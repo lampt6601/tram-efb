@@ -104,71 +104,59 @@ export function AccountCard({ account }: { account: PublicAccount }) {
           {account.title}
         </h3>
 
-        {Boolean(
-          (account.total_gp ?? 0) > 0 ||
-            (account.total_coins_android ?? 0) > 0 ||
-            (account.total_coins_ios ?? 0) > 0 ||
-            (account.team_strength ?? 0) > 0,
-        ) && (
-          <div className="mt-2.5 grid grid-cols-3 gap-1.5 sm:mt-3 sm:gap-2">
-            {(account.total_gp ?? 0) > 0 && (
-              <div
-                className={`flex min-w-0 items-center gap-1.5 text-sm ${
-                  isSold ? "text-slate-400" : "text-slate-500"
-                }`}
-              >
-                <Zap
-                  className={`h-3.5 w-3.5 shrink-0 ${
-                    isSold ? "text-amber-400" : "text-amber-500"
-                  }`}
-                />
-                <span className="truncate">
-                  {formatNumber(account.total_gp)} GP
+        <div className="mt-1.5 min-h-[18px] sm:min-h-[20px]">
+          {Boolean(
+            (account.total_gp ?? 0) > 0 ||
+              (account.total_coins_android ?? 0) > 0 ||
+              (account.total_coins_ios ?? 0) > 0 ||
+              (account.team_strength ?? 0) > 0,
+          ) && (
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-500">
+              {(account.total_gp ?? 0) > 0 && (
+                <span className="inline-flex items-center gap-1">
+                  <Zap
+                    className={`h-3 w-3 ${
+                      isSold ? "text-amber-400" : "text-amber-500"
+                    }`}
+                  />
+                  <span>{formatNumber(account.total_gp)} GP</span>
                 </span>
-              </div>
-            )}
-            {((account.total_coins_android ?? 0) > 0 ||
-              (account.total_coins_ios ?? 0) > 0) && (
-              <div
-                className={`flex min-w-0 items-center gap-1.5 text-sm ${
-                  isSold ? "text-slate-400" : "text-slate-500"
-                }`}
-              >
-                <Coins
-                  className={`h-3.5 w-3.5 shrink-0 ${
-                    isSold ? "text-yellow-400" : "text-yellow-500"
-                  }`}
-                />
-                <span className="truncate">
-                  {(account.total_coins_android ?? 0) > 0
-                    ? `${formatNumber(account.total_coins_android)} 🤖`
-                    : ""}
-                  {(account.total_coins_android ?? 0) > 0 &&
-                  (account.total_coins_ios ?? 0) > 0
-                    ? " | "
-                    : ""}
-                  {(account.total_coins_ios ?? 0) > 0
-                    ? `${formatNumber(account.total_coins_ios)} 🍎`
-                    : ""}
+              )}
+              {((account.total_coins_android ?? 0) > 0 ||
+                (account.total_coins_ios ?? 0) > 0) && (
+                <span className="inline-flex items-center gap-1">
+                  <Coins
+                    className={`h-3 w-3 ${
+                      isSold ? "text-yellow-400" : "text-yellow-500"
+                    }`}
+                  />
+                  <span className="truncate">
+                    {(account.total_coins_android ?? 0) > 0
+                      ? `${formatNumber(account.total_coins_android)} 🤖`
+                      : ""}
+                    {(account.total_coins_android ?? 0) > 0 &&
+                    (account.total_coins_ios ?? 0) > 0
+                      ? " | "
+                      : ""}
+                    {(account.total_coins_ios ?? 0) > 0
+                      ? `${formatNumber(account.total_coins_ios)} 🍎`
+                      : ""}
+                  </span>
                 </span>
-              </div>
-            )}
-            {(account.team_strength ?? 0) > 0 && (
-              <div
-                className={`flex min-w-0 items-center gap-1.5 text-sm ${
-                  isSold ? "text-slate-400" : "text-slate-500"
-                }`}
-              >
-                <Shield
-                  className={`h-3.5 w-3.5 shrink-0 ${
-                    isSold ? "text-blue-400" : "text-blue-500"
-                  }`}
-                />
-                <span className="truncate">{account.team_strength}</span>
-              </div>
-            )}
-          </div>
-        )}
+              )}
+              {(account.team_strength ?? 0) > 0 && (
+                <span className="inline-flex items-center gap-1">
+                  <Shield
+                    className={`h-3 w-3 ${
+                      isSold ? "text-blue-400" : "text-blue-500"
+                    }`}
+                  />
+                  <span>{account.team_strength}</span>
+                </span>
+              )}
+            </div>
+          )}
+        </div>
 
         <div className="mt-3 sm:mt-4 flex items-end justify-between border-t border-slate-100 pt-2.5 sm:pt-3">
           <div className="flex flex-col">
