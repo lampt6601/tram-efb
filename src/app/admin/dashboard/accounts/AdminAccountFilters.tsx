@@ -33,7 +33,7 @@ export function AdminAccountFilters({ totalCount }: AdminAccountFiltersProps) {
   const [isPending, startTransition] = useTransition();
 
   const sort = searchParams.get("sort") ?? "newest";
-  const status = searchParams.get("status") ?? "";
+  const status = searchParams.get("status") ?? "Available";
   const search = searchParams.get("q") ?? "";
 
   const update = useCallback(
@@ -51,7 +51,8 @@ export function AdminAccountFilters({ totalCount }: AdminAccountFiltersProps) {
     [router, pathname, searchParams],
   );
 
-  const hasActiveFilters = sort !== "newest" || status !== "" || search !== "";
+  const hasActiveFilters =
+    sort !== "newest" || status !== "Available" || search !== "";
 
   const clearAll = () => {
     startTransition(() => {

@@ -6,8 +6,19 @@ import { formatCurrency } from "@/lib/constants";
 import { DeleteAccountButton } from "./DeleteButton";
 import { SellAccountButton } from "./SellButton";
 import { AdminAccountFilters } from "./AdminAccountFilters";
+import { CopyLinkButton } from "./CopyLinkButton";
 import { Suspense } from "react";
 import type { AccountWithEmail } from "@/types/database";
+
+function formatCompactPrice(price: number): string {
+  if (price >= 1_000_000) {
+    return `${(price / 1_000_000).toFixed(price % 1_000_000 === 0 ? 0 : 1)}tr`;
+  }
+  if (price >= 1_000) {
+    return `${(price / 1_000).toFixed(price % 1_000 === 0 ? 0 : 1)}k`;
+  }
+  return price.toString();
+}
 
 type SearchParams = {
   sort?: string;
@@ -22,7 +33,7 @@ export default async function AccountsPage({
 }) {
   const params = await searchParams;
   const sort = params.sort ?? "newest";
-  const statusFilter = params.status ?? "";
+  const statusFilter = params.status ?? "Available";
   const searchQuery = params.q ?? "";
 
   const supabase = await createSupabaseServerClient();
@@ -98,25 +109,25 @@ export default async function AccountsPage({
           <table className="w-full text-left text-sm">
             <thead className="border-b border-slate-200 bg-slate-50">
               <tr>
-                <th className="px-6 py-3 font-medium text-slate-500">
+                <th className="px-3 py-2 sm:px-6 sm:py-3 font-medium text-slate-500">
                   Tài Khoản
                 </th>
-                <th className="px-6 py-3 font-medium text-slate-500">
+                <th className="px-3 py-2 sm:px-6 sm:py-3 font-medium text-slate-500">
                   Trạng Thái
                 </th>
-                <th className="px-6 py-3 font-medium text-slate-500">
+                <th className="hidden px-3 py-2 sm:px-6 sm:py-3 font-medium text-slate-500 md:table-cell">
                   Giá Nhập
                 </th>
-                <th className="px-6 py-3 font-medium text-slate-500">
+                <th className="px-3 py-2 sm:px-6 sm:py-3 font-medium text-slate-500">
                   Giá Bán
                 </th>
-                <th className="px-6 py-3 font-medium text-slate-500">
+                <th className="hidden px-3 py-2 sm:px-6 sm:py-3 font-medium text-slate-500 md:table-cell">
                   Lực Chiến
                 </th>
-                <th className="px-6 py-3 font-medium text-slate-500">
+                <th className="hidden px-3 py-2 sm:px-6 sm:py-3 font-medium text-slate-500 lg:table-cell">
                   Email Liên Kết
                 </th>
-                <th className="px-6 py-3 font-medium text-slate-500">
+                <th className="px-3 py-2 sm:px-6 sm:py-3 font-medium text-slate-500">
                   Hành Động
                 </th>
               </tr>
@@ -124,39 +135,45 @@ export default async function AccountsPage({
             <tbody className="divide-y divide-slate-100">
               {items.map((account) => (
                 <tr key={account.id} className="hover:bg-slate-50">
-                  <td className="px-6 py-4">
+                  <td className="px-3 py-3 sm:px-6 sm:py-4">
                     <div className="flex items-center gap-3">
-                      <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-50">
+                      <div className="hidden h-9 w-9 items-center justify-center rounded-lg bg-indigo-50 sm:flex">
                         <Gamepad2 className="h-4 w-4 text-indigo-600" />
                       </div>
-                      <span className="font-medium text-slate-900">
+                      <span className="max-w-[120px] truncate font-medium text-slate-900 sm:max-w-none">
                         {account.title}
                       </span>
                     </div>
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-3 py-3 sm:px-6 sm:py-4">
                     <StatusBadge status={account.status} />
                   </td>
-                  <td className="px-6 py-4 text-slate-600">
+                  <td className="hidden px-3 py-3 sm:px-6 sm:py-4 text-slate-600 md:table-cell">
                     {formatCurrency(account.purchase_price)}
                   </td>
-                  <td className="px-6 py-4 font-medium text-indigo-600">
-                    {formatCurrency(account.selling_price)}
+                  <td className="px-3 py-3 sm:px-6 sm:py-4 font-medium text-indigo-600">
+                    <span className="sm:hidden">
+                      {formatCompactPrice(account.selling_price)}
+                    </span>
+                    <span className="hidden sm:inline">
+                      {formatCurrency(account.selling_price)}
+                    </span>
                   </td>
-                  <td className="px-6 py-4 text-slate-600">
+                  <td className="hidden px-3 py-3 sm:px-6 sm:py-4 text-slate-600 md:table-cell">
                     {account.team_strength}
                   </td>
-                  <td className="px-6 py-4 text-xs text-slate-500">
+                  <td className="hidden px-3 py-3 sm:px-6 sm:py-4 text-xs text-slate-500 lg:table-cell">
                     {account.emails?.email_address || "—"}
                   </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-2">
+                  <td className="px-3 py-3 sm:px-6 sm:py-4">
+                    <div className="flex items-center gap-1 sm:gap-2">
                       <Link
                         href={`/admin/dashboard/accounts/${account.id}/edit`}
-                        className="rounded-lg p-2 text-slate-400 transition-colors hover:bg-indigo-50 hover:text-indigo-600"
+                        className="rounded-lg p-1.5 sm:p-2 text-slate-400 transition-colors hover:bg-indigo-50 hover:text-indigo-600"
                       >
                         <Pencil className="h-4 w-4" />
                       </Link>
+                      <CopyLinkButton id={account.id} />
                       <SellAccountButton
                         id={account.id}
                         currentSellingPrice={account.selling_price}
