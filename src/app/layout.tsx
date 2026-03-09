@@ -14,17 +14,19 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL("https://thc-efb.vercel.app"),
   title: {
-    default: "Shop Tài Khoản eFootball | Uy Tín – Giá Tốt",
+    default: "THC EFOOTBALL Shop - Account eFootball uy tín, giá tốt",
     template: "%s | THC eFootball Shop",
   },
-  description: "Mua bán tài khoản eFootball Mobile uy tín, giá tốt.",
+  description: "Mua bán tài khoản account eFootball uy tín, giá tốt tại THC EFOOTBALL Shop",
   keywords: [
-    "tài khoản efootball",
+    "account efootball",
     "mua bán acc efootball",
-    "efootball mobile",
-    "acc efootball android",
-    "acc efootball ios",
-    "shop efootball uy tín",
+    "account efootball android",
+    "account efootball ios",
+    "shop account efootball uy tín",
+    "thc efootball shop",
+    "thc efootball",
+    "thc efootball shop",
   ],
   authors: [{ name: "THC eFootball Shop" }],
   robots: {
@@ -36,15 +38,15 @@ export const metadata: Metadata = {
     type: "website",
     locale: "vi_VN",
     siteName: "THC eFootball Shop",
-    title: "Shop Tài Khoản eFootball | Uy Tín – Giá Tốt",
+    title: "THC EFOOTBALL Shop - Account eFootball uy tín, giá tốt",
     description:
-      "Mua bán tài khoản eFootball Mobile uy tín, giá tốt. Đa dạng tài khoản Android & iOS.",
+      "Mua bán tài khoản account eFootball uy tín, giá tốt tại THC EFOOTBALL Shop",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Shop Tài Khoản eFootball | Uy Tín – Giá Tốt",
+    title: "THC EFOOTBALL Shop - Account eFootball uy tín, giá tốt",
     description:
-      "Mua bán tài khoản eFootball Mobile uy tín, giá tốt. Đa dạng tài khoản Android & iOS.",
+      "Mua bán tài khoản account eFootball uy tín, giá tốt tại THC EFOOTBALL Shop",
   },
 };
 
