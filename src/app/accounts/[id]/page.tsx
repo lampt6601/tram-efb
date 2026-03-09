@@ -17,6 +17,7 @@ import {
   MessageCircle,
   ExternalLink,
   CheckCircle2,
+  Star,
 } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -218,6 +219,16 @@ export default async function AccountDetailPage({
 
   // Normal available/pending account
   const account = publicData as PublicAccount;
+  const isSale = account.original_price
+    ? account.original_price > account.selling_price
+    : false;
+  const discount = isSale
+    ? Math.round(
+        ((account.original_price! - account.selling_price) /
+          account.original_price!) *
+          100,
+      )
+    : 0;
   const contactMessage = encodeURIComponent(
     `Hi, I'm interested in account: ${account.title} (ID: ${account.id})`,
   );
@@ -255,10 +266,12 @@ export default async function AccountDetailPage({
               {/* Info */}
               <div className="flex flex-col">
                 <div className="flex items-start justify-between gap-3">
-                  <h1 className="text-2xl font-bold text-slate-900 lg:text-3xl">
+                  <h1 className="flex items-center gap-2 text-2xl font-bold text-slate-900 lg:text-3xl">
                     {account.title}
+                    {account.is_priority && (
+                      <Star className="h-6 w-6 shrink-0 fill-amber-500 text-amber-500" />
+                    )}
                   </h1>
-                  <StatusBadge status={account.status} />
                 </div>
 
                 <div className="mt-6 grid grid-cols-3 gap-4">
@@ -289,9 +302,23 @@ export default async function AccountDetailPage({
                 <div className="mt-auto pt-8">
                   <div className="mb-6">
                     <p className="text-sm text-slate-500">Giá Bán</p>
-                    <p className="text-3xl font-extrabold text-indigo-600">
-                      {formatCurrency(account.selling_price)}
-                    </p>
+                    <div className="mt-1 flex items-end gap-3">
+                      <p
+                        className={`text-3xl font-extrabold ${isSale ? "text-rose-600" : "text-indigo-600"}`}
+                      >
+                        {formatCurrency(account.selling_price)}
+                      </p>
+                      {isSale && (
+                        <div className="mb-0.5 flex flex-col">
+                          <span className="mb-0.5 text-sm font-medium text-slate-400 line-through decoration-slate-400">
+                            {formatCurrency(account.original_price!)}
+                          </span>
+                          <span className="inline-flex w-fit items-center rounded-md bg-rose-100 px-1.5 py-0.5 text-xs font-bold text-rose-600">
+                            -{discount}% GIẢM
+                          </span>
+                        </div>
+                      )}
+                    </div>
                   </div>
 
                   <div className="flex flex-col gap-3 sm:flex-row">

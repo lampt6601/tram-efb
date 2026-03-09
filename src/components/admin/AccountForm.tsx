@@ -22,6 +22,8 @@ type AccountFormValues = {
   totalCoinsIos: string;
   teamStrength: string;
   emailId: string;
+  isPriority: boolean;
+  originalPrice: string;
 };
 
 export function AccountForm({ account }: AccountFormProps) {
@@ -50,6 +52,8 @@ export function AccountForm({ account }: AccountFormProps) {
       totalCoinsIos: account?.total_coins_ios?.toString() ?? "",
       teamStrength: account?.team_strength?.toString() ?? "",
       emailId: account?.email_id ?? "",
+      isPriority: account?.is_priority ?? false,
+      originalPrice: account?.original_price?.toString() ?? "",
     }),
     [account],
   );
@@ -231,6 +235,10 @@ export function AccountForm({ account }: AccountFormProps) {
         total_coins_ios: parseInt(values.totalCoinsIos) || 0,
         team_strength: parseInt(values.teamStrength) || 0,
         email_id: values.emailId || null,
+        is_priority: values.isPriority,
+        original_price: values.originalPrice
+          ? parseInt(values.originalPrice)
+          : null,
         images: finalImages,
         primary_image_url: finalPrimaryUrl,
       };
@@ -291,7 +299,7 @@ export function AccountForm({ account }: AccountFormProps) {
           </div>
 
           {/* Prices */}
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-4 sm:grid-cols-3">
             <div>
               <label className="mb-1.5 block text-sm font-medium text-slate-700">
                 Giá Nhập (VNĐ)
@@ -314,7 +322,7 @@ export function AccountForm({ account }: AccountFormProps) {
             </div>
             <div>
               <label className="mb-1.5 block text-sm font-medium text-slate-700">
-                Giá Bán (VNĐ)
+                Giá Bán Hiện Tại
               </label>
               <input
                 {...register("sellingPrice", {
@@ -332,21 +340,75 @@ export function AccountForm({ account }: AccountFormProps) {
                 </p>
               )}
             </div>
+            <div>
+              <label className="mb-1.5 block text-sm font-medium text-slate-700">
+                Giá Bị Gạch / Giá Gốc{" "}
+                <span className="text-slate-400 font-normal">(Tuỳ chọn)</span>
+              </label>
+              <input
+                {...register("originalPrice", {
+                  min: { value: 0, message: "Giá gốc phải >= 0" },
+                  validate: (value, formValues) => {
+                    if (!value) return true;
+                    const original = parseInt(value);
+                    const selling = parseInt(formValues.sellingPrice);
+                    if (original <= selling)
+                      return "Giá bị gạch phải lớn hơn giá bán";
+                    return true;
+                  },
+                })}
+                aria-invalid={!!errors.originalPrice}
+                min="0"
+                step="1"
+                className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm outline-none transition-colors focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                placeholder="Để trống nếu không sale"
+              />
+              {errors.originalPrice && (
+                <p className="mt-1 text-xs text-red-600">
+                  {errors.originalPrice.message}
+                </p>
+              )}
+            </div>
           </div>
 
-          {/* Status */}
-          <div>
-            <label className="mb-1.5 block text-sm font-medium text-slate-700">
-              Trạng Thái
-            </label>
-            <select
-              {...register("status")}
-              className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm outline-none transition-colors focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
-            >
-              <option value="Available">Sẵn Sàng</option>
-              <option value="Pending">Đang Chờ</option>
-              <option value="Sold">Đã Bán</option>
-            </select>
+          {/* Status and Priority */}
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div>
+              <label className="mb-1.5 block text-sm font-medium text-slate-700">
+                Trạng Thái
+              </label>
+              <select
+                {...register("status")}
+                className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm outline-none transition-colors focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+              >
+                <option value="Available">Sẵn Sàng</option>
+                <option value="Pending">Đang Chờ</option>
+                <option value="Sold">Đã Bán</option>
+              </select>
+            </div>
+
+            <div className="flex flex-col justify-center">
+              <label className="mb-1.5 hidden text-sm font-medium text-slate-700 sm:block">
+                Tùy Chọn Khác
+              </label>
+              <div className="flex h-[42px] items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 px-4">
+                <input
+                  type="checkbox"
+                  id="isPriority"
+                  {...register("isPriority")}
+                  className="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                />
+                <label
+                  htmlFor="isPriority"
+                  className="flex flex-1 cursor-pointer items-center justify-between gap-1.5 text-sm font-medium text-slate-700 select-none"
+                >
+                  Tài Khoản Nổi Bật
+                  <Star
+                    className={`h-4 w-4 ${account?.is_priority ? "text-amber-500 fill-amber-500" : "text-slate-400"}`}
+                  />
+                </label>
+              </div>
+            </div>
           </div>
 
           {/* Stats */}

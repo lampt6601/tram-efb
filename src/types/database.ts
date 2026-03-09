@@ -14,6 +14,7 @@ export interface Account {
   title: string;
   purchase_price: number;
   selling_price: number;
+  original_price?: number | null;
   images: string[];
   primary_image_url: string | null;
   status: AccountStatus;
@@ -22,6 +23,7 @@ export interface Account {
   total_coins_ios: number;
   team_strength: number;
   email_id: string | null;
+  is_priority?: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -30,6 +32,7 @@ export interface PublicAccount {
   id: string;
   title: string;
   selling_price: number;
+  original_price?: number | null;
   images: string[];
   primary_image_url: string | null;
   status: AccountStatus;
@@ -37,6 +40,7 @@ export interface PublicAccount {
   total_coins_android: number;
   total_coins_ios: number;
   team_strength: number;
+  is_priority?: boolean;
   created_at: string;
 }
 

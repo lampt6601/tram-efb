@@ -74,7 +74,7 @@ export function AccountFilters({ totalCount }: { totalCount: number }) {
     >
       <div className="flex flex-wrap items-center gap-2 md:gap-3">
         {/* Search */}
-        <div className="flex flex-1 min-w-[140px] sm:min-w-[200px] items-center gap-2 rounded-xl border border-slate-200 bg-white px-2.5 py-1.5 sm:px-3 sm:py-2 transition-colors focus-within:border-indigo-400 focus-within:ring-1 focus-within:ring-indigo-400 md:max-w-xs">
+        <div className="flex flex-1 min-w-[140px] sm:min-w-[200px] items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 sm:px-3 sm:py-2 transition-colors focus-within:border-indigo-400 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-400 md:max-w-xs">
           <Search className="h-4 w-4 shrink-0 text-slate-400" />
           <input
             type="text"
@@ -91,7 +91,7 @@ export function AccountFilters({ totalCount }: { totalCount: number }) {
           <select
             value={sort}
             onChange={(e) => update("sort", e.target.value)}
-            className="rounded-xl border border-slate-200 bg-white px-2.5 py-1.5 sm:px-3 sm:py-2 text-sm text-slate-700 outline-none transition-colors focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 hover:border-slate-300 cursor-pointer"
+            className="rounded-xl border border-slate-200 bg-white px-3 py-2 sm:px-3 sm:py-2 text-sm text-slate-700 outline-none transition-colors focus:border-indigo-400 focus:ring-2 focus:ring-inset focus:ring-indigo-400 hover:border-slate-300 cursor-pointer"
           >
             {SORT_OPTIONS.map((o) => (
               <option key={o.value} value={o.value}>
@@ -112,7 +112,7 @@ export function AccountFilters({ totalCount }: { totalCount: number }) {
               min={0}
               step={10000}
               onChange={(e) => update("minPrice", e.target.value)}
-              className="w-24 sm:w-28 rounded-xl border border-slate-200 bg-white px-2.5 py-1.5 sm:px-3 sm:py-2 text-sm text-slate-700 outline-none transition-colors focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 hover:border-slate-300"
+              className="w-24 sm:w-28 rounded-xl border border-slate-200 bg-white px-3 py-2 sm:px-3 sm:py-2 text-sm text-slate-700 outline-none transition-colors focus:border-indigo-400 focus:ring-2 focus:ring-inset focus:ring-indigo-400 hover:border-slate-300"
             />
             <span className="text-slate-400">—</span>
             <input
@@ -122,7 +122,7 @@ export function AccountFilters({ totalCount }: { totalCount: number }) {
               min={0}
               step={10000}
               onChange={(e) => update("maxPrice", e.target.value)}
-              className="w-24 sm:w-28 rounded-xl border border-slate-200 bg-white px-2.5 py-1.5 sm:px-3 sm:py-2 text-sm text-slate-700 outline-none transition-colors focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 hover:border-slate-300"
+              className="w-24 sm:w-28 rounded-xl border border-slate-200 bg-white px-3 py-2 sm:px-3 sm:py-2 text-sm text-slate-700 outline-none transition-colors focus:border-indigo-400 focus:ring-2 focus:ring-inset focus:ring-indigo-400 hover:border-slate-300"
             />
           </div>
         </div>

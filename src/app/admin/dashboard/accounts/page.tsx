@@ -1,10 +1,11 @@
 import { createSupabaseServerClient } from "@/lib/supabase-server";
 import Link from "next/link";
-import { Plus, Pencil, Gamepad2 } from "lucide-react";
+import { Plus, Pencil, Gamepad2, Star } from "lucide-react";
 import { StatusBadge } from "@/components/ui/Badge";
 import { formatCurrency } from "@/lib/constants";
 import { DeleteAccountButton } from "./DeleteButton";
 import { SellAccountButton } from "./SellButton";
+import { SaleAccountButton } from "./SaleButton";
 import { AdminAccountFilters } from "./AdminAccountFilters";
 import { CopyLinkButton } from "./CopyLinkButton";
 import { Suspense } from "react";
@@ -140,8 +141,11 @@ export default async function AccountsPage({
                       <div className="hidden h-9 w-9 items-center justify-center rounded-lg bg-indigo-50 sm:flex">
                         <Gamepad2 className="h-4 w-4 text-indigo-600" />
                       </div>
-                      <span className="max-w-[120px] truncate font-medium text-slate-900 sm:max-w-none">
-                        {account.title}
+                      <span className="flex items-center gap-1.5 max-w-[120px] truncate font-medium text-slate-900 sm:max-w-none">
+                        {account.is_priority && (
+                          <Star className="h-4 w-4 shrink-0 fill-amber-500 text-amber-500 inline" />
+                        )}
+                        <span className="truncate">{account.title}</span>
                       </span>
                     </div>
                   </td>
@@ -152,6 +156,17 @@ export default async function AccountsPage({
                     {formatCurrency(account.purchase_price)}
                   </td>
                   <td className="px-3 py-3 sm:px-6 sm:py-4 font-medium text-indigo-600">
+                    {account.original_price &&
+                      account.original_price > account.selling_price && (
+                        <div className="text-xs text-slate-400 line-through font-normal">
+                          <span className="sm:hidden">
+                            {formatCompactPrice(account.original_price)}
+                          </span>
+                          <span className="hidden sm:inline">
+                            {formatCurrency(account.original_price)}
+                          </span>
+                        </div>
+                      )}
                     <span className="sm:hidden">
                       {formatCompactPrice(account.selling_price)}
                     </span>
@@ -174,6 +189,12 @@ export default async function AccountsPage({
                         <Pencil className="h-4 w-4" />
                       </Link>
                       <CopyLinkButton id={account.id} />
+                      <SaleAccountButton
+                        id={account.id}
+                        currentSellingPrice={account.selling_price}
+                        currentOriginalPrice={account.original_price ?? null}
+                        status={account.status}
+                      />
                       <SellAccountButton
                         id={account.id}
                         currentSellingPrice={account.selling_price}

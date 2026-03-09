@@ -7,6 +7,7 @@ import {
   Shield,
   ArrowRight,
   CheckCircle2,
+  Star,
 } from "lucide-react";
 import { StatusBadge } from "@/components/ui/Badge";
 import { formatCurrency, formatNumber } from "@/lib/constants";
@@ -15,6 +16,16 @@ import type { PublicAccount } from "@/types/database";
 export function AccountCard({ account }: { account: PublicAccount }) {
   const thumbnail = account.primary_image_url || account.images?.[0];
   const isSold = account.status === "Sold";
+  const isSale = account.original_price
+    ? account.original_price > account.selling_price
+    : false;
+  const discount = isSale
+    ? Math.round(
+        ((account.original_price! - account.selling_price) /
+          account.original_price!) *
+          100,
+      )
+    : 0;
 
   const cardContent = (
     <div
@@ -44,10 +55,29 @@ export function AccountCard({ account }: { account: PublicAccount }) {
 
         {/* Sold ribbon */}
         {isSold && (
-          <div className="absolute left-0 top-3 flex items-center gap-1.5 rounded-r-full bg-emerald-500 py-1 pl-3 pr-4 shadow-md">
+          <div className="absolute left-0 top-3 flex items-center gap-1.5 rounded-r-full bg-emerald-500 py-1 pl-3 pr-4 shadow-md z-10">
             <CheckCircle2 className="h-3.5 w-3.5 text-white" />
             <span className="text-[11px] font-bold uppercase tracking-wider text-white">
               Đã Bán
+            </span>
+          </div>
+        )}
+
+        {/* Sale ribbon */}
+        {!isSold && isSale && (
+          <div className="absolute left-0 top-3 flex items-center gap-1 rounded-r-full bg-rose-500 py-1 pl-3 pr-4 shadow-md z-10">
+            <span className="text-[12px] font-bold uppercase tracking-wider text-white">
+              -{discount}% GIẢM
+            </span>
+          </div>
+        )}
+
+        {/* Priority ribbon */}
+        {!isSold && account.is_priority && (
+          <div className="absolute right-0 top-3 flex items-center gap-1.5 rounded-l-full bg-amber-500 py-1 pl-4 pr-3 shadow-md z-10">
+            <Star className="h-3.5 w-3.5 fill-white text-white" />
+            <span className="text-[11px] font-bold uppercase tracking-wider text-white">
+              Nổi Bật
             </span>
           </div>
         )}
@@ -106,17 +136,26 @@ export function AccountCard({ account }: { account: PublicAccount }) {
           </div>
         </div>
 
-        <div className="mt-3 sm:mt-4 flex items-center justify-between border-t border-slate-100 pt-2.5 sm:pt-3">
-          <span
-            className={`truncate pr-2 ${
-              isSold
-                ? "text-base sm:text-lg font-bold text-slate-500 line-through decoration-slate-400"
-                : "text-lg sm:text-xl font-bold text-indigo-600 transition-colors duration-200 group-hover:text-indigo-700"
-            }`}
-          >
-            {formatCurrency(account.selling_price)}
-          </span>
-          <div className="shrink-0">
+        <div className="mt-3 sm:mt-4 flex items-end justify-between border-t border-slate-100 pt-2.5 sm:pt-3">
+          <div className="flex flex-col">
+            <div className="flex h-[18px] items-center">
+              {!isSold && isSale && (
+                <span className="text-xs font-medium text-slate-400 line-through decoration-slate-400 block h-full">
+                  {formatCurrency(account.original_price!)}
+                </span>
+              )}
+            </div>
+            <span
+              className={`truncate pr-2 ${
+                isSold
+                  ? "text-base sm:text-lg font-bold text-slate-500 line-through decoration-slate-400"
+                  : `text-lg sm:text-xl font-bold transition-colors duration-200 ${isSale ? "text-rose-600 group-hover:text-rose-700" : "text-indigo-600 group-hover:text-indigo-700"}`
+              }`}
+            >
+              {formatCurrency(account.selling_price)}
+            </span>
+          </div>
+          <div className="shrink-0 mb-1">
             {isSold ? (
               <span className="rounded-lg bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-600">
                 Đã giao dịch

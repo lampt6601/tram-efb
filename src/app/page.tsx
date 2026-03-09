@@ -50,6 +50,9 @@ export default async function HomePage({
   if (maxPrice !== null) query = query.lte("selling_price", maxPrice);
   if (searchQuery) query = query.ilike("title", `%${searchQuery}%`);
 
+  // Always order by priority first
+  query = query.order("is_priority", { ascending: false, nullsFirst: false });
+
   switch (sort) {
     case "price_asc":
       query = query.order("selling_price", { ascending: true });
@@ -109,7 +112,7 @@ export default async function HomePage({
         </section>
 
         {/* Account Grid */}
-        <section className="mx-auto max-w-7xl px-3 py-6 sm:px-6 sm:py-12 lg:px-8 lg:py-14">
+        <section className="mx-auto max-w-7xl px-3 py-6 sm:px-6 sm:py-12 lg:px-8 lg:py-10">
           <ScrollReveal direction="left" className="mb-3 sm:mb-4">
             <h2 className="text-xl font-semibold text-slate-900 sm:text-2xl">
               Tài Khoản Đang Bán

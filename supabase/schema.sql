@@ -28,6 +28,7 @@ CREATE TABLE accounts (
   title TEXT NOT NULL,
   purchase_price NUMERIC(12, 2) NOT NULL DEFAULT 0,
   selling_price NUMERIC(12, 2) NOT NULL DEFAULT 0,
+  original_price NUMERIC(12, 2) DEFAULT NULL,
   images TEXT[] DEFAULT '{}',
   primary_image_url TEXT,
   status account_status NOT NULL DEFAULT 'Available',
@@ -36,6 +37,7 @@ CREATE TABLE accounts (
   total_coins_ios BIGINT DEFAULT 0,
   team_strength INTEGER DEFAULT 0,
   email_id UUID UNIQUE REFERENCES emails(id) ON DELETE SET NULL,
+  is_priority BOOLEAN DEFAULT false,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -102,6 +104,8 @@ SELECT
   total_coins_android,
   total_coins_ios,
   team_strength,
+  is_priority,
+  original_price,
   created_at
 FROM accounts
 WHERE status = 'Available';
