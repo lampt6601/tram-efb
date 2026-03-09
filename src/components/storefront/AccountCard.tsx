@@ -63,7 +63,7 @@ export function AccountCard({ account }: { account: PublicAccount }) {
       </div>
 
       {/* Content */}
-      <div className="flex flex-1 flex-col p-4">
+      <div className="flex flex-1 flex-col p-3 sm:p-4">
         <h3
           className={`truncate text-base font-semibold ${
             isSold
@@ -74,7 +74,7 @@ export function AccountCard({ account }: { account: PublicAccount }) {
           {account.title}
         </h3>
 
-        <div className="mt-3 grid grid-cols-3 gap-2">
+        <div className="mt-2.5 sm:mt-3 grid grid-cols-3 gap-1.5 sm:gap-2">
           <div
             className={`flex min-w-0 items-center gap-1.5 text-sm ${isSold ? "text-slate-400" : "text-slate-500"}`}
           >
@@ -106,12 +106,12 @@ export function AccountCard({ account }: { account: PublicAccount }) {
           </div>
         </div>
 
-        <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-3">
+        <div className="mt-3 sm:mt-4 flex items-center justify-between border-t border-slate-100 pt-2.5 sm:pt-3">
           <span
             className={`truncate pr-2 ${
               isSold
-                ? "text-lg font-bold text-slate-500 line-through decoration-slate-400"
-                : "text-xl font-bold text-indigo-600 transition-colors duration-200 group-hover:text-indigo-700"
+                ? "text-base sm:text-lg font-bold text-slate-500 line-through decoration-slate-400"
+                : "text-lg sm:text-xl font-bold text-indigo-600 transition-colors duration-200 group-hover:text-indigo-700"
             }`}
           >
             {formatCurrency(account.selling_price)}

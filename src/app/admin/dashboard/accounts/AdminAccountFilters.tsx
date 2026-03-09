@@ -1,7 +1,8 @@
 "use client";
 
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import { useCallback, useTransition } from "react";
+import { useCallback, useTransition, useState, useEffect, useRef } from "react";
+import { useDebounce } from "@/hooks/use-debounce";
 import { ArrowUpDown, SlidersHorizontal, Search } from "lucide-react";
 
 const SORT_OPTIONS = [
@@ -36,6 +37,9 @@ export function AdminAccountFilters({ totalCount }: AdminAccountFiltersProps) {
   const status = searchParams.get("status") ?? "Available";
   const search = searchParams.get("q") ?? "";
 
+  const [localSearch, setLocalSearch] = useState(search);
+  const debouncedSearch = useDebounce(localSearch, 500);
+
   const update = useCallback(
     (key: string, value: string) => {
       const params = new URLSearchParams(searchParams.toString());
@@ -50,6 +54,21 @@ export function AdminAccountFilters({ totalCount }: AdminAccountFiltersProps) {
     },
     [router, pathname, searchParams],
   );
+
+  const lastDebouncedSearch = useRef(debouncedSearch);
+
+  useEffect(() => {
+    if (debouncedSearch !== lastDebouncedSearch.current) {
+      lastDebouncedSearch.current = debouncedSearch;
+      if (debouncedSearch !== search) {
+        update("q", debouncedSearch);
+      }
+    }
+  }, [debouncedSearch, search, update]);
+
+  useEffect(() => {
+    setLocalSearch(search);
+  }, [search]);
 
   const hasActiveFilters =
     sort !== "newest" || status !== "Available" || search !== "";
@@ -71,12 +90,8 @@ export function AdminAccountFilters({ totalCount }: AdminAccountFiltersProps) {
           <input
             type="text"
             placeholder="Tìm theo tiêu đề..."
-            defaultValue={search}
-            onKeyDown={(e) => {
-              if (e.key === "Enter")
-                update("q", (e.target as HTMLInputElement).value);
-            }}
-            onBlur={(e) => update("q", e.target.value)}
+            value={localSearch}
+            onChange={(e) => setLocalSearch(e.target.value)}
             className="w-full rounded-xl border border-slate-200 bg-white py-2 pl-9 pr-4 text-sm text-slate-700 outline-none placeholder:text-slate-400 transition-colors focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 hover:border-slate-300"
           />
         </div>

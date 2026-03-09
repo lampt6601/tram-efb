@@ -4,6 +4,7 @@ import { Footer } from "@/components/storefront/Footer";
 import { AccountCard } from "@/components/storefront/AccountCard";
 import { AccountFilters } from "@/components/storefront/AccountFilters";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
+import { AutoScrollSlider } from "@/components/ui/AutoScrollSlider";
 import { Gamepad2, Search, BadgeCheck } from "lucide-react";
 import { Suspense } from "react";
 import type { Metadata } from "next";
@@ -26,6 +27,7 @@ type SearchParams = {
   sort?: string;
   minPrice?: string;
   maxPrice?: string;
+  q?: string;
 };
 
 export default async function HomePage({
@@ -37,14 +39,16 @@ export default async function HomePage({
   const sort = params.sort ?? "newest";
   const minPrice = params.minPrice ? parseFloat(params.minPrice) : null;
   const maxPrice = params.maxPrice ? parseFloat(params.maxPrice) : null;
+  const searchQuery = params.q;
 
   const supabase = await createSupabaseServerClient();
 
-  // Build the accounts query with sort + price filter
+  // Build the accounts query with sort + price + search filter
   let query = supabase.from("public_accounts").select("*");
 
   if (minPrice !== null) query = query.gte("selling_price", minPrice);
   if (maxPrice !== null) query = query.lte("selling_price", maxPrice);
+  if (searchQuery) query = query.ilike("title", `%${searchQuery}%`);
 
   switch (sort) {
     case "price_asc":
@@ -85,8 +89,8 @@ export default async function HomePage({
         {/* Hero */}
         <section className="gradient-bg relative overflow-hidden">
           <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wMyI+PHBhdGggZD0iTTM2IDE4YzAtOS45NC04LjA2LTE4LTE4LTE4UzAgOC4wNiAwIDE4czguMDYgMTggMTggMTggMTgtOC4wNiAxOC0xOCIvPjwvZz48L2c+PC9zdmc+')] opacity-30" />
-          <div className="relative mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8 lg:py-20">
-            <div className="flex flex-col py-8 md:py-20">
+          <div className="relative mx-auto max-w-7xl px-4 py-2 sm:px-6 sm:py-8 lg:px-8 lg:py-10">
+            <div className="flex flex-col py-3 sm:py-6 md:py-10">
               <div className="text-center lg:text-left">
                 <div className="mx-auto mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-600/20 ring-1 ring-indigo-500/40 lg:mx-0">
                   <Gamepad2 className="h-7 w-7 text-indigo-400" />
@@ -105,21 +109,21 @@ export default async function HomePage({
         </section>
 
         {/* Account Grid */}
-        <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-12 lg:px-8 lg:py-14">
-          <ScrollReveal direction="left" className="mb-4">
+        <section className="mx-auto max-w-7xl px-3 py-6 sm:px-6 sm:py-12 lg:px-8 lg:py-14">
+          <ScrollReveal direction="left" className="mb-3 sm:mb-4">
             <h2 className="text-xl font-semibold text-slate-900 sm:text-2xl">
               Tài Khoản Đang Bán
             </h2>
           </ScrollReveal>
 
-          <ScrollReveal delay={120} className="mb-6 sm:mb-8">
+          <ScrollReveal delay={120} className="mb-5 sm:mb-8">
             <Suspense fallback={null}>
               <AccountFilters totalCount={items.length} />
             </Suspense>
           </ScrollReveal>
 
           {items.length > 0 ? (
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-4 sm:gap-0 sm:grid-cols-2 lg:grid-cols-3">
               {items.map((account, i) => (
                 <ScrollReveal key={account.id} delay={i * 80} distance="sm">
                   <AccountCard account={account} />
@@ -162,13 +166,18 @@ export default async function HomePage({
                   </p>
                 </div>
               </ScrollReveal>
-              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              <AutoScrollSlider>
                 {soldItems.map((account, i) => (
-                  <ScrollReveal key={account.id} delay={i * 80} distance="sm">
-                    <AccountCard account={account} />
-                  </ScrollReveal>
+                  <div
+                    key={account.id}
+                    className="w-[85vw] max-w-[320px] shrink-0 snap-start sm:w-[340px] lg:w-[380px]"
+                  >
+                    <ScrollReveal delay={i * 80} distance="sm">
+                      <AccountCard account={account} />
+                    </ScrollReveal>
+                  </div>
                 ))}
-              </div>
+              </AutoScrollSlider>
             </div>
           </section>
         )}

@@ -236,7 +236,7 @@ export default async function AccountDetailPage({
       <Header />
       <main className="flex-1">
         <div className="mx-auto w-full max-w-5xl px-0 sm:px-6 lg:px-8 py-4 sm:py-8">
-          <div className="px-4 sm:px-0 mb-4 sm:mb-6">
+          <div className="px-4 sm:px-0 mb-3 sm:mb-6">
             <Link
               href="/"
               className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 transition-colors hover:text-indigo-600"
@@ -245,8 +245,8 @@ export default async function AccountDetailPage({
             </Link>
           </div>
 
-          <div className="overflow-hidden sm:rounded-xl shadow-sm">
-            <div className="grid gap-8 lg:grid-cols-2 p-4">
+          <div className="overflow-hidden sm:rounded-xl sm:shadow-sm">
+            <div className="grid gap-8 lg:grid-cols-2 px-4">
               {/* Images */}
               <div className="relative">
                 <ImageGallery images={galleryImages} title={account.title} />
