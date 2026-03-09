@@ -167,30 +167,52 @@ export default async function AccountDetailPage({
                     </div>
                   </div>
 
-                  <div className="mt-6 grid grid-cols-3 gap-4">
-                    <div className="rounded-xl bg-amber-50 p-4 text-center opacity-60">
-                      <Zap className="mx-auto mb-1 h-5 w-5 text-amber-500" />
-                      <p className="text-lg font-bold text-slate-900">
-                        {formatNumber(account.total_gp)}
-                      </p>
-                      <p className="text-xs text-slate-500">Tổng GP</p>
+                  {Boolean(
+                    (account.total_gp ?? 0) > 0 ||
+                      (account.total_coins_android ?? 0) > 0 ||
+                      (account.total_coins_ios ?? 0) > 0 ||
+                      (account.team_strength ?? 0) > 0,
+                  ) && (
+                    <div className="mt-6 grid grid-cols-3 gap-4">
+                      {(account.total_gp ?? 0) > 0 && (
+                        <div className="rounded-xl bg-amber-50 p-4 text-center opacity-60">
+                          <Zap className="mx-auto mb-1 h-5 w-5 text-amber-500" />
+                          <p className="text-lg font-bold text-slate-900">
+                            {formatNumber(account.total_gp)}
+                          </p>
+                          <p className="text-xs text-slate-500">Tổng GP</p>
+                        </div>
+                      )}
+                      {((account.total_coins_android ?? 0) > 0 ||
+                        (account.total_coins_ios ?? 0) > 0) && (
+                        <div className="rounded-xl bg-yellow-50 p-4 text-center opacity-60">
+                          <Coins className="mx-auto mb-1 h-5 w-5 text-yellow-500" />
+                          <p className="text-sm font-bold text-slate-900">
+                            {(account.total_coins_android ?? 0) > 0
+                              ? `${formatNumber(account.total_coins_android)} 🤖`
+                              : ""}
+                            {(account.total_coins_android ?? 0) > 0 &&
+                            (account.total_coins_ios ?? 0) > 0
+                              ? " | "
+                              : ""}
+                            {(account.total_coins_ios ?? 0) > 0
+                              ? `${formatNumber(account.total_coins_ios)} 🍎`
+                              : ""}
+                          </p>
+                          <p className="text-xs text-slate-500">Coins</p>
+                        </div>
+                      )}
+                      {(account.team_strength ?? 0) > 0 && (
+                        <div className="rounded-xl bg-blue-50 p-4 text-center opacity-60">
+                          <Shield className="mx-auto mb-1 h-5 w-5 text-blue-500" />
+                          <p className="text-lg font-bold text-slate-900">
+                            {account.team_strength}
+                          </p>
+                          <p className="text-xs text-slate-500">Lực Chiến</p>
+                        </div>
+                      )}
                     </div>
-                    <div className="rounded-xl bg-yellow-50 p-4 text-center opacity-60">
-                      <Coins className="mx-auto mb-1 h-5 w-5 text-yellow-500" />
-                      <p className="text-sm font-bold text-slate-900">
-                        {formatNumber(account.total_coins_android)} 🤖 |{" "}
-                        {formatNumber(account.total_coins_ios)} 🍎
-                      </p>
-                      <p className="text-xs text-slate-500">Coins</p>
-                    </div>
-                    <div className="rounded-xl bg-blue-50 p-4 text-center opacity-60">
-                      <Shield className="mx-auto mb-1 h-5 w-5 text-blue-500" />
-                      <p className="text-lg font-bold text-slate-900">
-                        {account.team_strength}
-                      </p>
-                      <p className="text-xs text-slate-500">Lực Chiến</p>
-                    </div>
-                  </div>
+                  )}
 
                   <div className="mt-auto pt-8">
                     <div className="mb-6">
@@ -274,30 +296,52 @@ export default async function AccountDetailPage({
                   </h1>
                 </div>
 
-                <div className="mt-6 grid grid-cols-3 gap-4">
-                  <div className="rounded-xl bg-amber-50 p-4 text-center">
-                    <Zap className="mx-auto mb-1 h-5 w-5 text-amber-500" />
-                    <p className="text-lg font-bold text-slate-900">
-                      {formatNumber(account.total_gp)}
-                    </p>
-                    <p className="text-xs text-slate-500">Tổng GP</p>
+                {Boolean(
+                  (account.total_gp ?? 0) > 0 ||
+                    (account.total_coins_android ?? 0) > 0 ||
+                    (account.total_coins_ios ?? 0) > 0 ||
+                    (account.team_strength ?? 0) > 0,
+                ) && (
+                  <div className="mt-6 grid grid-cols-3 gap-4">
+                    {(account.total_gp ?? 0) > 0 && (
+                      <div className="rounded-xl bg-amber-50 p-4 text-center">
+                        <Zap className="mx-auto mb-1 h-5 w-5 text-amber-500" />
+                        <p className="text-lg font-bold text-slate-900">
+                          {formatNumber(account.total_gp)}
+                        </p>
+                        <p className="text-xs text-slate-500">Tổng GP</p>
+                      </div>
+                    )}
+                    {((account.total_coins_android ?? 0) > 0 ||
+                      (account.total_coins_ios ?? 0) > 0) && (
+                      <div className="rounded-xl bg-yellow-50 p-4 text-center">
+                        <Coins className="mx-auto mb-1 h-5 w-5 text-yellow-500" />
+                        <p className="text-sm font-bold text-slate-900">
+                          {(account.total_coins_android ?? 0) > 0
+                            ? `${formatNumber(account.total_coins_android)} 🤖`
+                            : ""}
+                          {(account.total_coins_android ?? 0) > 0 &&
+                          (account.total_coins_ios ?? 0) > 0
+                            ? " | "
+                            : ""}
+                          {(account.total_coins_ios ?? 0) > 0
+                            ? `${formatNumber(account.total_coins_ios)} 🍎`
+                            : ""}
+                        </p>
+                        <p className="text-xs text-slate-500">Coins</p>
+                      </div>
+                    )}
+                    {(account.team_strength ?? 0) > 0 && (
+                      <div className="rounded-xl bg-blue-50 p-4 text-center">
+                        <Shield className="mx-auto mb-1 h-5 w-5 text-blue-500" />
+                        <p className="text-lg font-bold text-slate-900">
+                          {account.team_strength}
+                        </p>
+                        <p className="text-xs text-slate-500">Lực Chiến</p>
+                      </div>
+                    )}
                   </div>
-                  <div className="rounded-xl bg-yellow-50 p-4 text-center">
-                    <Coins className="mx-auto mb-1 h-5 w-5 text-yellow-500" />
-                    <p className="text-sm font-bold text-slate-900">
-                      {formatNumber(account.total_coins_android)} 🤖 |{" "}
-                      {formatNumber(account.total_coins_ios)} 🍎
-                    </p>
-                    <p className="text-xs text-slate-500">Coins</p>
-                  </div>
-                  <div className="rounded-xl bg-blue-50 p-4 text-center">
-                    <Shield className="mx-auto mb-1 h-5 w-5 text-blue-500" />
-                    <p className="text-lg font-bold text-slate-900">
-                      {account.team_strength}
-                    </p>
-                    <p className="text-xs text-slate-500">Lực Chiến</p>
-                  </div>
-                </div>
+                )}
 
                 <div className="mt-auto pt-8">
                   <div className="mb-6">
