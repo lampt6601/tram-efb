@@ -56,10 +56,45 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <meta name="google-site-verification" content="trJhJ1lGcDKXthkx1ozmLiOXoxCM9nhp536tTfFd-dE" />
+    <html lang="vi">
+      <meta
+        name="google-site-verification"
+        content="trJhJ1lGcDKXthkx1ozmLiOXoxCM9nhp536tTfFd-dE"
+      />
       <body className={`${inter.variable} font-sans antialiased`}>
         {children}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              name: "THC eFootball Shop",
+              url: "https://thc-efb.vercel.app",
+              sameAs: [
+                "https://zalo.me/0969347283",
+                "https://www.facebook.com/share/1B7kgySoVd/?mibextid=wwXIfr",
+              ],
+            }),
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              name: "THC eFootball Shop",
+              url: "https://thc-efb.vercel.app",
+              potentialAction: {
+                "@type": "SearchAction",
+                target:
+                  "https://thc-efb.vercel.app/?q={search_term_string}",
+                "query-input": "required name=search_term_string",
+              },
+            }),
+          }}
+        />
         <Analytics />
       </body>
     </html>

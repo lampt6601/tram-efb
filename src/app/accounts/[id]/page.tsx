@@ -389,6 +389,26 @@ export default async function AccountDetailPage({
               </div>
             </div>
           </div>
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "Product",
+                name: account.title,
+                image: galleryImages,
+                description: `Tài khoản eFootball với lực chiến ${account.team_strength ?? 0} và tổng GP ${account.total_gp ?? 0}.`,
+                sku: account.id,
+                offers: {
+                  "@type": "Offer",
+                  priceCurrency: "VND",
+                  price: account.selling_price,
+                  availability: "https://schema.org/InStock",
+                  url: `https://thc-efb.vercel.app/accounts/${account.id}`,
+                },
+              }),
+            }}
+          />
         </div>
       </main>
       <Footer />
