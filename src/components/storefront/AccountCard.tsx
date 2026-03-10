@@ -109,7 +109,8 @@ export function AccountCard({ account }: { account: PublicAccount }) {
             (account.total_gp ?? 0) > 0 ||
               (account.total_coins_android ?? 0) > 0 ||
               (account.total_coins_ios ?? 0) > 0 ||
-              (account.team_strength ?? 0) > 0,
+              (account.team_strength ?? 0) > 0 ||
+              account.server_region,
           ) && (
             <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-500">
               {(account.total_gp ?? 0) > 0 && (
@@ -152,6 +153,11 @@ export function AccountCard({ account }: { account: PublicAccount }) {
                     }`}
                   />
                   <span>{account.team_strength}</span>
+                </span>
+              )}
+              {account.server_region && (
+                <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-slate-600">
+                  Server: {account.server_region}
                 </span>
               )}
             </div>

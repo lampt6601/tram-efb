@@ -103,7 +103,7 @@ export default async function AccountDetailPage({
     const { data: soldData } = await supabase
       .from("public_sold_accounts")
       .select(
-        "id, title, selling_price, images, primary_image_url, status, total_gp, total_coins_android, total_coins_ios, team_strength, created_at",
+        "id, title, selling_price, images, primary_image_url, status, total_gp, total_coins_android, total_coins_ios, team_strength, server_region, created_at",
       )
       .eq("id", id)
       .single();
@@ -149,9 +149,16 @@ export default async function AccountDetailPage({
                 {/* Info */}
                 <div className="flex flex-col">
                   <div className="flex items-start justify-between gap-3">
-                    <h1 className="text-2xl font-bold text-slate-700 line-through decoration-slate-400 lg:text-3xl">
-                      {account.title}
-                    </h1>
+                    <div className="flex flex-col gap-2">
+                      <h1 className="text-2xl font-bold text-slate-700 line-through decoration-slate-400 lg:text-3xl">
+                        {account.title}
+                      </h1>
+                      {account.server_region && (
+                        <span className="inline-flex w-fit items-center rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">
+                          Server: {account.server_region}
+                        </span>
+                      )}
+                    </div>
                     <StatusBadge status="Sold" />
                   </div>
 
@@ -290,12 +297,19 @@ export default async function AccountDetailPage({
               {/* Info */}
               <div className="flex flex-col">
                 <div className="flex items-start justify-between gap-3">
-                  <h1 className="flex items-center gap-2 text-2xl font-bold text-slate-900 lg:text-3xl">
-                    {account.title}
-                    {account.is_priority && (
-                      <Star className="h-6 w-6 shrink-0 fill-amber-500 text-amber-500" />
+                  <div className="flex flex-col gap-2">
+                    <h1 className="flex items-center gap-2 text-2xl font-bold text-slate-900 lg:text-3xl">
+                      {account.title}
+                      {account.is_priority && (
+                        <Star className="h-6 w-6 shrink-0 fill-amber-500 text-amber-500" />
+                      )}
+                    </h1>
+                    {account.server_region && (
+                      <span className="inline-flex w-fit items-center rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">
+                        Server: {account.server_region}
+                      </span>
                     )}
-                  </h1>
+                  </div>
                 </div>
 
                 {Boolean(

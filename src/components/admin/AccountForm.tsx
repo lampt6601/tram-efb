@@ -25,6 +25,7 @@ type AccountFormValues = {
   emailId: string;
   isPriority: boolean;
   originalPrice: string;
+  serverRegion: string;
 };
 
 export function AccountForm({ account }: AccountFormProps) {
@@ -55,6 +56,7 @@ export function AccountForm({ account }: AccountFormProps) {
       emailId: account?.email_id ?? "",
       isPriority: account?.is_priority ?? false,
       originalPrice: account?.original_price?.toString() ?? "",
+      serverRegion: account?.server_region ?? "",
     }),
     [account],
   );
@@ -233,6 +235,7 @@ export function AccountForm({ account }: AccountFormProps) {
         total_coins_android: parseInt(values.totalCoinsAndroid as string) || 0,
         total_coins_ios: parseInt(values.totalCoinsIos as string) || 0,
         team_strength: parseInt(values.teamStrength as string) || 0,
+        server_region: values.serverRegion || null,
         email_id: values.emailId || null,
         is_priority: values.isPriority,
         original_price: values.originalPrice
@@ -507,25 +510,46 @@ export function AccountForm({ account }: AccountFormProps) {
             </div>
           </div>
 
-          {/* Linked Email */}
-          <div>
-            <label className="mb-1.5 block text-sm font-medium text-slate-700">
-              Email Liên Kết
-              <span className="ml-1 text-xs font-normal text-slate-400">
-                (chỉ hiển thị email chưa liên kết)
-              </span>
-            </label>
-            <select
-              {...register("emailId")}
-              className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm outline-none transition-colors focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
-            >
-              <option value="">Không có email liên kết</option>
-              {availableEmails.map((e) => (
-                <option key={e.id} value={e.id}>
-                  {e.email_address}
-                </option>
-              ))}
-            </select>
+          {/* Email & Server Region */}
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div>
+              <label className="mb-1.5 block text-sm font-medium text-slate-700">
+                Email Liên Kết
+                <span className="ml-1 text-xs font-normal text-slate-400">
+                  (chỉ hiển thị email chưa liên kết)
+                </span>
+              </label>
+              <select
+                {...register("emailId")}
+                className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm outline-none transition-colors focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+              >
+                <option value="">Không có email liên kết</option>
+                {availableEmails.map((e) => (
+                  <option key={e.id} value={e.id}>
+                    {e.email_address}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="mb-1.5 block text-sm font-medium text-slate-700">
+                Server / Vùng
+                <span className="ml-1 text-xs font-normal text-slate-400">
+                  (eFootball region)
+                </span>
+              </label>
+              <select
+                {...register("serverRegion")}
+                className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm outline-none transition-colors focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+              >
+                <option value="">Chưa chọn</option>
+                <option value="Japan">Nhật (Japan)</option>
+                <option value="Morocco">Maroc (Morocco)</option>
+                <option value="Hong Kong">Hong Kong</option>
+                <option value="Other">Khác</option>
+              </select>
+            </div>
           </div>
 
           {/* Images */}

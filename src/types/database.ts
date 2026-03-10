@@ -23,6 +23,7 @@ export interface Account {
   total_coins_android: number;
   total_coins_ios: number;
   team_strength: number;
+   server_region?: string | null;
   email_id: string | null;
   user_id: string;
   is_priority?: boolean;
@@ -43,6 +44,7 @@ export interface PublicAccount {
   total_coins_ios: number;
   team_strength: number;
   is_priority?: boolean;
+  server_region?: string | null;
   created_at: string;
 }
 
