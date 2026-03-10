@@ -157,12 +157,6 @@ export function AccountForm({ account }: AccountFormProps) {
     setPreviews((prev) => [...prev, ...newPreviews]);
   };
 
-  const onPaste = (e: React.ClipboardEvent<HTMLDivElement>) => {
-    const files = Array.from(e.clipboardData.files);
-    addImageFiles(files);
-  };
-
-  // Also listen globally so paste works without focusing the drop zone
   useEffect(() => {
     const handleWindowPaste = (e: ClipboardEvent) => {
       // Only handle if not typing in an input/textarea/select
@@ -544,7 +538,6 @@ export function AccountForm({ account }: AccountFormProps) {
             <div
               onDragOver={onDragOver}
               onDrop={onDrop}
-              onPaste={onPaste}
               tabIndex={0}
               className="mt-1 flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-300 bg-slate-50/50 px-6 py-8 transition-colors hover:border-indigo-500 hover:bg-slate-50 relative outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
             >
