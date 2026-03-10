@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
@@ -13,6 +14,7 @@ import {
   Tag,
   Trash2,
   Loader2,
+  X,
 } from "lucide-react";
 import type { AccountStatus } from "@/types/database";
 import { notifyAdminAction } from "@/app/actions/notify-admin";
@@ -26,14 +28,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 
 interface AccountActionsDropdownProps {
   id: string;
@@ -46,6 +40,42 @@ interface AccountActionsDropdownProps {
 
 type OpenDialog = "sell" | "sale" | "delete" | null;
 
+// ─── Simple portal modal (no @base-ui focus lock) ──────────────────────────
+function Modal({
+  open,
+  onClose,
+  children,
+}: {
+  open: boolean;
+  onClose: () => void;
+  children: React.ReactNode;
+}) {
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [open, onClose]);
+
+  if (!open || typeof document === "undefined") return null;
+
+  return createPortal(
+    <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
+      {/* Backdrop */}
+      <div
+        className="absolute inset-0 bg-black/30 backdrop-blur-[2px]"
+        onClick={onClose}
+      />
+      {/* Panel */}
+      <div className="relative z-10 w-full max-w-sm rounded-xl bg-white shadow-xl ring-1 ring-black/10">
+        {children}
+      </div>
+    </div>,
+    document.body,
+  );
+}
+
+// ─── Main component ─────────────────────────────────────────────────────────
 export function AccountActionsDropdown({
   id,
   title,
@@ -61,13 +91,11 @@ export function AccountActionsDropdown({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // Copy link state
+  // Copy link
   const [copied, setCopied] = useState(false);
 
-  // Sell dialog state
   const [sellPrice, setSellPrice] = useState(currentSellingPrice.toString());
 
-  // Sale dialog state
   const [saleOriginalPrice, setSaleOriginalPrice] = useState(
     currentOriginalPrice
       ? currentOriginalPrice.toString()
@@ -75,7 +103,11 @@ export function AccountActionsDropdown({
   );
   const [salePrice, setSalePrice] = useState(currentSellingPrice.toString());
 
-  const openDialogWithReset = (dialog: OpenDialog) => {
+  const closeDialog = useCallback(() => {
+    if (!loading) setOpenDialog(null);
+  }, [loading]);
+
+  const openWith = (dialog: OpenDialog) => {
     setError("");
     setLoading(false);
     if (dialog === "sell") setSellPrice(currentSellingPrice.toString());
@@ -90,6 +122,7 @@ export function AccountActionsDropdown({
     setOpenDialog(dialog);
   };
 
+  // Copy link
   const handleCopyLink = async () => {
     try {
       await navigator.clipboard.writeText(
@@ -102,34 +135,40 @@ export function AccountActionsDropdown({
     }
   };
 
-  // --- Sell ---
+  // ── Sell ──────────────────────────────────────────────────────────────────
   const handleSell = async () => {
-    const parsedPrice = parseFloat(sellPrice);
-    if (isNaN(parsedPrice) || parsedPrice < 0) {
+    const parsed = parseFloat(sellPrice);
+    if (isNaN(parsed) || parsed < 0) {
       setError("Vui lòng nhập giá bán hợp lệ.");
       return;
     }
+    const finalPrice = parsed;
     setLoading(true);
     setError("");
     try {
       const { error: err } = await supabase
         .from("accounts")
-        .update({ status: "Sold", selling_price: parsedPrice, email_id: null })
+        .update({ status: "Sold", selling_price: finalPrice, email_id: null })
         .eq("id", id);
       if (err) throw err;
       try {
-        await notifyAdminAction("SELL", title, { purchasePrice, sellingPrice: parsedPrice });
-      } catch { /* ignore notify errors */ }
+        await notifyAdminAction("SELL", title, {
+          purchasePrice,
+          sellingPrice: finalPrice,
+        });
+      } catch {
+        /* ignore */
+      }
       setOpenDialog(null);
       router.refresh();
-    } catch (err: any) {
-      setError(err.message || "Đã có lỗi xảy ra.");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Đã có lỗi xảy ra.");
     } finally {
       setLoading(false);
     }
   };
 
-  // --- Sale ---
+  // ── Sale ──────────────────────────────────────────────────────────────────
   const handleSaleConfirm = async () => {
     const parsedOriginal = parseFloat(saleOriginalPrice);
     const parsedSale = parseFloat(salePrice);
@@ -137,32 +176,36 @@ export function AccountActionsDropdown({
       setError("Vui lòng nhập giá Sale hợp lệ.");
       return;
     }
-    if (saleOriginalPrice !== "" && (isNaN(parsedOriginal) || parsedOriginal <= parsedSale)) {
+    if (
+      saleOriginalPrice !== "" &&
+      (isNaN(parsedOriginal) || parsedOriginal <= parsedSale)
+    ) {
       setError("Giá gạch phải lớn hơn Giá Sale.");
       return;
     }
+    const finalSale = parsedSale;
+    const finalOriginal = saleOriginalPrice !== "" ? parsedOriginal : null;
     setLoading(true);
     setError("");
     try {
       const { error: err } = await supabase
         .from("accounts")
-        .update({
-          selling_price: parsedSale,
-          original_price: saleOriginalPrice !== "" ? parsedOriginal : null,
-        })
+        .update({ selling_price: finalSale, original_price: finalOriginal })
         .eq("id", id);
       if (err) throw err;
       try {
         await notifyAdminAction("UPDATE_SALE", title, {
           purchasePrice,
-          sellingPrice: parsedSale,
-          originalPrice: saleOriginalPrice !== "" ? parsedOriginal : null,
+          sellingPrice: finalSale,
+          originalPrice: finalOriginal,
         });
-      } catch { /* ignore */ }
+      } catch {
+        /* ignore */
+      }
       setOpenDialog(null);
       router.refresh();
-    } catch (err: any) {
-      setError(err.message || "Đã có lỗi xảy ra.");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Đã có lỗi xảy ra.");
     } finally {
       setLoading(false);
     }
@@ -177,58 +220,70 @@ export function AccountActionsDropdown({
         .update({ original_price: null })
         .eq("id", id);
       if (err) throw err;
-      try { await notifyAdminAction("UPDATE_SALE", title); } catch { /* ignore */ }
+      try {
+        await notifyAdminAction("UPDATE_SALE", title);
+      } catch {
+        /* ignore */
+      }
       setOpenDialog(null);
       router.refresh();
-    } catch (err: any) {
-      setError(err.message || "Đã có lỗi xảy ra.");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Đã có lỗi xảy ra.");
     } finally {
       setLoading(false);
     }
   };
 
-  // --- Delete ---
+  // ── Delete ────────────────────────────────────────────────────────────────
   const handleDelete = async () => {
     setLoading(true);
     try {
       await supabase.from("accounts").delete().eq("id", id);
-      try { await notifyAdminAction("DELETE", title); } catch { /* ignore */ }
+      try {
+        await notifyAdminAction("DELETE", title);
+      } catch {
+        /* ignore */
+      }
       setOpenDialog(null);
       router.refresh();
-    } catch (err: any) {
-      setError(err.message || "Đã có lỗi xảy ra.");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Đã có lỗi xảy ra.");
     } finally {
       setLoading(false);
     }
   };
 
   const isSold = status === "Sold";
-  const isOnSale = !!(currentOriginalPrice && currentOriginalPrice > currentSellingPrice);
+  const isOnSale = !!(
+    currentOriginalPrice && currentOriginalPrice > currentSellingPrice
+  );
 
   return (
     <>
+      {/* ── Dropdown ─────────────────────────────────────────────────────── */}
       <DropdownMenu>
         <DropdownMenuTrigger
           render={
-            <button className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 border border-slate-200">
+            <button className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-2.5 py-1.5 text-xs font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900">
               Tác vụ
               <ChevronDown className="h-3.5 w-3.5" />
             </button>
           }
         />
         <DropdownMenuContent align="end" className="w-44">
-          {/* Edit */}
           <DropdownMenuItem
             render={
-              <Link href={`/admin/dashboard/accounts/${id}/edit`} className="flex items-center gap-2" />
+              <Link
+                href={`/admin/dashboard/accounts/${id}/edit`}
+                className="flex items-center gap-2"
+              />
             }
           >
             <Pencil className="h-4 w-4 text-slate-400" />
             Chỉnh sửa
           </DropdownMenuItem>
 
-          {/* Copy link */}
-          <DropdownMenuItem onSelect={handleCopyLink} className="gap-2">
+          <DropdownMenuItem onClick={handleCopyLink} className="gap-2">
             {copied ? (
               <Check className="h-4 w-4 text-emerald-500" />
             ) : (
@@ -240,19 +295,15 @@ export function AccountActionsDropdown({
           {!isSold && (
             <>
               <DropdownMenuSeparator />
-
-              {/* Sale pricing */}
               <DropdownMenuItem
-                onSelect={() => openDialogWithReset("sale")}
+                onClick={() => openWith("sale")}
                 className="gap-2"
               >
                 <Tag className="h-4 w-4 text-rose-400" />
                 {isOnSale ? "Chỉnh giá sale" : "Thiết lập sale"}
               </DropdownMenuItem>
-
-              {/* Mark as sold */}
               <DropdownMenuItem
-                onSelect={() => openDialogWithReset("sell")}
+                onClick={() => openWith("sell")}
                 className="gap-2"
               >
                 <ShoppingCart className="h-4 w-4 text-green-500" />
@@ -262,11 +313,9 @@ export function AccountActionsDropdown({
           )}
 
           <DropdownMenuSeparator />
-
-          {/* Delete */}
           <DropdownMenuItem
             variant="destructive"
-            onSelect={() => openDialogWithReset("delete")}
+            onClick={() => openWith("delete")}
             className="gap-2"
           >
             <Trash2 className="h-4 w-4" />
@@ -275,58 +324,80 @@ export function AccountActionsDropdown({
         </DropdownMenuContent>
       </DropdownMenu>
 
-      {/* Sell dialog */}
-      <Dialog open={openDialog === "sell"} onOpenChange={(v) => !loading && setOpenDialog(v ? "sell" : null)}>
-        <DialogContent>
-          <DialogHeader>
-            <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-green-50">
+      {/* ── Sell modal ───────────────────────────────────────────────────── */}
+      <Modal open={openDialog === "sell"} onClose={closeDialog}>
+        <div className="p-5">
+          <div className="mb-4 flex items-start justify-between">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-green-50">
               <ShoppingCart className="h-5 w-5 text-green-600" />
             </div>
-            <DialogTitle>Xác Nhận Bán Tài Khoản</DialogTitle>
-            <DialogDescription>
-              Giá dự kiến sẽ được cập nhật thành giá bán thực tế. Email liên
-              kết sẽ bị gỡ tự động.
-            </DialogDescription>
-          </DialogHeader>
-          <div>
-            <Label className="mb-1.5 text-slate-700">Giá Bán Thực Tế (VNĐ)</Label>
-            <Input
-              type="number"
-              value={sellPrice}
-              onChange={(e) => setSellPrice(e.target.value)}
-              min="0"
-              step="1"
+            <button
+              onClick={closeDialog}
               disabled={loading}
-              className="mt-1.5 rounded-xl border-slate-300 focus-visible:border-green-500 focus-visible:ring-green-500/30"
-              autoFocus
-            />
-            {error && <p className="mt-1.5 text-xs text-red-600">{error}</p>}
+              className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+            >
+              <X className="h-4 w-4" />
+            </button>
           </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setOpenDialog(null)} disabled={loading}>Hủy</Button>
-            <Button onClick={handleSell} disabled={loading} className="bg-green-600 text-white hover:bg-green-700">
-              {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {loading ? "Đang xử lý..." : "Xác Nhận Bán"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+          <h2 className="mb-1 text-base font-semibold text-slate-900">
+            Xác Nhận Bán Tài Khoản
+          </h2>
+          <p className="mb-4 text-sm text-slate-500">
+            Giá dự kiến sẽ cập nhật thành giá bán thực tế. Email liên kết sẽ
+            bị gỡ tự động.
+          </p>
+          <Label className="mb-1.5 text-slate-700">Giá Bán Thực Tế (VNĐ)</Label>
+          <Input
+            type="number"
+            value={sellPrice}
+            onChange={(e) => setSellPrice(e.target.value)}
+            min="0"
+            step="1"
+            disabled={loading}
+            className="mt-1.5 rounded-xl border-slate-300"
+            autoFocus
+          />
+          {error && <p className="mt-1.5 text-xs text-red-600">{error}</p>}
+        </div>
+        <div className="flex justify-end gap-2 rounded-b-xl border-t bg-slate-50 px-5 py-3">
+          <Button variant="outline" onClick={closeDialog} disabled={loading}>
+            Hủy
+          </Button>
+          <Button
+            onClick={handleSell}
+            disabled={loading}
+            className="bg-green-600 text-white hover:bg-green-700"
+          >
+            {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            {loading ? "Đang xử lý..." : "Xác Nhận Bán"}
+          </Button>
+        </div>
+      </Modal>
 
-      {/* Sale dialog */}
-      <Dialog open={openDialog === "sale"} onOpenChange={(v) => !loading && setOpenDialog(v ? "sale" : null)}>
-        <DialogContent>
-          <DialogHeader>
-            <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-rose-50">
+      {/* ── Sale modal ───────────────────────────────────────────────────── */}
+      <Modal open={openDialog === "sale"} onClose={closeDialog}>
+        <div className="p-5">
+          <div className="mb-4 flex items-start justify-between">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-rose-50">
               <Tag className="h-5 w-5 text-rose-600" />
             </div>
-            <DialogTitle>Cài Đặt Khuyến Mãi (Sale)</DialogTitle>
-            <DialogDescription>
-              Thiết lập giá gốc và giá giảm để tạo hiệu ứng thẻ sale nổi bật.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4">
+            <button
+              onClick={closeDialog}
+              disabled={loading}
+              className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+          <h2 className="mb-1 text-base font-semibold text-slate-900">
+            Cài Đặt Khuyến Mãi (Sale)
+          </h2>
+          <p className="mb-4 text-sm text-slate-500">
+            Thiết lập giá gốc và giá giảm để tạo hiệu ứng thẻ sale nổi bật.
+          </p>
+          <div className="space-y-3">
             <div>
-              <Label className="mb-1.5 text-slate-700">Giá Bị Gạch / Giá Gốc (VNĐ)</Label>
+              <Label className="text-slate-700">Giá Bị Gạch / Giá Gốc (VNĐ)</Label>
               <Input
                 type="number"
                 value={saleOriginalPrice}
@@ -334,12 +405,12 @@ export function AccountActionsDropdown({
                 min="0"
                 step="1"
                 disabled={loading}
-                className="mt-1.5 rounded-xl border-slate-300 focus-visible:border-rose-500 focus-visible:ring-rose-500/30"
-                placeholder="Ví dụ: 1000000"
+                className="mt-1.5 rounded-xl border-slate-300"
+                placeholder="Để trống nếu không có"
               />
             </div>
             <div>
-              <Label className="mb-1.5 text-slate-700">Giá Sale Bán Thực Tế (VNĐ)</Label>
+              <Label className="text-slate-700">Giá Sale Bán Thực Tế (VNĐ)</Label>
               <Input
                 type="number"
                 value={salePrice}
@@ -347,48 +418,65 @@ export function AccountActionsDropdown({
                 min="0"
                 step="1"
                 disabled={loading}
-                className="mt-1.5 rounded-xl border-rose-300 bg-rose-50/30 focus-visible:border-rose-500 focus-visible:ring-rose-500/30"
+                className="mt-1.5 rounded-xl border-rose-300 bg-rose-50/30"
               />
             </div>
             {error && <p className="text-xs text-red-600">{error}</p>}
           </div>
-          <DialogFooter className="flex-col gap-2">
-            <div className="flex gap-2 w-full sm:w-auto">
-              <Button variant="outline" onClick={() => setOpenDialog(null)} disabled={loading}>Hủy</Button>
-              <Button onClick={handleSaleConfirm} disabled={loading} className="flex-1 bg-rose-600 text-white hover:bg-rose-700 sm:flex-none">
-                {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {loading ? "Đang xử lý..." : "Lưu Thay Đổi"}
-              </Button>
-            </div>
-            {isOnSale && (
-              <Button variant="ghost" onClick={handleRemoveSale} disabled={loading} className="w-full text-slate-600 hover:text-slate-800 hover:bg-slate-100">
-                Hủy bỏ Sale cho tài khoản này
-              </Button>
-            )}
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Delete dialog */}
-      <Dialog open={openDialog === "delete"} onOpenChange={(v) => !loading && setOpenDialog(v ? "delete" : null)}>
-        <DialogContent showCloseButton={false}>
-          <DialogHeader>
-            <DialogTitle>Xóa tài khoản</DialogTitle>
-            <DialogDescription>
-              Bạn có chắc chắn muốn xóa tài khoản{" "}
-              <span className="font-semibold text-slate-900">"{title}"</span>?
-              Hành động này không thể hoàn tác.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setOpenDialog(null)} disabled={loading}>Hủy</Button>
-            <Button onClick={handleDelete} disabled={loading} className="bg-red-600 text-white hover:bg-red-700">
-              {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {loading ? "Đang xóa..." : "Xóa"}
+        </div>
+        <div className="rounded-b-xl border-t bg-slate-50 px-5 py-3">
+          <div className="flex justify-end gap-2">
+            <Button variant="outline" onClick={closeDialog} disabled={loading}>
+              Hủy
             </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+            <Button
+              onClick={handleSaleConfirm}
+              disabled={loading}
+              className="bg-rose-600 text-white hover:bg-rose-700"
+            >
+              {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {loading ? "Đang xử lý..." : "Lưu Thay Đổi"}
+            </Button>
+          </div>
+          {isOnSale && (
+            <button
+              onClick={handleRemoveSale}
+              disabled={loading}
+              className="mt-2 w-full rounded-lg py-1.5 text-center text-sm text-slate-500 hover:text-slate-700 hover:underline disabled:opacity-50"
+            >
+              Hủy bỏ sale cho tài khoản này
+            </button>
+          )}
+        </div>
+      </Modal>
+
+      {/* ── Delete modal ─────────────────────────────────────────────────── */}
+      <Modal open={openDialog === "delete"} onClose={closeDialog}>
+        <div className="p-5">
+          <h2 className="mb-2 text-base font-semibold text-slate-900">
+            Xóa tài khoản
+          </h2>
+          <p className="text-sm text-slate-500">
+            Bạn có chắc chắn muốn xóa tài khoản{" "}
+            <span className="font-semibold text-slate-900">"{title}"</span>?
+            Hành động này không thể hoàn tác.
+          </p>
+          {error && <p className="mt-2 text-xs text-red-600">{error}</p>}
+        </div>
+        <div className="flex justify-end gap-2 rounded-b-xl border-t bg-slate-50 px-5 py-3">
+          <Button variant="outline" onClick={closeDialog} disabled={loading}>
+            Hủy
+          </Button>
+          <Button
+            onClick={handleDelete}
+            disabled={loading}
+            className="bg-red-600 text-white hover:bg-red-700"
+          >
+            {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            {loading ? "Đang xóa..." : "Xóa"}
+          </Button>
+        </div>
+      </Modal>
     </>
   );
 }

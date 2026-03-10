@@ -117,8 +117,7 @@ export default async function AccountsPage({
                 <TableHead className="text-slate-500">Trạng Thái</TableHead>
                 <TableHead className="hidden text-slate-500 md:table-cell">Giá Nhập</TableHead>
                 <TableHead className="text-slate-500">Giá Bán</TableHead>
-                <TableHead className="hidden text-slate-500 md:table-cell">Lực Chiến</TableHead>
-                <TableHead className="text-slate-500">Tác Vụ</TableHead>
+                <TableHead className="text-slate-500">Hành Động</TableHead>
                 <TableHead className="text-slate-500">Email Liên Kết</TableHead>
               </TableRow>
             </TableHeader>
@@ -163,9 +162,6 @@ export default async function AccountsPage({
                       {formatCurrency(account.selling_price)}
                     </span>
                   </TableCell>
-                  <TableCell className="hidden text-slate-600 md:table-cell">
-                    {account.team_strength}
-                  </TableCell>
                   <TableCell>
                     <AccountActionsDropdown
                       id={account.id}
@@ -184,7 +180,7 @@ export default async function AccountsPage({
               {items.length === 0 && (
                 <TableRow>
                   <TableCell
-                    colSpan={7}
+                    colSpan={6}
                     className="py-12 text-center text-slate-400"
                   >
                     Không tìm thấy tài khoản nào phù hợp với bộ lọc.

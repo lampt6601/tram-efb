@@ -357,7 +357,7 @@ export function AccountForm({ account }: AccountFormProps) {
             </div>
             <div>
               <Label className="mb-1.5 text-slate-700">
-                Giá Bán Hiện Tại <span className="text-red-500">*</span>
+                Giá Bán Hiện Tại (VNĐ) <span className="text-red-500">*</span>
               </Label>
               <Input
                 type="number"

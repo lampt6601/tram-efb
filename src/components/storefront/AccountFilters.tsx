@@ -33,7 +33,12 @@ export function AccountFilters({ totalCount }: { totalCount: number }) {
   const search = searchParams.get("q") ?? "";
 
   const [localSearch, setLocalSearch] = useState(search);
+  const [localMinPrice, setLocalMinPrice] = useState(minPrice);
+  const [localMaxPrice, setLocalMaxPrice] = useState(maxPrice);
+
   const debouncedSearch = useDebounce(localSearch, 500);
+  const debouncedMinPrice = useDebounce(localMinPrice, 600);
+  const debouncedMaxPrice = useDebounce(localMaxPrice, 600);
 
   const update = useCallback(
     (key: string, value: string) => {
@@ -51,19 +56,33 @@ export function AccountFilters({ totalCount }: { totalCount: number }) {
   );
 
   const lastDebouncedSearch = useRef(debouncedSearch);
+  const lastDebouncedMin = useRef(debouncedMinPrice);
+  const lastDebouncedMax = useRef(debouncedMaxPrice);
 
   useEffect(() => {
     if (debouncedSearch !== lastDebouncedSearch.current) {
       lastDebouncedSearch.current = debouncedSearch;
-      if (debouncedSearch !== search) {
-        update("q", debouncedSearch);
-      }
+      if (debouncedSearch !== search) update("q", debouncedSearch);
     }
   }, [debouncedSearch, search, update]);
 
   useEffect(() => {
-    setLocalSearch(search);
-  }, [search]);
+    if (debouncedMinPrice !== lastDebouncedMin.current) {
+      lastDebouncedMin.current = debouncedMinPrice;
+      if (debouncedMinPrice !== minPrice) update("minPrice", debouncedMinPrice);
+    }
+  }, [debouncedMinPrice, minPrice, update]);
+
+  useEffect(() => {
+    if (debouncedMaxPrice !== lastDebouncedMax.current) {
+      lastDebouncedMax.current = debouncedMaxPrice;
+      if (debouncedMaxPrice !== maxPrice) update("maxPrice", debouncedMaxPrice);
+    }
+  }, [debouncedMaxPrice, maxPrice, update]);
+
+  useEffect(() => { setLocalSearch(search); }, [search]);
+  useEffect(() => { setLocalMinPrice(minPrice); }, [minPrice]);
+  useEffect(() => { setLocalMaxPrice(maxPrice); }, [maxPrice]);
 
   const hasActiveFilters =
     sort !== "newest" || minPrice !== "" || maxPrice !== "" || search !== "";
@@ -114,20 +133,20 @@ export function AccountFilters({ totalCount }: { totalCount: number }) {
             <Input
               type="number"
               placeholder="Giá từ"
-              value={minPrice}
+              value={localMinPrice}
               min={0}
-              step={10000}
-              onChange={(e) => update("minPrice", e.target.value)}
+              step={1}
+              onChange={(e) => setLocalMinPrice(e.target.value)}
               className={`${inputClass} w-24 sm:w-28`}
             />
             <span className="text-sm text-slate-400">—</span>
             <Input
               type="number"
               placeholder="đến"
-              value={maxPrice}
+              value={localMaxPrice}
               min={0}
-              step={10000}
-              onChange={(e) => update("maxPrice", e.target.value)}
+              step={1}
+              onChange={(e) => setLocalMaxPrice(e.target.value)}
               className={`${inputClass} w-24 sm:w-28`}
             />
           </div>
