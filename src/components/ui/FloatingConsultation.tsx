@@ -2,13 +2,19 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { ArrowUp } from "lucide-react";
 import { CONTACT_ZALO_GROUP_URL, CONTACT_MESSENGER_URL } from "@/lib/constants";
 import zaloIcon from "@/assets/icons/zalo.png";
 import facebookIcon from "@/assets/icons/facebook.webp";
 
 export function FloatingConsultation() {
+  const pathname = usePathname();
   const [showScroll, setShowScroll] = useState(false);
+
+  if (pathname?.startsWith("/admin")) {
+    return null;
+  }
 
   useEffect(() => {
     const handleScroll = () => {
@@ -51,7 +57,7 @@ export function FloatingConsultation() {
         <div className="flex flex-col items-end gap-3">
           {/* Tooltip / Label */}
           <div className="animate-bounce rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white shadow-lg sm:text-sm relative">
-            Tư vấn miễn phí...
+            Tư vấn miễn phí
             <div className="absolute -bottom-1 right-5 h-3 w-3 rotate-45 bg-blue-600"></div>
           </div>
 

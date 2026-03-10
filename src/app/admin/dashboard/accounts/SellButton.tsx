@@ -64,10 +64,14 @@ export function SellAccountButton({
 
       if (err) throw err;
 
-      await notifyAdminAction("SELL", title, {
-        purchasePrice,
-        sellingPrice: parsedPrice,
-      });
+      try {
+        await notifyAdminAction("SELL", title, {
+          purchasePrice,
+          sellingPrice: parsedPrice,
+        });
+      } catch (notifyErr) {
+        console.error("Notification failed:", notifyErr);
+      }
 
       setOpen(false);
       router.refresh();

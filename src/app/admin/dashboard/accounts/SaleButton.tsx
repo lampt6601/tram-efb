@@ -93,11 +93,15 @@ export function SaleAccountButton({
 
       if (err) throw err;
 
-      await notifyAdminAction("UPDATE_SALE", title, {
-        purchasePrice,
-        sellingPrice: parsedSale,
-        originalPrice: originalPrice !== "" ? parsedOriginal : null,
-      });
+      try {
+        await notifyAdminAction("UPDATE_SALE", title, {
+          purchasePrice,
+          sellingPrice: parsedSale,
+          originalPrice: originalPrice !== "" ? parsedOriginal : null,
+        });
+      } catch (notifyErr) {
+        console.error("Notification failed:", notifyErr);
+      }
 
       setOpen(false);
       router.refresh();
@@ -122,7 +126,11 @@ export function SaleAccountButton({
 
       if (err) throw err;
 
-      await notifyAdminAction("UPDATE_SALE", title);
+      try {
+        await notifyAdminAction("UPDATE_SALE", title);
+      } catch (notifyErr) {
+        console.error("Notification failed:", notifyErr);
+      }
 
       setOpen(false);
       router.refresh();

@@ -48,13 +48,15 @@ CREATE TABLE accounts (
 CREATE INDEX idx_accounts_status ON accounts(status);
 CREATE INDEX idx_accounts_email_id ON accounts(email_id);
 CREATE INDEX idx_accounts_user_id ON accounts(user_id);
-CREATE INDEX idx_emails_user_id ON emails(user_id);
+-- Unused index removed per Supabase alert: idx_emails_user_id
 
 -- ============================================
 -- Auto-update updated_at trigger
 -- ============================================
 CREATE OR REPLACE FUNCTION update_updated_at()
-RETURNS TRIGGER AS $$
+RETURNS TRIGGER
+SET search_path = ''
+AS $$
 BEGIN
   NEW.updated_at = NOW();
   RETURN NEW;
@@ -98,7 +100,7 @@ CREATE POLICY "Admin full access to own accounts"
   WITH CHECK (auth.uid() = user_id);
 
 -- ============================================
--- Public view: hides sensitive fields
+-- Public view: hides sensitive fields (Must be Security Definer to bypass RLS safely)
 -- ============================================
 CREATE OR REPLACE VIEW public_accounts AS
 SELECT

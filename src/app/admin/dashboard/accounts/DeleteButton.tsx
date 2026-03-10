@@ -18,7 +18,11 @@ export function DeleteAccountButton({
   const handleDelete = async () => {
     if (!confirm("Bạn có chắc chắn muốn xóa tài khoản này không?")) return;
     await supabase.from("accounts").delete().eq("id", id);
-    await notifyAdminAction("DELETE", title);
+    try {
+      await notifyAdminAction("DELETE", title);
+    } catch (notifyErr) {
+      console.error("Notification failed:", notifyErr);
+    }
     router.refresh();
   };
 

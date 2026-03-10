@@ -226,22 +226,27 @@ export function AccountForm({ account }: AccountFormProps) {
         finalPrimaryUrl = null;
       }
 
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
       const payload = {
         title: values.title,
-        purchase_price: values.purchasePrice,
-        selling_price: values.sellingPrice,
+        purchase_price: parseInt(values.purchasePrice as string) || 0,
+        selling_price: parseInt(values.sellingPrice as string) || 0,
         status: values.status,
-        total_gp: parseInt(values.totalGp) || 0,
-        total_coins_android: parseInt(values.totalCoinsAndroid) || 0,
-        total_coins_ios: parseInt(values.totalCoinsIos) || 0,
-        team_strength: parseInt(values.teamStrength) || 0,
+        total_gp: parseInt(values.totalGp as string) || 0,
+        total_coins_android: parseInt(values.totalCoinsAndroid as string) || 0,
+        total_coins_ios: parseInt(values.totalCoinsIos as string) || 0,
+        team_strength: parseInt(values.teamStrength as string) || 0,
         email_id: values.emailId || null,
         is_priority: values.isPriority,
         original_price: values.originalPrice
-          ? parseInt(values.originalPrice)
+          ? parseInt(values.originalPrice as string)
           : null,
         images: finalImages,
         primary_image_url: finalPrimaryUrl,
+        user_id: user?.id,
       };
 
       const { error: err } = isEditing
@@ -250,21 +255,31 @@ export function AccountForm({ account }: AccountFormProps) {
 
       if (err) throw err;
 
-      await notifyAdminAction(isEditing ? "UPDATE" : "CREATE", payload.title, {
-        purchasePrice: payload.purchase_price
-          ? parseInt(payload.purchase_price as unknown as string)
-          : undefined,
-        sellingPrice: payload.selling_price
-          ? parseInt(payload.selling_price as unknown as string)
-          : undefined,
-        originalPrice: payload.original_price,
-      });
+      try {
+        await notifyAdminAction(
+          isEditing ? "UPDATE" : "CREATE",
+          payload.title,
+          {
+            purchasePrice: payload.purchase_price
+              ? parseInt(payload.purchase_price as unknown as string)
+              : undefined,
+            sellingPrice: payload.selling_price
+              ? parseInt(payload.selling_price as unknown as string)
+              : undefined,
+            originalPrice: payload.original_price,
+          },
+        );
+      } catch (notifyErr) {
+        console.error(
+          "Notification failed, but continuing with save:",
+          notifyErr,
+        );
+      }
 
-      router.push("/admin/dashboard/accounts");
       router.refresh();
+      router.push("/admin/dashboard/accounts");
     } catch (err: any) {
       setError(err.message || "An error occurred during upload.");
-    } finally {
       setLoading(false);
     }
   };

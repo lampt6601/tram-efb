@@ -17,7 +17,7 @@ const SORT_OPTIONS = [
 ];
 
 const STATUS_OPTIONS = [
-  { value: "", label: "Tất cả" },
+  { value: "all", label: "Tất cả" },
   { value: "Available", label: "Sẵn Sàng" },
   { value: "Pending", label: "Đang Chờ" },
   { value: "Sold", label: "Đã Bán" },

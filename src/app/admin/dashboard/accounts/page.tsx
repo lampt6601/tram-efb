@@ -42,7 +42,7 @@ export default async function AccountsPage({
   let query = supabase.from("accounts").select("*, emails(*)");
 
   // Filter by status
-  if (statusFilter) {
+  if (statusFilter && statusFilter !== "all") {
     query = query.eq("status", statusFilter);
   }
 
