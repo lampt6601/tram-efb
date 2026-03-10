@@ -191,16 +191,21 @@ export default async function AccountsPage({
                       <CopyLinkButton id={account.id} />
                       <SaleAccountButton
                         id={account.id}
+                        title={account.title}
                         currentSellingPrice={account.selling_price}
                         currentOriginalPrice={account.original_price ?? null}
                         status={account.status}
                       />
                       <SellAccountButton
                         id={account.id}
+                        title={account.title}
                         currentSellingPrice={account.selling_price}
                         status={account.status}
                       />
-                      <DeleteAccountButton id={account.id} />
+                      <DeleteAccountButton
+                        id={account.id}
+                        title={account.title}
+                      />
                     </div>
                   </td>
                 </tr>

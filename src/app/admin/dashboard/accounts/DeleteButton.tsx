@@ -3,14 +3,22 @@
 import { useRouter } from "next/navigation";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 import { Trash2 } from "lucide-react";
+import { notifyAdminAction } from "@/app/actions/notify-admin";
 
-export function DeleteAccountButton({ id }: { id: string }) {
+export function DeleteAccountButton({
+  id,
+  title,
+}: {
+  id: string;
+  title: string;
+}) {
   const router = useRouter();
   const supabase = createSupabaseBrowserClient();
 
   const handleDelete = async () => {
     if (!confirm("Bạn có chắc chắn muốn xóa tài khoản này không?")) return;
     await supabase.from("accounts").delete().eq("id", id);
+    await notifyAdminAction("DELETE", title);
     router.refresh();
   };
 

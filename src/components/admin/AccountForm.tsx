@@ -7,6 +7,7 @@ import { ArrowLeft, Loader2, Plus, X, UploadCloud, Star } from "lucide-react";
 import Link from "next/link";
 import type { Account, Email, AccountStatus } from "@/types/database";
 import { useForm } from "react-hook-form";
+import { notifyAdminAction } from "@/app/actions/notify-admin";
 
 interface AccountFormProps {
   account?: Account | null;
@@ -248,6 +249,8 @@ export function AccountForm({ account }: AccountFormProps) {
         : await supabase.from("accounts").insert(payload);
 
       if (err) throw err;
+
+      await notifyAdminAction(isEditing ? "UPDATE" : "CREATE", payload.title);
 
       router.push("/admin/dashboard/accounts");
       router.refresh();

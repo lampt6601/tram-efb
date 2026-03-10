@@ -5,9 +5,11 @@ import { useRouter } from "next/navigation";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 import { Tag, Loader2, X } from "lucide-react";
 import type { AccountStatus } from "@/types/database";
+import { notifyAdminAction } from "@/app/actions/notify-admin";
 
 interface SaleButtonProps {
   id: string;
+  title: string;
   currentSellingPrice: number;
   currentOriginalPrice: number | null;
   status: AccountStatus;
@@ -15,6 +17,7 @@ interface SaleButtonProps {
 
 export function SaleAccountButton({
   id,
+  title,
   currentSellingPrice,
   currentOriginalPrice,
   status,
@@ -88,6 +91,8 @@ export function SaleAccountButton({
 
       if (err) throw err;
 
+      await notifyAdminAction("UPDATE_SALE", title);
+
       setOpen(false);
       router.refresh();
     } catch (err: any) {
@@ -110,6 +115,8 @@ export function SaleAccountButton({
         .eq("id", id);
 
       if (err) throw err;
+
+      await notifyAdminAction("UPDATE_SALE", title);
 
       setOpen(false);
       router.refresh();

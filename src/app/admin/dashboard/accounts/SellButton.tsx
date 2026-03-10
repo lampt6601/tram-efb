@@ -5,15 +5,18 @@ import { useRouter } from "next/navigation";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 import { ShoppingCart, Loader2, X } from "lucide-react";
 import type { AccountStatus } from "@/types/database";
+import { notifyAdminAction } from "@/app/actions/notify-admin";
 
 interface SellButtonProps {
   id: string;
+  title: string;
   currentSellingPrice: number;
   status: AccountStatus;
 }
 
 export function SellAccountButton({
   id,
+  title,
   currentSellingPrice,
   status,
 }: SellButtonProps) {
@@ -58,6 +61,8 @@ export function SellAccountButton({
         .eq("id", id);
 
       if (err) throw err;
+
+      await notifyAdminAction("SELL", title);
 
       setOpen(false);
       router.refresh();
