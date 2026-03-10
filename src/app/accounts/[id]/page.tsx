@@ -20,6 +20,9 @@ import {
   Star,
 } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
+import facebookIcon from "@/assets/icons/facebook.webp";
+import zaloIcon from "@/assets/icons/zalo.png";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import type { PublicAccount } from "@/types/database";
@@ -169,9 +172,9 @@ export default async function AccountDetailPage({
 
                   {Boolean(
                     (account.total_gp ?? 0) > 0 ||
-                      (account.total_coins_android ?? 0) > 0 ||
-                      (account.total_coins_ios ?? 0) > 0 ||
-                      (account.team_strength ?? 0) > 0,
+                    (account.total_coins_android ?? 0) > 0 ||
+                    (account.total_coins_ios ?? 0) > 0 ||
+                    (account.team_strength ?? 0) > 0,
                   ) && (
                     <div className="mt-6 grid grid-cols-3 gap-4">
                       {(account.total_gp ?? 0) > 0 && (
@@ -298,9 +301,9 @@ export default async function AccountDetailPage({
 
                 {Boolean(
                   (account.total_gp ?? 0) > 0 ||
-                    (account.total_coins_android ?? 0) > 0 ||
-                    (account.total_coins_ios ?? 0) > 0 ||
-                    (account.team_strength ?? 0) > 0,
+                  (account.total_coins_android ?? 0) > 0 ||
+                  (account.total_coins_ios ?? 0) > 0 ||
+                  (account.team_strength ?? 0) > 0,
                 ) && (
                   <div className="mt-6 grid grid-cols-3 gap-4">
                     {(account.total_gp ?? 0) > 0 && (
@@ -372,7 +375,11 @@ export default async function AccountDetailPage({
                       rel="noopener noreferrer"
                       className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-blue-700"
                     >
-                      <MessageCircle className="h-4 w-4" />
+                      <Image
+                        src={zaloIcon}
+                        alt="Zalo"
+                        className="h-5 w-5 object-contain"
+                      />
                       Liên hệ qua Zalo
                     </a>
                     <a
@@ -381,7 +388,11 @@ export default async function AccountDetailPage({
                       rel="noopener noreferrer"
                       className="flex flex-1 items-center justify-center gap-2 rounded-xl border-2 border-indigo-600 px-6 py-3 text-sm font-semibold text-indigo-600 transition-colors hover:bg-indigo-50"
                     >
-                      <ExternalLink className="h-4 w-4" />
+                      <Image
+                        src={facebookIcon}
+                        alt="Facebook"
+                        className="h-5 w-5 object-contain"
+                      />
                       Liên hệ qua Messenger
                     </a>
                   </div>

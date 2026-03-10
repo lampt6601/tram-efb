@@ -58,10 +58,18 @@ export function ImageGallery({ images, title }: ImageGalleryProps) {
 
   useEffect(() => {
     window.addEventListener("keydown", handleKeyDown);
-    document.body.style.overflow = isFullscreen ? "hidden" : "auto";
+    if (isFullscreen) {
+      document.body.style.overflow = "hidden";
+      document.body.classList.add("hide-floating");
+    } else {
+      document.body.style.overflow = "auto";
+      document.body.classList.remove("hide-floating");
+    }
+
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
       document.body.style.overflow = "auto";
+      document.body.classList.remove("hide-floating");
     };
   }, [handleKeyDown, isFullscreen]);
 

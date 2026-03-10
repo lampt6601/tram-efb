@@ -14,3 +14,10 @@
     background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
   }
 }
+
+/* Hide Floating Consultation Widget when Image Gallery is Fullscreen */
+body.hide-floating .floating-consultation {
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+}

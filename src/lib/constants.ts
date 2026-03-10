@@ -1,21 +1,23 @@
-export const CONTACT_ZALO_URL = 'https://zalo.me/0969347283';
-export const CONTACT_MESSENGER_URL = 'https://www.facebook.com/share/1B7kgySoVd/?mibextid=wwXIfr';
+export const CONTACT_ZALO_URL = "https://zalo.me/0969347283";
+export const CONTACT_ZALO_GROUP_URL = "https://zalo.me/g/a3v3dgaj4ugylmmnwk0u";
+export const CONTACT_MESSENGER_URL =
+  "https://www.facebook.com/share/1B7kgySoVd/?mibextid=wwXIfr";
 
 export const STATUS_COLORS: Record<string, string> = {
-  Available: 'bg-emerald-100 text-emerald-800',
-  Pending: 'bg-amber-100 text-amber-800',
-  Sold: 'bg-red-100 text-red-800',
+  Available: "bg-emerald-100 text-emerald-800",
+  Pending: "bg-amber-100 text-amber-800",
+  Sold: "bg-red-100 text-red-800",
 };
 
 export const PLATFORM_ICONS: Record<string, string> = {
-  Android: '🤖',
-  iOS: '🍎',
+  Android: "🤖",
+  iOS: "🍎",
 };
 
 export const formatCurrency = (amount: number): string => {
-  return new Intl.NumberFormat('vi-VN', {
-    style: 'currency',
-    currency: 'VND',
+  return new Intl.NumberFormat("vi-VN", {
+    style: "currency",
+    currency: "VND",
     maximumFractionDigits: 0,
   }).format(amount);
 };

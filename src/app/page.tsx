@@ -13,12 +13,13 @@ import type { PublicAccount } from "@/types/database";
 export const revalidate = 0; // dynamic because filters change per request
 
 export const metadata: Metadata = {
-  title: "Cửa Hàng Tài Khoản eFootball",
+  title: "THC EFOOTBALL Shop - Cửa Hàng Tài Khoản eFootball",
   description:
-    "Khám phá hàng trăm tài khoản eFootball Mobile chất lượng cao, giá tốt. Android & iOS, cập nhật mỗi ngày.",
+    "Chào mừng bạn đến với THC EFOOTBALL Shop. Chuyên cung cấp tài khoản eFootball chất lượng, nạp game an toàn và giao dịch nhanh chóng. Uy tín đặt lên hàng đầu!",
   openGraph: {
-    title: "Cửa Hàng Tài Khoản eFootball | THC Shop",
-    description: "Khám phá tài khoản eFootball Mobile chất lượng cao, giá tốt.",
+    title: "THC EFOOTBALL Shop - Cửa Hàng Tài Khoản eFootball",
+    description:
+      "Chào mừng bạn đến với THC EFOOTBALL Shop. Chuyên cung cấp tài khoản eFootball chất lượng, nạp game an toàn và giao dịch nhanh chóng. Uy tín đặt lên hàng đầu!",
     url: "/",
   },
 };
