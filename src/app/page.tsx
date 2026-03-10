@@ -74,13 +74,13 @@ export default async function HomePage({
   const { data: accounts } = await query;
 
   // Sold accounts (always newest first, no limit)
+  // Use a public view to avoid RLS differences across sessions/devices.
   const { data: soldAccountsRaw } = await supabase
-    .from("accounts")
+    .from("public_sold_accounts")
     .select(
       "id, title, selling_price, images, primary_image_url, status, total_gp, total_coins_android, total_coins_ios, team_strength, created_at",
     )
-    .eq("status", "Sold")
-    .order("updated_at", { ascending: false });
+    .order("created_at", { ascending: false });
 
   const items = (accounts ?? []) as PublicAccount[];
   const soldItems = (soldAccountsRaw ?? []) as PublicAccount[];

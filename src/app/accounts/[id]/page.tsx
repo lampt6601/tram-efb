@@ -44,7 +44,7 @@ export async function generateMetadata({
 
   const { data: sold } = !pub
     ? await supabase
-        .from("accounts")
+        .from("public_sold_accounts")
         .select("title, selling_price, primary_image_url, status")
         .eq("id", id)
         .single()
@@ -101,12 +101,11 @@ export default async function AccountDetailPage({
   // Fallback: check if it's a sold account
   if (!publicData) {
     const { data: soldData } = await supabase
-      .from("accounts")
+      .from("public_sold_accounts")
       .select(
         "id, title, selling_price, images, primary_image_url, status, total_gp, total_coins_android, total_coins_ios, team_strength, created_at",
       )
       .eq("id", id)
-      .eq("status", "Sold")
       .single();
 
     if (!soldData) notFound();
