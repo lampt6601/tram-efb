@@ -28,7 +28,21 @@ export function Footer() {
                 alt="Zalo Group"
                 className="h-5 w-5 object-contain"
               />
-              <span>Tham gia Group Tư vấn</span>
+              <span>Group Tư vấn</span>
+            </a>
+            <a
+              href="https://zalo.me/g/umniisdttnw5kcubv74y"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group relative flex items-center justify-center gap-2 rounded-full bg-emerald-50 px-5 py-2.5 text-sm font-semibold text-emerald-600 transition-all hover:bg-emerald-100 hover:scale-105 active:scale-95 border border-emerald-200"
+              title="Tham gia Nhóm Zalo Mua Bán Acc"
+            >
+              <Image
+                src={zaloIcon}
+                alt="Zalo Group Mua Bán"
+                className="h-5 w-5 object-contain"
+              />
+              <span>Group Mua Bán Acc</span>
             </a>
             <div className="flex items-center gap-4">
               <a
