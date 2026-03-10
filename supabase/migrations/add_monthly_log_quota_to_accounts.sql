@@ -1,6 +1,6 @@
--- Per-account monthly log quota (different for each account)
+-- Per-account monthly log quota (different for each account, NULL = not set)
 ALTER TABLE public.accounts
-ADD COLUMN IF NOT EXISTS monthly_log_quota INTEGER DEFAULT 10;
+ADD COLUMN IF NOT EXISTS monthly_log_quota INTEGER DEFAULT NULL;
 
 -- Refresh public view for available accounts to expose monthly_log_quota
 DROP VIEW IF EXISTS public.public_accounts;
