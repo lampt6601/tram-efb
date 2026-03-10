@@ -16,6 +16,7 @@ CREATE TABLE emails (
   email_address TEXT NOT NULL,
   password TEXT NOT NULL,
   recovery_info TEXT,
+  user_id UUID NOT NULL DEFAULT auth.uid() REFERENCES auth.users(id) ON DELETE CASCADE,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -38,6 +39,7 @@ CREATE TABLE accounts (
   team_strength INTEGER DEFAULT 0,
   email_id UUID UNIQUE REFERENCES emails(id) ON DELETE SET NULL,
   is_priority BOOLEAN DEFAULT false,
+  user_id UUID NOT NULL DEFAULT auth.uid() REFERENCES auth.users(id) ON DELETE CASCADE,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -45,6 +47,8 @@ CREATE TABLE accounts (
 -- Index for fast public queries
 CREATE INDEX idx_accounts_status ON accounts(status);
 CREATE INDEX idx_accounts_email_id ON accounts(email_id);
+CREATE INDEX idx_accounts_user_id ON accounts(user_id);
+CREATE INDEX idx_emails_user_id ON emails(user_id);
 
 -- ============================================
 -- Auto-update updated_at trigger
@@ -73,21 +77,25 @@ CREATE TRIGGER set_accounts_updated_at
 ALTER TABLE emails ENABLE ROW LEVEL SECURITY;
 ALTER TABLE accounts ENABLE ROW LEVEL SECURITY;
 
--- Emails: Only authenticated users (admin) can access
-CREATE POLICY "Admin full access to emails"
+-- Emails: Admin access to their own emails only
+CREATE POLICY "Admin full access to own emails"
   ON emails FOR ALL
-  USING (auth.role() = 'authenticated')
-  WITH CHECK (auth.role() = 'authenticated');
+  TO authenticated
+  USING (auth.uid() = user_id)
+  WITH CHECK (auth.uid() = user_id);
 
 -- Accounts: Public can only read Available accounts (restricted columns via view)
 CREATE POLICY "Public can view available accounts"
   ON accounts FOR SELECT
+  TO anon
   USING (true);
 
-CREATE POLICY "Admin full access to accounts"
+-- Accounts: Admin access to their own accounts only
+CREATE POLICY "Admin full access to own accounts"
   ON accounts FOR ALL
-  USING (auth.role() = 'authenticated')
-  WITH CHECK (auth.role() = 'authenticated');
+  TO authenticated
+  USING (auth.uid() = user_id)
+  WITH CHECK (auth.uid() = user_id);
 
 -- ============================================
 -- Public view: hides sensitive fields

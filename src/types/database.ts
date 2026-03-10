@@ -5,6 +5,7 @@ export interface Email {
   email_address: string;
   password: string;
   recovery_info: string | null;
+  user_id: string;
   created_at: string;
   updated_at: string;
 }
@@ -23,6 +24,7 @@ export interface Account {
   total_coins_ios: number;
   team_strength: number;
   email_id: string | null;
+  user_id: string;
   is_priority?: boolean;
   created_at: string;
   updated_at: string;
