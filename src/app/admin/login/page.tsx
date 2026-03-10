@@ -84,12 +84,14 @@ export default function AdminLoginPage() {
                     required: "Vui lòng nhập email",
                   })}
                   aria-invalid={!!errors.email}
-                  className="w-full rounded-xl border border-white/10 bg-white/5 py-3 pl-10 pr-4 text-white placeholder-slate-500 outline-none transition-colors focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                  className="w-full rounded-xl border border-white/10 bg-white/5 py-3 pl-10 pr-4 text-slate-500 placeholder-slate-400 outline-none transition-colors focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
                   placeholder="admin@example.com"
                 />
               </div>
               {errors.email && (
-                <p className="mt-1 text-xs text-red-400">{errors.email.message}</p>
+                <p className="mt-1 text-xs text-red-400">
+                  {errors.email.message}
+                </p>
               )}
             </div>
 
@@ -109,7 +111,7 @@ export default function AdminLoginPage() {
                     required: "Vui lòng nhập mật khẩu",
                   })}
                   aria-invalid={!!errors.password}
-                  className="w-full rounded-xl border border-white/10 bg-white/5 py-3 pl-10 pr-4 text-white placeholder-slate-500 outline-none transition-colors focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                  className="w-full rounded-xl border border-white/10 bg-white/5 py-3 pl-10 pr-4 text-slate-500 placeholder-slate-400 outline-none transition-colors focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
                   placeholder="••••••••"
                 />
               </div>
