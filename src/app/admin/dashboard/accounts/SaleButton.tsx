@@ -10,6 +10,7 @@ import { notifyAdminAction } from "@/app/actions/notify-admin";
 interface SaleButtonProps {
   id: string;
   title: string;
+  purchasePrice: number;
   currentSellingPrice: number;
   currentOriginalPrice: number | null;
   status: AccountStatus;
@@ -18,6 +19,7 @@ interface SaleButtonProps {
 export function SaleAccountButton({
   id,
   title,
+  purchasePrice,
   currentSellingPrice,
   currentOriginalPrice,
   status,
@@ -91,7 +93,11 @@ export function SaleAccountButton({
 
       if (err) throw err;
 
-      await notifyAdminAction("UPDATE_SALE", title);
+      await notifyAdminAction("UPDATE_SALE", title, {
+        purchasePrice,
+        sellingPrice: parsedSale,
+        originalPrice: originalPrice !== "" ? parsedOriginal : null,
+      });
 
       setOpen(false);
       router.refresh();

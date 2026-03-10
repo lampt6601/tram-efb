@@ -192,6 +192,7 @@ export default async function AccountsPage({
                       <SaleAccountButton
                         id={account.id}
                         title={account.title}
+                        purchasePrice={account.purchase_price}
                         currentSellingPrice={account.selling_price}
                         currentOriginalPrice={account.original_price ?? null}
                         status={account.status}
@@ -199,6 +200,7 @@ export default async function AccountsPage({
                       <SellAccountButton
                         id={account.id}
                         title={account.title}
+                        purchasePrice={account.purchase_price}
                         currentSellingPrice={account.selling_price}
                         status={account.status}
                       />

@@ -12,6 +12,8 @@ const actionTypeMap: Record<string, string> = {
   UPDATE_SALE: "Cập nhật giá Sale (Gạch)",
 };
 
+import { formatCurrency } from "@/lib/constants";
+
 /**
  * Notifies the owner if a different admin performs an action on an account.
  * owner_id = "45666c47-ae4d-4a29-aded-58c61a4e6cb0"
@@ -19,6 +21,11 @@ const actionTypeMap: Record<string, string> = {
 export async function notifyAdminAction(
   actionType: string,
   accountTitle: string,
+  priceDetails?: {
+    purchasePrice?: number;
+    sellingPrice?: number;
+    originalPrice?: number | null;
+  },
 ) {
   try {
     const supabase = await createSupabaseServerClient();
@@ -60,6 +67,20 @@ export async function notifyAdminAction(
             <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold; width: 30%; background-color: #f9f9f9;">Tên tài khoản:</td>
             <td style="padding: 10px; border: 1px solid #ddd;">${accountTitle}</td>
           </tr>
+          ${
+            priceDetails
+              ? `
+          <tr>
+            <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold; width: 30%; background-color: #f9f9f9;">Giá thu (Nhập):</td>
+            <td style="padding: 10px; border: 1px solid #ddd;">${priceDetails.purchasePrice != null ? formatCurrency(priceDetails.purchasePrice) : "N/A"}</td>
+          </tr>
+          <tr>
+            <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold; width: 30%; background-color: #f9f9f9;">Giá bán:</td>
+            <td style="padding: 10px; border: 1px solid #ddd; color: #e11d48; font-weight: bold;">${priceDetails.sellingPrice != null ? formatCurrency(priceDetails.sellingPrice) : "N/A"}</td>
+          </tr>
+          `
+              : ""
+          }
           <tr>
             <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold; width: 30%; background-color: #f9f9f9;">Thời gian:</td>
             <td style="padding: 10px; border: 1px solid #ddd;">${new Date().toLocaleString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh" })}</td>

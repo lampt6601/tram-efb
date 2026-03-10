@@ -250,7 +250,15 @@ export function AccountForm({ account }: AccountFormProps) {
 
       if (err) throw err;
 
-      await notifyAdminAction(isEditing ? "UPDATE" : "CREATE", payload.title);
+      await notifyAdminAction(isEditing ? "UPDATE" : "CREATE", payload.title, {
+        purchasePrice: payload.purchase_price
+          ? parseInt(payload.purchase_price as unknown as string)
+          : undefined,
+        sellingPrice: payload.selling_price
+          ? parseInt(payload.selling_price as unknown as string)
+          : undefined,
+        originalPrice: payload.original_price,
+      });
 
       router.push("/admin/dashboard/accounts");
       router.refresh();
