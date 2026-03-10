@@ -26,6 +26,7 @@ type AccountFormValues = {
   isPriority: boolean;
   originalPrice: string;
   serverRegion: string;
+  monthlyLogQuota: string;
 };
 
 export function AccountForm({ account }: AccountFormProps) {
@@ -39,6 +40,7 @@ export function AccountForm({ account }: AccountFormProps) {
   const [availableEmails, setAvailableEmails] = useState<Email[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [imageError, setImageError] = useState("");
 
   const router = useRouter();
   const supabase = createSupabaseBrowserClient();
@@ -57,6 +59,7 @@ export function AccountForm({ account }: AccountFormProps) {
       isPriority: account?.is_priority ?? false,
       originalPrice: account?.original_price?.toString() ?? "",
       serverRegion: account?.server_region ?? "",
+      monthlyLogQuota: account?.monthly_log_quota?.toString() ?? "",
     }),
     [account],
   );
@@ -172,6 +175,12 @@ export function AccountForm({ account }: AccountFormProps) {
   }, []);
 
   const onSubmit = async (values: AccountFormValues) => {
+    // Validate images
+    if (images.length === 0 && selectedFiles.length === 0) {
+      setImageError("Vui lòng tải lên ít nhất 1 hình ảnh");
+      return;
+    }
+    setImageError("");
     setLoading(true);
     setError("");
 
@@ -236,6 +245,9 @@ export function AccountForm({ account }: AccountFormProps) {
         total_coins_ios: parseInt(values.totalCoinsIos as string) || 0,
         team_strength: parseInt(values.teamStrength as string) || 0,
         server_region: values.serverRegion || null,
+        monthly_log_quota: values.monthlyLogQuota
+          ? parseInt(values.monthlyLogQuota as string)
+          : null,
         email_id: values.emailId || null,
         is_priority: values.isPriority,
         original_price: values.originalPrice
@@ -305,7 +317,7 @@ export function AccountForm({ account }: AccountFormProps) {
           {/* Title */}
           <div>
             <label className="mb-1.5 block text-sm font-medium text-slate-700">
-              Tiêu Đề
+              Tiêu Đề <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
@@ -325,7 +337,7 @@ export function AccountForm({ account }: AccountFormProps) {
           <div className="grid gap-4 sm:grid-cols-3">
             <div>
               <label className="mb-1.5 block text-sm font-medium text-slate-700">
-                Giá Nhập (VNĐ)
+                Giá Nhập (VNĐ) <span className="text-red-500">*</span>
               </label>
               <input
                 {...register("purchasePrice", {
@@ -345,7 +357,7 @@ export function AccountForm({ account }: AccountFormProps) {
             </div>
             <div>
               <label className="mb-1.5 block text-sm font-medium text-slate-700">
-                Giá Bán Hiện Tại
+                Giá Bán Hiện Tại <span className="text-red-500">*</span>
               </label>
               <input
                 {...register("sellingPrice", {
@@ -398,7 +410,7 @@ export function AccountForm({ account }: AccountFormProps) {
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
               <label className="mb-1.5 block text-sm font-medium text-slate-700">
-                Trạng Thái
+                Trạng Thái <span className="text-red-500">*</span>
               </label>
               <select
                 {...register("status")}
@@ -435,10 +447,11 @@ export function AccountForm({ account }: AccountFormProps) {
           </div>
 
           {/* Stats */}
-          <div className="grid gap-4 sm:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-3 lg:grid-cols-4">
             <div>
               <label className="mb-1.5 block text-sm font-medium text-slate-700">
-                Tổng GP
+                Tổng GP{" "}
+                <span className="text-slate-400 font-normal">(Tuỳ chọn)</span>
               </label>
               <input
                 {...register("totalGp", {
@@ -456,7 +469,8 @@ export function AccountForm({ account }: AccountFormProps) {
             </div>
             <div>
               <label className="mb-1.5 block text-sm font-medium text-slate-700">
-                Coins (Android)
+                Coins (Android){" "}
+                <span className="text-slate-400 font-normal">(Tuỳ chọn)</span>
               </label>
               <input
                 {...register("totalCoinsAndroid", {
@@ -474,7 +488,8 @@ export function AccountForm({ account }: AccountFormProps) {
             </div>
             <div>
               <label className="mb-1.5 block text-sm font-medium text-slate-700">
-                Coins (iOS)
+                Coins (iOS){" "}
+                <span className="text-slate-400 font-normal">(Tuỳ chọn)</span>
               </label>
               <input
                 {...register("totalCoinsIos", {
@@ -492,7 +507,8 @@ export function AccountForm({ account }: AccountFormProps) {
             </div>
             <div>
               <label className="mb-1.5 block text-sm font-medium text-slate-700">
-                Lực Chiến Đội Hình
+                Lực Chiến Đội Hình{" "}
+                <span className="text-slate-400 font-normal">(Tuỳ chọn)</span>
               </label>
               <input
                 {...register("teamStrength", {
@@ -505,6 +521,26 @@ export function AccountForm({ account }: AccountFormProps) {
               {errors.teamStrength && (
                 <p className="mt-1 text-xs text-red-600">
                   {errors.teamStrength.message}
+                </p>
+              )}
+            </div>
+            <div>
+              <label className="mb-1.5 block text-sm font-medium text-slate-700">
+                Số lượng log{" "}
+                <span className="text-slate-400 font-normal">(Tuỳ chọn)</span>
+              </label>
+              <input
+                {...register("monthlyLogQuota", {
+                  min: { value: 1, message: "Số lượng log phải >= 1" },
+                })}
+                aria-invalid={!!errors.monthlyLogQuota}
+                min="1"
+                step="1"
+                className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm outline-none transition-colors focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+              />
+              {errors.monthlyLogQuota && (
+                <p className="mt-1 text-xs text-red-600">
+                  {errors.monthlyLogQuota.message}
                 </p>
               )}
             </div>
@@ -555,7 +591,7 @@ export function AccountForm({ account }: AccountFormProps) {
           {/* Images */}
           <div>
             <label className="mb-1.5 block text-sm font-medium text-slate-700">
-              Hình Ảnh
+              Hình Ảnh <span className="text-red-500">*</span>
             </label>
 
             {/* Drag & Drop + Paste Area */}
@@ -601,6 +637,10 @@ export function AccountForm({ account }: AccountFormProps) {
                 để dán ảnh từ clipboard
               </p>
             </div>
+
+            {imageError && (
+              <p className="mt-2 text-xs text-red-600">{imageError}</p>
+            )}
 
             {/* Existing & New Images Preview */}
             {(images.length > 0 || previews.length > 0) && (

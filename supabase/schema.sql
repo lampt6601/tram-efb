@@ -38,6 +38,7 @@ CREATE TABLE accounts (
   total_coins_ios BIGINT DEFAULT 0,
   team_strength INTEGER DEFAULT 0,
   server_region TEXT,
+  monthly_log_quota INTEGER DEFAULT 10,
   email_id UUID UNIQUE REFERENCES emails(id) ON DELETE SET NULL,
   is_priority BOOLEAN DEFAULT false,
   user_id UUID NOT NULL DEFAULT auth.uid() REFERENCES auth.users(id) ON DELETE CASCADE,
@@ -118,6 +119,7 @@ SELECT
   is_priority,
   original_price,
   server_region,
+  monthly_log_quota,
   created_at
 FROM accounts
 WHERE status = 'Available';

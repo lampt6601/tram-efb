@@ -153,11 +153,18 @@ export default async function AccountDetailPage({
                       <h1 className="text-2xl font-bold text-slate-700 line-through decoration-slate-400 lg:text-3xl">
                         {account.title}
                       </h1>
-                      {account.server_region && (
-                        <span className="inline-flex w-fit items-center rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">
-                          Server: {account.server_region}
-                        </span>
-                      )}
+                      <div className="flex flex-wrap gap-2">
+                        {account.server_region && (
+                          <span className="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">
+                            Server: {account.server_region}
+                          </span>
+                        )}
+                        {account.monthly_log_quota != null && (
+                          <span className="inline-flex items-center rounded-full bg-indigo-50 px-3 py-1 text-xs font-medium text-indigo-700">
+                            Số lượng log: {account.monthly_log_quota}
+                          </span>
+                        )}
+                      </div>
                     </div>
                     <StatusBadge status="Sold" />
                   </div>
@@ -182,7 +189,7 @@ export default async function AccountDetailPage({
                     (account.total_coins_ios ?? 0) > 0 ||
                     (account.team_strength ?? 0) > 0,
                   ) && (
-                    <div className="mt-6 grid grid-cols-3 gap-4">
+                    <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 gap-4">
                       {(account.total_gp ?? 0) > 0 && (
                         <div className="rounded-xl bg-amber-50 p-4 text-center opacity-60">
                           <Zap className="mx-auto mb-1 h-5 w-5 text-amber-500" />
@@ -211,7 +218,7 @@ export default async function AccountDetailPage({
                           <p className="text-xs text-slate-500">Coins</p>
                         </div>
                       )}
-                      {(account.team_strength ?? 0) > 0 && (
+                    {(account.team_strength ?? 0) > 0 && (
                         <div className="rounded-xl bg-blue-50 p-4 text-center opacity-60">
                           <Shield className="mx-auto mb-1 h-5 w-5 text-blue-500" />
                           <p className="text-lg font-bold text-slate-900">
@@ -220,6 +227,15 @@ export default async function AccountDetailPage({
                           <p className="text-xs text-slate-500">Lực Chiến</p>
                         </div>
                       )}
+                    <div className="rounded-xl bg-indigo-50 p-4 text-center opacity-60">
+                      <MessageCircle className="mx-auto mb-1 h-5 w-5 text-indigo-500" />
+                      <p className="text-lg font-bold text-slate-900">
+                        {account.monthly_log_quota ?? 10}
+                      </p>
+                      <p className="text-xs text-slate-500">
+                        Số lượng log
+                      </p>
+                    </div>
                     </div>
                   )}
 
@@ -304,11 +320,18 @@ export default async function AccountDetailPage({
                         <Star className="h-6 w-6 shrink-0 fill-amber-500 text-amber-500" />
                       )}
                     </h1>
-                    {account.server_region && (
-                      <span className="inline-flex w-fit items-center rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">
-                        Server: {account.server_region}
-                      </span>
-                    )}
+                    <div className="flex flex-wrap gap-2">
+                      {account.server_region && (
+                        <span className="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">
+                          Server: {account.server_region}
+                        </span>
+                      )}
+                      {account.monthly_log_quota != null && (
+                        <span className="inline-flex items-center rounded-full bg-indigo-50 px-3 py-1 text-xs font-medium text-indigo-700">
+                          Số lượng log: {account.monthly_log_quota}
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
 
@@ -318,7 +341,7 @@ export default async function AccountDetailPage({
                   (account.total_coins_ios ?? 0) > 0 ||
                   (account.team_strength ?? 0) > 0,
                 ) && (
-                  <div className="mt-6 grid grid-cols-3 gap-4">
+                  <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 gap-4">
                     {(account.total_gp ?? 0) > 0 && (
                       <div className="rounded-xl bg-amber-50 p-4 text-center">
                         <Zap className="mx-auto mb-1 h-5 w-5 text-amber-500" />
@@ -356,6 +379,15 @@ export default async function AccountDetailPage({
                         <p className="text-xs text-slate-500">Lực Chiến</p>
                       </div>
                     )}
+                    <div className="rounded-xl bg-indigo-50 p-4 text-center">
+                      <MessageCircle className="mx-auto mb-1 h-5 w-5 text-indigo-500" />
+                      <p className="text-lg font-bold text-slate-900">
+                        {account.monthly_log_quota ?? 10}
+                      </p>
+                      <p className="text-xs text-slate-500">
+                        Số lượng log
+                      </p>
+                    </div>
                   </div>
                 )}
 

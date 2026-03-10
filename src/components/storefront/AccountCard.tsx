@@ -105,63 +105,60 @@ export function AccountCard({ account }: { account: PublicAccount }) {
         </h3>
 
         <div className="mt-1.5 min-h-[18px] sm:min-h-[20px]">
-          {Boolean(
-            (account.total_gp ?? 0) > 0 ||
-              (account.total_coins_android ?? 0) > 0 ||
-              (account.total_coins_ios ?? 0) > 0 ||
-              (account.team_strength ?? 0) > 0 ||
-              account.server_region,
-          ) && (
-            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-500">
-              {(account.total_gp ?? 0) > 0 && (
-                <span className="inline-flex items-center gap-1">
-                  <Zap
-                    className={`h-3 w-3 ${
-                      isSold ? "text-amber-400" : "text-amber-500"
-                    }`}
-                  />
-                  <span>{formatNumber(account.total_gp)} GP</span>
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-500">
+            {(account.total_gp ?? 0) > 0 && (
+              <span className="inline-flex items-center gap-1">
+                <Zap
+                  className={`h-3 w-3 ${
+                    isSold ? "text-amber-400" : "text-amber-500"
+                  }`}
+                />
+                <span>{formatNumber(account.total_gp)} GP</span>
+              </span>
+            )}
+            {((account.total_coins_android ?? 0) > 0 ||
+              (account.total_coins_ios ?? 0) > 0) && (
+              <span className="inline-flex items-center gap-1">
+                <Coins
+                  className={`h-3 w-3 ${
+                    isSold ? "text-yellow-400" : "text-yellow-500"
+                  }`}
+                />
+                <span className="truncate">
+                  {(account.total_coins_android ?? 0) > 0
+                    ? `${formatNumber(account.total_coins_android)} 🤖`
+                    : ""}
+                  {(account.total_coins_android ?? 0) > 0 &&
+                  (account.total_coins_ios ?? 0) > 0
+                    ? " | "
+                    : ""}
+                  {(account.total_coins_ios ?? 0) > 0
+                    ? `${formatNumber(account.total_coins_ios)} 🍎`
+                    : ""}
                 </span>
-              )}
-              {((account.total_coins_android ?? 0) > 0 ||
-                (account.total_coins_ios ?? 0) > 0) && (
-                <span className="inline-flex items-center gap-1">
-                  <Coins
-                    className={`h-3 w-3 ${
-                      isSold ? "text-yellow-400" : "text-yellow-500"
-                    }`}
-                  />
-                  <span className="truncate">
-                    {(account.total_coins_android ?? 0) > 0
-                      ? `${formatNumber(account.total_coins_android)} 🤖`
-                      : ""}
-                    {(account.total_coins_android ?? 0) > 0 &&
-                    (account.total_coins_ios ?? 0) > 0
-                      ? " | "
-                      : ""}
-                    {(account.total_coins_ios ?? 0) > 0
-                      ? `${formatNumber(account.total_coins_ios)} 🍎`
-                      : ""}
-                  </span>
-                </span>
-              )}
-              {(account.team_strength ?? 0) > 0 && (
-                <span className="inline-flex items-center gap-1">
-                  <Shield
-                    className={`h-3 w-3 ${
-                      isSold ? "text-blue-400" : "text-blue-500"
-                    }`}
-                  />
-                  <span>{account.team_strength}</span>
-                </span>
-              )}
-              {account.server_region && (
-                <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-slate-600">
-                  Server: {account.server_region}
-                </span>
-              )}
-            </div>
-          )}
+              </span>
+            )}
+            {(account.team_strength ?? 0) > 0 && (
+              <span className="inline-flex items-center gap-1">
+                <Shield
+                  className={`h-3 w-3 ${
+                    isSold ? "text-blue-400" : "text-blue-500"
+                  }`}
+                />
+                <span>{account.team_strength}</span>
+              </span>
+            )}
+            {account.server_region && (
+              <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-slate-600">
+                Server: {account.server_region}
+              </span>
+            )}
+            {!isSold && account.monthly_log_quota != null && (
+              <span className="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-2 py-0.5 text-[11px] font-medium text-indigo-700">
+                Số lượng log: {account.monthly_log_quota}
+              </span>
+            )}
+          </div>
         </div>
 
         <div className="mt-3 sm:mt-4 flex items-end justify-between border-t border-slate-100 pt-2.5 sm:pt-3">
