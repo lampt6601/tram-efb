@@ -5,6 +5,9 @@ import { useRouter } from "next/navigation";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 import { Gamepad2, Loader2, Lock, Mail } from "lucide-react";
 import { useForm } from "react-hook-form";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 
 type LoginFormValues = {
   email: string;
@@ -69,22 +72,22 @@ export default function AdminLoginPage() {
 
           <div className="space-y-4">
             <div>
-              <label
+              <Label
                 htmlFor="email"
-                className="mb-1.5 block text-sm font-medium text-slate-300"
+                className="mb-1.5 text-slate-300"
               >
                 Email
-              </label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
-                <input
+              </Label>
+              <div className="relative mt-1.5">
+                <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500 z-10" />
+                <Input
                   id="email"
                   type="email"
                   {...register("email", {
                     required: "Vui lòng nhập email",
                   })}
                   aria-invalid={!!errors.email}
-                  className="w-full rounded-xl border border-white/10 bg-white/5 py-3 pl-10 pr-4 text-slate-500 placeholder-slate-400 outline-none transition-colors focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                  className="border-white/10 bg-white/5 py-5 pl-10 pr-4 text-slate-200 placeholder:text-slate-500 focus-visible:border-indigo-500 focus-visible:ring-indigo-500/30"
                   placeholder="admin@example.com"
                 />
               </div>
@@ -96,22 +99,22 @@ export default function AdminLoginPage() {
             </div>
 
             <div>
-              <label
+              <Label
                 htmlFor="password"
-                className="mb-1.5 block text-sm font-medium text-slate-300"
+                className="mb-1.5 text-slate-300"
               >
                 Mật khẩu
-              </label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
-                <input
+              </Label>
+              <div className="relative mt-1.5">
+                <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500 z-10" />
+                <Input
                   id="password"
                   type="password"
                   {...register("password", {
                     required: "Vui lòng nhập mật khẩu",
                   })}
                   aria-invalid={!!errors.password}
-                  className="w-full rounded-xl border border-white/10 bg-white/5 py-3 pl-10 pr-4 text-slate-500 placeholder-slate-400 outline-none transition-colors focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                  className="border-white/10 bg-white/5 py-5 pl-10 pr-4 text-slate-200 placeholder:text-slate-500 focus-visible:border-indigo-500 focus-visible:ring-indigo-500/30"
                   placeholder="••••••••"
                 />
               </div>
@@ -123,14 +126,14 @@ export default function AdminLoginPage() {
             </div>
           </div>
 
-          <button
+          <Button
             type="submit"
             disabled={loading}
-            className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 py-3 text-sm font-semibold text-white transition-colors hover:bg-indigo-700 disabled:opacity-50"
+            className="mt-6 h-11 w-full bg-indigo-600 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-50"
           >
-            {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+            {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
             {loading ? "Đang đăng nhập..." : "Đăng Nhập"}
-          </button>
+          </Button>
         </form>
       </div>
     </div>

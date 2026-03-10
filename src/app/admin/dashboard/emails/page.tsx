@@ -3,6 +3,15 @@ import Link from "next/link";
 import { Plus, Mail, Pencil, Link2, Link2Off } from "lucide-react";
 import { DeleteEmailButton } from "./DeleteButton";
 import type { Email } from "@/types/database";
+import { Button } from "@/components/ui/button";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 interface EmailWithAccount extends Email {
   accounts: { id: string; title: string } | null;
@@ -27,54 +36,44 @@ export default async function EmailsPage() {
             {items.length} email đã đăng ký
           </p>
         </div>
-        <Link
-          href="/admin/dashboard/emails/new"
-          className="flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-indigo-700"
+        <Button
+          render={<Link href="/admin/dashboard/emails/new" />}
+          className="bg-indigo-600 hover:bg-indigo-700 text-white"
         >
           <Plus className="h-4 w-4" /> Thêm Email
-        </Link>
+        </Button>
       </div>
 
       <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm">
-            <thead className="border-b border-slate-200 bg-slate-50">
-              <tr>
-                <th className="px-6 py-3 font-medium text-slate-500">
-                  Địa chỉ Email
-                </th>
-                <th className="px-6 py-3 font-medium text-slate-500">
-                  Mật khẩu
-                </th>
-                <th className="px-6 py-3 font-medium text-slate-500">
-                  Thông tin khôi phục
-                </th>
-                <th className="px-6 py-3 font-medium text-slate-500">
-                  Trạng Thái Liên Kết
-                </th>
-                <th className="px-6 py-3 font-medium text-slate-500">
-                  Hành Động
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
+          <Table>
+            <TableHeader>
+              <TableRow className="bg-slate-50 hover:bg-slate-50">
+                <TableHead className="text-slate-500">Địa chỉ Email</TableHead>
+                <TableHead className="text-slate-500">Mật khẩu</TableHead>
+                <TableHead className="text-slate-500">Thông tin khôi phục</TableHead>
+                <TableHead className="text-slate-500">Trạng Thái Liên Kết</TableHead>
+                <TableHead className="text-slate-500">Hành Động</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {items.map((email) => (
-                <tr key={email.id} className="hover:bg-slate-50">
-                  <td className="px-6 py-4">
+                <TableRow key={email.id} className="hover:bg-slate-50">
+                  <TableCell>
                     <div className="flex items-center gap-2">
                       <Mail className="h-4 w-4 text-slate-400" />
                       <span className="font-medium text-slate-900">
                         {email.email_address}
                       </span>
                     </div>
-                  </td>
-                  <td className="px-6 py-4 font-mono text-xs text-slate-600">
+                  </TableCell>
+                  <TableCell className="font-mono text-xs text-slate-600">
                     {email.password}
-                  </td>
-                  <td className="px-6 py-4 text-slate-600">
+                  </TableCell>
+                  <TableCell className="text-slate-600">
                     {email.recovery_info || "—"}
-                  </td>
-                  <td className="px-6 py-4">
+                  </TableCell>
+                  <TableCell>
                     {email.accounts ? (
                       <div className="flex flex-col gap-1">
                         <span className="inline-flex w-fit items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700">
@@ -95,8 +94,8 @@ export default async function EmailsPage() {
                         Chưa liên kết
                       </span>
                     )}
-                  </td>
-                  <td className="px-6 py-4">
+                  </TableCell>
+                  <TableCell>
                     <div className="flex items-center gap-2">
                       <Link
                         href={`/admin/dashboard/emails/${email.id}/edit`}
@@ -106,21 +105,21 @@ export default async function EmailsPage() {
                       </Link>
                       <DeleteEmailButton id={email.id} />
                     </div>
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               ))}
               {items.length === 0 && (
-                <tr>
-                  <td
+                <TableRow>
+                  <TableCell
                     colSpan={5}
-                    className="px-6 py-12 text-center text-slate-400"
+                    className="py-12 text-center text-slate-400"
                   >
                     Chưa có email nào. Hãy thêm email đầu tiên để bắt đầu.
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               )}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
         </div>
       </div>
     </div>

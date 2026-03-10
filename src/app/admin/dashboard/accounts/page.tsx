@@ -1,15 +1,21 @@
 import { createSupabaseServerClient } from "@/lib/supabase-server";
 import Link from "next/link";
-import { Plus, Pencil, Gamepad2, Star } from "lucide-react";
+import { Plus, Gamepad2, Star } from "lucide-react";
 import { StatusBadge } from "@/components/ui/Badge";
 import { formatCurrency } from "@/lib/constants";
-import { DeleteAccountButton } from "./DeleteButton";
-import { SellAccountButton } from "./SellButton";
-import { SaleAccountButton } from "./SaleButton";
 import { AdminAccountFilters } from "./AdminAccountFilters";
-import { CopyLinkButton } from "./CopyLinkButton";
+import { AccountActionsDropdown } from "./AccountActionsDropdown";
 import { Suspense } from "react";
 import type { AccountWithEmail } from "@/types/database";
+import { Button } from "@/components/ui/button";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 function formatCompactPrice(price: number): string {
   if (price >= 1_000_000) {
@@ -41,17 +47,14 @@ export default async function AccountsPage({
 
   let query = supabase.from("accounts").select("*, emails(*)");
 
-  // Filter by status
   if (statusFilter && statusFilter !== "all") {
     query = query.eq("status", statusFilter);
   }
 
-  // Filter by search query (title)
   if (searchQuery) {
     query = query.ilike("title", `%${searchQuery}%`);
   }
 
-  // Sort
   switch (sort) {
     case "oldest":
       query = query.order("created_at", { ascending: true });
@@ -90,12 +93,12 @@ export default async function AccountsPage({
             {items.length} tài khoản game
           </p>
         </div>
-        <Link
-          href="/admin/dashboard/accounts/new"
-          className="flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-indigo-700"
+        <Button
+          render={<Link href="/admin/dashboard/accounts/new" />}
+          className="bg-indigo-600 hover:bg-indigo-700 text-white"
         >
           <Plus className="h-4 w-4" /> Thêm Tài Khoản
-        </Link>
+        </Button>
       </div>
 
       {/* Filters */}
@@ -107,36 +110,22 @@ export default async function AccountsPage({
 
       <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm">
-            <thead className="border-b border-slate-200 bg-slate-50">
-              <tr>
-                <th className="px-3 py-2 sm:px-6 sm:py-3 font-medium text-slate-500">
-                  Tài Khoản
-                </th>
-                <th className="px-3 py-2 sm:px-6 sm:py-3 font-medium text-slate-500">
-                  Trạng Thái
-                </th>
-                <th className="hidden px-3 py-2 sm:px-6 sm:py-3 font-medium text-slate-500 md:table-cell">
-                  Giá Nhập
-                </th>
-                <th className="px-3 py-2 sm:px-6 sm:py-3 font-medium text-slate-500">
-                  Giá Bán
-                </th>
-                <th className="hidden px-3 py-2 sm:px-6 sm:py-3 font-medium text-slate-500 md:table-cell">
-                  Lực Chiến
-                </th>
-                <th className="hidden px-3 py-2 sm:px-6 sm:py-3 font-medium text-slate-500 lg:table-cell">
-                  Email Liên Kết
-                </th>
-                <th className="px-3 py-2 sm:px-6 sm:py-3 font-medium text-slate-500">
-                  Hành Động
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
+          <Table>
+            <TableHeader>
+              <TableRow className="bg-slate-50 hover:bg-slate-50">
+                <TableHead className="text-slate-500">Tài Khoản</TableHead>
+                <TableHead className="text-slate-500">Trạng Thái</TableHead>
+                <TableHead className="hidden text-slate-500 md:table-cell">Giá Nhập</TableHead>
+                <TableHead className="text-slate-500">Giá Bán</TableHead>
+                <TableHead className="hidden text-slate-500 md:table-cell">Lực Chiến</TableHead>
+                <TableHead className="text-slate-500">Tác Vụ</TableHead>
+                <TableHead className="text-slate-500">Email Liên Kết</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {items.map((account) => (
-                <tr key={account.id} className="hover:bg-slate-50">
-                  <td className="px-3 py-3 sm:px-6 sm:py-4">
+                <TableRow key={account.id} className="hover:bg-slate-50">
+                  <TableCell>
                     <div className="flex items-center gap-3">
                       <div className="hidden h-9 w-9 items-center justify-center rounded-lg bg-indigo-50 sm:flex">
                         <Gamepad2 className="h-4 w-4 text-indigo-600" />
@@ -148,14 +137,14 @@ export default async function AccountsPage({
                         <span className="truncate">{account.title}</span>
                       </span>
                     </div>
-                  </td>
-                  <td className="px-3 py-3 sm:px-6 sm:py-4">
+                  </TableCell>
+                  <TableCell>
                     <StatusBadge status={account.status} />
-                  </td>
-                  <td className="hidden px-3 py-3 sm:px-6 sm:py-4 text-slate-600 md:table-cell">
+                  </TableCell>
+                  <TableCell className="hidden text-slate-600 md:table-cell">
                     {formatCurrency(account.purchase_price)}
-                  </td>
-                  <td className="px-3 py-3 sm:px-6 sm:py-4 font-medium text-indigo-600">
+                  </TableCell>
+                  <TableCell className="font-medium text-indigo-600">
                     {account.original_price &&
                       account.original_price > account.selling_price && (
                         <div className="text-xs text-slate-400 line-through font-normal">
@@ -173,57 +162,37 @@ export default async function AccountsPage({
                     <span className="hidden sm:inline">
                       {formatCurrency(account.selling_price)}
                     </span>
-                  </td>
-                  <td className="hidden px-3 py-3 sm:px-6 sm:py-4 text-slate-600 md:table-cell">
+                  </TableCell>
+                  <TableCell className="hidden text-slate-600 md:table-cell">
                     {account.team_strength}
-                  </td>
-                  <td className="hidden px-3 py-3 sm:px-6 sm:py-4 text-xs text-slate-500 lg:table-cell">
+                  </TableCell>
+                  <TableCell>
+                    <AccountActionsDropdown
+                      id={account.id}
+                      title={account.title}
+                      purchasePrice={account.purchase_price}
+                      currentSellingPrice={account.selling_price}
+                      currentOriginalPrice={account.original_price ?? null}
+                      status={account.status}
+                    />
+                  </TableCell>
+                  <TableCell className="max-w-[140px] truncate text-xs text-slate-500">
                     {account.emails?.email_address || "—"}
-                  </td>
-                  <td className="px-3 py-3 sm:px-6 sm:py-4">
-                    <div className="flex items-center gap-1 sm:gap-2">
-                      <Link
-                        href={`/admin/dashboard/accounts/${account.id}/edit`}
-                        className="rounded-lg p-1.5 sm:p-2 text-slate-400 transition-colors hover:bg-indigo-50 hover:text-indigo-600"
-                      >
-                        <Pencil className="h-4 w-4" />
-                      </Link>
-                      <CopyLinkButton id={account.id} />
-                      <SaleAccountButton
-                        id={account.id}
-                        title={account.title}
-                        purchasePrice={account.purchase_price}
-                        currentSellingPrice={account.selling_price}
-                        currentOriginalPrice={account.original_price ?? null}
-                        status={account.status}
-                      />
-                      <SellAccountButton
-                        id={account.id}
-                        title={account.title}
-                        purchasePrice={account.purchase_price}
-                        currentSellingPrice={account.selling_price}
-                        status={account.status}
-                      />
-                      <DeleteAccountButton
-                        id={account.id}
-                        title={account.title}
-                      />
-                    </div>
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               ))}
               {items.length === 0 && (
-                <tr>
-                  <td
+                <TableRow>
+                  <TableCell
                     colSpan={7}
-                    className="px-6 py-12 text-center text-slate-400"
+                    className="py-12 text-center text-slate-400"
                   >
                     Không tìm thấy tài khoản nào phù hợp với bộ lọc.
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               )}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
         </div>
       </div>
     </div>

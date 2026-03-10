@@ -3,9 +3,21 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
-import { ShoppingCart, Loader2, X } from "lucide-react";
+import { ShoppingCart, Loader2 } from "lucide-react";
 import type { AccountStatus } from "@/types/database";
 import { notifyAdminAction } from "@/app/actions/notify-admin";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 interface SellButtonProps {
   id: string;
@@ -32,14 +44,14 @@ export function SellAccountButton({
 
   if (status === "Sold") return null;
 
-  const handleOpen = () => {
-    setPrice(currentSellingPrice.toString());
-    setError("");
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    if (!loading) setOpen(false);
+  const handleOpenChange = (val: boolean) => {
+    if (!loading) {
+      setOpen(val);
+      if (val) {
+        setPrice(currentSellingPrice.toString());
+        setError("");
+      }
+    }
   };
 
   const handleConfirm = async () => {
@@ -83,89 +95,62 @@ export function SellAccountButton({
   };
 
   return (
-    <>
-      {/* Sell Button */}
-      <button
-        onClick={handleOpen}
-        title="Bán tài khoản"
-        className="rounded-lg p-2 text-slate-400 transition-colors hover:bg-green-50 hover:text-green-600"
-      >
-        <ShoppingCart className="h-4 w-4" />
-      </button>
-
-      {/* Modal Backdrop */}
-      {open && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm"
-          onClick={handleClose}
-        >
-          {/* Modal Panel */}
-          <div
-            className="relative w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl"
-            onClick={(e) => e.stopPropagation()}
+    <Dialog open={open} onOpenChange={handleOpenChange}>
+      <DialogTrigger
+        render={
+          <button
+            title="Bán tài khoản"
+            className="rounded-lg p-1.5 sm:p-2 text-slate-400 transition-colors hover:bg-green-50 hover:text-green-600"
           >
-            {/* Close */}
-            <button
-              onClick={handleClose}
-              disabled={loading}
-              className="absolute right-4 top-4 rounded-lg p-1 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600"
-            >
-              <X className="h-4 w-4" />
-            </button>
-
-            {/* Header */}
-            <div className="mb-5">
-              <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-green-50">
-                <ShoppingCart className="h-5 w-5 text-green-600" />
-              </div>
-              <h2 className="text-lg font-bold text-slate-900">
-                Xác Nhận Bán Tài Khoản
-              </h2>
-              <p className="mt-1 text-sm text-slate-500">
-                Giá dự kiến sẽ được cập nhật thành giá bán thực tế. Email liên
-                kết sẽ bị gỡ tự động.
-              </p>
-            </div>
-
-            {/* Price Input */}
-            <div className="mb-4">
-              <label className="mb-1.5 block text-sm font-medium text-slate-700">
-                Giá Bán Thực Tế (VNĐ)
-              </label>
-              <input
-                type="number"
-                value={price}
-                onChange={(e) => setPrice(e.target.value)}
-                min="0"
-                step="1"
-                disabled={loading}
-                className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm outline-none transition-colors focus:border-green-500 focus:ring-1 focus:ring-green-500 disabled:opacity-60"
-                autoFocus
-              />
-              {error && <p className="mt-1.5 text-xs text-red-600">{error}</p>}
-            </div>
-
-            {/* Actions */}
-            <div className="flex gap-3">
-              <button
-                onClick={handleConfirm}
-                disabled={loading}
-                className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-green-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-green-700 disabled:opacity-50"
-              >
-                {loading && <Loader2 className="h-4 w-4 animate-spin" />}
-                {loading ? "Đang xử lý..." : "Xác Nhận Bán"}
-              </button>
-              <button
-                onClick={handleClose}
-                disabled={loading}
-                className="rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 disabled:opacity-50"
-              >
-                Hủy
-              </button>
-            </div>
+            <ShoppingCart className="h-4 w-4" />
+          </button>
+        }
+      />
+      <DialogContent>
+        <DialogHeader>
+          <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-green-50">
+            <ShoppingCart className="h-5 w-5 text-green-600" />
           </div>
+          <DialogTitle>Xác Nhận Bán Tài Khoản</DialogTitle>
+          <DialogDescription>
+            Giá dự kiến sẽ được cập nhật thành giá bán thực tế. Email liên kết
+            sẽ bị gỡ tự động.
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="mb-1">
+          <Label className="mb-1.5 text-slate-700">Giá Bán Thực Tế (VNĐ)</Label>
+          <Input
+            type="number"
+            value={price}
+            onChange={(e) => setPrice(e.target.value)}
+            min="0"
+            step="1"
+            disabled={loading}
+            className="mt-1.5 rounded-xl border-slate-300 focus-visible:border-green-500 focus-visible:ring-green-500/30"
+            autoFocus
+          />
+          {error && <p className="mt-1.5 text-xs text-red-600">{error}</p>}
         </div>
-      )}
-    </>
+
+        <DialogFooter>
+          <Button
+            variant="outline"
+            onClick={() => handleOpenChange(false)}
+            disabled={loading}
+          >
+            Hủy
+          </Button>
+          <Button
+            onClick={handleConfirm}
+            disabled={loading}
+            className="bg-green-600 text-white hover:bg-green-700"
+          >
+            {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            {loading ? "Đang xử lý..." : "Xác Nhận Bán"}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

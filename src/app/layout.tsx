@@ -3,6 +3,7 @@ import { Inter, Geist } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import { FloatingConsultation } from "@/components/ui/FloatingConsultation";
+import { Toaster } from "@/components/ui/sonner";
 import { cn } from "@/lib/utils";
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
@@ -129,6 +130,7 @@ export default function RootLayout({
         />
         <Analytics />
         <FloatingConsultation />
+        <Toaster position="top-right" richColors />
       </body>
     </html>
   );

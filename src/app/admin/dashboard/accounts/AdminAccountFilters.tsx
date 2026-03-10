@@ -3,7 +3,9 @@
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useCallback, useTransition, useState, useEffect, useRef } from "react";
 import { useDebounce } from "@/hooks/use-debounce";
-import { ArrowUpDown, SlidersHorizontal, Search } from "lucide-react";
+import { ArrowUpDown, Search } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 const SORT_OPTIONS = [
   { value: "newest", label: "Mới nhất" },
@@ -22,6 +24,9 @@ const STATUS_OPTIONS = [
   { value: "Pending", label: "Đang Chờ" },
   { value: "Sold", label: "Đã Bán" },
 ];
+
+const selectClass =
+  "h-9 rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-700 outline-none transition-colors focus:border-indigo-400 focus:ring-2 focus:ring-inset focus:ring-indigo-400 hover:border-slate-300 cursor-pointer";
 
 interface AdminAccountFiltersProps {
   totalCount: number;
@@ -86,13 +91,13 @@ export function AdminAccountFilters({ totalCount }: AdminAccountFiltersProps) {
       <div className="flex flex-wrap items-center gap-3">
         {/* Search */}
         <div className="relative flex-1 min-w-48">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-          <input
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 z-10 pointer-events-none" />
+          <Input
             type="text"
             placeholder="Tìm theo tiêu đề..."
             value={localSearch}
             onChange={(e) => setLocalSearch(e.target.value)}
-            className="w-full rounded-xl border border-slate-200 bg-white py-2 pl-9 pr-4 text-base sm:text-sm text-slate-700 outline-none placeholder:text-slate-400 transition-colors focus:border-indigo-400 focus:ring-2 focus:ring-inset focus:ring-indigo-400 hover:border-slate-300"
+            className="h-9 rounded-xl border-slate-200 pl-9 text-sm text-slate-700 focus-visible:border-indigo-400 focus-visible:ring-indigo-400/30"
           />
         </div>
 
@@ -100,7 +105,7 @@ export function AdminAccountFilters({ totalCount }: AdminAccountFiltersProps) {
         <select
           value={status}
           onChange={(e) => update("status", e.target.value)}
-          className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-base sm:text-sm text-slate-700 outline-none transition-colors focus:border-indigo-400 focus:ring-2 focus:ring-inset focus:ring-indigo-400 hover:border-slate-300 cursor-pointer"
+          className={selectClass}
         >
           {STATUS_OPTIONS.map((o) => (
             <option key={o.value} value={o.value}>
@@ -115,7 +120,7 @@ export function AdminAccountFilters({ totalCount }: AdminAccountFiltersProps) {
           <select
             value={sort}
             onChange={(e) => update("sort", e.target.value)}
-            className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-base sm:text-sm text-slate-700 outline-none transition-colors focus:border-indigo-400 focus:ring-2 focus:ring-inset focus:ring-indigo-400 hover:border-slate-300 cursor-pointer"
+            className={selectClass}
           >
             {SORT_OPTIONS.map((o) => (
               <option key={o.value} value={o.value}>
@@ -127,12 +132,14 @@ export function AdminAccountFilters({ totalCount }: AdminAccountFiltersProps) {
 
         {/* Clear */}
         {hasActiveFilters && (
-          <button
+          <Button
+            variant="outline"
+            size="sm"
             onClick={clearAll}
-            className="rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-sm font-medium text-rose-600 transition-colors hover:bg-rose-100"
+            className="h-9 rounded-xl border-rose-200 bg-rose-50 px-3 text-sm text-rose-600 hover:bg-rose-100 hover:text-rose-700 hover:border-rose-300"
           >
             Xoá bộ lọc
-          </button>
+          </Button>
         )}
 
         <span className="ml-auto text-sm text-slate-400">

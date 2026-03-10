@@ -9,9 +9,10 @@ import {
   CheckCircle2,
   Star,
 } from "lucide-react";
-import { StatusBadge } from "@/components/ui/Badge";
+import { StatusBadge, Badge } from "@/components/ui/Badge";
 import { formatCurrency, formatNumber } from "@/lib/constants";
 import type { PublicAccount } from "@/types/database";
+import { cn } from "@/lib/utils";
 
 export function AccountCard({ account }: { account: PublicAccount }) {
   const thumbnail = account.primary_image_url || account.images?.[0];
@@ -149,14 +150,20 @@ export function AccountCard({ account }: { account: PublicAccount }) {
               </span>
             )}
             {account.server_region && (
-              <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-slate-600">
+              <Badge
+                variant="secondary"
+                className="h-auto rounded-full px-2 py-0.5 text-[11px] text-slate-600 bg-slate-100"
+              >
                 Server: {account.server_region}
-              </span>
+              </Badge>
             )}
             {!isSold && account.monthly_log_quota != null && (
-              <span className="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-2 py-0.5 text-[11px] font-medium text-indigo-700">
+              <Badge
+                variant="outline"
+                className="h-auto rounded-full px-2 py-0.5 text-[11px] text-indigo-700 bg-indigo-50 border-indigo-200"
+              >
                 Số lượng log: {account.monthly_log_quota}
-              </span>
+              </Badge>
             )}
           </div>
         </div>

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 import { LayoutDashboard, Gamepad2, Mail, LogOut, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const navItems = [
   { href: "/admin/dashboard", label: "Bảng Điều Khiển", icon: LayoutDashboard },
@@ -51,9 +52,14 @@ export function Sidebar({ open, onClose }: SidebarProps) {
               Quản Trị <span className="text-indigo-600">eFootball</span>
             </span>
           </Link>
-          <button onClick={onClose} className="lg:hidden">
-            <X className="h-5 w-5 text-slate-400" />
-          </button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onClose}
+            className="lg:hidden text-slate-400 hover:text-slate-600"
+          >
+            <X className="h-5 w-5" />
+          </Button>
         </div>
 
         <nav className="flex-1 space-y-1 p-4">
@@ -83,13 +89,14 @@ export function Sidebar({ open, onClose }: SidebarProps) {
         </nav>
 
         <div className="border-t border-slate-200 p-4">
-          <button
+          <Button
+            variant="ghost"
             onClick={handleLogout}
-            className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:bg-red-50 hover:text-red-700"
+            className="w-full justify-start gap-3 px-3 py-2.5 text-sm font-medium text-slate-600 hover:bg-red-50 hover:text-red-700"
           >
             <LogOut className="h-5 w-5 text-slate-400" />
             Đăng Xuất
-          </button>
+          </Button>
         </div>
       </aside>
     </>
