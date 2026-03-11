@@ -4,12 +4,21 @@ import { useState, type ReactNode } from "react";
 import { Sidebar } from "./Sidebar";
 import { Menu } from "lucide-react";
 
-export function AdminShell({ children }: { children: ReactNode }) {
+interface AdminShellProps {
+  children: ReactNode;
+  isSuperAdmin?: boolean;
+}
+
+export function AdminShell({ children, isSuperAdmin = false }: AdminShellProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
     <div className="flex h-screen bg-slate-50">
-      <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      <Sidebar
+        open={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+        isSuperAdmin={isSuperAdmin}
+      />
       <div className="flex flex-1 flex-col overflow-hidden">
         <header className="flex h-16 items-center gap-4 border-b border-slate-200 bg-white px-4 lg:px-8">
           <button

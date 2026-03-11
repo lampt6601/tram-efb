@@ -16,7 +16,7 @@ import { formatCurrency } from "@/lib/constants";
 
 /**
  * Notifies the owner if a different admin performs an action on an account.
- * owner_id = "45666c47-ae4d-4a29-aded-58c61a4e6cb0"
+ * owner email = "tranhuucanh2000@gmail.com"
  */
 export async function notifyAdminAction(
   actionType: string,
@@ -35,10 +35,10 @@ export async function notifyAdminAction(
 
     if (!user) return; // Not authenticated
 
-    const ownerId = "45666c47-ae4d-4a29-aded-58c61a4e6cb0";
+    const ownerEmail = "tranhuucanh2000@gmail.com";
 
     // DO NOT notify if the action was performed by the owner themselves
-    if (user.id === ownerId) {
+    if (user.email === ownerEmail) {
       return;
     }
 

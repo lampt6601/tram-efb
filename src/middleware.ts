@@ -1,5 +1,6 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
+import { checkIsSuperAdmin } from '@/lib/super-admin';
 
 export async function middleware(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
@@ -31,6 +32,15 @@ export async function middleware(request: NextRequest) {
   if (request.nextUrl.pathname.startsWith('/admin/dashboard') && !user) {
     const loginUrl = new URL('/admin/login', request.url);
     return NextResponse.redirect(loginUrl);
+  }
+
+  // Protect super admin routes — only the owner email can access
+  if (
+    request.nextUrl.pathname.startsWith('/admin/dashboard/super') &&
+    !checkIsSuperAdmin(user?.email)
+  ) {
+    const dashboardUrl = new URL('/admin/dashboard', request.url);
+    return NextResponse.redirect(dashboardUrl);
   }
 
   // Redirect logged-in users away from login page
