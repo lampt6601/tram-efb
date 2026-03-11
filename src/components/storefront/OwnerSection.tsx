@@ -1,6 +1,5 @@
 import Image from "next/image";
 import { ShieldCheck, Zap, HeartHandshake } from "lucide-react";
-import avatarOwner from "@/assets/images/avatar-owner.jpeg";
 import facebookIcon from "@/assets/icons/facebook.webp";
 import zaloIcon from "@/assets/icons/zalo.png";
 
@@ -12,12 +11,11 @@ export function OwnerSection() {
           {/* Avatar */}
           <div className="shrink-0">
             <div className="relative h-20 w-20 sm:h-24 sm:w-24">
-              <Image
-                src={avatarOwner}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/avatar-owner.jpeg"
                 alt="Trần Hữu Cảnh"
-                fill
-                className="rounded-2xl object-cover shadow-lg"
-                sizes="96px"
+                className="h-full w-full rounded-2xl object-cover shadow-lg"
               />
               <div className="absolute -bottom-1.5 -right-1.5 flex h-7 w-7 items-center justify-center rounded-full border-2 border-white bg-emerald-500 shadow">
                 <ShieldCheck className="h-3.5 w-3.5 text-white" />
