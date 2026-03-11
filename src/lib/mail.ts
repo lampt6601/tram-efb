@@ -25,7 +25,7 @@ export async function sendAdminNotificationMail(
 
     await transporter.sendMail({
       from: `"THC EFB Admin" <${user}>`,
-      to: "tranhuucanh2000@gmail.com",
+      to: "tranhuucanhpes@gmail.com",
       subject,
       html: htmlContent,
     });
