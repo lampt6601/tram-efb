@@ -1,11 +1,13 @@
 import { Gamepad2 } from "lucide-react";
 import Image from "next/image";
-import facebookIcon from "@/assets/icons/facebook.webp";
 import zaloIcon from "@/assets/icons/zalo.png";
+import { OwnerSection } from "./OwnerSection";
 
 export function Footer() {
   return (
-    <footer className="border-t border-slate-200 bg-white">
+    <>
+      <OwnerSection />
+      <footer className="border-t border-slate-200 bg-white">
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
           <div className="flex items-center gap-2 text-slate-500">
@@ -44,43 +46,16 @@ export function Footer() {
               />
               <span>Group Mua Bán Acc</span>
             </a>
-            <div className="flex items-center gap-4">
-              <a
-                href="https://www.facebook.com/share/1B7kgySoVd/?mibextid=wwXIfr"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group relative flex h-10 w-10 items-center justify-center rounded-full bg-slate-50 transition-all hover:bg-slate-100 hover:scale-105 active:scale-95"
-                title="Facebook THC eFootball Shop"
-              >
-                <Image
-                  src={facebookIcon}
-                  alt="Facebook"
-                  className="h-8 w-8 object-contain transition-transform group-hover:scale-110"
-                />
-                <span className="sr-only">Facebook</span>
-              </a>
-              <a
-                href="https://zalo.me/0969347283"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group relative flex h-10 w-10 items-center justify-center rounded-full bg-slate-50 transition-all hover:bg-slate-100 hover:scale-105 active:scale-95"
-                title="Zalo THC eFootball Shop"
-              >
-                <Image
-                  src={zaloIcon}
-                  alt="Zalo"
-                  className="h-8 w-8 object-contain transition-transform group-hover:scale-110"
-                />
-                <span className="sr-only">Zalo</span>
-              </a>
-            </div>
           </div>
 
           <p className="text-sm text-slate-400">
-            &copy; {new Date().getFullYear()} THC EFOOTBALL Shop.
+            &copy; {new Date().getFullYear()}{" "}
+            <span className="font-medium text-slate-600">Trần Hữu Cảnh</span>
+            {" "}· THC EFOOTBALL Shop.
           </p>
         </div>
       </div>
     </footer>
+    </>
   );
 }

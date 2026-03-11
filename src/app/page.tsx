@@ -5,7 +5,8 @@ import { AccountCard } from "@/components/storefront/AccountCard";
 import { AccountFilters } from "@/components/storefront/AccountFilters";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { AutoScrollSlider } from "@/components/ui/AutoScrollSlider";
-import { Gamepad2, Search, BadgeCheck } from "lucide-react";
+import { Gamepad2, Search, BadgeCheck, ShieldCheck } from "lucide-react";
+import Image from "next/image";
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import type { PublicAccount } from "@/types/database";
@@ -98,6 +99,12 @@ export default async function HomePage({
                 <div className="mx-auto mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-600/20 ring-1 ring-indigo-500/40 lg:mx-0">
                   <Gamepad2 className="h-7 w-7 text-indigo-400" />
                 </div>
+                <div className="mx-auto mb-4 inline-flex items-center gap-2 rounded-full border border-indigo-500/30 bg-indigo-500/10 px-4 py-1.5 lg:mx-0">
+                  <span className="h-1.5 w-1.5 rounded-full bg-indigo-400 animate-pulse" />
+                  <span className="text-xs font-semibold tracking-wide text-indigo-300">
+                    Shop của <span className="text-white">Trần Hữu Cảnh</span>
+                  </span>
+                </div>
                 <h1 className="text-balance text-3xl font-extrabold tracking-tight text-white sm:text-4xl lg:text-5xl">
                   Tài Khoản eFootball{" "}
                   <span className="block text-indigo-400">Uy Tín, Giá Tốt</span>
@@ -185,6 +192,7 @@ export default async function HomePage({
           </section>
         )}
       </main>
+
       <Footer />
     </div>
   );
