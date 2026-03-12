@@ -13,7 +13,7 @@ export function Footer() {
           <div className="flex items-center gap-2 text-slate-500">
             <Gamepad2 className="h-6 w-6 text-indigo-600" />
             <span className="text-base font-bold text-slate-900">
-              THC EFOOTBALL Shop
+              THC eFootball Shop
             </span>
           </div>
 
@@ -51,7 +51,7 @@ export function Footer() {
           <p className="text-sm text-slate-400">
             &copy; {new Date().getFullYear()}{" "}
             <span className="font-medium text-slate-600">Trần Hữu Cảnh</span>
-            {" "}· THC EFOOTBALL Shop.
+            {" "}· THC eFootball Shop.
           </p>
         </div>
       </div>

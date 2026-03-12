@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
-import { ArrowLeft, Loader2, X, UploadCloud, Star } from "lucide-react";
+import { ArrowLeft, Loader2, X, UploadCloud, Star, Copy } from "lucide-react";
 import Link from "next/link";
 import type { Account, Email, AccountStatus } from "@/types/database";
 import { useForm, Controller } from "react-hook-form";
@@ -34,6 +34,7 @@ type FormValues = {
   serverRegion: string;
   emailId: string;
   isPriority: boolean;
+  isClone: boolean;
 };
 
 const inputClass = "w-full rounded-xl border-slate-300 px-4 py-2.5 text-sm focus-visible:border-indigo-500 focus-visible:ring-indigo-500/30";
@@ -66,6 +67,7 @@ export function SuperAdminAccountForm({ account, availableEmails }: Props) {
     serverRegion: account.server_region ?? "",
     emailId: account.email_id ?? "",
     isPriority: account.is_priority ?? false,
+    isClone: account.is_clone ?? false,
   }), [account]);
 
   const { register, handleSubmit, control, watch, formState: { errors } } = useForm<FormValues>({ defaultValues });
@@ -130,6 +132,7 @@ export function SuperAdminAccountForm({ account, availableEmails }: Props) {
         monthly_log_quota: values.monthlyLogQuota ? parseInt(values.monthlyLogQuota) : null,
         email_id: values.emailId || null,
         is_priority: values.isPriority,
+        is_clone: values.isClone,
         images: finalImages,
         primary_image_url: finalPrimaryUrl,
       });
@@ -144,6 +147,7 @@ export function SuperAdminAccountForm({ account, availableEmails }: Props) {
   };
 
   const isPriorityValue = watch("isPriority");
+  const isCloneValue = watch("isClone");
 
   return (
     <div className="mx-auto max-w-3xl">
@@ -203,7 +207,7 @@ export function SuperAdminAccountForm({ account, availableEmails }: Props) {
                 <option value="Sold">Đã Bán</option>
               </select>
             </div>
-            <div className="flex flex-col justify-center">
+            <div className="flex flex-col justify-center gap-2">
               <Label className="mb-1.5 hidden text-slate-700 sm:flex">Tùy Chọn Khác</Label>
               <div className="flex h-[42px] items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 px-4 mt-1.5">
                 <Controller name="isPriority" control={control}
@@ -214,6 +218,17 @@ export function SuperAdminAccountForm({ account, availableEmails }: Props) {
                   className="flex flex-1 cursor-pointer items-center justify-between gap-1.5 text-sm font-medium text-slate-700 select-none">
                   Tài Khoản Nổi Bật
                   <Star className={`h-4 w-4 ${isPriorityValue ? "text-amber-500 fill-amber-500" : "text-slate-400"}`} />
+                </label>
+              </div>
+              <div className="flex h-[42px] items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 px-4">
+                <Controller name="isClone" control={control}
+                  render={({ field }) => (
+                    <Checkbox id="isClone" checked={field.value} onCheckedChange={field.onChange} />
+                  )} />
+                <label htmlFor="isClone"
+                  className="flex flex-1 cursor-pointer items-center justify-between gap-1.5 text-sm font-medium text-slate-700 select-none">
+                  Tài Khoản Clone
+                  <Copy className={`h-4 w-4 ${isCloneValue ? "text-violet-500" : "text-slate-400"}`} />
                 </label>
               </div>
             </div>

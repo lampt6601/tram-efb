@@ -8,6 +8,7 @@ import {
   ArrowRight,
   CheckCircle2,
   Star,
+  Copy,
 } from "lucide-react";
 import { StatusBadge, Badge } from "@/components/ui/Badge";
 import { formatCurrency, formatNumber } from "@/lib/constants";
@@ -79,6 +80,16 @@ export function AccountCard({ account }: { account: PublicAccount }) {
             <Star className="h-3.5 w-3.5 fill-white text-white" />
             <span className="text-[11px] font-bold uppercase tracking-wider text-white">
               Nổi Bật
+            </span>
+          </div>
+        )}
+
+        {/* Clone ribbon */}
+        {!isSold && account.is_clone && !account.is_priority && (
+          <div className="absolute right-0 top-3 flex items-center gap-1.5 rounded-l-full bg-violet-500 py-1 pl-4 pr-3 shadow-md z-10">
+            <Copy className="h-3.5 w-3.5 text-white" />
+            <span className="text-[11px] font-bold uppercase tracking-wider text-white">
+              Clone
             </span>
           </div>
         )}
@@ -155,6 +166,14 @@ export function AccountCard({ account }: { account: PublicAccount }) {
                 className="h-auto rounded-full px-2 py-0.5 text-[11px] text-slate-600 bg-slate-100"
               >
                 Server: {account.server_region}
+              </Badge>
+            )}
+            {!isSold && account.is_clone && (
+              <Badge
+                variant="outline"
+                className="h-auto rounded-full px-2 py-0.5 text-[11px] text-violet-700 bg-violet-50 border-violet-200"
+              >
+                Clone
               </Badge>
             )}
             {!isSold && account.monthly_log_quota != null && (

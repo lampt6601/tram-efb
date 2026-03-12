@@ -12,7 +12,7 @@ export function Header() {
             <Gamepad2 className="h-5 w-5 text-white" />
           </div>
           <span className="text-lg font-bold text-white">
-            Shop eFootball<span className="text-indigo-400"> THC</span>
+            <span className="text-indigo-400">THC</span> eFootball Shop
           </span>
         </Link>
 

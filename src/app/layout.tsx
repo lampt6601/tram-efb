@@ -19,11 +19,11 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL("https://thc-efb.vercel.app"),
   title: {
-    default: "THC EFOOTBALL Shop - Cửa Hàng Tài Khoản eFootball Uy Tín",
-    template: "%s | THC EFOOTBALL Shop",
+    default: "THC eFootball Shop - Cửa Hàng Tài Khoản eFootball Uy Tín",
+    template: "%s | THC eFootball Shop",
   },
   description:
-    "Chào mừng bạn đến với THC EFOOTBALL Shop. Chuyên cung cấp tài khoản eFootball chất lượng, nạp game an toàn và giao dịch nhanh chóng. Uy tín đặt lên hàng đầu!",
+    "Chào mừng bạn đến với THC eFootball Shop. Chuyên cung cấp tài khoản eFootball chất lượng, nạp game an toàn và giao dịch nhanh chóng. Uy tín đặt lên hàng đầu!",
   keywords: [
     "trần hữu cảnh efootball",
     "tran huu canh efootball",
@@ -44,17 +44,17 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "vi_VN",
-    siteName: "THC EFOOTBALL Shop",
-    title: "THC EFOOTBALL Shop - Cửa Hàng Tài Khoản eFootball",
+    siteName: "THC eFootball Shop",
+    title: "THC eFootball Shop - Cửa Hàng Tài Khoản eFootball",
     description:
-      "Chào mừng bạn đến với THC EFOOTBALL Shop. Chuyên cung cấp tài khoản eFootball chất lượng, nạp game an toàn và giao dịch nhanh chóng. Uy tín đặt lên hàng đầu!",
+      "Chào mừng bạn đến với THC eFootball Shop. Chuyên cung cấp tài khoản eFootball chất lượng, nạp game an toàn và giao dịch nhanh chóng. Uy tín đặt lên hàng đầu!",
     url: "https://thc-efb.vercel.app",
   },
   twitter: {
     card: "summary_large_image",
-    title: "THC EFOOTBALL Shop - Cửa Hàng Tài Khoản eFootball",
+    title: "THC eFootball Shop - Cửa Hàng Tài Khoản eFootball",
     description:
-      "Chào mừng bạn đến với THC EFOOTBALL Shop. Chuyên cung cấp tài khoản eFootball chất lượng, nạp game an toàn và giao dịch nhanh chóng. Uy tín đặt lên hàng đầu!",
+      "Chào mừng bạn đến với THC eFootball Shop. Chuyên cung cấp tài khoản eFootball chất lượng, nạp game an toàn và giao dịch nhanh chóng. Uy tín đặt lên hàng đầu!",
   },
 };
 
@@ -117,7 +117,7 @@ export default function RootLayout({
             __html: JSON.stringify({
               "@context": "https://schema.org",
               "@type": "WebSite",
-              name: "THC EFOOTBALL Shop",
+              name: "THC eFootball Shop",
               alternateName: ["THC Shop", "THC eFootball"],
               url: "https://thc-efb.vercel.app",
               potentialAction: {

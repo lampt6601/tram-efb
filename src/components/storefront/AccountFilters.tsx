@@ -3,20 +3,9 @@
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useCallback, useTransition, useState, useEffect, useRef } from "react";
 import { useDebounce } from "@/hooks/use-debounce";
-import { SlidersHorizontal, ArrowUpDown, Search } from "lucide-react";
+import { SlidersHorizontal, Search, Copy } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-
-const SORT_OPTIONS = [
-  { value: "newest", label: "Mới nhất" },
-  { value: "price_asc", label: "Giá tăng dần" },
-  { value: "price_desc", label: "Giá giảm dần" },
-  { value: "gp_desc", label: "GP cao nhất" },
-  { value: "strength_desc", label: "Lực chiến cao nhất" },
-];
-
-const selectClass =
-  "h-9 rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-700 outline-none transition-colors focus:border-indigo-400 focus:ring-2 focus:ring-inset focus:ring-indigo-400 hover:border-slate-300 cursor-pointer";
 
 const inputClass =
   "h-9 rounded-xl border-slate-200 px-3 text-sm text-slate-700 focus-visible:border-indigo-400 focus-visible:ring-indigo-400/30";
@@ -27,10 +16,10 @@ export function AccountFilters({ totalCount }: { totalCount: number }) {
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
 
-  const sort = searchParams.get("sort") ?? "newest";
   const minPrice = searchParams.get("minPrice") ?? "";
   const maxPrice = searchParams.get("maxPrice") ?? "";
   const search = searchParams.get("q") ?? "";
+  const cloneOnly = searchParams.get("clone") === "1";
 
   const [localSearch, setLocalSearch] = useState(search);
   const [localMinPrice, setLocalMinPrice] = useState(minPrice);
@@ -54,6 +43,18 @@ export function AccountFilters({ totalCount }: { totalCount: number }) {
     },
     [router, pathname, searchParams],
   );
+
+  const toggleClone = () => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (cloneOnly) {
+      params.delete("clone");
+    } else {
+      params.set("clone", "1");
+    }
+    startTransition(() => {
+      router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+    });
+  };
 
   const lastDebouncedSearch = useRef(debouncedSearch);
   const lastDebouncedMin = useRef(debouncedMinPrice);
@@ -84,8 +85,7 @@ export function AccountFilters({ totalCount }: { totalCount: number }) {
   useEffect(() => { setLocalMinPrice(minPrice); }, [minPrice]);
   useEffect(() => { setLocalMaxPrice(maxPrice); }, [maxPrice]);
 
-  const hasActiveFilters =
-    sort !== "newest" || minPrice !== "" || maxPrice !== "" || search !== "";
+  const hasActiveFilters = minPrice !== "" || maxPrice !== "" || search !== "" || cloneOnly;
 
   const clearAll = () => {
     startTransition(() => {
@@ -110,21 +110,20 @@ export function AccountFilters({ totalCount }: { totalCount: number }) {
           />
         </div>
 
-        {/* Sort */}
-        <div className="flex items-center gap-2">
-          <ArrowUpDown className="h-4 w-4 shrink-0 text-slate-400" />
-          <select
-            value={sort}
-            onChange={(e) => update("sort", e.target.value)}
-            className={selectClass}
-          >
-            {SORT_OPTIONS.map((o) => (
-              <option key={o.value} value={o.value}>
-                {o.label}
-              </option>
-            ))}
-          </select>
-        </div>
+        {/* Clone filter toggle */}
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={toggleClone}
+          className={`h-9 rounded-xl px-3 text-sm font-medium transition-colors ${
+            cloneOnly
+              ? "border-violet-400 bg-violet-500 text-white hover:bg-violet-600 hover:border-violet-500"
+              : "border-violet-200 bg-violet-50 text-violet-600 hover:bg-violet-100 hover:border-violet-300"
+          }`}
+        >
+          <Copy className="mr-1.5 h-3.5 w-3.5" />
+          Clone
+        </Button>
 
         {/* Price range */}
         <div className="flex items-center gap-2">

@@ -5,8 +5,7 @@ import { AccountCard } from "@/components/storefront/AccountCard";
 import { AccountFilters } from "@/components/storefront/AccountFilters";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { AutoScrollSlider } from "@/components/ui/AutoScrollSlider";
-import { Gamepad2, Search, BadgeCheck, ShieldCheck } from "lucide-react";
-import Image from "next/image";
+import { Gamepad2, Search, BadgeCheck, Flame, Clock } from "lucide-react";
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import type { PublicAccount } from "@/types/database";
@@ -14,22 +13,22 @@ import type { PublicAccount } from "@/types/database";
 export const revalidate = 0; // dynamic because filters change per request
 
 export const metadata: Metadata = {
-  title: "THC EFOOTBALL Shop - Cửa Hàng Tài Khoản eFootball",
+  title: "THC eFootball Shop - Cửa Hàng Tài Khoản eFootball",
   description:
-    "Chào mừng bạn đến với THC EFOOTBALL Shop. Chuyên cung cấp tài khoản eFootball chất lượng, nạp game an toàn và giao dịch nhanh chóng. Uy tín đặt lên hàng đầu!",
+    "Chào mừng bạn đến với THC eFootball Shop. Chuyên cung cấp tài khoản eFootball chất lượng, nạp game an toàn và giao dịch nhanh chóng. Uy tín đặt lên hàng đầu!",
   openGraph: {
-    title: "THC EFOOTBALL Shop - Cửa Hàng Tài Khoản eFootball",
+    title: "THC eFootball Shop - Cửa Hàng Tài Khoản eFootball",
     description:
-      "Chào mừng bạn đến với THC EFOOTBALL Shop. Chuyên cung cấp tài khoản eFootball chất lượng, nạp game an toàn và giao dịch nhanh chóng. Uy tín đặt lên hàng đầu!",
+      "Chào mừng bạn đến với THC eFootball Shop. Chuyên cung cấp tài khoản eFootball chất lượng, nạp game an toàn và giao dịch nhanh chóng. Uy tín đặt lên hàng đầu!",
     url: "/",
   },
 };
 
 type SearchParams = {
-  sort?: string;
   minPrice?: string;
   maxPrice?: string;
   q?: string;
+  clone?: string;
 };
 
 export default async function HomePage({
@@ -38,39 +37,25 @@ export default async function HomePage({
   searchParams: Promise<SearchParams>;
 }) {
   const params = await searchParams;
-  const sort = params.sort ?? "newest";
   const minPrice = params.minPrice ? parseFloat(params.minPrice) : null;
   const maxPrice = params.maxPrice ? parseFloat(params.maxPrice) : null;
   const searchQuery = params.q;
+  const cloneOnly = params.clone === "1";
 
   const supabase = await createSupabaseServerClient();
 
-  // Build the accounts query with sort + price + search filter
+  // Build the accounts query with price + search + clone filter
   let query = supabase.from("public_accounts").select("*");
 
   if (minPrice !== null) query = query.gte("selling_price", minPrice);
   if (maxPrice !== null) query = query.lte("selling_price", maxPrice);
   if (searchQuery) query = query.ilike("title", `%${searchQuery}%`);
+  if (cloneOnly) query = query.eq("is_clone", true);
 
-  // Always order by priority first
-  query = query.order("is_priority", { ascending: false, nullsFirst: false });
-
-  switch (sort) {
-    case "price_asc":
-      query = query.order("selling_price", { ascending: true });
-      break;
-    case "price_desc":
-      query = query.order("selling_price", { ascending: false });
-      break;
-    case "gp_desc":
-      query = query.order("total_gp", { ascending: false });
-      break;
-    case "strength_desc":
-      query = query.order("team_strength", { ascending: false });
-      break;
-    default:
-      query = query.order("created_at", { ascending: false });
-  }
+  // Priority accounts first, then newest
+  query = query
+    .order("is_priority", { ascending: false, nullsFirst: false })
+    .order("created_at", { ascending: false });
 
   const { data: accounts } = await query;
 
@@ -83,8 +68,11 @@ export default async function HomePage({
     )
     .order("created_at", { ascending: false });
 
-  const items = (accounts ?? []) as PublicAccount[];
+  const allItems = (accounts ?? []) as PublicAccount[];
   const soldItems = (soldAccountsRaw ?? []) as PublicAccount[];
+
+  const priorityItems = allItems.filter((a) => a.is_priority);
+  const regularItems = allItems.filter((a) => !a.is_priority);
 
   return (
     <div className="flex min-h-screen flex-col bg-slate-50">
@@ -128,19 +116,11 @@ export default async function HomePage({
 
           <ScrollReveal delay={120} className="mb-5 sm:mb-8">
             <Suspense fallback={null}>
-              <AccountFilters totalCount={items.length} />
+              <AccountFilters totalCount={allItems.length} />
             </Suspense>
           </ScrollReveal>
 
-          {items.length > 0 ? (
-            <div className="grid gap-4 sm:gap-0 sm:grid-cols-2 lg:grid-cols-3">
-              {items.map((account, i) => (
-                <ScrollReveal key={account.id} delay={i * 80} distance="sm">
-                  <AccountCard account={account} />
-                </ScrollReveal>
-              ))}
-            </div>
-          ) : (
+          {allItems.length === 0 ? (
             <ScrollReveal>
               <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-200 py-20">
                 <Search className="mb-4 h-12 w-12 text-slate-300" />
@@ -152,6 +132,52 @@ export default async function HomePage({
                 </p>
               </div>
             </ScrollReveal>
+          ) : (
+            <div className="space-y-10">
+              {/* Featured accounts */}
+              {priorityItems.length > 0 && (
+                <div>
+                  <ScrollReveal direction="left" className="mb-4">
+                    <div className="flex items-center gap-2">
+                      <Flame className="h-5 w-5 text-orange-500" />
+                      <h3 className="text-base font-semibold text-orange-600 uppercase tracking-wide">
+                        Tài Khoản Nổi Bật
+                      </h3>
+                    </div>
+                  </ScrollReveal>
+                  <div className="grid gap-4 sm:gap-0 sm:grid-cols-2 lg:grid-cols-3">
+                    {priorityItems.map((account, i) => (
+                      <ScrollReveal key={account.id} delay={i * 80} distance="sm">
+                        <AccountCard account={account} />
+                      </ScrollReveal>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Regular accounts (newest first) */}
+              {regularItems.length > 0 && (
+                <div>
+                  {priorityItems.length > 0 && (
+                    <ScrollReveal direction="left" className="mb-4">
+                      <div className="flex items-center gap-2">
+                        <Clock className="h-5 w-5 text-slate-400" />
+                        <h3 className="text-base font-semibold text-slate-500 uppercase tracking-wide">
+                          Tài Khoản Mới Đăng
+                        </h3>
+                      </div>
+                    </ScrollReveal>
+                  )}
+                  <div className="grid gap-4 sm:gap-0 sm:grid-cols-2 lg:grid-cols-3">
+                    {regularItems.map((account, i) => (
+                      <ScrollReveal key={account.id} delay={i * 80} distance="sm">
+                        <AccountCard account={account} />
+                      </ScrollReveal>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
           )}
         </section>
 

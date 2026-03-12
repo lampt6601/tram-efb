@@ -28,6 +28,7 @@ export interface Account {
   email_id: string | null;
   user_id: string;
   is_priority?: boolean;
+  is_clone?: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -45,6 +46,7 @@ export interface PublicAccount {
   total_coins_ios: number;
   team_strength: number;
   is_priority?: boolean;
+  is_clone?: boolean;
   server_region?: string | null;
   monthly_log_quota?: number | null;
   created_at: string;

@@ -45,7 +45,7 @@ export async function notifyAdminAction(
     const actionText = actionTypeMap[actionType] || actionType;
     const adminEmail = user.email || "Unknown Admin";
 
-    const subject = `[THC EFB] Thông báo: Quản trị viên đã thực hiện hành động "${actionText}"`;
+    const subject = `[THC Shop] ${actionText}: ${accountTitle}`;
     const htmlContent = `
       <div style="font-family: sans-serif; line-height: 1.5; color: #333;">
         <h2 style="color: #4f46e5;">Hành động quản trị mới</h2>
@@ -86,7 +86,7 @@ export async function notifyAdminAction(
             <td style="padding: 10px; border: 1px solid #ddd;">${new Date().toLocaleString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh" })}</td>
           </tr>
         </table>
-        <p style="margin-top: 30px; font-size: 12px; color: #777;">Email này được gửi tự động bởi hệ thống THC EFB.</p>
+        <p style="margin-top: 30px; font-size: 12px; color: #777;">Email này được gửi tự động bởi hệ thống THC eFootball Shop.</p>
       </div>
     `;
 
