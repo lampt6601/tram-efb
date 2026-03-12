@@ -172,6 +172,14 @@ export function AccountForm({ account }: AccountFormProps) {
     setPreviews((prev) => [...prev, ...newPreviews]);
   };
 
+  // Auto-select the first image as primary when none is set yet
+  useEffect(() => {
+    if (!primaryImage) {
+      const first = images[0] ?? previews[0] ?? null;
+      if (first) setPrimaryImage(first);
+    }
+  }, [images, previews]);
+
   useEffect(() => {
     const handleWindowPaste = (e: ClipboardEvent) => {
       const tag = (e.target as HTMLElement).tagName;
@@ -302,13 +310,22 @@ export function AccountForm({ account }: AccountFormProps) {
   const isPriorityValue = watch("isPriority");
   const isCloneValue = watch("isClone");
 
+  const SectionHeader = ({ label }: { label: string }) => (
+    <div className="flex items-center gap-3 pt-1">
+      <span className="text-[11px] font-semibold uppercase tracking-widest text-slate-400">
+        {label}
+      </span>
+      <div className="flex-1 border-t border-slate-100" />
+    </div>
+  );
+
   return (
     <div className="mx-auto max-w-3xl">
       <Link
         href="/admin/dashboard/accounts"
         className="mb-6 inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-indigo-600"
       >
-        <ArrowLeft className="h-4 w-4" /> Quay lại Danh sách Tài Khoản
+        <ArrowLeft className="h-4 w-4" /> Quay lại danh sách
       </Link>
 
       <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
@@ -316,85 +333,84 @@ export function AccountForm({ account }: AccountFormProps) {
           {isEditing ? "Chỉnh Sửa Tài Khoản" : "Thêm Tài Khoản Mới"}
         </h1>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="mt-6 space-y-6">
-          {/* Title */}
+        <form onSubmit={handleSubmit(onSubmit)} className="mt-5 space-y-5">
+
+          {/* ── Thông tin cơ bản ── */}
+          <SectionHeader label="Thông tin" />
+
           <div>
-            <Label className="mb-1.5 text-slate-700">
-              Tiêu Đề <span className="text-red-500">*</span>
+            <Label className="text-slate-700">
+              Tiêu đề <span className="text-red-500">*</span>
             </Label>
             <Input
               type="text"
               {...register("title", { required: "Vui lòng nhập tiêu đề" })}
               aria-invalid={!!errors.title}
               className={cn(inputClass, "mt-1.5")}
-              placeholder="ví dụ: Tài khoản Android Cực VIP - Lực Chiến 5000+"
+              placeholder="ví dụ: Android Cực VIP — Lực Chiến 5000+"
             />
             {errors.title && (
-              <p className="mt-1 text-xs text-red-600">
-                {errors.title.message}
-              </p>
+              <p className="mt-1 text-xs text-red-600">{errors.title.message}</p>
             )}
           </div>
 
-          {/* Prices */}
+          {/* ── Giá ── */}
+          <SectionHeader label="Giá (VNĐ)" />
+
           <div className="grid gap-4 sm:grid-cols-3">
             <div>
-              <Label className="mb-1.5 text-slate-700">
-                Giá Nhập (VNĐ) <span className="text-red-500">*</span>
+              <Label className="text-slate-700">
+                Giá nhập <span className="text-red-500">*</span>
               </Label>
               <Input
                 type="number"
                 {...register("purchasePrice", {
                   required: "Vui lòng nhập giá nhập",
-                  min: { value: 0, message: "Giá nhập phải >= 0" },
+                  min: { value: 0, message: "Phải >= 0" },
                 })}
                 aria-invalid={!!errors.purchasePrice}
                 min="0"
                 step="1"
                 className={cn(inputClass, "mt-1.5")}
+                placeholder="0"
               />
               {errors.purchasePrice && (
-                <p className="mt-1 text-xs text-red-600">
-                  {errors.purchasePrice.message}
-                </p>
+                <p className="mt-1 text-xs text-red-600">{errors.purchasePrice.message}</p>
               )}
             </div>
             <div>
-              <Label className="mb-1.5 text-slate-700">
-                Giá Bán Hiện Tại (VNĐ) <span className="text-red-500">*</span>
+              <Label className="text-slate-700">
+                Giá bán <span className="text-red-500">*</span>
               </Label>
               <Input
                 type="number"
                 {...register("sellingPrice", {
                   required: "Vui lòng nhập giá bán",
-                  min: { value: 0, message: "Giá bán phải >= 0" },
+                  min: { value: 0, message: "Phải >= 0" },
                 })}
                 aria-invalid={!!errors.sellingPrice}
                 min="0"
                 step="1"
                 className={cn(inputClass, "mt-1.5")}
+                placeholder="0"
               />
               {errors.sellingPrice && (
-                <p className="mt-1 text-xs text-red-600">
-                  {errors.sellingPrice.message}
-                </p>
+                <p className="mt-1 text-xs text-red-600">{errors.sellingPrice.message}</p>
               )}
             </div>
             <div>
-              <Label className="mb-1.5 text-slate-700">
-                Giá Bị Gạch / Giá Gốc{" "}
-                <span className="text-slate-400 font-normal">(Tuỳ chọn)</span>
+              <Label className="text-slate-700">
+                Giá gốc{" "}
+                <span className="font-normal text-slate-400">(gạch ngang)</span>
               </Label>
               <Input
                 type="number"
                 {...register("originalPrice", {
-                  min: { value: 0, message: "Giá gốc phải >= 0" },
+                  min: { value: 0, message: "Phải >= 0" },
                   validate: (value, formValues) => {
                     if (!value) return true;
-                    const original = parseInt(value);
-                    const selling = parseInt(formValues.sellingPrice);
-                    if (original <= selling)
-                      return "Giá bị gạch phải lớn hơn giá bán";
+                    if (parseInt(value) <= parseInt(formValues.sellingPrice))
+                      return "Phải lớn hơn giá bán";
                     return true;
                   },
                 })}
@@ -405,199 +421,181 @@ export function AccountForm({ account }: AccountFormProps) {
                 placeholder="Để trống nếu không sale"
               />
               {errors.originalPrice && (
-                <p className="mt-1 text-xs text-red-600">
-                  {errors.originalPrice.message}
-                </p>
+                <p className="mt-1 text-xs text-red-600">{errors.originalPrice.message}</p>
               )}
             </div>
           </div>
 
-          {/* Status and Priority */}
+          {/* ── Cài đặt ── */}
+          <SectionHeader label="Cài đặt" />
+
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <Label className="mb-1.5 text-slate-700">
-                Trạng Thái <span className="text-red-500">*</span>
+              <Label className="text-slate-700">
+                Trạng thái <span className="text-red-500">*</span>
               </Label>
-              <select
-                {...register("status")}
-                className={cn(selectClass, "mt-1.5")}
-              >
-                <option value="Available">Sẵn Sàng</option>
-                <option value="Pending">Đang Chờ</option>
-                <option value="Sold">Đã Bán</option>
+              <select {...register("status")} className={cn(selectClass, "mt-1.5")}>
+                <option value="Available">Sẵn sàng</option>
+                <option value="Pending">Đang chờ</option>
+                <option value="Sold">Đã bán</option>
               </select>
             </div>
 
-            <div className="flex flex-col justify-center gap-2">
-              <Label className="mb-1.5 hidden text-slate-700 sm:flex">
-                Tùy Chọn Khác
-              </Label>
-              <div className="flex h-[42px] items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 px-4 mt-1.5">
-                <Controller
-                  name="isPriority"
-                  control={control}
-                  render={({ field }) => (
-                    <Checkbox
-                      id="isPriority"
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
+            <div>
+              <Label className="text-slate-700">Phân loại</Label>
+              <div className="mt-1.5 grid grid-cols-2 gap-2">
+                <div
+                  className={cn(
+                    "flex cursor-pointer items-center gap-2.5 rounded-xl border px-3 py-2.5 transition-colors",
+                    isPriorityValue
+                      ? "border-amber-300 bg-amber-50"
+                      : "border-slate-200 bg-slate-50 hover:border-slate-300",
                   )}
-                />
-                <label
-                  htmlFor="isPriority"
-                  className="flex flex-1 cursor-pointer items-center justify-between gap-1.5 text-sm font-medium text-slate-700 select-none"
+                  onClick={() => {
+                    const el = document.getElementById("isPriority");
+                    el?.click();
+                  }}
                 >
-                  Tài Khoản Nổi Bật
-                  <Star
-                    className={`h-4 w-4 ${isPriorityValue ? "text-amber-500 fill-amber-500" : "text-slate-400"}`}
+                  <Controller
+                    name="isPriority"
+                    control={control}
+                    render={({ field }) => (
+                      <Checkbox
+                        id="isPriority"
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    )}
                   />
-                </label>
-              </div>
-              <div className="flex h-[42px] items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 px-4">
-                <Controller
-                  name="isClone"
-                  control={control}
-                  render={({ field }) => (
-                    <Checkbox
-                      id="isClone"
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
+                  <label
+                    htmlFor="isPriority"
+                    className="flex flex-1 cursor-pointer items-center justify-between text-sm font-medium text-slate-700 select-none"
+                  >
+                    Nổi bật
+                    <Star className={`h-4 w-4 ${isPriorityValue ? "fill-amber-500 text-amber-500" : "text-slate-300"}`} />
+                  </label>
+                </div>
+
+                <div
+                  className={cn(
+                    "flex cursor-pointer items-center gap-2.5 rounded-xl border px-3 py-2.5 transition-colors",
+                    isCloneValue
+                      ? "border-violet-300 bg-violet-50"
+                      : "border-slate-200 bg-slate-50 hover:border-slate-300",
                   )}
-                />
-                <label
-                  htmlFor="isClone"
-                  className="flex flex-1 cursor-pointer items-center justify-between gap-1.5 text-sm font-medium text-slate-700 select-none"
+                  onClick={() => {
+                    const el = document.getElementById("isClone");
+                    el?.click();
+                  }}
                 >
-                  Tài Khoản Clone
-                  <Copy
-                    className={`h-4 w-4 ${isCloneValue ? "text-violet-500" : "text-slate-400"}`}
+                  <Controller
+                    name="isClone"
+                    control={control}
+                    render={({ field }) => (
+                      <Checkbox
+                        id="isClone"
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    )}
                   />
-                </label>
+                  <label
+                    htmlFor="isClone"
+                    className="flex flex-1 cursor-pointer items-center justify-between text-sm font-medium text-slate-700 select-none"
+                  >
+                    Clone
+                    <Copy className={`h-4 w-4 ${isCloneValue ? "text-violet-500" : "text-slate-300"}`} />
+                  </label>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Stats */}
-          <div className="grid gap-4 sm:grid-cols-3 lg:grid-cols-4">
+          {/* ── Chỉ số ── */}
+          <SectionHeader label="Chỉ số" />
+
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
             <div>
-              <Label className="mb-1.5 text-slate-700">
-                Tổng GP{" "}
-                <span className="text-slate-400 font-normal">(Tuỳ chọn)</span>
-              </Label>
+              <Label className="text-slate-700">GP</Label>
               <Input
                 type="number"
-                {...register("totalGp", {
-                  min: { value: 0, message: "Tổng GP phải >= 0" },
-                })}
+                {...register("totalGp", { min: { value: 0, message: "Phải >= 0" } })}
                 aria-invalid={!!errors.totalGp}
                 min="0"
                 className={cn(inputClass, "mt-1.5")}
+                placeholder="0"
               />
               {errors.totalGp && (
-                <p className="mt-1 text-xs text-red-600">
-                  {errors.totalGp.message}
-                </p>
+                <p className="mt-1 text-xs text-red-600">{errors.totalGp.message}</p>
               )}
             </div>
             <div>
-              <Label className="mb-1.5 text-slate-700">
-                Coins (Android){" "}
-                <span className="text-slate-400 font-normal">(Tuỳ chọn)</span>
-              </Label>
+              <Label className="text-slate-700">Coins 🤖</Label>
               <Input
                 type="number"
-                {...register("totalCoinsAndroid", {
-                  min: { value: 0, message: "Coins (Android) phải >= 0" },
-                })}
+                {...register("totalCoinsAndroid", { min: { value: 0, message: "Phải >= 0" } })}
                 aria-invalid={!!errors.totalCoinsAndroid}
                 min="0"
                 className={cn(inputClass, "mt-1.5")}
+                placeholder="0"
               />
               {errors.totalCoinsAndroid && (
-                <p className="mt-1 text-xs text-red-600">
-                  {errors.totalCoinsAndroid.message}
-                </p>
+                <p className="mt-1 text-xs text-red-600">{errors.totalCoinsAndroid.message}</p>
               )}
             </div>
             <div>
-              <Label className="mb-1.5 text-slate-700">
-                Coins (iOS){" "}
-                <span className="text-slate-400 font-normal">(Tuỳ chọn)</span>
-              </Label>
+              <Label className="text-slate-700">Coins 🍎</Label>
               <Input
                 type="number"
-                {...register("totalCoinsIos", {
-                  min: { value: 0, message: "Coins (iOS) phải >= 0" },
-                })}
+                {...register("totalCoinsIos", { min: { value: 0, message: "Phải >= 0" } })}
                 aria-invalid={!!errors.totalCoinsIos}
                 min="0"
                 className={cn(inputClass, "mt-1.5")}
+                placeholder="0"
               />
               {errors.totalCoinsIos && (
-                <p className="mt-1 text-xs text-red-600">
-                  {errors.totalCoinsIos.message}
-                </p>
+                <p className="mt-1 text-xs text-red-600">{errors.totalCoinsIos.message}</p>
               )}
             </div>
             <div>
-              <Label className="mb-1.5 text-slate-700">
-                Lực Chiến Đội Hình{" "}
-                <span className="text-slate-400 font-normal">(Tuỳ chọn)</span>
-              </Label>
+              <Label className="text-slate-700">Lực chiến</Label>
               <Input
                 type="number"
-                {...register("teamStrength", {
-                  min: { value: 0, message: "Lực chiến phải >= 0" },
-                })}
+                {...register("teamStrength", { min: { value: 0, message: "Phải >= 0" } })}
                 aria-invalid={!!errors.teamStrength}
                 min="0"
                 className={cn(inputClass, "mt-1.5")}
+                placeholder="0"
               />
               {errors.teamStrength && (
-                <p className="mt-1 text-xs text-red-600">
-                  {errors.teamStrength.message}
-                </p>
+                <p className="mt-1 text-xs text-red-600">{errors.teamStrength.message}</p>
               )}
             </div>
             <div>
-              <Label className="mb-1.5 text-slate-700">
-                Số lượng log{" "}
-                <span className="text-slate-400 font-normal">(Tuỳ chọn)</span>
-              </Label>
+              <Label className="text-slate-700">Log / tháng</Label>
               <Input
                 type="number"
-                {...register("monthlyLogQuota", {
-                  min: { value: 1, message: "Số lượng log phải >= 1" },
-                })}
+                {...register("monthlyLogQuota", { min: { value: 1, message: "Phải >= 1" } })}
                 aria-invalid={!!errors.monthlyLogQuota}
                 min="1"
                 step="1"
                 className={cn(inputClass, "mt-1.5")}
+                placeholder="—"
               />
               {errors.monthlyLogQuota && (
-                <p className="mt-1 text-xs text-red-600">
-                  {errors.monthlyLogQuota.message}
-                </p>
+                <p className="mt-1 text-xs text-red-600">{errors.monthlyLogQuota.message}</p>
               )}
             </div>
           </div>
 
-          {/* Email & Server Region */}
+          {/* ── Liên kết ── */}
+          <SectionHeader label="Liên kết" />
+
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <Label className="mb-1.5 text-slate-700">
-                Email Liên Kết
-                <span className="ml-1 text-xs font-normal text-slate-400">
-                  (chỉ hiển thị email chưa liên kết)
-                </span>
-              </Label>
-              <select
-                {...register("emailId")}
-                className={cn(selectClass, "mt-1.5")}
-              >
-                <option value="">Không có email liên kết</option>
+              <Label className="text-slate-700">Email</Label>
+              <select {...register("emailId")} className={cn(selectClass, "mt-1.5")}>
+                <option value="">Không có</option>
                 {availableEmails.map((e) => (
                   <option key={e.id} value={e.id}>
                     {e.email_address}
@@ -605,18 +603,9 @@ export function AccountForm({ account }: AccountFormProps) {
                 ))}
               </select>
             </div>
-
             <div>
-              <Label className="mb-1.5 text-slate-700">
-                Server / Vùng
-                <span className="ml-1 text-xs font-normal text-slate-400">
-                  (eFootball region)
-                </span>
-              </Label>
-              <select
-                {...register("serverRegion")}
-                className={cn(selectClass, "mt-1.5")}
-              >
+              <Label className="text-slate-700">Server / Vùng</Label>
+              <select {...register("serverRegion")} className={cn(selectClass, "mt-1.5")}>
                 <option value="">Chưa chọn</option>
                 <option value="Japan">Nhật (Japan)</option>
                 <option value="Morocco">Maroc (Morocco)</option>
@@ -626,53 +615,42 @@ export function AccountForm({ account }: AccountFormProps) {
             </div>
           </div>
 
-          {/* Images */}
-          <div>
-            <Label className="mb-1.5 text-slate-700">
-              Hình Ảnh <span className="text-red-500">*</span>
-            </Label>
+          {/* ── Hình ảnh ── */}
+          <SectionHeader label="Hình ảnh" />
 
+          <div>
             <div
               onDragOver={onDragOver}
               onDrop={onDrop}
               tabIndex={0}
-              className="mt-1.5 flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-300 bg-slate-50/50 px-6 py-8 transition-colors hover:border-indigo-500 hover:bg-slate-50 relative outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
+              className="flex items-center justify-center gap-4 rounded-xl border-2 border-dashed border-slate-300 bg-slate-50/50 px-6 py-5 transition-colors hover:border-indigo-400 hover:bg-slate-50 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
             >
-              <UploadCloud
-                className="mb-3 h-10 w-10 text-slate-400"
-                aria-hidden="true"
-              />
-              <div className="flex text-sm text-slate-600">
-                <label
-                  htmlFor="file-upload"
-                  className="relative cursor-pointer rounded-md font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
-                >
-                  <span>Tải ảnh lên</span>
-                  <input
-                    id="file-upload"
-                    name="file-upload"
-                    type="file"
-                    multiple
-                    accept="image/*"
-                    className="sr-only"
-                    onChange={handleFileChange}
-                  />
-                </label>
-                <p className="pl-1">hoặc kéo thả vào đây</p>
+              <UploadCloud className="h-8 w-8 shrink-0 text-slate-400" aria-hidden="true" />
+              <div className="flex flex-col gap-0.5">
+                <div className="flex items-center gap-1 text-sm text-slate-600">
+                  <label
+                    htmlFor="file-upload"
+                    className="cursor-pointer font-semibold text-indigo-600 hover:text-indigo-500"
+                  >
+                    Tải ảnh lên
+                    <input
+                      id="file-upload"
+                      name="file-upload"
+                      type="file"
+                      multiple
+                      accept="image/*"
+                      className="sr-only"
+                      onChange={handleFileChange}
+                    />
+                  </label>
+                  <span>hoặc kéo thả vào đây</span>
+                </div>
+                <p className="text-xs text-slate-400">
+                  PNG, JPG, GIF · tối đa 5MB ·{" "}
+                  <kbd className="rounded border border-slate-200 bg-white px-1 py-0.5 font-mono text-[10px] text-slate-500">Ctrl+V</kbd>
+                  {" "}để dán
+                </p>
               </div>
-              <p className="text-xs leading-5 text-slate-500 mt-1">
-                PNG, JPG, GIF tối đa 5MB
-              </p>
-              <p className="mt-2 flex items-center gap-1 text-xs text-slate-400">
-                <kbd className="rounded border border-slate-200 bg-white px-1.5 py-0.5 font-mono text-[10px] text-slate-500 shadow-sm">
-                  Ctrl
-                </kbd>
-                +
-                <kbd className="rounded border border-slate-200 bg-white px-1.5 py-0.5 font-mono text-[10px] text-slate-500 shadow-sm">
-                  V
-                </kbd>
-                để dán ảnh từ clipboard
-              </p>
             </div>
 
             {imageError && (
@@ -680,44 +658,33 @@ export function AccountForm({ account }: AccountFormProps) {
             )}
 
             {(images.length > 0 || previews.length > 0) && (
-              <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+              <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
                 {images.map((img, i) => (
                   <div
                     key={`existing-${i}`}
-                    className={`relative aspect-video rounded-xl border-2 bg-slate-50 shadow-sm overflow-hidden ${
-                      primaryImage === img
-                        ? "border-indigo-500"
-                        : "border-slate-200"
-                    }`}
+                    className={cn(
+                      "relative aspect-video overflow-hidden rounded-xl border-2 bg-slate-50 shadow-sm",
+                      primaryImage === img ? "border-indigo-500" : "border-slate-200",
+                    )}
                   >
                     {primaryImage === img && (
-                      <div className="absolute top-2 left-2 z-10 flex items-center gap-1 rounded-md bg-indigo-600/90 px-2 py-0.5 text-[10px] font-medium tracking-wide text-white shadow-sm backdrop-blur-sm">
-                        <Star className="h-3 w-3 fill-current" /> Trình diện
+                      <div className="absolute left-2 top-2 z-10 flex items-center gap-1 rounded-md bg-indigo-600/90 px-2 py-0.5 text-[10px] font-medium tracking-wide text-white shadow-sm backdrop-blur-sm">
+                        <Star className="h-3 w-3 fill-current" /> Đại diện
                       </div>
                     )}
-                    <img
-                      src={img}
-                      alt={`Existing account image ${i + 1}`}
-                      className="h-full w-full object-cover"
-                    />
+                    <img src={img} alt={`Ảnh ${i + 1}`} className="h-full w-full object-cover" />
                     <div className="absolute bottom-2 right-2 z-10 flex gap-1.5">
                       {primaryImage !== img && (
-                        <button
-                          type="button"
-                          onClick={() => setPrimaryImage(img)}
+                        <button type="button" onClick={() => setPrimaryImage(img)}
                           className="rounded-full bg-white/90 p-1.5 text-indigo-600 shadow-md backdrop-blur-sm hover:bg-white"
-                          title="Đặt làm ảnh đại diện"
-                        >
-                          <Star className="h-4 w-4" />
+                          title="Đặt làm ảnh đại diện">
+                          <Star className="h-3.5 w-3.5" />
                         </button>
                       )}
-                      <button
-                        type="button"
-                        onClick={() => removeExistingImage(i)}
+                      <button type="button" onClick={() => removeExistingImage(i)}
                         className="rounded-full bg-red-500/90 p-1.5 text-white shadow-md backdrop-blur-sm hover:bg-red-600"
-                        title="Xóa ảnh"
-                      >
-                        <X className="h-4 w-4" />
+                        title="Xóa ảnh">
+                        <X className="h-3.5 w-3.5" />
                       </button>
                     </div>
                   </div>
@@ -726,44 +693,30 @@ export function AccountForm({ account }: AccountFormProps) {
                 {previews.map((preview, i) => (
                   <div
                     key={`new-${i}`}
-                    className={`relative aspect-video rounded-xl border-2 bg-slate-50 shadow-sm overflow-hidden ${
-                      primaryImage === preview
-                        ? "border-indigo-500"
-                        : "border-slate-200"
-                    }`}
-                  >
-                    {primaryImage === preview ? (
-                      <div className="absolute top-2 left-2 z-10 flex items-center gap-1 rounded-md bg-indigo-600/90 px-2 py-0.5 text-[10px] font-medium tracking-wide text-white shadow-sm backdrop-blur-sm">
-                        <Star className="h-3 w-3 fill-current" /> Trình diện
-                      </div>
-                    ) : (
-                      <div className="absolute top-2 left-2 z-10 rounded-md bg-slate-800/80 px-2 py-0.5 text-[10px] font-medium tracking-wide text-white shadow-sm backdrop-blur-sm">
-                        MỚI
-                      </div>
+                    className={cn(
+                      "relative aspect-video overflow-hidden rounded-xl border-2 bg-slate-50 shadow-sm",
+                      primaryImage === preview ? "border-indigo-500" : "border-slate-200",
                     )}
-                    <img
-                      src={preview}
-                      alt={`New upload preview ${i + 1}`}
-                      className="h-full w-full object-cover"
-                    />
+                  >
+                    <div className="absolute left-2 top-2 z-10 flex items-center gap-1 rounded-md px-2 py-0.5 text-[10px] font-medium tracking-wide text-white shadow-sm backdrop-blur-sm
+                      bg-indigo-600/90">
+                      {primaryImage === preview ? (
+                        <><Star className="h-3 w-3 fill-current" /> Đại diện</>
+                      ) : "MỚI"}
+                    </div>
+                    <img src={preview} alt={`Ảnh mới ${i + 1}`} className="h-full w-full object-cover" />
                     <div className="absolute bottom-2 right-2 z-20 flex gap-1.5">
                       {primaryImage !== preview && (
-                        <button
-                          type="button"
-                          onClick={() => setPrimaryImage(preview)}
+                        <button type="button" onClick={() => setPrimaryImage(preview)}
                           className="rounded-full bg-white/90 p-1.5 text-indigo-600 shadow-md backdrop-blur-sm hover:bg-white"
-                          title="Đặt làm ảnh đại diện"
-                        >
-                          <Star className="h-4 w-4" />
+                          title="Đặt làm ảnh đại diện">
+                          <Star className="h-3.5 w-3.5" />
                         </button>
                       )}
-                      <button
-                        type="button"
-                        onClick={() => removeNewImage(i)}
+                      <button type="button" onClick={() => removeNewImage(i)}
                         className="rounded-full bg-red-500/90 p-1.5 text-white shadow-md backdrop-blur-sm hover:bg-red-600"
-                        title="Xóa ảnh"
-                      >
-                        <X className="h-4 w-4" />
+                        title="Xóa ảnh">
+                        <X className="h-3.5 w-3.5" />
                       </button>
                     </div>
                   </div>
@@ -772,19 +725,15 @@ export function AccountForm({ account }: AccountFormProps) {
             )}
           </div>
 
-          {/* Submit */}
-          <div className="flex gap-3 border-t border-slate-100 pt-6">
+          {/* ── Submit ── */}
+          <div className="flex gap-3 border-t border-slate-100 pt-5">
             <Button
               type="submit"
               disabled={loading}
               className="h-10 bg-indigo-600 px-6 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-50"
             >
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {loading
-                ? "Đang lưu..."
-                : isEditing
-                  ? "Cập Nhật Tài Khoản"
-                  : "Tạo Tài Khoản"}
+              {loading ? "Đang lưu..." : isEditing ? "Cập nhật" : "Tạo tài khoản"}
             </Button>
             <Button
               variant="outline"

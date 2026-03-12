@@ -331,7 +331,7 @@ export default async function AccountDetailPage({
                   )}
                   {account.monthly_log_quota != null && (
                     <span className="inline-flex items-center rounded-full bg-indigo-50 px-3 py-1 text-xs font-medium text-indigo-700">
-                      Log: {account.monthly_log_quota} lần/tháng
+                      Số lượng log: {account.monthly_log_quota}
                     </span>
                   )}
                 </div>
