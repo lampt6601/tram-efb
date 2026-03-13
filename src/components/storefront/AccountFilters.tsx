@@ -6,6 +6,7 @@ import { useDebounce } from "@/hooks/use-debounce";
 import { SlidersHorizontal, Search, Copy } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { PriceInput } from "@/components/ui/price-input";
 
 const inputClass =
   "h-9 rounded-xl border-slate-200 px-3 text-sm text-slate-700 focus-visible:border-indigo-400 focus-visible:ring-indigo-400/30";
@@ -129,23 +130,17 @@ export function AccountFilters({ totalCount }: { totalCount: number }) {
         <div className="flex items-center gap-2">
           <SlidersHorizontal className="h-4 w-4 shrink-0 text-slate-400" />
           <div className="flex items-center gap-1.5">
-            <Input
-              type="number"
+            <PriceInput
               placeholder="Giá từ"
               value={localMinPrice}
-              min={0}
-              step={1}
-              onChange={(e) => setLocalMinPrice(e.target.value)}
+              onChange={setLocalMinPrice}
               className={`${inputClass} w-24 sm:w-28`}
             />
             <span className="text-sm text-slate-400">—</span>
-            <Input
-              type="number"
+            <PriceInput
               placeholder="đến"
               value={localMaxPrice}
-              min={0}
-              step={1}
-              onChange={(e) => setLocalMaxPrice(e.target.value)}
+              onChange={setLocalMaxPrice}
               className={`${inputClass} w-24 sm:w-28`}
             />
           </div>

@@ -49,6 +49,19 @@ export async function approveAccount(accountId: string) {
   revalidatePath("/admin/dashboard/super/accounts");
 }
 
+export async function unapproveAccount(accountId: string) {
+  await verifySuperAdmin();
+  const service = createSupabaseServiceClient();
+  const { error } = await service
+    .from("accounts")
+    .update({ is_approved: false })
+    .eq("id", accountId);
+  if (error) throw new Error(error.message);
+  revalidatePath("/admin/dashboard/super/pending");
+  revalidatePath("/admin/dashboard/super/accounts");
+  revalidatePath("/admin/dashboard/accounts");
+}
+
 export async function superAdminDeleteAccount(accountId: string) {
   await verifySuperAdmin();
   const service = createSupabaseServiceClient();
