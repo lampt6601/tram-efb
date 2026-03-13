@@ -57,6 +57,12 @@ export interface AccountWithEmail extends Account {
   emails?: Email | null;
 }
 
+export interface AdminSettings {
+  user_id: string;
+  auto_approve: boolean;
+  created_at: string;
+}
+
 export interface DashboardMetrics {
   totalAccounts: number;
   availableAccounts: number;

@@ -13,6 +13,11 @@ export default async function DashboardLayout({
   } = await supabase.auth.getUser();
 
   const isSuperAdmin = checkIsSuperAdmin(user?.email);
+  const adminName = (user?.user_metadata?.full_name as string | undefined) ?? "";
 
-  return <AdminShell isSuperAdmin={isSuperAdmin}>{children}</AdminShell>;
+  return (
+    <AdminShell isSuperAdmin={isSuperAdmin} adminName={adminName} adminEmail={user?.email ?? ""}>
+      {children}
+    </AdminShell>
+  );
 }

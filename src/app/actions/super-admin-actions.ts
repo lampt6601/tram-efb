@@ -27,6 +27,16 @@ async function getSuperAdminId(): Promise<string> {
   return owner.id;
 }
 
+export async function setAdminAutoApprove(adminId: string, autoApprove: boolean) {
+  await verifySuperAdmin();
+  const service = createSupabaseServiceClient();
+  const { error } = await service
+    .from("admin_settings")
+    .upsert({ user_id: adminId, auto_approve: autoApprove }, { onConflict: "user_id" });
+  if (error) throw new Error(error.message);
+  revalidatePath("/admin/dashboard/super/admins");
+}
+
 export async function approveAccount(accountId: string) {
   await verifySuperAdmin();
   const service = createSupabaseServiceClient();
@@ -63,17 +73,28 @@ export async function superAdminUpdateAccount(
   revalidatePath(`/admin/dashboard/super/accounts/${accountId}/edit`);
 }
 
-export async function createAdmin(email: string, password: string) {
+export async function createAdmin(email: string, password: string, name?: string) {
   await verifySuperAdmin();
   const service = createSupabaseServiceClient();
   const { data, error } = await service.auth.admin.createUser({
     email,
     password,
     email_confirm: true,
+    user_metadata: name ? { full_name: name } : undefined,
   });
   if (error) throw new Error(error.message);
   revalidatePath("/admin/dashboard/super/admins");
   return data.user;
+}
+
+export async function updateAdminProfile(adminId: string, name: string) {
+  await verifySuperAdmin();
+  const service = createSupabaseServiceClient();
+  const { error } = await service.auth.admin.updateUserById(adminId, {
+    user_metadata: { full_name: name },
+  });
+  if (error) throw new Error(error.message);
+  revalidatePath("/admin/dashboard/super/admins");
 }
 
 export async function deleteAdmin(adminId: string) {

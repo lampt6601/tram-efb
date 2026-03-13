@@ -13,12 +13,13 @@ export function CreateAdminModal() {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
 
-  const handleClose = () => { if (!loading) { setOpen(false); setEmail(""); setPassword(""); setError(""); } };
+  const handleClose = () => { if (!loading) { setOpen(false); setName(""); setEmail(""); setPassword(""); setError(""); } };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,8 +27,8 @@ export function CreateAdminModal() {
     if (password.length < 6) { setError("Mật khẩu phải có ít nhất 6 ký tự."); return; }
     setLoading(true); setError("");
     try {
-      await createAdmin(email.trim(), password);
-      toast.success(`Đã tạo admin ${email} thành công`);
+      await createAdmin(email.trim(), password, name.trim() || undefined);
+      toast.success(`Đã tạo admin ${name.trim() || email} thành công`);
       setOpen(false);
       router.refresh();
     } catch (err) {
@@ -64,10 +65,16 @@ export function CreateAdminModal() {
                 </div>
                 <div className="space-y-4">
                   <div>
+                    <Label className="text-slate-700">Tên</Label>
+                    <Input type="text" value={name} onChange={(e) => setName(e.target.value)}
+                      placeholder="Nguyễn Văn A" disabled={loading}
+                      className="mt-1.5 rounded-xl border-slate-300" autoFocus />
+                  </div>
+                  <div>
                     <Label className="text-slate-700">Email</Label>
                     <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)}
                       placeholder="admin@example.com" disabled={loading}
-                      className="mt-1.5 rounded-xl border-slate-300" autoFocus />
+                      className="mt-1.5 rounded-xl border-slate-300" />
                   </div>
                   <div>
                     <Label className="text-slate-700">Mật Khẩu</Label>

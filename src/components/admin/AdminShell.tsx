@@ -7,9 +7,11 @@ import { Menu } from "lucide-react";
 interface AdminShellProps {
   children: ReactNode;
   isSuperAdmin?: boolean;
+  adminName?: string;
+  adminEmail?: string;
 }
 
-export function AdminShell({ children, isSuperAdmin = false }: AdminShellProps) {
+export function AdminShell({ children, isSuperAdmin = false, adminName = "", adminEmail = "" }: AdminShellProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
@@ -18,6 +20,8 @@ export function AdminShell({ children, isSuperAdmin = false }: AdminShellProps) 
         open={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
         isSuperAdmin={isSuperAdmin}
+        adminName={adminName}
+        adminEmail={adminEmail}
       />
       <div className="flex flex-1 flex-col overflow-hidden">
         <header className="flex h-16 items-center gap-4 border-b border-slate-200 bg-white px-4 lg:px-8">

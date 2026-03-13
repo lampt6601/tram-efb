@@ -6,6 +6,7 @@ import { ClipboardCheck, Gamepad2, CheckCircle } from "lucide-react";
 import { formatCurrency } from "@/lib/constants";
 import { StatusBadge } from "@/components/ui/Badge";
 import { ApproveButton } from "./ApproveButton";
+import { PendingAccountDrawer } from "./PendingAccountDrawer";
 import {
   Table,
   TableBody,
@@ -94,6 +95,7 @@ export default async function PendingApprovalPage() {
                     Ngày Tạo
                   </TableHead>
                   <TableHead className="text-slate-500">Hành Động</TableHead>
+                  <TableHead className="text-slate-500">Chi Tiết</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -127,6 +129,12 @@ export default async function PendingApprovalPage() {
                       <ApproveButton
                         accountId={account.id}
                         accountTitle={account.title}
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <PendingAccountDrawer
+                        account={account}
+                        adminEmail={adminEmailMap.get(account.user_id) ?? account.user_id}
                       />
                     </TableCell>
                   </TableRow>

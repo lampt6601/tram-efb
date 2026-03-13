@@ -6,9 +6,12 @@ import { Users, ShieldCheck, Gamepad2, Mail, Calendar, Clock } from "lucide-reac
 import { CreateAdminModal } from "./CreateAdminModal";
 import { DeleteAdminButton } from "./DeleteAdminButton";
 import { ResetPasswordModal } from "./ResetPasswordModal";
+import { EditAdminNameModal } from "./EditAdminNameModal";
+import { AutoApproveToggle } from "./AutoApproveToggle";
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
+import type { AdminSettings } from "@/types/database";
 
 function fmtDate(d: string | null) {
   if (!d) return "—";
@@ -29,14 +32,25 @@ export default async function SuperAdminsPage() {
   const { data: usersData } = await service.auth.admin.listUsers({ perPage: 1000 });
   const allUsers = usersData?.users ?? [];
 
-  const { data: accountRows } = await service.from("accounts").select("user_id");
-  const { data: emailRows } = await service.from("emails").select("user_id");
+  const [
+    { data: accountRows },
+    { data: emailRows },
+    { data: settingsRows },
+  ] = await Promise.all([
+    service.from("accounts").select("user_id"),
+    service.from("emails").select("user_id"),
+    service.from("admin_settings").select("user_id, auto_approve"),
+  ]);
 
   const acctCount = new Map<string, number>();
   for (const r of accountRows ?? []) acctCount.set(r.user_id, (acctCount.get(r.user_id) ?? 0) + 1);
 
   const emailCount = new Map<string, number>();
   for (const r of emailRows ?? []) emailCount.set(r.user_id, (emailCount.get(r.user_id) ?? 0) + 1);
+
+  const autoApproveMap = new Map<string, boolean>(
+    (settingsRows as AdminSettings[] ?? []).map((s) => [s.user_id, s.auto_approve])
+  );
 
   const owner = allUsers.find((u) => u.email === SUPER_ADMIN_EMAIL);
   const admins = allUsers
@@ -68,7 +82,10 @@ export default async function SuperAdminsPage() {
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
-                <span className="text-sm font-semibold text-slate-900 truncate">{owner.email}</span>
+                {owner.user_metadata?.full_name && (
+                  <span className="text-sm font-bold text-slate-900 truncate">{owner.user_metadata.full_name}</span>
+                )}
+                <span className="text-sm font-semibold text-slate-500 truncate">{owner.email}</span>
                 <span className="shrink-0 rounded-full bg-amber-200 px-2 py-0.5 text-xs font-semibold text-amber-800">Owner</span>
               </div>
               <div className="mt-1 flex flex-wrap gap-3 text-xs text-slate-500">
@@ -89,11 +106,12 @@ export default async function SuperAdminsPage() {
           <Table>
             <TableHeader>
               <TableRow className="bg-slate-50 hover:bg-slate-50">
-                <TableHead className="text-slate-500">Email Admin</TableHead>
+                <TableHead className="text-slate-500">Admin</TableHead>
                 <TableHead className="hidden text-slate-500 sm:table-cell">Tài Khoản</TableHead>
                 <TableHead className="hidden text-slate-500 sm:table-cell">Email</TableHead>
                 <TableHead className="hidden text-slate-500 md:table-cell">Ngày Tạo</TableHead>
                 <TableHead className="hidden text-slate-500 lg:table-cell">Đăng Nhập Cuối</TableHead>
+                <TableHead className="hidden text-slate-500 md:table-cell">Duyệt TK</TableHead>
                 <TableHead className="text-slate-500">Hành Động</TableHead>
               </TableRow>
             </TableHeader>
@@ -102,10 +120,19 @@ export default async function SuperAdminsPage() {
                 <TableRow key={admin.id} className="hover:bg-slate-50">
                   <TableCell>
                     <div className="flex items-center gap-2.5">
-                      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100 text-sm font-semibold text-slate-600">
-                        {(admin.email ?? "?")[0].toUpperCase()}
+                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-sm font-semibold text-slate-600">
+                        {(admin.user_metadata?.full_name ?? admin.email ?? "?")[0].toUpperCase()}
                       </div>
-                      <span className="max-w-[180px] truncate text-sm font-medium text-slate-900">{admin.email ?? "—"}</span>
+                      <div className="min-w-0">
+                        {admin.user_metadata?.full_name ? (
+                          <>
+                            <p className="truncate text-sm font-semibold text-slate-900">{admin.user_metadata.full_name}</p>
+                            <p className="max-w-[180px] truncate text-xs text-slate-400">{admin.email ?? "—"}</p>
+                          </>
+                        ) : (
+                          <p className="max-w-[180px] truncate text-sm font-medium text-slate-900">{admin.email ?? "—"}</p>
+                        )}
+                      </div>
                     </div>
                   </TableCell>
                   <TableCell className="hidden sm:table-cell">
@@ -124,8 +151,16 @@ export default async function SuperAdminsPage() {
                   <TableCell className="hidden text-sm text-slate-500 lg:table-cell">
                     <div className="flex items-center gap-1"><Clock className="h-3.5 w-3.5 text-slate-400" /> {fmtDateTime(admin.last_sign_in_at ?? null)}</div>
                   </TableCell>
+                  <TableCell className="hidden md:table-cell">
+                    <AutoApproveToggle
+                      adminId={admin.id}
+                      adminEmail={admin.email ?? ""}
+                      enabled={autoApproveMap.get(admin.id) ?? false}
+                    />
+                  </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-1.5">
+                      <EditAdminNameModal adminId={admin.id} adminEmail={admin.email ?? ""} currentName={admin.user_metadata?.full_name ?? ""} />
                       <ResetPasswordModal adminId={admin.id} adminEmail={admin.email ?? ""} />
                       <DeleteAdminButton adminId={admin.id} adminEmail={admin.email ?? ""} accountCount={acctCount.get(admin.id) ?? 0} />
                     </div>
@@ -134,7 +169,7 @@ export default async function SuperAdminsPage() {
               ))}
               {admins.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={6} className="py-12 text-center text-slate-400">
+                  <TableCell colSpan={7} className="py-12 text-center text-slate-400">
                     Chưa có admin nào. Nhấn "Thêm Admin" để tạo mới.
                   </TableCell>
                 </TableRow>

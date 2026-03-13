@@ -13,6 +13,7 @@ import {
   Users,
   Globe,
   ClipboardCheck,
+  UserCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -20,6 +21,7 @@ const navItems = [
   { href: "/admin/dashboard", label: "Bảng Điều Khiển", icon: LayoutDashboard },
   { href: "/admin/dashboard/accounts", label: "Tài Khoản", icon: Gamepad2 },
   { href: "/admin/dashboard/emails", label: "Email", icon: Mail },
+  { href: "/admin/dashboard/profile", label: "Hồ Sơ Cá Nhân", icon: UserCircle },
 ];
 
 const superAdminNavItems = [
@@ -32,9 +34,11 @@ interface SidebarProps {
   open: boolean;
   onClose: () => void;
   isSuperAdmin?: boolean;
+  adminName?: string;
+  adminEmail?: string;
 }
 
-export function Sidebar({ open, onClose, isSuperAdmin = false }: SidebarProps) {
+export function Sidebar({ open, onClose, isSuperAdmin = false, adminName = "", adminEmail = "" }: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
   const supabase = createSupabaseBrowserClient();
@@ -133,12 +137,23 @@ export function Sidebar({ open, onClose, isSuperAdmin = false }: SidebarProps) {
         </nav>
 
         <div className="border-t border-slate-200 p-4">
-          {isSuperAdmin && (
-            <div className="mb-3 flex items-center gap-2 rounded-lg bg-amber-50 px-3 py-2">
-              <ShieldCheck className="h-4 w-4 text-amber-500" />
-              <span className="text-xs font-medium text-amber-700">
-                Owner / Super Admin
-              </span>
+          {(adminName || adminEmail) && (
+            <div className={`mb-3 flex items-center gap-2.5 rounded-lg px-3 py-2 ${isSuperAdmin ? "bg-amber-50" : "bg-slate-50"}`}>
+              <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-xs font-bold ${isSuperAdmin ? "bg-amber-100 text-amber-700" : "bg-indigo-100 text-indigo-700"}`}>
+                {(adminName || adminEmail || "?")[0].toUpperCase()}
+              </div>
+              <div className="min-w-0">
+                {adminName && (
+                  <p className={`truncate text-xs font-semibold ${isSuperAdmin ? "text-amber-800" : "text-slate-800"}`}>{adminName}</p>
+                )}
+                <p className="truncate text-xs text-slate-400">{adminEmail}</p>
+                {isSuperAdmin && (
+                  <div className="flex items-center gap-1 mt-0.5">
+                    <ShieldCheck className="h-3 w-3 text-amber-500" />
+                    <span className="text-xs font-medium text-amber-600">Owner</span>
+                  </div>
+                )}
+              </div>
             </div>
           )}
           <Button
