@@ -29,6 +29,7 @@ export interface Account {
   user_id: string;
   is_priority?: boolean;
   is_clone?: boolean;
+  is_approved: boolean;
   created_at: string;
   updated_at: string;
 }

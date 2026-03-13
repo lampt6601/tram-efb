@@ -12,6 +12,7 @@ import {
   ShieldCheck,
   Users,
   Globe,
+  ClipboardCheck,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -23,6 +24,7 @@ const navItems = [
 
 const superAdminNavItems = [
   { href: "/admin/dashboard/super/accounts", label: "Tất Cả Tài Khoản", icon: Globe },
+  { href: "/admin/dashboard/super/pending", label: "Phê Duyệt Tài Khoản", icon: ClipboardCheck },
   { href: "/admin/dashboard/super/admins", label: "Quản Lý Admin", icon: Users },
 ];
 

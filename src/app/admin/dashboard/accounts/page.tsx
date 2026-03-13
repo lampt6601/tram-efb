@@ -1,6 +1,6 @@
 import { createSupabaseServerClient } from "@/lib/supabase-server";
 import Link from "next/link";
-import { Plus, Gamepad2, Star } from "lucide-react";
+import { Plus, Gamepad2, Star, Clock, CheckCircle2 } from "lucide-react";
 import { StatusBadge } from "@/components/ui/Badge";
 import { formatCurrency } from "@/lib/constants";
 import { AdminAccountFilters } from "./AdminAccountFilters";
@@ -115,6 +115,7 @@ export default async function AccountsPage({
               <TableRow className="bg-slate-50 hover:bg-slate-50">
                 <TableHead className="text-slate-500">Tài Khoản</TableHead>
                 <TableHead className="text-slate-500">Trạng Thái</TableHead>
+                <TableHead className="hidden text-slate-500 sm:table-cell">Phê Duyệt</TableHead>
                 <TableHead className="hidden text-slate-500 md:table-cell">Giá Nhập</TableHead>
                 <TableHead className="text-slate-500">Giá Bán</TableHead>
                 <TableHead className="text-slate-500">Hành Động</TableHead>
@@ -139,6 +140,19 @@ export default async function AccountsPage({
                   </TableCell>
                   <TableCell>
                     <StatusBadge status={account.status} />
+                  </TableCell>
+                  <TableCell className="hidden sm:table-cell">
+                    {account.is_approved ? (
+                      <span className="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700">
+                        <CheckCircle2 className="h-3 w-3" />
+                        Đã duyệt
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-700">
+                        <Clock className="h-3 w-3" />
+                        Chờ duyệt
+                      </span>
+                    )}
                   </TableCell>
                   <TableCell className="hidden text-slate-600 md:table-cell">
                     {formatCurrency(account.purchase_price)}
@@ -180,7 +194,7 @@ export default async function AccountsPage({
               {items.length === 0 && (
                 <TableRow>
                   <TableCell
-                    colSpan={6}
+                    colSpan={7}
                     className="py-12 text-center text-slate-400"
                   >
                     Không tìm thấy tài khoản nào phù hợp với bộ lọc.
