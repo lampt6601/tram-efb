@@ -44,6 +44,7 @@ export async function notifyAdminAction(
 
     const actionText = actionTypeMap[actionType] || actionType;
     const adminEmail = user.email || "Unknown Admin";
+    const adminName = (user.user_metadata?.full_name as string | undefined) || "";
 
     const subject = `[THC Shop] ${actionText}: ${accountTitle}`;
     const htmlContent = `
@@ -51,6 +52,11 @@ export async function notifyAdminAction(
         <h2 style="color: #4f46e5;">Hành động quản trị mới</h2>
         <p>Có một hành động vừa được thực hiện trên hệ thống bởi một quản trị viên khác:</p>
         <table style="border-collapse: collapse; width: 100%; max-width: 600px; margin-top: 20px;">
+          ${adminName ? `
+          <tr>
+            <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold; width: 30%; background-color: #f9f9f9;">Tên Admin:</td>
+            <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold; color: #4f46e5;">${adminName}</td>
+          </tr>` : ""}
           <tr>
             <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold; width: 30%; background-color: #f9f9f9;">Admin Email:</td>
             <td style="padding: 10px; border: 1px solid #ddd;">${adminEmail}</td>
