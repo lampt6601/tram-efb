@@ -260,7 +260,7 @@ export default async function AccountDetailPage({
             </div>
           </div>
         </main>
-        <Footer />
+        <Footer showRecruit />
       </div>
     );
   }
@@ -483,7 +483,7 @@ export default async function AccountDetailPage({
           />
         </div>
       </main>
-      <Footer />
+      <Footer showRecruit />
     </div>
   );
 }

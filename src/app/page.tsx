@@ -9,6 +9,7 @@ import { Gamepad2, Search, BadgeCheck, Flame, Clock } from "lucide-react";
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import type { PublicAccount } from "@/types/database";
+import { RecruitAdminSection } from "@/components/storefront/RecruitAdminSection";
 
 export const revalidate = 0; // dynamic because filters change per request
 
@@ -219,6 +220,7 @@ export default async function HomePage({
         )}
       </main>
 
+      <RecruitAdminSection />
       <Footer />
     </div>
   );
