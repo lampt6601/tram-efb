@@ -14,6 +14,7 @@ import {
   Globe,
   ClipboardCheck,
   UserCircle,
+  BookOpen,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -22,6 +23,7 @@ const navItems = [
   { href: "/admin/dashboard/accounts", label: "Tài Khoản", icon: Gamepad2 },
   { href: "/admin/dashboard/emails", label: "Email", icon: Mail },
   { href: "/admin/dashboard/profile", label: "Hồ Sơ Cá Nhân", icon: UserCircle },
+  { href: "/admin/dashboard/guide", label: "Hướng Dẫn", icon: BookOpen },
 ];
 
 const superAdminNavItems = [
