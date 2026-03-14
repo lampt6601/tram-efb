@@ -84,8 +84,11 @@ export function SuperAccountFilters({ totalCount }: { totalCount: number }) {
     }
   }, [debouncedMaxPrice, maxPrice, update]);
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => setLocalSearch(search), [search]);
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => setLocalMinPrice(minPrice), [minPrice]);
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => setLocalMaxPrice(maxPrice), [maxPrice]);
 
   const hasActiveFilters = sort !== "newest" || status !== "all" || search !== "" || minPrice !== "" || maxPrice !== "";

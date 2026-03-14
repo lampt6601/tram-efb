@@ -12,10 +12,6 @@ export function FloatingConsultation() {
   const pathname = usePathname();
   const [showScroll, setShowScroll] = useState(false);
 
-  if (pathname?.startsWith("/admin")) {
-    return null;
-  }
-
   useEffect(() => {
     const handleScroll = () => {
       setShowScroll(window.scrollY > 300);
@@ -28,6 +24,10 @@ export function FloatingConsultation() {
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
+
+  if (pathname?.startsWith("/admin")) {
+    return null;
+  }
 
   return (
     <>

@@ -45,7 +45,7 @@ const colorMap: Record<string, { bg: string; icon: string; badge: string }> = {
 };
 
 export function RecruitAdminSection() {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
 
   return (
     <section className="border-t border-indigo-100 bg-gradient-to-br from-indigo-50 via-slate-50 to-purple-50">
@@ -139,7 +139,7 @@ export function RecruitAdminSection() {
                 className="flex items-center gap-2.5 rounded-full border border-blue-200 bg-blue-50 px-6 py-3 text-sm font-semibold text-blue-700 shadow-sm transition-all hover:bg-blue-100 hover:scale-105 active:scale-95"
               >
                 <Image src={zaloIcon} alt="Zalo" className="h-5 w-5 object-contain" />
-                Nhắn Zalo: 0969 347 283
+                Nhắn Zalo
               </a>
               <a
                 href="https://www.facebook.com/share/1B7kgySoVd/?mibextid=wwXIfr"

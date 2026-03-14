@@ -161,8 +161,8 @@ async function main() {
       urlMap.set(oldUrl, newUrl);
       console.log(`   ✅ ${fileName} → ${newUrl}\n`);
       successCount++;
-    } catch (err: any) {
-      console.error(`   ❌ Failed: ${fileName} — ${err.message}\n`);
+    } catch (err: unknown) {
+      console.error(`   ❌ Failed: ${fileName} — ${err instanceof Error ? err.message : "Unknown error"}\n`);
       failCount++;
     }
   }

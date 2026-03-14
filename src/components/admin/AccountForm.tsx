@@ -180,7 +180,7 @@ export function AccountForm({ account }: AccountFormProps) {
       const first = images[0] ?? previews[0] ?? null;
       if (first) setPrimaryImage(first);
     }
-  }, [images, previews]);
+  }, [images, previews, primaryImage]);
 
   useEffect(() => {
     const handleWindowPaste = (e: ClipboardEvent) => {
@@ -288,8 +288,8 @@ export function AccountForm({ account }: AccountFormProps) {
 
       router.refresh();
       router.push("/admin/dashboard/accounts");
-    } catch (err: any) {
-      toast.error(err.message || "Đã xảy ra lỗi khi lưu tài khoản.");
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : "Đã xảy ra lỗi khi lưu tài khoản.");
       setLoading(false);
     }
   };
@@ -659,6 +659,7 @@ export function AccountForm({ account }: AccountFormProps) {
                         <Star className="h-3 w-3 fill-current" /> Đại diện
                       </div>
                     )}
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={adminThumb(img)} alt={`Ảnh ${i + 1}`} className="h-full w-full object-cover" />
                     <div className="absolute bottom-2 right-2 z-10 flex gap-1.5">
                       {primaryImage !== img && (
@@ -691,6 +692,7 @@ export function AccountForm({ account }: AccountFormProps) {
                         <><Star className="h-3 w-3 fill-current" /> Đại diện</>
                       ) : "MỚI"}
                     </div>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={preview} alt={`Ảnh mới ${i + 1}`} className="h-full w-full object-cover" />
                     <div className="absolute bottom-2 right-2 z-20 flex gap-1.5">
                       {primaryImage !== preview && (

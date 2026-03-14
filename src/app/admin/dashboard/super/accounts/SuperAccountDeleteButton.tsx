@@ -64,7 +64,7 @@ export function SuperAccountDeleteButton({ id, title }: { id: string; title: str
           </div>
           <h2 className="mb-1 text-base font-semibold text-slate-900">Xóa tài khoản</h2>
           <p className="text-sm text-slate-500">
-            Bạn có chắc muốn xóa <span className="font-semibold text-slate-900">"{title}"</span>? Hành động này không thể hoàn tác.
+            Bạn có chắc muốn xóa <span className="font-semibold text-slate-900">&quot;{title}&quot;</span>? Hành động này không thể hoàn tác.
           </p>
         </div>
         <div className="flex justify-end gap-2 rounded-b-xl border-t bg-slate-50 px-5 py-3">

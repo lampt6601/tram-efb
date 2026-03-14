@@ -592,7 +592,7 @@ export function AccountActionsDropdown({
           </h2>
           <p className="text-sm text-slate-500">
             Bạn có chắc chắn muốn xóa tài khoản{" "}
-            <span className="font-semibold text-slate-900">"{title}"</span>?
+            <span className="font-semibold text-slate-900">&quot;{title}&quot;</span>?
             Hành động này không thể hoàn tác.
           </p>
           {error && <p className="mt-2 text-xs text-red-600">{error}</p>}
@@ -631,7 +631,7 @@ export function AccountActionsDropdown({
             Gỡ Đánh Dấu Đã Bán
           </h2>
           <p className="text-sm text-slate-500">
-            Tài khoản <span className="font-semibold text-slate-900">"{title}"</span> sẽ được chuyển về trạng thái{" "}
+            Tài khoản <span className="font-semibold text-slate-900">&quot;{title}&quot;</span> sẽ được chuyển về trạng thái{" "}
             <span className="font-semibold text-slate-700">Đang bán</span>.
           </p>
           {error && <p className="mt-2 text-xs text-red-600">{error}</p>}

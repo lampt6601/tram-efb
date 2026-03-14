@@ -425,7 +425,7 @@ export function SuperAccountActionsDropdown({
           </div>
           <h2 className="mb-1 text-base font-semibold text-slate-900">Chuyển về chờ duyệt</h2>
           <p className="text-sm text-slate-500">
-            Tài khoản <span className="font-semibold text-slate-900">"{title}"</span> sẽ không còn hiển thị công khai và cần được duyệt lại.
+            Tài khoản <span className="font-semibold text-slate-900">&quot;{title}&quot;</span> sẽ không còn hiển thị công khai và cần được duyệt lại.
           </p>
         </div>
         <div className="flex justify-end gap-2 rounded-b-xl border-t bg-slate-50 px-5 py-3">
@@ -451,7 +451,7 @@ export function SuperAccountActionsDropdown({
           <h2 className="mb-1 text-base font-semibold text-slate-900">Xóa tài khoản</h2>
           <p className="text-sm text-slate-500">
             Bạn có chắc muốn xóa{" "}
-            <span className="font-semibold text-slate-900">"{title}"</span>? Hành động này không thể hoàn tác.
+            <span className="font-semibold text-slate-900">&quot;{title}&quot;</span>? Hành động này không thể hoàn tác.
           </p>
         </div>
         <div className="flex justify-end gap-2 rounded-b-xl border-t bg-slate-50 px-5 py-3">
@@ -586,7 +586,7 @@ export function SuperAccountActionsDropdown({
           </div>
           <h2 className="mb-1 text-base font-semibold text-slate-900">Gỡ đánh dấu đã bán</h2>
           <p className="text-sm text-slate-500">
-            Tài khoản <span className="font-semibold text-slate-900">"{title}"</span> sẽ được chuyển về trạng thái Còn hàng.
+            Tài khoản <span className="font-semibold text-slate-900">&quot;{title}&quot;</span> sẽ được chuyển về trạng thái Còn hàng.
           </p>
           {error && <p className="mt-2 text-xs text-red-600">{error}</p>}
         </div>

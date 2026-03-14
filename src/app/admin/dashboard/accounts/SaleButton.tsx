@@ -109,8 +109,8 @@ export function SaleAccountButton({
 
       setOpen(false);
       router.refresh();
-    } catch (err: any) {
-      setError(err.message || "Đã có lỗi xảy ra.");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Đã có lỗi xảy ra.");
     } finally {
       setLoading(false);
     }
@@ -136,8 +136,8 @@ export function SaleAccountButton({
 
       setOpen(false);
       router.refresh();
-    } catch (err: any) {
-      setError(err.message || "Đã có lỗi xảy ra.");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Đã có lỗi xảy ra.");
     } finally {
       setLoading(false);
     }

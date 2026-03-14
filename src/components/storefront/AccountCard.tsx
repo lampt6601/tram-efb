@@ -13,7 +13,6 @@ import {
 import { StatusBadge, Badge } from "@/components/ui/Badge";
 import { formatCurrency, formatNumber } from "@/lib/constants";
 import type { PublicAccount } from "@/types/database";
-import { cn } from "@/lib/utils";
 import { thumbCard } from "@/lib/image-utils";
 
 export function AccountCard({ account }: { account: PublicAccount }) {

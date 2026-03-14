@@ -55,7 +55,7 @@ export function DeleteAccountButton({
           <DialogTitle>Xóa tài khoản</DialogTitle>
           <DialogDescription>
             Bạn có chắc chắn muốn xóa tài khoản{" "}
-            <span className="font-semibold text-slate-900">"{title}"</span>?
+            <span className="font-semibold text-slate-900">&quot;{title}&quot;</span>?
             Hành động này không thể hoàn tác.
           </DialogDescription>
         </DialogHeader>

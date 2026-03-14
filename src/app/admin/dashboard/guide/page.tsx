@@ -10,7 +10,6 @@ import {
   CheckCircle2,
   Info,
   ChevronRight,
-  ImageIcon,
   Link2,
   UserCircle,
   Star,
@@ -319,7 +318,7 @@ export default function GuidePage() {
           ))}
         </ol>
         <InfoBox type="info">
-          Sau khi đánh dấu đã bán, acc vẫn hiển thị trên web trong mục <strong>"Tài Khoản Đã Bán"</strong> — giúp tăng độ tin cậy của shop với khách hàng mới.
+          Sau khi đánh dấu đã bán, acc vẫn hiển thị trên web trong mục <strong>&quot;Tài Khoản Đã Bán&quot;</strong> — giúp tăng độ tin cậy của shop với khách hàng mới.
         </InfoBox>
       </div>
 
@@ -397,7 +396,7 @@ export default function GuidePage() {
         <div className="space-y-3">
           <InfoBox type="warning">
             <span>
-              <strong>Hệ thống phê duyệt:</strong> Acc mới tạo hoặc chỉnh sửa có thể cần chủ shop duyệt trước khi hiển thị công khai. Nếu bạn thấy badge <strong>"Chờ duyệt"</strong> trên acc, hãy nhắn chủ shop để được duyệt nhanh.
+              <strong>Hệ thống phê duyệt:</strong> Acc mới tạo hoặc chỉnh sửa có thể cần chủ shop duyệt trước khi hiển thị công khai. Nếu bạn thấy badge <strong>&quot;Chờ duyệt&quot;</strong> trên acc, hãy nhắn chủ shop để được duyệt nhanh.
             </span>
           </InfoBox>
           <InfoBox type="warning">

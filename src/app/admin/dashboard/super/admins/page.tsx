@@ -169,7 +169,7 @@ export default async function SuperAdminsPage() {
               {admins.length === 0 && (
                 <TableRow>
                   <TableCell colSpan={7} className="py-12 text-center text-slate-400">
-                    Chưa có admin nào. Nhấn "Thêm Admin" để tạo mới.
+                    Chưa có admin nào. Nhấn &quot;Thêm Admin&quot; để tạo mới.
                   </TableCell>
                 </TableRow>
               )}
