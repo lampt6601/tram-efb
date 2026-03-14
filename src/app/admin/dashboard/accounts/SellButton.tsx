@@ -144,10 +144,15 @@ export function SellAccountButton({
           <Button
             onClick={handleConfirm}
             disabled={loading}
-            className="bg-green-600 text-white hover:bg-green-700"
+            aria-busy={loading}
+            className="min-w-[10rem] bg-green-600 text-white hover:bg-green-700"
           >
-            {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {loading ? "Đang xử lý..." : "Xác Nhận Bán"}
+            <span className="inline-flex items-center justify-center gap-2">
+              {loading && (
+                <Loader2 className="h-4 w-4 shrink-0 animate-spin" aria-hidden />
+              )}
+              <span>{loading ? "Đang xử lý..." : "Xác Nhận Bán"}</span>
+            </span>
           </Button>
         </DialogFooter>
       </DialogContent>

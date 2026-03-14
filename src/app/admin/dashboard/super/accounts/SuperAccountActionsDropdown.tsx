@@ -493,9 +493,18 @@ export function SuperAccountActionsDropdown({
         </div>
         <div className="flex justify-end gap-2 rounded-b-xl border-t bg-slate-50 px-5 py-3">
           <Button variant="outline" onClick={closeDialog} disabled={loading}>Hủy</Button>
-          <Button onClick={handleSell} disabled={loading} className="bg-green-600 text-white hover:bg-green-700">
-            {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {loading ? "Đang xử lý..." : "Xác Nhận Bán"}
+          <Button
+            onClick={handleSell}
+            disabled={loading}
+            aria-busy={loading}
+            className="min-w-[10rem] bg-green-600 text-white hover:bg-green-700"
+          >
+            <span className="inline-flex items-center justify-center gap-2">
+              {loading && (
+                <Loader2 className="h-4 w-4 shrink-0 animate-spin" aria-hidden />
+              )}
+              <span>{loading ? "Đang xử lý..." : "Xác Nhận Bán"}</span>
+            </span>
           </Button>
         </div>
       </Modal>
