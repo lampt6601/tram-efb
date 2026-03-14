@@ -82,9 +82,9 @@ export function galleryMain(url: string): string {
   return optimizeImage(url, { w: 900, q: 80 });
 }
 
-/** Gallery thumbnail strip (~200px) */
+/** Gallery thumbnail strip (~400px) */
 export function galleryThumb(url: string): string {
-  return optimizeImage(url, { w: 200, q: 70 });
+  return optimizeImage(url, { w: 400, q: 80 });
 }
 
 /** Fullscreen lightbox (full resolution, high quality) */
