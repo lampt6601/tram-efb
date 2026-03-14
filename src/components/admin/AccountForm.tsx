@@ -8,6 +8,7 @@ import Link from "next/link";
 import type { Account, Email, AccountStatus } from "@/types/database";
 import { useForm, Controller } from "react-hook-form";
 import { notifyAdminAction } from "@/app/actions/notify-admin";
+import { uploadImageAction } from "@/app/actions/upload-image";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -206,24 +207,9 @@ export function AccountForm({ account }: AccountFormProps) {
       if (selectedFiles.length > 0) {
         for (let i = 0; i < selectedFiles.length; i++) {
           const file = selectedFiles[i];
-          const fileExt = file.name.split(".").pop();
-          const uniqueId = Math.random().toString(36).substring(2, 15);
-          const fileName = `${uniqueId}-${Date.now()}.${fileExt}`;
-
-          const { error: uploadError } = await supabase.storage
-            .from("account-images")
-            .upload(`images/${fileName}`, file, {
-              cacheControl: "3600",
-              upsert: false,
-            });
-
-          if (uploadError) throw uploadError;
-
-          const {
-            data: { publicUrl },
-          } = supabase.storage
-            .from("account-images")
-            .getPublicUrl(`images/${fileName}`);
+          const fd = new FormData();
+          fd.append("file", file);
+          const publicUrl = await uploadImageAction(fd);
 
           uploadedUrls.push(publicUrl);
 

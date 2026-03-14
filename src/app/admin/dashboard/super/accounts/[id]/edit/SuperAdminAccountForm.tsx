@@ -8,6 +8,7 @@ import Link from "next/link";
 import type { Account, Email, AccountStatus } from "@/types/database";
 import { useForm, Controller } from "react-hook-form";
 import { superAdminUpdateAccount } from "@/app/actions/super-admin-actions";
+import { uploadImageAction } from "@/app/actions/upload-image";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -103,13 +104,9 @@ export function SuperAdminAccountForm({ account, availableEmails }: Props) {
 
       for (let i = 0; i < selectedFiles.length; i++) {
         const file = selectedFiles[i];
-        const ext = file.name.split(".").pop();
-        const fileName = `${Math.random().toString(36).slice(2)}-${Date.now()}.${ext}`;
-        const { error: uploadError } = await supabase.storage
-          .from("account-images")
-          .upload(`images/${fileName}`, file, { cacheControl: "3600", upsert: false });
-        if (uploadError) throw uploadError;
-        const { data: { publicUrl } } = supabase.storage.from("account-images").getPublicUrl(`images/${fileName}`);
+        const fd = new FormData();
+        fd.append("file", file);
+        const publicUrl = await uploadImageAction(fd);
         uploadedUrls.push(publicUrl);
         if (primaryImage === previews[i]) finalPrimaryUrl = publicUrl;
       }
