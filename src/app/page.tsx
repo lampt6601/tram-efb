@@ -21,6 +21,14 @@ export const metadata: Metadata = {
     description:
       "Chào mừng bạn đến với THC eFootball Shop. Chuyên cung cấp tài khoản eFootball chất lượng, nạp game an toàn và giao dịch nhanh chóng. Uy tín đặt lên hàng đầu!",
     url: "/",
+    images: [
+      {
+        url: "/thc-shop.png",
+        width: 1200,
+        height: 630,
+        alt: "THC eFootball Shop",
+      },
+    ],
   },
 };
 
