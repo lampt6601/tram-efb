@@ -14,9 +14,11 @@ import { StatusBadge, Badge } from "@/components/ui/Badge";
 import { formatCurrency, formatNumber } from "@/lib/constants";
 import type { PublicAccount } from "@/types/database";
 import { cn } from "@/lib/utils";
+import { thumbCard } from "@/lib/image-utils";
 
 export function AccountCard({ account }: { account: PublicAccount }) {
   const thumbnail = account.primary_image_url || account.images?.[0];
+  const optimizedThumb = thumbnail ? thumbCard(thumbnail) : undefined;
   const isSold = account.status === "Sold";
   const isSale = account.original_price
     ? account.original_price > account.selling_price
@@ -35,9 +37,9 @@ export function AccountCard({ account }: { account: PublicAccount }) {
     >
       {/* Image + overlay/ribbon */}
       <div className="relative overflow-hidden bg-gradient-to-br from-slate-100 to-slate-200 aspect-video">
-        {thumbnail ? (
+        {optimizedThumb ? (
           <Image
-            src={thumbnail}
+            src={optimizedThumb}
             alt={account.title}
             fill
             sizes="(min-width: 1280px) 380px, (min-width: 768px) 50vw, 100vw"

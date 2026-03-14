@@ -27,6 +27,7 @@ import zaloIcon from "@/assets/icons/zalo.png";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import type { PublicAccount } from "@/types/database";
+import { ogImage } from "@/lib/image-utils";
 
 export async function generateMetadata({
   params,
@@ -59,7 +60,7 @@ export async function generateMetadata({
   const description = isSold
     ? `Tài khoản ${account.title} đã được bán. Xem các tài khoản khác đang sẵn sàng tại THC eFootball Shop.`
     : `Mua ngay tài khoản ${account.title} với giá ${formatCurrency(account.selling_price)}. Giao dịch nhanh, uy tín tại THC eFootball Shop.`;
-  const image = account.primary_image_url ?? undefined;
+  const image = account.primary_image_url ? ogImage(account.primary_image_url) : undefined;
 
   return {
     title,

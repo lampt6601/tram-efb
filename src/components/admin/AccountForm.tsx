@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { adminThumb } from "@/lib/image-utils";
 
 interface AccountFormProps {
   account?: Account | null;
@@ -658,7 +659,7 @@ export function AccountForm({ account }: AccountFormProps) {
                         <Star className="h-3 w-3 fill-current" /> Đại diện
                       </div>
                     )}
-                    <img src={img} alt={`Ảnh ${i + 1}`} className="h-full w-full object-cover" />
+                    <img src={adminThumb(img)} alt={`Ảnh ${i + 1}`} className="h-full w-full object-cover" />
                     <div className="absolute bottom-2 right-2 z-10 flex gap-1.5">
                       {primaryImage !== img && (
                         <button type="button" onClick={() => setPrimaryImage(img)}

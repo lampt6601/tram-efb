@@ -9,6 +9,7 @@ import {
   Gamepad2,
   Maximize2,
 } from "lucide-react";
+import { galleryMain, galleryThumb, galleryFull } from "@/lib/image-utils";
 
 interface ImageGalleryProps {
   images: string[];
@@ -90,9 +91,9 @@ export function ImageGallery({ images, title }: ImageGalleryProps) {
       {images.length > 1 && (
         <div className="hidden" aria-hidden="true">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={images[prevIndex]} alt="" />
+          <img src={galleryThumb(images[prevIndex])} alt="" />
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={images[nextIndex]} alt="" />
+          <img src={galleryThumb(images[nextIndex])} alt="" />
         </div>
       )}
 
@@ -104,7 +105,7 @@ export function ImageGallery({ images, title }: ImageGalleryProps) {
         {/* Blur-up reveal — blurry/faded while loading, sharpens on load */}
         <Image
           key={selectedIndex}
-          src={images[selectedIndex]}
+          src={galleryMain(images[selectedIndex])}
           alt={`${title} - screenshot ${selectedIndex + 1}`}
           width={1600}
           height={700}
@@ -168,10 +169,10 @@ export function ImageGallery({ images, title }: ImageGalleryProps) {
               }`}
             >
               <Image
-                src={img}
+                src={galleryThumb(img)}
                 alt={`${title} thumbnail ${i + 1}`}
-                width={1600}
-                height={700}
+                width={200}
+                height={88}
                 className="object-cover"
               />
             </button>
@@ -194,12 +195,12 @@ export function ImageGallery({ images, title }: ImageGalleryProps) {
             <div className="relative h-full w-full flex items-center justify-center">
               <Image
                 key={`fs-${selectedIndex}`}
-                src={images[selectedIndex]}
+                src={galleryFull(images[selectedIndex])}
                 alt={`${title} fullscreen ${selectedIndex + 1}`}
                 fill
                 className="object-contain"
                 sizes="100vw"
-                quality={100}
+                quality={90}
                 priority
               />
             </div>
