@@ -5,8 +5,7 @@ import { redirect } from "next/navigation";
 import { ClipboardCheck, Gamepad2, CheckCircle } from "lucide-react";
 import { formatCurrency } from "@/lib/constants";
 import { StatusBadge } from "@/components/ui/Badge";
-import { ApproveButton } from "./ApproveButton";
-import { PendingAccountDrawer } from "./PendingAccountDrawer";
+import { PendingActionsDropdown } from "./PendingActionsDropdown";
 import {
   Table,
   TableBody,
@@ -95,7 +94,6 @@ export default async function PendingApprovalPage() {
                     Ngày Tạo
                   </TableHead>
                   <TableHead className="text-slate-500">Hành Động</TableHead>
-                  <TableHead className="text-slate-500">Chi Tiết</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -126,13 +124,7 @@ export default async function PendingApprovalPage() {
                       {fmtDate(account.created_at)}
                     </TableCell>
                     <TableCell>
-                      <ApproveButton
-                        accountId={account.id}
-                        accountTitle={account.title}
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <PendingAccountDrawer
+                      <PendingActionsDropdown
                         account={account}
                         adminEmail={adminEmailMap.get(account.user_id) ?? account.user_id}
                       />

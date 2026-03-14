@@ -25,6 +25,9 @@ import type { AccountWithEmail } from "@/types/database";
 interface PendingAccountDrawerProps {
   account: AccountWithEmail;
   adminEmail: string;
+  /** Controlled mode: if provided, the trigger button is hidden and the caller controls open state */
+  controlledOpen?: boolean;
+  onControlledClose?: () => void;
 }
 
 function fmtDate(d: string) {
@@ -58,15 +61,25 @@ function StatBox({
 export function PendingAccountDrawer({
   account,
   adminEmail,
+  controlledOpen,
+  onControlledClose,
 }: PendingAccountDrawerProps) {
-  const [open, setOpen] = useState(false);
+  const isControlled = controlledOpen !== undefined;
+  const [internalOpen, setInternalOpen] = useState(false);
+  const open = isControlled ? controlledOpen : internalOpen;
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  const onClose = useCallback(() => setOpen(false), []);
+  const onClose = useCallback(() => {
+    if (isControlled) {
+      onControlledClose?.();
+    } else {
+      setInternalOpen(false);
+    }
+  }, [isControlled, onControlledClose]);
 
   useEffect(() => {
     if (!open) return;
@@ -301,13 +314,15 @@ export function PendingAccountDrawer({
 
   return (
     <>
-      <button
-        onClick={() => setOpen(true)}
-        className="inline-flex items-center gap-1.5 rounded-lg border border-indigo-200 bg-indigo-50 px-2.5 py-1.5 text-xs font-medium text-indigo-700 hover:bg-indigo-100 transition-colors"
-      >
-        <Eye className="h-3.5 w-3.5" />
-        Chi tiết
-      </button>
+      {!isControlled && (
+        <button
+          onClick={() => setInternalOpen(true)}
+          className="inline-flex items-center gap-1.5 rounded-lg border border-indigo-200 bg-indigo-50 px-2.5 py-1.5 text-xs font-medium text-indigo-700 hover:bg-indigo-100 transition-colors"
+        >
+          <Eye className="h-3.5 w-3.5" />
+          Chi tiết
+        </button>
+      )}
       {drawer}
     </>
   );

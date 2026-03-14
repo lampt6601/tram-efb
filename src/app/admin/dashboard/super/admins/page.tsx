@@ -4,10 +4,8 @@ import { checkIsSuperAdmin, SUPER_ADMIN_EMAIL } from "@/lib/super-admin";
 import { redirect } from "next/navigation";
 import { Users, ShieldCheck, Gamepad2, Mail, Calendar, Clock } from "lucide-react";
 import { CreateAdminModal } from "./CreateAdminModal";
-import { DeleteAdminButton } from "./DeleteAdminButton";
-import { ResetPasswordModal } from "./ResetPasswordModal";
-import { EditAdminNameModal } from "./EditAdminNameModal";
 import { AutoApproveToggle } from "./AutoApproveToggle";
+import { AdminActionsDropdown } from "./AdminActionsDropdown";
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
@@ -159,11 +157,12 @@ export default async function SuperAdminsPage() {
                     />
                   </TableCell>
                   <TableCell>
-                    <div className="flex items-center gap-1.5">
-                      <EditAdminNameModal adminId={admin.id} adminEmail={admin.email ?? ""} currentName={admin.user_metadata?.full_name ?? ""} />
-                      <ResetPasswordModal adminId={admin.id} adminEmail={admin.email ?? ""} />
-                      <DeleteAdminButton adminId={admin.id} adminEmail={admin.email ?? ""} accountCount={acctCount.get(admin.id) ?? 0} />
-                    </div>
+                    <AdminActionsDropdown
+                      adminId={admin.id}
+                      adminEmail={admin.email ?? ""}
+                      currentName={admin.user_metadata?.full_name ?? ""}
+                      accountCount={acctCount.get(admin.id) ?? 0}
+                    />
                   </TableCell>
                 </TableRow>
               ))}

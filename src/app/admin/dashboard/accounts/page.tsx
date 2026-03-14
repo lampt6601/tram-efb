@@ -184,6 +184,8 @@ export default async function AccountsPage({
                       currentSellingPrice={account.selling_price}
                       currentOriginalPrice={account.original_price ?? null}
                       status={account.status}
+                      isPriority={account.is_priority ?? false}
+                      isClone={account.is_clone ?? false}
                     />
                   </TableCell>
                   <TableCell className="max-w-[140px] truncate text-xs text-slate-500">

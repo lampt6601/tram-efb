@@ -2,13 +2,11 @@ import { createSupabaseServerClient } from "@/lib/supabase-server";
 import { createSupabaseServiceClient } from "@/lib/supabase-service";
 import { checkIsSuperAdmin } from "@/lib/super-admin";
 import { redirect } from "next/navigation";
-import Link from "next/link";
-import { Globe, Gamepad2, Star, Pencil } from "lucide-react";
+import { Globe, Gamepad2, Star } from "lucide-react";
 import { StatusBadge } from "@/components/ui/Badge";
 import { formatCurrency } from "@/lib/constants";
 import { SuperAccountFilters } from "./SuperAccountFilters";
-import { SuperAccountDeleteButton } from "./SuperAccountDeleteButton";
-import { UnapproveButton } from "./UnapproveButton";
+import { SuperAccountActionsDropdown } from "./SuperAccountActionsDropdown";
 import { Suspense } from "react";
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
@@ -134,18 +132,12 @@ export default async function SuperAccountsPage({
                     {account.emails?.email_address || "—"}
                   </TableCell>
                   <TableCell>
-                    <div className="flex flex-wrap items-center gap-1.5">
-                      <Link
-                        href={`/admin/dashboard/super/accounts/${account.id}/edit`}
-                        className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-slate-50 px-2 py-1 text-xs font-medium text-slate-600 hover:bg-slate-100"
-                      >
-                        <Pencil className="h-3.5 w-3.5" /> Sửa
-                      </Link>
-                      {account.is_approved && account.status !== "Sold" && (
-                        <UnapproveButton accountId={account.id} accountTitle={account.title} />
-                      )}
-                      <SuperAccountDeleteButton id={account.id} title={account.title} />
-                    </div>
+                    <SuperAccountActionsDropdown
+                      account={account}
+                      adminEmail={adminEmailMap.get(account.user_id) ?? account.user_id}
+                      isApproved={account.is_approved}
+                      isSold={account.status === "Sold"}
+                    />
                   </TableCell>
                 </TableRow>
               ))}

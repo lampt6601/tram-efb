@@ -84,6 +84,7 @@ export async function superAdminUpdateAccount(
   if (error) throw new Error(error.message);
   revalidatePath("/admin/dashboard/super/accounts");
   revalidatePath(`/admin/dashboard/super/accounts/${accountId}/edit`);
+  revalidatePath("/admin/dashboard/accounts");
 }
 
 export async function createAdmin(email: string, password: string, name?: string) {

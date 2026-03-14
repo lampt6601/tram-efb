@@ -15,6 +15,10 @@ import {
   Trash2,
   Loader2,
   X,
+  ExternalLink,
+  Star,
+  Copy,
+  RotateCcw,
 } from "lucide-react";
 import type { AccountStatus } from "@/types/database";
 import { notifyAdminAction } from "@/app/actions/notify-admin";
@@ -36,9 +40,11 @@ interface AccountActionsDropdownProps {
   currentSellingPrice: number;
   currentOriginalPrice: number | null;
   status: AccountStatus;
+  isPriority: boolean;
+  isClone: boolean;
 }
 
-type OpenDialog = "sell" | "sale" | "delete" | null;
+type OpenDialog = "sell" | "sale" | "delete" | "unmark-sold" | null;
 
 // ─── Simple portal modal (no @base-ui focus lock) ──────────────────────────
 function Modal({
@@ -83,6 +89,8 @@ export function AccountActionsDropdown({
   currentSellingPrice,
   currentOriginalPrice,
   status,
+  isPriority,
+  isClone,
 }: AccountActionsDropdownProps) {
   const router = useRouter();
   const supabase = createSupabaseBrowserClient();
@@ -93,6 +101,11 @@ export function AccountActionsDropdown({
 
   // Copy link
   const [copied, setCopied] = useState(false);
+
+  // Toggle states
+  const [priority, setPriority] = useState(isPriority);
+  const [clone, setClone] = useState(isClone);
+  const [toggling, setToggling] = useState<"priority" | "clone" | null>(null);
 
   const [sellPrice, setSellPrice] = useState(currentSellingPrice.toString());
 
@@ -132,6 +145,68 @@ export function AccountActionsDropdown({
       setTimeout(() => setCopied(false), 2000);
     } catch {
       // ignore
+    }
+  };
+
+  // ── Toggle priority ───────────────────────────────────────────────────────
+  const handleTogglePriority = async () => {
+    const next = !priority;
+    setToggling("priority");
+    try {
+      const { error: err } = await supabase
+        .from("accounts")
+        .update({ is_priority: next })
+        .eq("id", id);
+      if (err) throw err;
+      setPriority(next);
+      router.refresh();
+    } catch {
+      // ignore
+    } finally {
+      setToggling(null);
+    }
+  };
+
+  // ── Toggle clone ──────────────────────────────────────────────────────────
+  const handleToggleClone = async () => {
+    const next = !clone;
+    setToggling("clone");
+    try {
+      const { error: err } = await supabase
+        .from("accounts")
+        .update({ is_clone: next })
+        .eq("id", id);
+      if (err) throw err;
+      setClone(next);
+      router.refresh();
+    } catch {
+      // ignore
+    } finally {
+      setToggling(null);
+    }
+  };
+
+  // ── Unmark sold ───────────────────────────────────────────────────────────
+  const handleUnmarkSold = async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const { error: err } = await supabase
+        .from("accounts")
+        .update({ status: "Available" })
+        .eq("id", id);
+      if (err) throw err;
+      try {
+        await notifyAdminAction("UPDATE", title);
+      } catch {
+        /* ignore */
+      }
+      setOpenDialog(null);
+      router.refresh();
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Đã có lỗi xảy ra.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -270,7 +345,7 @@ export function AccountActionsDropdown({
             </button>
           }
         />
-        <DropdownMenuContent align="end" className="w-44">
+        <DropdownMenuContent align="end" className="w-52">
           <DropdownMenuItem
             render={
               <Link
@@ -283,6 +358,19 @@ export function AccountActionsDropdown({
             Chỉnh sửa
           </DropdownMenuItem>
 
+          <DropdownMenuItem
+            render={
+              <Link
+                href={`/accounts/${id}`}
+                target="_blank"
+                className="flex items-center gap-2"
+              />
+            }
+          >
+            <ExternalLink className="h-4 w-4 text-slate-400" />
+            Xem trang công khai
+          </DropdownMenuItem>
+
           <DropdownMenuItem onClick={handleCopyLink} className="gap-2">
             {copied ? (
               <Check className="h-4 w-4 text-emerald-500" />
@@ -290,6 +378,34 @@ export function AccountActionsDropdown({
               <LinkIcon className="h-4 w-4 text-slate-400" />
             )}
             {copied ? "Đã copy!" : "Copy link"}
+          </DropdownMenuItem>
+
+          <DropdownMenuSeparator />
+
+          <DropdownMenuItem
+            onClick={handleTogglePriority}
+            disabled={toggling !== null}
+            className="gap-2"
+          >
+            {toggling === "priority" ? (
+              <Loader2 className="h-4 w-4 animate-spin text-amber-400" />
+            ) : (
+              <Star className={`h-4 w-4 ${priority ? "fill-amber-500 text-amber-500" : "text-slate-400"}`} />
+            )}
+            {priority ? "Bỏ nổi bật" : "Đánh dấu nổi bật"}
+          </DropdownMenuItem>
+
+          <DropdownMenuItem
+            onClick={handleToggleClone}
+            disabled={toggling !== null}
+            className="gap-2"
+          >
+            {toggling === "clone" ? (
+              <Loader2 className="h-4 w-4 animate-spin text-violet-400" />
+            ) : (
+              <Copy className={`h-4 w-4 ${clone ? "text-violet-500" : "text-slate-400"}`} />
+            )}
+            {clone ? "Bỏ Clone" : "Đánh dấu Clone"}
           </DropdownMenuItem>
 
           {!isSold && (
@@ -308,6 +424,19 @@ export function AccountActionsDropdown({
               >
                 <ShoppingCart className="h-4 w-4 text-green-500" />
                 Đánh dấu đã bán
+              </DropdownMenuItem>
+            </>
+          )}
+
+          {isSold && (
+            <>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onClick={() => openWith("unmark-sold")}
+                className="gap-2"
+              >
+                <RotateCcw className="h-4 w-4 text-blue-500" />
+                Gỡ đánh dấu đã bán
               </DropdownMenuItem>
             </>
           )}
@@ -474,6 +603,45 @@ export function AccountActionsDropdown({
           >
             {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             {loading ? "Đang xóa..." : "Xóa"}
+          </Button>
+        </div>
+      </Modal>
+
+      {/* ── Unmark sold modal ─────────────────────────────────────────────── */}
+      <Modal open={openDialog === "unmark-sold"} onClose={closeDialog}>
+        <div className="p-5">
+          <div className="mb-4 flex items-start justify-between">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50">
+              <RotateCcw className="h-5 w-5 text-blue-600" />
+            </div>
+            <button
+              onClick={closeDialog}
+              disabled={loading}
+              className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+          <h2 className="mb-1 text-base font-semibold text-slate-900">
+            Gỡ Đánh Dấu Đã Bán
+          </h2>
+          <p className="text-sm text-slate-500">
+            Tài khoản <span className="font-semibold text-slate-900">"{title}"</span> sẽ được chuyển về trạng thái{" "}
+            <span className="font-semibold text-slate-700">Đang bán</span>.
+          </p>
+          {error && <p className="mt-2 text-xs text-red-600">{error}</p>}
+        </div>
+        <div className="flex justify-end gap-2 rounded-b-xl border-t bg-slate-50 px-5 py-3">
+          <Button variant="outline" onClick={closeDialog} disabled={loading}>
+            Hủy
+          </Button>
+          <Button
+            onClick={handleUnmarkSold}
+            disabled={loading}
+            className="bg-blue-600 text-white hover:bg-blue-700"
+          >
+            {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            {loading ? "Đang xử lý..." : "Xác nhận"}
           </Button>
         </div>
       </Modal>
