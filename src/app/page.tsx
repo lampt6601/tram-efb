@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     url: "/",
     images: [
       {
-        url: "/thc-shop.png",
+        url: "/thc-shop.jpg",
         width: 1200,
         height: 630,
         alt: "THC eFootball Shop",
