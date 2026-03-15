@@ -126,7 +126,7 @@ export default async function AccountDetailPage({
       <div className="flex min-h-screen flex-col bg-slate-50">
         <Header />
         <main className="flex-1">
-          <div className="mx-auto w-full max-w-7xl px-0 py-4 sm:px-6 sm:py-8 lg:px-8">
+          <div className="mx-auto w-full max-w-7xl overflow-x-hidden px-0 py-4 sm:px-6 sm:py-8 lg:px-8">
             <div className="mb-4 px-4 sm:mb-6 sm:px-0">
               <Link
                 href="/"
@@ -137,9 +137,9 @@ export default async function AccountDetailPage({
             </div>
 
             <div className="overflow-hidden shadow-sm sm:rounded-xl">
-              <div className="grid gap-8 p-4 lg:grid-cols-2">
-                {/* Images — greyed out */}
-                <div className="relative">
+              <div className="grid max-w-full gap-8 p-4 lg:grid-cols-2">
+                {/* Images — greyed out; min-w-0 + max-w-full for iOS Safari */}
+                <div className="relative min-w-0 max-w-full overflow-hidden">
                   <div className="pointer-events-none opacity-60 grayscale">
                     <ImageGallery
                       images={galleryImages}
@@ -295,7 +295,7 @@ export default async function AccountDetailPage({
     <div className="flex min-h-screen flex-col bg-slate-50">
       <Header />
       <main className="flex-1">
-        <div className="mx-auto w-full max-w-7xl px-4 py-4 sm:px-6 sm:py-8 lg:px-8">
+        <div className="mx-auto w-full max-w-7xl overflow-x-hidden px-4 py-4 sm:px-6 sm:py-8 lg:px-8">
           {/* Back link */}
           <div className="mb-4">
             <Link
@@ -306,14 +306,14 @@ export default async function AccountDetailPage({
             </Link>
           </div>
 
-          <div className="grid gap-6 lg:grid-cols-[1fr_420px] lg:items-start">
-            {/* Left — Images */}
-            <div className="overflow-hidden rounded-2xl bg-white shadow-sm">
+          <div className="grid min-w-0 max-w-full gap-6 lg:grid-cols-[1fr_420px] lg:items-start">
+            {/* Left — Images: min-w-0 + max-w-full for iOS Safari (aspect-ratio in grid is buggy) */}
+            <div className="min-w-0 max-w-full overflow-hidden rounded-2xl bg-white shadow-sm">
               <ImageGallery images={galleryImages} title={account.title} />
             </div>
 
             {/* Right — Info card */}
-            <div className="rounded-2xl bg-white p-5 shadow-sm sm:p-6">
+            <div className="min-w-0 overflow-hidden rounded-2xl bg-white p-5 shadow-sm sm:p-6">
               {/* Title */}
               <h1 className="flex items-start gap-2 text-xl font-bold leading-snug text-slate-900 sm:text-2xl">
                 <span>{account.title}</span>
