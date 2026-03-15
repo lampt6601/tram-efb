@@ -57,6 +57,17 @@ export interface AccountWithEmail extends Account {
   emails?: Email | null;
 }
 
+export interface AccountRequest {
+  id: string;
+  detail: string;
+  price_level: string | null;
+  requester_name: string;
+  contact_platform: string;
+  completed: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface AdminSettings {
   user_id: string;
   auto_approve: boolean;

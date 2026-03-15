@@ -15,12 +15,14 @@ import {
   ClipboardCheck,
   UserCircle,
   BookOpen,
+  SearchCheck,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const navItems = [
   { href: "/admin/dashboard", label: "Bảng Điều Khiển", icon: LayoutDashboard },
   { href: "/admin/dashboard/accounts", label: "Tài Khoản", icon: Gamepad2 },
+  { href: "/admin/dashboard/requests", label: "Yêu Cầu Tìm Acc", icon: SearchCheck },
   { href: "/admin/dashboard/emails", label: "Email", icon: Mail },
   { href: "/admin/dashboard/profile", label: "Hồ Sơ Cá Nhân", icon: UserCircle },
   { href: "/admin/dashboard/guide", label: "Hướng Dẫn", icon: BookOpen },
