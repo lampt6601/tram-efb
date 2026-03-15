@@ -15,6 +15,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { adminThumb } from "@/lib/image-utils";
+import { MAX_IMAGE_UPLOAD_BYTES } from "@/lib/constants";
 
 interface Props {
   account: Account;
@@ -86,8 +87,17 @@ export function SuperAdminAccountForm({ account, availableEmails }: Props) {
   const addImageFiles = (files: File[]) => {
     const imgs = files.filter((f) => f.type.startsWith("image/"));
     if (!imgs.length) return;
-    setSelectedFiles((p) => [...p, ...imgs]);
-    setPreviews((p) => [...p, ...imgs.map((f) => URL.createObjectURL(f))]);
+    const valid = imgs.filter((f) => f.size <= MAX_IMAGE_UPLOAD_BYTES);
+    const rejected = imgs.filter((f) => f.size > MAX_IMAGE_UPLOAD_BYTES);
+    if (rejected.length > 0) {
+      toast.error(
+        `${rejected.length} ảnh vượt 4MB đã bỏ qua. Vui lòng chọn ảnh nhỏ hơn 4MB.`,
+      );
+    }
+    if (valid.length > 0) {
+      setSelectedFiles((p) => [...p, ...valid]);
+      setPreviews((p) => [...p, ...valid.map((f) => URL.createObjectURL(f))]);
+    }
   };
 
   useEffect(() => {
@@ -109,6 +119,13 @@ export function SuperAdminAccountForm({ account, availableEmails }: Props) {
     setLoading(true);
 
     try {
+      const oversized = selectedFiles.filter((f) => f.size > MAX_IMAGE_UPLOAD_BYTES);
+      if (oversized.length > 0) {
+        setImageError("Một hoặc nhiều ảnh vượt 4MB. Vui lòng chọn ảnh nhỏ hơn 4MB.");
+        setLoading(false);
+        return;
+      }
+
       const uploadedUrls: string[] = [];
       let finalPrimaryUrl = primaryImage;
 

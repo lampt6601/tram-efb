@@ -1,3 +1,6 @@
+/** Max size per image upload (4MB), must be under serverActions.bodySizeLimit (5mb) */
+export const MAX_IMAGE_UPLOAD_BYTES = 4 * 1024 * 1024;
+
 export const CONTACT_ZALO_URL = "https://zalo.me/0969347283";
 export const CONTACT_ZALO_GROUP_URL = "https://zalo.me/g/a3v3dgaj4ugylmmnwk0u";
 export const CONTACT_MESSENGER_URL =

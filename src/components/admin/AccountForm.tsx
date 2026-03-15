@@ -16,6 +16,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { adminThumb } from "@/lib/image-utils";
+import { MAX_IMAGE_UPLOAD_BYTES } from "@/lib/constants";
 
 interface AccountFormProps {
   account?: Account | null;
@@ -131,9 +132,17 @@ export function AccountForm({ account }: AccountFormProps) {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const filesArray = Array.from(e.target.files);
-      setSelectedFiles((prev) => [...prev, ...filesArray]);
-      const newPreviews = filesArray.map((file) => URL.createObjectURL(file));
-      setPreviews((prev) => [...prev, ...newPreviews]);
+      const valid = filesArray.filter((f) => f.size <= MAX_IMAGE_UPLOAD_BYTES);
+      const rejected = filesArray.filter((f) => f.size > MAX_IMAGE_UPLOAD_BYTES);
+      if (rejected.length > 0) {
+        toast.error(
+          `${rejected.length} ảnh vượt 4MB đã bỏ qua. Vui lòng chọn ảnh nhỏ hơn 4MB.`,
+        );
+      }
+      if (valid.length > 0) {
+        setSelectedFiles((prev) => [...prev, ...valid]);
+        setPreviews((prev) => [...prev, ...valid.map((f) => URL.createObjectURL(f))]);
+      }
     }
   };
 
@@ -160,18 +169,34 @@ export function AccountForm({ account }: AccountFormProps) {
       const filesArray = Array.from(e.dataTransfer.files).filter((file) =>
         file.type.startsWith("image/"),
       );
-      setSelectedFiles((prev) => [...prev, ...filesArray]);
-      const newPreviews = filesArray.map((file) => URL.createObjectURL(file));
-      setPreviews((prev) => [...prev, ...newPreviews]);
+      const valid = filesArray.filter((f) => f.size <= MAX_IMAGE_UPLOAD_BYTES);
+      const rejected = filesArray.filter((f) => f.size > MAX_IMAGE_UPLOAD_BYTES);
+      if (rejected.length > 0) {
+        toast.error(
+          `${rejected.length} ảnh vượt 4MB đã bỏ qua. Vui lòng chọn ảnh nhỏ hơn 4MB.`,
+        );
+      }
+      if (valid.length > 0) {
+        setSelectedFiles((prev) => [...prev, ...valid]);
+        setPreviews((prev) => [...prev, ...valid.map((f) => URL.createObjectURL(f))]);
+      }
     }
   };
 
   const addImageFiles = (files: File[]) => {
     const imageFiles = files.filter((f) => f.type.startsWith("image/"));
     if (imageFiles.length === 0) return;
-    setSelectedFiles((prev) => [...prev, ...imageFiles]);
-    const newPreviews = imageFiles.map((f) => URL.createObjectURL(f));
-    setPreviews((prev) => [...prev, ...newPreviews]);
+    const valid = imageFiles.filter((f) => f.size <= MAX_IMAGE_UPLOAD_BYTES);
+    const rejected = imageFiles.filter((f) => f.size > MAX_IMAGE_UPLOAD_BYTES);
+    if (rejected.length > 0) {
+      toast.error(
+        `${rejected.length} ảnh vượt 4MB đã bỏ qua. Vui lòng chọn ảnh nhỏ hơn 4MB.`,
+      );
+    }
+    if (valid.length > 0) {
+      setSelectedFiles((prev) => [...prev, ...valid]);
+      setPreviews((prev) => [...prev, ...valid.map((f) => URL.createObjectURL(f))]);
+    }
   };
 
   // Auto-select the first image as primary when none is set yet
@@ -202,6 +227,13 @@ export function AccountForm({ account }: AccountFormProps) {
     setLoading(true);
 
     try {
+      const oversized = selectedFiles.filter((f) => f.size > MAX_IMAGE_UPLOAD_BYTES);
+      if (oversized.length > 0) {
+        setImageError("Một hoặc nhiều ảnh vượt 4MB. Vui lòng chọn ảnh nhỏ hơn 4MB.");
+        setLoading(false);
+        return;
+      }
+
       const uploadedUrls: string[] = [];
       let finalPrimaryUrl = primaryImage;
 
