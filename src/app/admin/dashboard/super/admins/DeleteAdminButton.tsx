@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
-import { Trash2, Loader2, X, AlertTriangle } from "lucide-react";
+import { Trash2, X, AlertTriangle } from "lucide-react";
 import { deleteAdmin } from "@/app/actions/super-admin-actions";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -72,9 +72,13 @@ export function DeleteAdminButton({ adminId, adminEmail, accountCount }: { admin
         </div>
         <div className="flex justify-end gap-2 rounded-b-xl border-t bg-slate-50 px-5 py-3">
           <Button variant="outline" onClick={onClose} disabled={loading}>Hủy</Button>
-          <Button onClick={handleDelete} disabled={loading} className="bg-red-600 text-white hover:bg-red-700">
-            {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {loading ? "Đang xóa..." : "Xóa Admin"}
+          <Button
+            onClick={handleDelete}
+            loading={loading}
+            loadingLabel="Đang xóa..."
+            className="min-w-[8rem] bg-red-600 text-white hover:bg-red-700"
+          >
+            Xóa Admin
           </Button>
         </div>
       </Modal>

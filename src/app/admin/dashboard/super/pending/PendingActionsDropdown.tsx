@@ -153,9 +153,13 @@ export function PendingActionsDropdown({ account, adminEmail }: PendingActionsDr
         </div>
         <div className="flex justify-end gap-2 rounded-b-xl border-t bg-slate-50 px-5 py-3">
           <Button variant="outline" onClick={closeDelete} disabled={deleting}>Hủy</Button>
-          <Button onClick={handleDelete} disabled={deleting} className="bg-red-600 text-white hover:bg-red-700">
-            {deleting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {deleting ? "Đang xóa..." : "Xóa"}
+          <Button
+            onClick={handleDelete}
+            loading={deleting}
+            loadingLabel="Đang xóa..."
+            className="min-w-[7rem] bg-red-600 text-white hover:bg-red-700"
+          >
+            Xóa
           </Button>
         </div>
       </Modal>

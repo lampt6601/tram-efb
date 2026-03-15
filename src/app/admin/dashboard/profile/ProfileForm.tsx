@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Loader2, Save } from "lucide-react";
+import { Save } from "lucide-react";
 import { updateMyProfile } from "@/app/actions/profile-actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -66,20 +66,13 @@ export function ProfileForm({ currentName, email }: ProfileFormProps) {
       <div className="flex justify-end pt-2">
         <Button
           type="submit"
-          disabled={loading || name.trim() === currentName}
-          className="bg-indigo-600 text-white hover:bg-indigo-700"
+          disabled={name.trim() === currentName}
+          loading={loading}
+          loadingLabel="Đang lưu..."
+          className="min-w-[9rem] bg-indigo-600 text-white hover:bg-indigo-700"
         >
-          {loading ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Đang lưu...
-            </>
-          ) : (
-            <>
-              <Save className="mr-2 h-4 w-4" />
-              Lưu thay đổi
-            </>
-          )}
+          <Save className="h-4 w-4 shrink-0" />
+          Lưu thay đổi
         </Button>
       </div>
     </form>

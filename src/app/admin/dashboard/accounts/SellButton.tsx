@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
-import { ShoppingCart, Loader2 } from "lucide-react";
+import { ShoppingCart } from "lucide-react";
 import type { AccountStatus } from "@/types/database";
 import { notifyAdminAction } from "@/app/actions/notify-admin";
 import { Button } from "@/components/ui/button";
@@ -143,16 +143,11 @@ export function SellAccountButton({
           </Button>
           <Button
             onClick={handleConfirm}
-            disabled={loading}
-            aria-busy={loading}
+            loading={loading}
+            loadingLabel="Đang xử lý..."
             className="min-w-[10rem] bg-green-600 text-white hover:bg-green-700"
           >
-            <span className="inline-flex items-center justify-center gap-2">
-              {loading && (
-                <Loader2 className="h-4 w-4 shrink-0 animate-spin" aria-hidden />
-              )}
-              <span>{loading ? "Đang xử lý..." : "Xác Nhận Bán"}</span>
-            </span>
+            Xác Nhận Bán
           </Button>
         </DialogFooter>
       </DialogContent>

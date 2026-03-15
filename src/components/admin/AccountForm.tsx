@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
-import { ArrowLeft, Loader2, X, UploadCloud, Star, Copy } from "lucide-react";
+import { ArrowLeft, X, UploadCloud, Star, Copy } from "lucide-react";
 import Link from "next/link";
 import type { Account, Email, AccountStatus } from "@/types/database";
 import { useForm, Controller } from "react-hook-form";
@@ -750,11 +750,11 @@ export function AccountForm({ account }: AccountFormProps) {
           <div className="flex gap-3 border-t border-slate-100 pt-5">
             <Button
               type="submit"
-              disabled={loading}
-              className="h-10 bg-indigo-600 px-6 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-50"
+              loading={loading}
+              loadingLabel={isEditing ? "Đang lưu..." : "Đang tạo..."}
+              className="h-10 min-w-[10rem] bg-indigo-600 px-6 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-50"
             >
-              {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {loading ? "Đang lưu..." : isEditing ? "Cập nhật" : "Tạo tài khoản"}
+              {isEditing ? "Cập nhật" : "Tạo tài khoản"}
             </Button>
             <Button
               variant="outline"

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Pencil, X, Loader2 } from "lucide-react";
+import { Pencil, X } from "lucide-react";
 import { updateAdminProfile } from "@/app/actions/super-admin-actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -106,11 +106,11 @@ export function EditAdminNameModal({ adminId, adminEmail, currentName }: EditAdm
                 </Button>
                 <Button
                   type="submit"
-                  disabled={loading}
-                  className="bg-indigo-600 text-white hover:bg-indigo-700"
+                  loading={loading}
+                  loadingLabel="Đang lưu..."
+                  className="min-w-[6rem] bg-indigo-600 text-white hover:bg-indigo-700"
                 >
-                  {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  {loading ? "Đang lưu..." : "Lưu"}
+                  Lưu
                 </Button>
               </div>
             </form>

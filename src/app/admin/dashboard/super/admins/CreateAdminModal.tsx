@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { UserPlus, X, Loader2, Eye, EyeOff } from "lucide-react";
+import { UserPlus, X, Eye, EyeOff } from "lucide-react";
 import { createAdmin } from "@/app/actions/super-admin-actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -94,9 +94,13 @@ export function CreateAdminModal() {
               </div>
               <div className="flex justify-end gap-2 rounded-b-xl border-t bg-slate-50 px-6 py-4">
                 <Button type="button" variant="outline" onClick={handleClose} disabled={loading}>Hủy</Button>
-                <Button type="submit" disabled={loading} className="bg-amber-500 text-white hover:bg-amber-600">
-                  {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  {loading ? "Đang tạo..." : "Tạo Admin"}
+                <Button
+                  type="submit"
+                  loading={loading}
+                  loadingLabel="Đang tạo..."
+                  className="min-w-[8rem] bg-amber-500 text-white hover:bg-amber-600"
+                >
+                  Tạo Admin
                 </Button>
               </div>
             </form>

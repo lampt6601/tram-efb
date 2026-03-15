@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Loader2, X, UploadCloud, Star, Copy } from "lucide-react";
+import { ArrowLeft, X, UploadCloud, Star, Copy } from "lucide-react";
 import Link from "next/link";
 import type { Account, Email, AccountStatus } from "@/types/database";
 import { useForm, Controller } from "react-hook-form";
@@ -554,11 +554,11 @@ export function SuperAdminAccountForm({ account, availableEmails }: Props) {
           <div className="flex gap-3 border-t border-slate-100 pt-6">
             <Button
               type="submit"
-              disabled={loading}
-              className="h-10 bg-indigo-600 px-6 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-50"
+              loading={loading}
+              loadingLabel="Đang lưu..."
+              className="h-10 min-w-[11rem] bg-indigo-600 px-6 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-50"
             >
-              {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {loading ? "Đang lưu..." : "Cập Nhật Tài Khoản"}
+              Cập Nhật Tài Khoản
             </Button>
             <Button
               type="button"

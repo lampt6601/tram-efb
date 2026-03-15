@@ -430,9 +430,13 @@ export function SuperAccountActionsDropdown({
         </div>
         <div className="flex justify-end gap-2 rounded-b-xl border-t bg-slate-50 px-5 py-3">
           <Button variant="outline" onClick={closeDialog} disabled={loading}>Hủy</Button>
-          <Button onClick={handleUnapprove} disabled={loading} className="bg-amber-600 text-white hover:bg-amber-700">
-            {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {loading ? "Đang xử lý..." : "Xác nhận"}
+          <Button
+            onClick={handleUnapprove}
+            loading={loading}
+            loadingLabel="Đang xử lý..."
+            className="min-w-[8rem] bg-amber-600 text-white hover:bg-amber-700"
+          >
+            Xác nhận
           </Button>
         </div>
       </Modal>
@@ -456,9 +460,13 @@ export function SuperAccountActionsDropdown({
         </div>
         <div className="flex justify-end gap-2 rounded-b-xl border-t bg-slate-50 px-5 py-3">
           <Button variant="outline" onClick={closeDialog} disabled={loading}>Hủy</Button>
-          <Button onClick={handleDelete} disabled={loading} className="bg-red-600 text-white hover:bg-red-700">
-            {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {loading ? "Đang xóa..." : "Xóa"}
+          <Button
+            onClick={handleDelete}
+            loading={loading}
+            loadingLabel="Đang xóa..."
+            className="min-w-[7rem] bg-red-600 text-white hover:bg-red-700"
+          >
+            Xóa
           </Button>
         </div>
       </Modal>
@@ -495,16 +503,11 @@ export function SuperAccountActionsDropdown({
           <Button variant="outline" onClick={closeDialog} disabled={loading}>Hủy</Button>
           <Button
             onClick={handleSell}
-            disabled={loading}
-            aria-busy={loading}
+            loading={loading}
+            loadingLabel="Đang xử lý..."
             className="min-w-[10rem] bg-green-600 text-white hover:bg-green-700"
           >
-            <span className="inline-flex items-center justify-center gap-2">
-              {loading && (
-                <Loader2 className="h-4 w-4 shrink-0 animate-spin" aria-hidden />
-              )}
-              <span>{loading ? "Đang xử lý..." : "Xác Nhận Bán"}</span>
-            </span>
+            Xác Nhận Bán
           </Button>
         </div>
       </Modal>
@@ -556,9 +559,13 @@ export function SuperAccountActionsDropdown({
         <div className="rounded-b-xl border-t bg-slate-50 px-5 py-3">
           <div className="flex justify-end gap-2">
             <Button variant="outline" onClick={closeDialog} disabled={loading}>Hủy</Button>
-            <Button onClick={handleSaleConfirm} disabled={loading} className="bg-rose-600 text-white hover:bg-rose-700">
-              {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {loading ? "Đang xử lý..." : "Lưu Thay Đổi"}
+            <Button
+              onClick={handleSaleConfirm}
+              loading={loading}
+              loadingLabel="Đang xử lý..."
+              className="min-w-[9rem] bg-rose-600 text-white hover:bg-rose-700"
+            >
+              Lưu Thay Đổi
             </Button>
           </div>
           {isOnSale && (
@@ -592,9 +599,13 @@ export function SuperAccountActionsDropdown({
         </div>
         <div className="flex justify-end gap-2 rounded-b-xl border-t bg-slate-50 px-5 py-3">
           <Button variant="outline" onClick={closeDialog} disabled={loading}>Hủy</Button>
-          <Button onClick={handleUnmarkSold} disabled={loading} className="bg-blue-600 text-white hover:bg-blue-700">
-            {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {loading ? "Đang xử lý..." : "Xác nhận"}
+          <Button
+            onClick={handleUnmarkSold}
+            loading={loading}
+            loadingLabel="Đang xử lý..."
+            className="min-w-[8rem] bg-blue-600 text-white hover:bg-blue-700"
+          >
+            Xác nhận
           </Button>
         </div>
       </Modal>

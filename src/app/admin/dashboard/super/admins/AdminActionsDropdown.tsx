@@ -239,9 +239,13 @@ export function AdminActionsDropdown({
           </div>
           <div className="flex justify-end gap-2 rounded-b-xl border-t bg-slate-50 px-5 py-3">
             <Button type="button" variant="outline" onClick={closeDialog} disabled={loading}>Hủy</Button>
-            <Button type="submit" disabled={loading} className="bg-indigo-600 text-white hover:bg-indigo-700">
-              {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {loading ? "Đang lưu..." : "Lưu"}
+            <Button
+              type="submit"
+              loading={loading}
+              loadingLabel="Đang lưu..."
+              className="min-w-[6rem] bg-indigo-600 text-white hover:bg-indigo-700"
+            >
+              Lưu
             </Button>
           </div>
         </form>
@@ -294,9 +298,13 @@ export function AdminActionsDropdown({
           </div>
           <div className="flex justify-end gap-2 rounded-b-xl border-t bg-slate-50 px-5 py-3">
             <Button type="button" variant="outline" onClick={closeDialog} disabled={loading}>Hủy</Button>
-            <Button type="submit" disabled={loading} className="bg-slate-800 text-white hover:bg-slate-900">
-              {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {loading ? "Đang lưu..." : "Lưu"}
+            <Button
+              type="submit"
+              loading={loading}
+              loadingLabel="Đang lưu..."
+              className="min-w-[6rem] bg-slate-800 text-white hover:bg-slate-900"
+            >
+              Lưu
             </Button>
           </div>
         </form>
@@ -330,9 +338,13 @@ export function AdminActionsDropdown({
         </div>
         <div className="flex justify-end gap-2 rounded-b-xl border-t bg-slate-50 px-5 py-3">
           <Button variant="outline" onClick={closeDialog} disabled={loading}>Hủy</Button>
-          <Button onClick={handleDelete} disabled={loading} className="bg-red-600 text-white hover:bg-red-700">
-            {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {loading ? "Đang xóa..." : "Xóa Admin"}
+          <Button
+            onClick={handleDelete}
+            loading={loading}
+            loadingLabel="Đang xóa..."
+            className="min-w-[8rem] bg-red-600 text-white hover:bg-red-700"
+          >
+            Xóa Admin
           </Button>
         </div>
       </Modal>

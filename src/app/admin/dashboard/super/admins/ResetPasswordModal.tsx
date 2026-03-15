@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { KeyRound, X, Loader2, Eye, EyeOff } from "lucide-react";
+import { KeyRound, X, Eye, EyeOff } from "lucide-react";
 import { resetAdminPassword } from "@/app/actions/super-admin-actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -73,9 +73,13 @@ export function ResetPasswordModal({ adminId, adminEmail }: { adminId: string; a
               </div>
               <div className="flex justify-end gap-2 rounded-b-xl border-t bg-slate-50 px-5 py-3">
                 <Button type="button" variant="outline" onClick={handleClose} disabled={loading}>Hủy</Button>
-                <Button type="submit" disabled={loading} className="bg-slate-800 text-white hover:bg-slate-900">
-                  {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  {loading ? "Đang lưu..." : "Lưu"}
+                <Button
+                  type="submit"
+                  loading={loading}
+                  loadingLabel="Đang lưu..."
+                  className="min-w-[6rem] bg-slate-800 text-white hover:bg-slate-900"
+                >
+                  Lưu
                 </Button>
               </div>
             </form>

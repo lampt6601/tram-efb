@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
-import { Gamepad2, Loader2, Lock, Mail } from "lucide-react";
+import { Gamepad2, Lock, Mail } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -128,11 +128,11 @@ export default function AdminLoginPage() {
 
           <Button
             type="submit"
-            disabled={loading}
+            loading={loading}
+            loadingLabel="Đang đăng nhập..."
             className="mt-6 h-11 w-full bg-indigo-600 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-50"
           >
-            {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-            {loading ? "Đang đăng nhập..." : "Đăng Nhập"}
+            Đăng Nhập
           </Button>
         </form>
       </div>

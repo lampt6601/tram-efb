@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
-import { Tag, Loader2 } from "lucide-react";
+import { Tag } from "lucide-react";
 import type { AccountStatus } from "@/types/database";
 import { notifyAdminAction } from "@/app/actions/notify-admin";
 import { Button } from "@/components/ui/button";
@@ -216,11 +216,11 @@ export function SaleAccountButton({
             </Button>
             <Button
               onClick={handleConfirm}
-              disabled={loading}
-              className="flex-1 bg-rose-600 text-white hover:bg-rose-700 sm:flex-none"
+              loading={loading}
+              loadingLabel="Đang xử lý..."
+              className="min-w-[9rem] flex-1 bg-rose-600 text-white hover:bg-rose-700 sm:flex-none"
             >
-              {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {loading ? "Đang xử lý..." : "Lưu Thay Đổi"}
+              Lưu Thay Đổi
             </Button>
           </div>
           {currentOriginalPrice && currentOriginalPrice > currentSellingPrice && (

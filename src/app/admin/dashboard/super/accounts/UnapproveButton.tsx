@@ -50,14 +50,21 @@ export function UnapproveButton({ accountId, accountTitle }: UnapproveButtonProp
     <button
       onClick={() => setConfirming(true)}
       disabled={loading}
-      className="inline-flex items-center gap-1 rounded-lg border border-amber-200 bg-amber-50 px-2 py-1 text-xs font-medium text-amber-700 hover:bg-amber-100 hover:border-amber-300 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
+      className="inline-flex items-center justify-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-2 py-1 text-xs font-medium text-amber-700 hover:bg-amber-100 hover:border-amber-300 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
     >
-      {loading ? (
-        <Loader2 className="h-3.5 w-3.5 animate-spin" />
-      ) : (
-        <RotateCcw className="h-3.5 w-3.5" />
-      )}
-      {loading ? "Đang xử lý..." : "Chờ duyệt"}
+      <span className="inline-flex items-center justify-center gap-2">
+        {loading ? (
+          <>
+            <Loader2 className="h-3.5 w-3.5 shrink-0 animate-spin" aria-hidden />
+            <span>Đang xử lý...</span>
+          </>
+        ) : (
+          <>
+            <RotateCcw className="h-3.5 w-3.5 shrink-0" />
+            <span>Chờ duyệt</span>
+          </>
+        )}
+      </span>
     </button>
   );
 }

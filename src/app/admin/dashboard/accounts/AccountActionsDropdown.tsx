@@ -494,16 +494,11 @@ export function AccountActionsDropdown({
           </Button>
           <Button
             onClick={handleSell}
-            disabled={loading}
-            aria-busy={loading}
+            loading={loading}
+            loadingLabel="Đang xử lý..."
             className="min-w-[10rem] bg-green-600 text-white hover:bg-green-700"
           >
-            <span className="inline-flex items-center justify-center gap-2">
-              {loading && (
-                <Loader2 className="h-4 w-4 shrink-0 animate-spin" aria-hidden />
-              )}
-              <span>{loading ? "Đang xử lý..." : "Xác Nhận Bán"}</span>
-            </span>
+            Xác Nhận Bán
           </Button>
         </div>
       </Modal>
@@ -565,11 +560,11 @@ export function AccountActionsDropdown({
             </Button>
             <Button
               onClick={handleSaleConfirm}
-              disabled={loading}
-              className="bg-rose-600 text-white hover:bg-rose-700"
+              loading={loading}
+              loadingLabel="Đang xử lý..."
+              className="min-w-[9rem] bg-rose-600 text-white hover:bg-rose-700"
             >
-              {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {loading ? "Đang xử lý..." : "Lưu Thay Đổi"}
+              Lưu Thay Đổi
             </Button>
           </div>
           {isOnSale && (
@@ -603,11 +598,11 @@ export function AccountActionsDropdown({
           </Button>
           <Button
             onClick={handleDelete}
-            disabled={loading}
-            className="bg-red-600 text-white hover:bg-red-700"
+            loading={loading}
+            loadingLabel="Đang xóa..."
+            className="min-w-[7rem] bg-red-600 text-white hover:bg-red-700"
           >
-            {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {loading ? "Đang xóa..." : "Xóa"}
+            Xóa
           </Button>
         </div>
       </Modal>
@@ -642,11 +637,11 @@ export function AccountActionsDropdown({
           </Button>
           <Button
             onClick={handleUnmarkSold}
-            disabled={loading}
-            className="bg-blue-600 text-white hover:bg-blue-700"
+            loading={loading}
+            loadingLabel="Đang xử lý..."
+            className="min-w-[8rem] bg-blue-600 text-white hover:bg-blue-700"
           >
-            {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {loading ? "Đang xử lý..." : "Xác nhận"}
+            Xác nhận
           </Button>
         </div>
       </Modal>

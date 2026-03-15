@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
-import { Trash2, Loader2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import { notifyAdminAction } from "@/app/actions/notify-admin";
 import { Button } from "@/components/ui/button";
 import {
@@ -70,11 +70,11 @@ export function DeleteAccountButton({
           <Button
             variant="destructive"
             onClick={handleDelete}
-            disabled={loading}
-            className="bg-red-600 text-white hover:bg-red-700"
+            loading={loading}
+            loadingLabel="Đang xóa..."
+            className="min-w-[7rem] bg-red-600 text-white hover:bg-red-700"
           >
-            {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {loading ? "Đang xóa..." : "Xóa"}
+            Xóa
           </Button>
         </DialogFooter>
       </DialogContent>

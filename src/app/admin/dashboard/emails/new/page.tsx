@@ -3,9 +3,10 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
-import { ArrowLeft, Loader2 } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
+import { Button } from "@/components/ui/button";
 
 type EmailFormValues = {
   emailAddress: string;
@@ -117,14 +118,14 @@ export default function NewEmailPage() {
             />
           </div>
           <div className="flex gap-3 pt-2">
-            <button
+            <Button
               type="submit"
-              disabled={loading}
-              className="flex items-center gap-2 rounded-xl bg-indigo-600 px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-indigo-700 disabled:opacity-50"
+              loading={loading}
+              loadingLabel="Đang lưu..."
+              className="min-w-[8rem] rounded-xl bg-indigo-600 px-6 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-50"
             >
-              {loading && <Loader2 className="h-4 w-4 animate-spin" />}
-              {loading ? "Đang lưu..." : "Lưu Email"}
-            </button>
+              Lưu Email
+            </Button>
             <Link
               href="/admin/dashboard/emails"
               className="rounded-xl border border-slate-300 px-6 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50"

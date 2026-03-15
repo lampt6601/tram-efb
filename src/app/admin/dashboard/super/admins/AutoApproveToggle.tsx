@@ -38,18 +38,25 @@ export function AutoApproveToggle({ adminId, adminEmail, enabled }: AutoApproveT
       onClick={handleToggle}
       disabled={loading}
       title={active ? "Tắt auto duyệt" : "Bật auto duyệt"}
-      className={`inline-flex items-center gap-1.5 rounded-lg border px-2 py-1 text-xs font-medium transition-colors disabled:opacity-60 disabled:cursor-not-allowed ${
+      className={`inline-flex items-center justify-center gap-2 rounded-lg border px-2 py-1 text-xs font-medium transition-colors disabled:opacity-60 disabled:cursor-not-allowed ${
         active
           ? "border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
           : "border-slate-200 bg-slate-50 text-slate-500 hover:bg-slate-100"
       }`}
     >
-      {loading ? (
-        <Loader2 className="h-3.5 w-3.5 animate-spin" />
-      ) : (
-        <Zap className={`h-3.5 w-3.5 ${active ? "fill-emerald-500 text-emerald-500" : ""}`} />
-      )}
-      {active ? "Auto duyệt" : "Thủ công"}
+      <span className="inline-flex items-center justify-center gap-2">
+        {loading ? (
+          <>
+            <Loader2 className="h-3.5 w-3.5 shrink-0 animate-spin" aria-hidden />
+            <span>{active ? "Auto duyệt" : "Thủ công"}</span>
+          </>
+        ) : (
+          <>
+            <Zap className={`h-3.5 w-3.5 shrink-0 ${active ? "fill-emerald-500 text-emerald-500" : ""}`} />
+            <span>{active ? "Auto duyệt" : "Thủ công"}</span>
+          </>
+        )}
+      </span>
     </button>
   );
 }
