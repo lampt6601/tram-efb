@@ -8,6 +8,9 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { PriceInput } from "@/components/ui/price-input";
 
+/** Chỉ tìm kiếm sau khi user dừng gõ (ms). */
+const SEARCH_DEBOUNCE_MS = 600;
+
 const SORT_OPTIONS = [
   { value: "newest", label: "Mới nhất" },
   { value: "oldest", label: "Cũ nhất" },
@@ -32,6 +35,7 @@ export function SuperAccountFilters({ totalCount }: { totalCount: number }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
 
   const sort = searchParams.get("sort") ?? "newest";
   const status = searchParams.get("status") ?? "all";
@@ -43,7 +47,7 @@ export function SuperAccountFilters({ totalCount }: { totalCount: number }) {
   const [localMinPrice, setLocalMinPrice] = useState(minPrice);
   const [localMaxPrice, setLocalMaxPrice] = useState(maxPrice);
 
-  const debouncedSearch = useDebounce(localSearch, 500);
+  const debouncedSearch = useDebounce(localSearch, SEARCH_DEBOUNCE_MS);
   const debouncedMinPrice = useDebounce(localMinPrice, 600);
   const debouncedMaxPrice = useDebounce(localMaxPrice, 600);
 
@@ -84,11 +88,11 @@ export function SuperAccountFilters({ totalCount }: { totalCount: number }) {
     }
   }, [debouncedMaxPrice, maxPrice, update]);
 
-  // eslint-disable-next-line react-hooks/set-state-in-effect
-  useEffect(() => setLocalSearch(search), [search]);
-  // eslint-disable-next-line react-hooks/set-state-in-effect
+  // Chỉ đồng bộ URL → ô tìm kiếm khi user không đang focus (tránh ghi đè chữ đang gõ).
+  useEffect(() => {
+    if (!isSearchFocused) setLocalSearch(search);
+  }, [search, isSearchFocused]);
   useEffect(() => setLocalMinPrice(minPrice), [minPrice]);
-  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => setLocalMaxPrice(maxPrice), [maxPrice]);
 
   const hasActiveFilters = sort !== "newest" || status !== "all" || search !== "" || minPrice !== "" || maxPrice !== "";
@@ -103,6 +107,8 @@ export function SuperAccountFilters({ totalCount }: { totalCount: number }) {
             placeholder="Tìm theo tiêu đề..."
             value={localSearch}
             onChange={(e) => setLocalSearch(e.target.value)}
+            onFocus={() => setIsSearchFocused(true)}
+            onBlur={() => setIsSearchFocused(false)}
             className="h-9 rounded-xl border-slate-200 pl-9 text-sm focus-visible:border-amber-400 focus-visible:ring-amber-400/30"
           />
         </div>

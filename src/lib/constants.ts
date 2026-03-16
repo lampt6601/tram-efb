@@ -12,9 +12,10 @@ export const STATUS_COLORS: Record<string, string> = {
   Sold: "bg-red-100 text-red-800",
 };
 
-export const PLATFORM_ICONS: Record<string, string> = {
-  Android: "🤖",
-  iOS: "🍎",
+/** Fallback labels for platform (use PlatformCoinIcons in UI for icons) */
+export const PLATFORM_LABELS: Record<string, string> = {
+  Android: "Android",
+  iOS: "iOS",
 };
 
 export const formatCurrency = (amount: number): string => {

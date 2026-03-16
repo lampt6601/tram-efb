@@ -10,6 +10,7 @@ import {
   Star,
   Copy,
 } from "lucide-react";
+import { AndroidCoinIcon, IosCoinIcon } from "@/components/ui/PlatformCoinIcons";
 import { StatusBadge, Badge } from "@/components/ui/Badge";
 import { formatCurrency, formatNumber } from "@/lib/constants";
 import type { PublicAccount } from "@/types/database";
@@ -131,24 +132,34 @@ export function AccountCard({ account }: { account: PublicAccount }) {
             )}
             {((account.total_coins_android ?? 0) > 0 ||
               (account.total_coins_ios ?? 0) > 0) && (
-              <span className="inline-flex items-center gap-1">
+              <span className="inline-flex flex-wrap items-center gap-x-1.5 gap-y-0.5">
                 <Coins
-                  className={`h-3 w-3 ${
+                  className={`h-3 w-3 shrink-0 ${
                     isSold ? "text-yellow-400" : "text-yellow-500"
                   }`}
                 />
-                <span className="truncate">
-                  {(account.total_coins_android ?? 0) > 0
-                    ? `${formatNumber(account.total_coins_android)} 🤖`
-                    : ""}
-                  {(account.total_coins_android ?? 0) > 0 &&
-                  (account.total_coins_ios ?? 0) > 0
-                    ? " | "
-                    : ""}
-                  {(account.total_coins_ios ?? 0) > 0
-                    ? `${formatNumber(account.total_coins_ios)} 🍎`
-                    : ""}
-                </span>
+                {(account.total_coins_android ?? 0) > 0 && (
+                  <span className="inline-flex items-center gap-0.5">
+                    <AndroidCoinIcon
+                      size={16}
+                      className={isSold ? "opacity-70" : ""}
+                    />
+                    <span>{formatNumber(account.total_coins_android)}</span>
+                  </span>
+                )}
+                {(account.total_coins_android ?? 0) > 0 &&
+                  (account.total_coins_ios ?? 0) > 0 && (
+                  <span className="text-slate-300" aria-hidden>·</span>
+                )}
+                {(account.total_coins_ios ?? 0) > 0 && (
+                  <span className="inline-flex items-center gap-0.5">
+                    <IosCoinIcon
+                      size={16}
+                      className={isSold ? "opacity-70" : ""}
+                    />
+                    <span>{formatNumber(account.total_coins_ios)}</span>
+                  </span>
+                )}
               </span>
             )}
             {(account.team_strength ?? 0) > 0 && (

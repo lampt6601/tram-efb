@@ -8,6 +8,9 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { PriceInput } from "@/components/ui/price-input";
 
+/** Chỉ tìm kiếm sau khi user dừng gõ (ms). */
+const SEARCH_DEBOUNCE_MS = 600;
+
 const SORT_OPTIONS = [
   { value: "newest", label: "Mới nhất" },
   { value: "oldest", label: "Cũ nhất" },
@@ -38,6 +41,7 @@ export function AdminAccountFilters({ totalCount }: AdminAccountFiltersProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
 
   const sort = searchParams.get("sort") ?? "newest";
   const status = searchParams.get("status") ?? "Available";
@@ -49,7 +53,7 @@ export function AdminAccountFilters({ totalCount }: AdminAccountFiltersProps) {
   const [localMinPrice, setLocalMinPrice] = useState(minPrice);
   const [localMaxPrice, setLocalMaxPrice] = useState(maxPrice);
 
-  const debouncedSearch = useDebounce(localSearch, 500);
+  const debouncedSearch = useDebounce(localSearch, SEARCH_DEBOUNCE_MS);
   const debouncedMinPrice = useDebounce(localMinPrice, 600);
   const debouncedMaxPrice = useDebounce(localMaxPrice, 600);
 
@@ -95,7 +99,10 @@ export function AdminAccountFilters({ totalCount }: AdminAccountFiltersProps) {
     }
   }, [debouncedMaxPrice, maxPrice, update]);
 
-  useEffect(() => { setLocalSearch(search); }, [search]);
+  // Chỉ đồng bộ URL → ô tìm kiếm khi user không đang focus (tránh ghi đè chữ đang gõ).
+  useEffect(() => {
+    if (!isSearchFocused) setLocalSearch(search);
+  }, [search, isSearchFocused]);
   useEffect(() => { setLocalMinPrice(minPrice); }, [minPrice]);
   useEffect(() => { setLocalMaxPrice(maxPrice); }, [maxPrice]);
 
@@ -103,6 +110,9 @@ export function AdminAccountFilters({ totalCount }: AdminAccountFiltersProps) {
     sort !== "newest" || status !== "Available" || search !== "" || minPrice !== "" || maxPrice !== "";
 
   const clearAll = () => {
+    setLocalSearch("");
+    setLocalMinPrice("");
+    setLocalMaxPrice("");
     startTransition(() => {
       router.replace(pathname, { scroll: false });
     });
@@ -121,6 +131,8 @@ export function AdminAccountFilters({ totalCount }: AdminAccountFiltersProps) {
             placeholder="Tìm theo tiêu đề..."
             value={localSearch}
             onChange={(e) => setLocalSearch(e.target.value)}
+            onFocus={() => setIsSearchFocused(true)}
+            onBlur={() => setIsSearchFocused(false)}
             className="h-9 rounded-xl border-slate-200 pl-9 text-sm text-slate-700 focus-visible:border-indigo-400 focus-visible:ring-indigo-400/30"
           />
         </div>

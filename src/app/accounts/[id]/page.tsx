@@ -28,6 +28,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import type { PublicAccount } from "@/types/database";
 import { ogImage } from "@/lib/image-utils";
+import { AndroidCoinIcon, IosCoinIcon } from "@/components/ui/PlatformCoinIcons";
 
 export async function generateMetadata({
   params,
@@ -205,17 +206,23 @@ export default async function AccountDetailPage({
                         (account.total_coins_ios ?? 0) > 0) && (
                         <div className="rounded-xl bg-yellow-50 p-4 text-center opacity-60">
                           <Coins className="mx-auto mb-1 h-5 w-5 text-yellow-500" />
-                          <p className="text-sm font-bold text-slate-900">
-                            {(account.total_coins_android ?? 0) > 0
-                              ? `${formatNumber(account.total_coins_android)} 🤖`
-                              : ""}
+                          <p className="text-sm font-bold text-slate-900 flex flex-wrap items-center justify-center gap-x-1.5 gap-y-0.5">
+                            {(account.total_coins_android ?? 0) > 0 && (
+                              <span className="inline-flex items-center gap-0.5">
+                                <AndroidCoinIcon size={18} className="opacity-80" />
+                                {formatNumber(account.total_coins_android)}
+                              </span>
+                            )}
                             {(account.total_coins_android ?? 0) > 0 &&
-                            (account.total_coins_ios ?? 0) > 0
-                              ? " | "
-                              : ""}
-                            {(account.total_coins_ios ?? 0) > 0
-                              ? `${formatNumber(account.total_coins_ios)} 🍎`
-                              : ""}
+                              (account.total_coins_ios ?? 0) > 0 && (
+                              <span className="text-slate-400">|</span>
+                            )}
+                            {(account.total_coins_ios ?? 0) > 0 && (
+                              <span className="inline-flex items-center gap-0.5">
+                                <IosCoinIcon size={18} className="opacity-80" />
+                                {formatNumber(account.total_coins_ios)}
+                              </span>
+                            )}
                           </p>
                           <p className="text-xs text-slate-500">Coins</p>
                         </div>
@@ -359,17 +366,23 @@ export default async function AccountDetailPage({
                     (account.total_coins_ios ?? 0) > 0) && (
                     <div className="rounded-xl bg-yellow-50 px-3 py-3 text-center">
                       <Coins className="mx-auto mb-1 h-4 w-4 text-yellow-500" />
-                      <p className="text-sm font-bold text-slate-900 leading-tight">
-                        {(account.total_coins_android ?? 0) > 0
-                          ? `${formatNumber(account.total_coins_android)} 🤖`
-                          : ""}
+                      <p className="text-sm font-bold text-slate-900 leading-tight flex flex-wrap items-center justify-center gap-x-1.5 gap-y-0.5">
+                        {(account.total_coins_android ?? 0) > 0 && (
+                          <span className="inline-flex items-center gap-0.5">
+                            <AndroidCoinIcon size={16} />
+                            {formatNumber(account.total_coins_android)}
+                          </span>
+                        )}
                         {(account.total_coins_android ?? 0) > 0 &&
-                        (account.total_coins_ios ?? 0) > 0
-                          ? " · "
-                          : ""}
-                        {(account.total_coins_ios ?? 0) > 0
-                          ? `${formatNumber(account.total_coins_ios)} 🍎`
-                          : ""}
+                          (account.total_coins_ios ?? 0) > 0 && (
+                          <span className="text-slate-400">·</span>
+                        )}
+                        {(account.total_coins_ios ?? 0) > 0 && (
+                          <span className="inline-flex items-center gap-0.5">
+                            <IosCoinIcon size={16} />
+                            {formatNumber(account.total_coins_ios)}
+                          </span>
+                        )}
                       </p>
                       <p className="text-xs text-slate-500">Coins</p>
                     </div>

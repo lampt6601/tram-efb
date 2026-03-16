@@ -8,12 +8,15 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { PriceInput } from "@/components/ui/price-input";
 
+/** Chỉ tìm kiếm sau khi user dừng gõ (ms). */
+const SEARCH_DEBOUNCE_MS = 600;
 
 export function AccountFilters({ totalCount }: { totalCount: number }) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
 
   const minPrice = searchParams.get("minPrice") ?? "";
   const maxPrice = searchParams.get("maxPrice") ?? "";
@@ -24,7 +27,7 @@ export function AccountFilters({ totalCount }: { totalCount: number }) {
   const [localMinPrice, setLocalMinPrice] = useState(minPrice);
   const [localMaxPrice, setLocalMaxPrice] = useState(maxPrice);
 
-  const debouncedSearch = useDebounce(localSearch, 500);
+  const debouncedSearch = useDebounce(localSearch, SEARCH_DEBOUNCE_MS);
   const debouncedMinPrice = useDebounce(localMinPrice, 2500);
   const debouncedMaxPrice = useDebounce(localMaxPrice, 2500);
 
@@ -97,13 +100,20 @@ export function AccountFilters({ totalCount }: { totalCount: number }) {
     }
   }, [debouncedMinPrice, debouncedMaxPrice, minPrice, maxPrice, updatePrices]);
 
-  useEffect(() => { setLocalSearch(search); }, [search]);
+  // Chỉ đồng bộ URL → ô tìm kiếm khi user không đang focus ô (tránh ghi đè chữ đang gõ).
+  useEffect(() => {
+    if (!isSearchFocused) setLocalSearch(search);
+  }, [search, isSearchFocused]);
+
   useEffect(() => { setLocalMinPrice(minPrice); }, [minPrice]);
   useEffect(() => { setLocalMaxPrice(maxPrice); }, [maxPrice]);
 
   const hasActiveFilters = minPrice !== "" || maxPrice !== "" || search !== "" || cloneOnly;
 
   const clearAll = () => {
+    setLocalSearch("");
+    setLocalMinPrice("");
+    setLocalMaxPrice("");
     startTransition(() => {
       router.replace(pathname, { scroll: false });
     });
@@ -122,6 +132,8 @@ export function AccountFilters({ totalCount }: { totalCount: number }) {
             placeholder="Tìm kiếm tài khoản..."
             value={localSearch}
             onChange={(e) => setLocalSearch(e.target.value)}
+            onFocus={() => setIsSearchFocused(true)}
+            onBlur={() => setIsSearchFocused(false)}
             className="h-11 md:h-10 w-full rounded-2xl md:rounded-xl border-slate-200 pl-10 pr-4 text-[15px] md:text-sm text-slate-700 shadow-sm transition-all focus-visible:border-indigo-400 focus-visible:ring-4 focus-visible:ring-indigo-400/20"
           />
         </div>

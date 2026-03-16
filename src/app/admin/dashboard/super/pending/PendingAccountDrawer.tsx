@@ -21,6 +21,7 @@ import { StatusBadge } from "@/components/ui/Badge";
 import { ApproveButton } from "./ApproveButton";
 import { formatCurrency, formatNumber } from "@/lib/constants";
 import type { AccountWithEmail } from "@/types/database";
+import { AndroidCoinIcon, IosCoinIcon } from "@/components/ui/PlatformCoinIcons";
 
 interface PendingAccountDrawerProps {
   account: AccountWithEmail;
@@ -47,12 +48,12 @@ function StatBox({
 }: {
   icon: React.ReactNode;
   label: string;
-  value: string | number;
+  value: string | number | React.ReactNode;
 }) {
   return (
     <div className="flex flex-col items-center justify-center rounded-xl bg-slate-50 px-3 py-3 text-center">
       <div className="mb-1">{icon}</div>
-      <p className="text-base font-bold text-slate-900">{value}</p>
+      <div className="text-base font-bold text-slate-900">{value}</div>
       <p className="text-xs text-slate-500">{label}</p>
     </div>
   );
@@ -182,16 +183,26 @@ export function PendingAccountDrawer({
                         <StatBox
                           icon={<Coins className="h-4 w-4 text-yellow-500" />}
                           label="Coins"
-                          value={[
-                            (account.total_coins_android ?? 0) > 0
-                              ? `${formatNumber(account.total_coins_android)} 🤖`
-                              : "",
-                            (account.total_coins_ios ?? 0) > 0
-                              ? `${formatNumber(account.total_coins_ios)} 🍎`
-                              : "",
-                          ]
-                            .filter(Boolean)
-                            .join(" · ")}
+                          value={
+                            <span className="inline-flex flex-wrap items-center justify-center gap-x-1.5 gap-y-0.5">
+                              {(account.total_coins_android ?? 0) > 0 && (
+                                <span className="inline-flex items-center gap-0.5">
+                                  <AndroidCoinIcon size={18} />
+                                  {formatNumber(account.total_coins_android)}
+                                </span>
+                              )}
+                              {(account.total_coins_android ?? 0) > 0 &&
+                                (account.total_coins_ios ?? 0) > 0 && (
+                                <span className="text-slate-400">·</span>
+                              )}
+                              {(account.total_coins_ios ?? 0) > 0 && (
+                                <span className="inline-flex items-center gap-0.5">
+                                  <IosCoinIcon size={18} />
+                                  {formatNumber(account.total_coins_ios)}
+                                </span>
+                              )}
+                            </span>
+                          }
                         />
                       )}
                       {(account.team_strength ?? 0) > 0 && (

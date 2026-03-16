@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 import { ArrowLeft, X, UploadCloud, Star, Copy } from "lucide-react";
+import { AndroidCoinIcon, IosCoinIcon } from "@/components/ui/PlatformCoinIcons";
 import Link from "next/link";
 import type { Account, Email, AccountStatus } from "@/types/database";
 import { useForm, Controller } from "react-hook-form";
@@ -514,7 +515,9 @@ export function AccountForm({ account }: AccountFormProps) {
               )}
             </div>
             <div>
-              <Label className="text-slate-700">Coins 🤖</Label>
+              <Label className="text-slate-700 inline-flex items-center gap-1">
+                Coins <AndroidCoinIcon size={18} />
+              </Label>
               <Input
                 type="number"
                 {...register("totalCoinsAndroid", { min: { value: 0, message: "Phải >= 0" } })}
@@ -528,7 +531,9 @@ export function AccountForm({ account }: AccountFormProps) {
               )}
             </div>
             <div>
-              <Label className="text-slate-700">Coins 🍎</Label>
+              <Label className="text-slate-700 inline-flex items-center gap-1">
+                Coins <IosCoinIcon size={18} />
+              </Label>
               <Input
                 type="number"
                 {...register("totalCoinsIos", { min: { value: 0, message: "Phải >= 0" } })}
