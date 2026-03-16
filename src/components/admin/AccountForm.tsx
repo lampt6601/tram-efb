@@ -32,7 +32,6 @@ type AccountFormValues = {
   totalCoinsIos: string;
   teamStrength: string;
   emailId: string;
-  isPriority: boolean;
   isClone: boolean;
   originalPrice: string;
   serverRegion: string;
@@ -71,7 +70,6 @@ export function AccountForm({ account }: AccountFormProps) {
       totalCoinsIos: account?.total_coins_ios?.toString() ?? "",
       teamStrength: account?.team_strength?.toString() ?? "",
       emailId: account?.email_id ?? "",
-      isPriority: account?.is_priority ?? false,
       isClone: account?.is_clone ?? false,
       originalPrice: account?.original_price?.toString() ?? "",
       serverRegion: account?.server_region ?? "",
@@ -281,7 +279,7 @@ export function AccountForm({ account }: AccountFormProps) {
           ? parseInt(values.monthlyLogQuota as string)
           : null,
         email_id: values.emailId || null,
-        is_priority: values.isPriority,
+        ...(isEditing ? {} : { is_priority: false }),
         is_clone: values.isClone,
         original_price: values.originalPrice
           ? parseInt(values.originalPrice as string)
@@ -326,7 +324,6 @@ export function AccountForm({ account }: AccountFormProps) {
     }
   };
 
-  const isPriorityValue = watch("isPriority");
   const isCloneValue = watch("isClone");
 
   const SectionHeader = ({ label }: { label: string }) => (
@@ -463,38 +460,6 @@ export function AccountForm({ account }: AccountFormProps) {
             <div>
               <Label className="text-slate-700">Phân loại</Label>
               <div className="mt-1.5 grid grid-cols-2 gap-2">
-                <div
-                  className={cn(
-                    "flex cursor-pointer items-center gap-2.5 rounded-xl border px-3 py-2.5 transition-colors",
-                    isPriorityValue
-                      ? "border-amber-300 bg-amber-50"
-                      : "border-slate-200 bg-slate-50 hover:border-slate-300",
-                  )}
-                  onClick={() => {
-                    const el = document.getElementById("isPriority");
-                    el?.click();
-                  }}
-                >
-                  <Controller
-                    name="isPriority"
-                    control={control}
-                    render={({ field }) => (
-                      <Checkbox
-                        id="isPriority"
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    )}
-                  />
-                  <label
-                    htmlFor="isPriority"
-                    className="flex flex-1 cursor-pointer items-center justify-between text-sm font-medium text-slate-700 select-none"
-                  >
-                    Nổi bật
-                    <Star className={`h-4 w-4 ${isPriorityValue ? "fill-amber-500 text-amber-500" : "text-slate-300"}`} />
-                  </label>
-                </div>
-
                 <div
                   className={cn(
                     "flex cursor-pointer items-center gap-2.5 rounded-xl border px-3 py-2.5 transition-colors",

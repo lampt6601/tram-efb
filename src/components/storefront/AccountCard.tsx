@@ -117,7 +117,7 @@ export function AccountCard({ account }: { account: PublicAccount }) {
           {account.title}
         </h3>
 
-        <div className="mt-1.5 min-h-[18px] sm:min-h-[20px]">
+        <div className="mt-1.5 min-h-[1.5rem]">
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-500">
             {(account.total_gp ?? 0) > 0 && (
               <span className="inline-flex items-center gap-1">
@@ -223,7 +223,7 @@ export function AccountCard({ account }: { account: PublicAccount }) {
 
   if (isSold) {
     return (
-      <div className="group block w-full overflow-hidden rounded-2xl border border-slate-200 bg-white opacity-80 shadow-sm transition-all duration-300 hover:opacity-100 hover:shadow-md">
+      <div className="group flex h-full w-full overflow-hidden rounded-2xl border border-slate-200 bg-white opacity-80 shadow-sm transition-all duration-300 hover:opacity-100 hover:shadow-md">
         {cardContent}
       </div>
     );
@@ -232,7 +232,7 @@ export function AccountCard({ account }: { account: PublicAccount }) {
   return (
     <Link
       href={`/accounts/${account.id}`}
-      className="group block w-full overflow-hidden rounded-2xl shadow-sm transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl hover:shadow-indigo-100/60"
+      className="group flex h-full w-full overflow-hidden rounded-2xl shadow-sm transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl hover:shadow-indigo-100/60"
     >
       {cardContent}
     </Link>

@@ -16,7 +16,6 @@ import {
   Loader2,
   X,
   ExternalLink,
-  Star,
   Copy,
   RotateCcw,
 } from "lucide-react";
@@ -40,7 +39,6 @@ interface AccountActionsDropdownProps {
   currentSellingPrice: number;
   currentOriginalPrice: number | null;
   status: AccountStatus;
-  isPriority: boolean;
   isClone: boolean;
 }
 
@@ -89,7 +87,6 @@ export function AccountActionsDropdown({
   currentSellingPrice,
   currentOriginalPrice,
   status,
-  isPriority,
   isClone,
 }: AccountActionsDropdownProps) {
   const router = useRouter();
@@ -103,9 +100,8 @@ export function AccountActionsDropdown({
   const [copied, setCopied] = useState(false);
 
   // Toggle states
-  const [priority, setPriority] = useState(isPriority);
   const [clone, setClone] = useState(isClone);
-  const [toggling, setToggling] = useState<"priority" | "clone" | null>(null);
+  const [toggling, setToggling] = useState<"clone" | null>(null);
 
   const [sellPrice, setSellPrice] = useState(currentSellingPrice.toString());
 
@@ -145,25 +141,6 @@ export function AccountActionsDropdown({
       setTimeout(() => setCopied(false), 2000);
     } catch {
       // ignore
-    }
-  };
-
-  // ── Toggle priority ───────────────────────────────────────────────────────
-  const handleTogglePriority = async () => {
-    const next = !priority;
-    setToggling("priority");
-    try {
-      const { error: err } = await supabase
-        .from("accounts")
-        .update({ is_priority: next })
-        .eq("id", id);
-      if (err) throw err;
-      setPriority(next);
-      router.refresh();
-    } catch {
-      // ignore
-    } finally {
-      setToggling(null);
     }
   };
 
@@ -381,19 +358,6 @@ export function AccountActionsDropdown({
           </DropdownMenuItem>
 
           <DropdownMenuSeparator />
-
-          <DropdownMenuItem
-            onClick={handleTogglePriority}
-            disabled={toggling !== null}
-            className="gap-2"
-          >
-            {toggling === "priority" ? (
-              <Loader2 className="h-4 w-4 animate-spin text-amber-400" />
-            ) : (
-              <Star className={`h-4 w-4 ${priority ? "fill-amber-500 text-amber-500" : "text-slate-400"}`} />
-            )}
-            {priority ? "Bỏ nổi bật" : "Đánh dấu nổi bật"}
-          </DropdownMenuItem>
 
           <DropdownMenuItem
             onClick={handleToggleClone}

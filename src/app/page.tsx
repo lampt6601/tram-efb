@@ -153,9 +153,9 @@ export default async function HomePage({
                       </h3>
                     </div>
                   </ScrollReveal>
-                  <div className="grid gap-4 sm:gap-0 sm:grid-cols-2 lg:grid-cols-3">
+                  <div className="grid gap-4 sm:gap-0 sm:grid-cols-2 lg:grid-cols-3 sm:items-stretch">
                     {priorityItems.map((account, i) => (
-                      <ScrollReveal key={account.id} delay={i * 80} distance="sm">
+                      <ScrollReveal key={account.id} delay={i * 80} distance="sm" className="h-full min-h-0">
                         <AccountCard account={account} />
                       </ScrollReveal>
                     ))}
@@ -176,9 +176,9 @@ export default async function HomePage({
                       </div>
                     </ScrollReveal>
                   )}
-                  <div className="grid gap-4 sm:gap-0 sm:grid-cols-2 lg:grid-cols-3">
+                  <div className="grid gap-4 sm:gap-0 sm:grid-cols-2 lg:grid-cols-3 sm:items-stretch">
                     {regularItems.map((account, i) => (
-                      <ScrollReveal key={account.id} delay={i * 80} distance="sm">
+                      <ScrollReveal key={account.id} delay={i * 80} distance="sm" className="h-full min-h-0">
                         <AccountCard account={account} />
                       </ScrollReveal>
                     ))}
