@@ -45,7 +45,7 @@ const colorMap: Record<string, { bg: string; icon: string; badge: string }> = {
 };
 
 export function RecruitAdminSection() {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
 
   return (
     <section className="border-t border-indigo-100 bg-gradient-to-br from-indigo-50 via-slate-50 to-purple-50">
