@@ -40,9 +40,10 @@ interface SidebarProps {
   isSuperAdmin?: boolean;
   adminName?: string;
   adminEmail?: string;
+  canViewAllAccounts?: boolean;
 }
 
-export function Sidebar({ open, onClose, isSuperAdmin = false, adminName = "", adminEmail = "" }: SidebarProps) {
+export function Sidebar({ open, onClose, isSuperAdmin = false, adminName = "", adminEmail = "", canViewAllAccounts = false }: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
   const supabase = createSupabaseBrowserClient();
@@ -108,6 +109,33 @@ export function Sidebar({ open, onClose, isSuperAdmin = false, adminName = "", a
               {item.label}
             </Link>
           ))}
+
+          {!isSuperAdmin && canViewAllAccounts && (
+            <div className="mt-4">
+              <div className="mb-2 flex items-center gap-2 px-3">
+                <Globe className="h-3.5 w-3.5 text-indigo-500" />
+                <span className="text-xs font-semibold uppercase tracking-wider text-indigo-600">
+                  Được Cấp Phép
+                </span>
+              </div>
+              <div className="space-y-1 rounded-xl border border-indigo-100 bg-indigo-50/50 p-1.5">
+                <Link
+                  href="/admin/dashboard/all-accounts"
+                  onClick={onClose}
+                  className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
+                    isActive("/admin/dashboard/all-accounts")
+                      ? "bg-indigo-100 text-indigo-800"
+                      : "text-indigo-700 hover:bg-indigo-100 hover:text-indigo-900"
+                  }`}
+                >
+                  <Globe
+                    className={`h-5 w-5 ${isActive("/admin/dashboard/all-accounts") ? "text-indigo-600" : "text-indigo-400"}`}
+                  />
+                  Tất Cả Tài Khoản
+                </Link>
+              </div>
+            </div>
+          )}
 
           {isSuperAdmin && (
             <div className="mt-4">

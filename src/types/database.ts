@@ -71,6 +71,7 @@ export interface AccountRequest {
 export interface AdminSettings {
   user_id: string;
   auto_approve: boolean;
+  can_view_all_accounts: boolean;
   created_at: string;
 }
 

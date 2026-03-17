@@ -37,6 +37,16 @@ export async function setAdminAutoApprove(adminId: string, autoApprove: boolean)
   revalidatePath("/admin/dashboard/super/admins");
 }
 
+export async function setAdminCanViewAllAccounts(adminId: string, canView: boolean) {
+  await verifySuperAdmin();
+  const service = createSupabaseServiceClient();
+  const { error } = await service
+    .from("admin_settings")
+    .upsert({ user_id: adminId, can_view_all_accounts: canView }, { onConflict: "user_id" });
+  if (error) throw new Error(error.message);
+  revalidatePath("/admin/dashboard/super/admins");
+}
+
 export async function approveAccount(accountId: string) {
   await verifySuperAdmin();
   const service = createSupabaseServiceClient();

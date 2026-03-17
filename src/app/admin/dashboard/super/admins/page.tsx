@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { Users, ShieldCheck, Gamepad2, Mail, Calendar, Clock } from "lucide-react";
 import { CreateAdminModal } from "./CreateAdminModal";
 import { AutoApproveToggle } from "./AutoApproveToggle";
+import { ViewAllAccountsToggle } from "./ViewAllAccountsToggle";
 import { AdminActionsDropdown } from "./AdminActionsDropdown";
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
@@ -48,6 +49,9 @@ export default async function SuperAdminsPage() {
 
   const autoApproveMap = new Map<string, boolean>(
     (settingsRows as AdminSettings[] ?? []).map((s) => [s.user_id, s.auto_approve])
+  );
+  const canViewAllAccountsMap = new Map<string, boolean>(
+    (settingsRows as AdminSettings[] ?? []).map((s) => [s.user_id, s.can_view_all_accounts ?? false])
   );
 
   const owner = allUsers.find((u) => u.email === SUPER_ADMIN_EMAIL);
@@ -110,6 +114,7 @@ export default async function SuperAdminsPage() {
                 <TableHead className="hidden text-slate-500 md:table-cell">Ngày Tạo</TableHead>
                 <TableHead className="hidden text-slate-500 lg:table-cell">Đăng Nhập Cuối</TableHead>
                 <TableHead className="hidden text-slate-500 md:table-cell">Duyệt TK</TableHead>
+                <TableHead className="hidden text-slate-500 md:table-cell">Xem Tất Cả</TableHead>
                 <TableHead className="text-slate-500">Hành Động</TableHead>
               </TableRow>
             </TableHeader>
@@ -156,6 +161,13 @@ export default async function SuperAdminsPage() {
                       enabled={autoApproveMap.get(admin.id) ?? false}
                     />
                   </TableCell>
+                  <TableCell className="hidden md:table-cell">
+                    <ViewAllAccountsToggle
+                      adminId={admin.id}
+                      adminEmail={admin.email ?? ""}
+                      enabled={canViewAllAccountsMap.get(admin.id) ?? false}
+                    />
+                  </TableCell>
                   <TableCell>
                     <AdminActionsDropdown
                       adminId={admin.id}
@@ -168,7 +180,7 @@ export default async function SuperAdminsPage() {
               ))}
               {admins.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={7} className="py-12 text-center text-slate-400">
+                  <TableCell colSpan={8} className="py-12 text-center text-slate-400">
                     Chưa có admin nào. Nhấn &quot;Thêm Admin&quot; để tạo mới.
                   </TableCell>
                 </TableRow>
