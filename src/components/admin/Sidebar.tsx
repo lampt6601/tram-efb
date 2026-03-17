@@ -16,6 +16,7 @@ import {
   UserCircle,
   BookOpen,
   SearchCheck,
+  Dices,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -32,6 +33,7 @@ const superAdminNavItems = [
   { href: "/admin/dashboard/super/accounts", label: "Tất Cả Tài Khoản", icon: Globe },
   { href: "/admin/dashboard/super/pending", label: "Phê Duyệt Tài Khoản", icon: ClipboardCheck },
   { href: "/admin/dashboard/super/admins", label: "Quản Lý Admin", icon: Users },
+  { href: "/admin/dashboard/super/event/spin", label: "Vòng Quay Sự Kiện", icon: Dices },
 ];
 
 interface SidebarProps {

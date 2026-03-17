@@ -1,29 +1,19 @@
 "use client";
 
-import { Trophy, Gift, Users, UserPlus, MessageCircle, ShieldCheck, AlertTriangle } from "lucide-react";
+import Image from "next/image";
+import { Trophy, Users, UserPlus, MessageCircle, ShieldCheck, AlertTriangle } from "lucide-react";
 
 const prizes = [
   {
     icon: Trophy,
     label: "Giải May Mắn",
     badge: "🥇",
-    description: "1 Acc game cực khét trị giá 5xx k",
-    detail: "Đội hình bao cháy, mang về là leo rank ầm ầm!",
+    description: "1 Acc game trị giá 1xx k VND",
+    detail: "Acc duy nhất của chương trình (ảnh minh họa bên dưới).",
     gradient: "from-amber-500/20 to-yellow-500/20",
     border: "border-amber-500/30",
     iconColor: "text-amber-400",
     textColor: "text-amber-300",
-  },
-  {
-    icon: Gift,
-    label: "Giải Hơi May Mắn",
-    badge: "🥈",
-    description: "1 Acc game cày chay khởi nghiệp trị giá xx k",
-    detail: "Dành cho anh em test nhân phẩm và trải nghiệm.",
-    gradient: "from-slate-400/20 to-zinc-400/20",
-    border: "border-slate-400/30",
-    iconColor: "text-slate-300",
-    textColor: "text-slate-300",
   },
 ];
 
@@ -63,7 +53,7 @@ export function EventInfo() {
         <h2 className="mb-4 flex items-center gap-2 text-lg font-bold text-white sm:text-xl">
           <span className="text-2xl">🎁</span> Cơ Cấu Giải Thưởng
         </h2>
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid gap-4">
           {prizes.map((prize) => (
             <div
               key={prize.label}
@@ -85,6 +75,17 @@ export function EventInfo() {
                   </p>
                   <p className="mt-0.5 text-xs text-white/60">{prize.detail}</p>
                 </div>
+              </div>
+
+              <div className="mt-4 overflow-hidden rounded-xl border border-white/10 bg-white/5">
+                <Image
+                  src="/event-prize.png"
+                  alt="Giải thưởng sự kiện"
+                  width={1200}
+                  height={675}
+                  className="h-auto w-full object-cover"
+                  priority
+                />
               </div>
             </div>
           ))}

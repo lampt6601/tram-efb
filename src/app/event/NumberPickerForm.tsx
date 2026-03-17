@@ -2,9 +2,10 @@
 
 import { useState, useTransition } from "react";
 import { User, Hash, Check, Loader2 } from "lucide-react";
-import { submitEventEntry } from "@/app/actions/event-actions";
+import { submitMultipleEventEntries } from "@/app/actions/event-actions";
 
 const MAX_NUMBER = 199;
+const MAX_SLOTS = 10;
 
 interface NumberPickerFormProps {
   takenNumbers: number[];
@@ -12,49 +13,70 @@ interface NumberPickerFormProps {
 }
 
 export function NumberPickerForm({ takenNumbers, onSuccess }: NumberPickerFormProps) {
-  const [zaloName, setZaloName] = useState("");
-  const [fbName, setFbName] = useState("");
-  const [number, setNumber] = useState("");
+  const [name, setName] = useState("");
+  const [slotCount, setSlotCount] = useState(1);
+  const [numbers, setNumbers] = useState<string[]>([""]);
   const [error, setError] = useState("");
+  const [submittedNumbers, setSubmittedNumbers] = useState<number[]>([]);
   const [submitted, setSubmitted] = useState(false);
   const [isPending, startTransition] = useTransition();
 
-  const handleNumberChange = (value: string) => {
+  const handleSlotCountChange = (count: number) => {
+    setSlotCount(count);
+    setNumbers((prev) => {
+      if (count > prev.length) {
+        return [...prev, ...Array<string>(count - prev.length).fill("")];
+      }
+      return prev.slice(0, count);
+    });
+    setError("");
+  };
+
+  const handleNumberChange = (index: number, value: string) => {
     const cleaned = value.replace(/\D/g, "");
     const num = parseInt(cleaned, 10);
     if (cleaned && (num < 1 || num > MAX_NUMBER)) return;
-    setNumber(cleaned);
+    setNumbers((prev) => {
+      const next = [...prev];
+      next[index] = cleaned;
+      return next;
+    });
     setError("");
   };
 
   const handleSubmit = () => {
     setError("");
 
-    if (!zaloName.trim()) {
-      setError("Vui lòng nhập tên Zalo của bạn.");
-      return;
-    }
-    if (!fbName.trim()) {
-      setError("Vui lòng nhập tên Facebook của bạn.");
+    if (!name.trim()) {
+      setError("Vui lòng nhập tên Zalo hoặc Facebook của bạn.");
       return;
     }
 
-    const num = parseInt(number, 10);
-    if (isNaN(num) || num < 1 || num > MAX_NUMBER) {
-      setError(`Số phải nằm trong khoảng 1 – ${MAX_NUMBER}.`);
-      return;
-    }
-
-    if (takenNumbers.includes(num)) {
-      setError(`Số ${num} đã được người khác chọn rồi!`);
-      return;
+    const parsed: number[] = [];
+    for (let i = 0; i < slotCount; i++) {
+      const num = parseInt(numbers[i] ?? "", 10);
+      if (isNaN(num) || num < 1 || num > MAX_NUMBER) {
+        setError(`Số thứ ${i + 1} phải nằm trong khoảng 1 – ${MAX_NUMBER}.`);
+        return;
+      }
+      if (parsed.includes(num)) {
+        setError(`Bạn đã nhập số ${num} hai lần. Mỗi số phải khác nhau.`);
+        return;
+      }
+      if (takenNumbers.includes(num)) {
+        setError(`Số ${num} đã được người khác chọn rồi!`);
+        return;
+      }
+      parsed.push(num);
     }
 
     startTransition(async () => {
-      const result = await submitEventEntry(zaloName.trim(), fbName.trim(), num);
+      const trimmed = name.trim();
+      const result = await submitMultipleEventEntries(trimmed, trimmed, parsed);
       if (result.error) {
         setError(result.error);
       } else {
+        setSubmittedNumbers(parsed);
         setSubmitted(true);
         onSuccess();
       }
@@ -63,7 +85,8 @@ export function NumberPickerForm({ takenNumbers, onSuccess }: NumberPickerFormPr
 
   const handleReset = () => {
     setSubmitted(false);
-    setNumber("");
+    setNumbers([""]);
+    setSlotCount(1);
     setError("");
   };
 
@@ -72,16 +95,24 @@ export function NumberPickerForm({ takenNumbers, onSuccess }: NumberPickerFormPr
       <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/10 p-5 text-center backdrop-blur-sm">
         <div className="mb-2 text-3xl">✅</div>
         <p className="text-sm font-semibold text-emerald-300">
-          Đã ghi nhận số <span className="text-white font-bold">{number}</span> thành công!
+          Đã ghi nhận {submittedNumbers.length} số thành công!
         </p>
-        <p className="mt-1 text-xs text-emerald-200/60">
-          Chúc bạn may mắn! 🍀
-        </p>
+        <div className="mt-3 flex flex-wrap justify-center gap-2">
+          {submittedNumbers.map((n) => (
+            <span
+              key={n}
+              className="rounded-full border border-emerald-500/30 bg-emerald-500/20 px-3 py-1 text-sm font-bold text-emerald-300"
+            >
+              {n}
+            </span>
+          ))}
+        </div>
+        <p className="mt-3 text-xs text-emerald-200/60">Chúc bạn may mắn! 🍀</p>
         <button
           onClick={handleReset}
           className="mt-3 rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-xs font-medium text-white/60 transition-colors hover:bg-white/10"
         >
-          Chọn thêm số (nếu bạn còn lượt)
+          Điền lần nữa
         </button>
       </div>
     );
@@ -93,57 +124,76 @@ export function NumberPickerForm({ takenNumbers, onSuccess }: NumberPickerFormPr
         📝 Chọn Số May Mắn Của Bạn
       </h3>
 
-      {/* Zalo Name */}
-      <div className="mb-3">
-        <label className="mb-1.5 block text-xs font-medium text-white/60">
-          Tên Zalo <span className="text-red-400">*</span>
-        </label>
-        <div className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2.5">
-          <User className="h-4 w-4 text-emerald-400" />
-          <input
-            type="text"
-            value={zaloName}
-            onChange={(e) => setZaloName(e.target.value)}
-            placeholder="Nhập đúng tên Zalo của bạn..."
-            className="w-full bg-transparent text-sm text-white outline-none placeholder:text-white/30"
-          />
-        </div>
-      </div>
-
-      {/* Facebook Name */}
-      <div className="mb-3">
-        <label className="mb-1.5 block text-xs font-medium text-white/60">
-          Tên Facebook <span className="text-red-400">*</span>
-        </label>
-        <div className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2.5">
-          <User className="h-4 w-4 text-blue-400" />
-          <input
-            type="text"
-            value={fbName}
-            onChange={(e) => setFbName(e.target.value)}
-            placeholder="Nhập đúng tên Facebook của bạn..."
-            className="w-full bg-transparent text-sm text-white outline-none placeholder:text-white/30"
-          />
-        </div>
-      </div>
-
-      {/* Number input */}
+      {/* Name */}
       <div className="mb-4">
         <label className="mb-1.5 block text-xs font-medium text-white/60">
-          Chọn số (1 – {MAX_NUMBER}) <span className="text-red-400">*</span>
+          Tên Zalo hoặc Facebook <span className="text-red-400">*</span>
         </label>
         <div className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2.5">
-          <Hash className="h-4 w-4 text-indigo-400" />
+          <User className="h-4 w-4 shrink-0 text-indigo-400" />
           <input
             type="text"
-            inputMode="numeric"
-            value={number}
-            onChange={(e) => handleNumberChange(e.target.value)}
-            placeholder="Nhập con số bạn muốn chọn..."
-            className="w-full bg-transparent text-sm font-semibold text-white outline-none placeholder:text-white/30"
-            maxLength={3}
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Nhập tên Zalo hoặc Facebook của bạn..."
+            className="w-full bg-transparent text-sm text-white outline-none placeholder:text-white/30"
           />
         </div>
+      </div>
+
+      {/* Slot Count Selector */}
+      <div className="mb-4">
+        <label className="mb-2 block text-xs font-medium text-white/60">
+          Số lượt của bạn{" "}
+          <span className="text-white/40">(theo điều kiện bên dưới)</span>{" "}
+          <span className="text-red-400">*</span>
+        </label>
+        <div className="flex flex-wrap gap-2">
+          {Array.from({ length: MAX_SLOTS }, (_, i) => i + 1).map((n) => (
+            <button
+              key={n}
+              type="button"
+              onClick={() => handleSlotCountChange(n)}
+              className={`h-9 w-9 rounded-lg text-sm font-bold transition-all ${
+                slotCount === n
+                  ? "bg-indigo-500 text-white shadow-lg shadow-indigo-500/30"
+                  : "border border-white/10 bg-white/5 text-white/50 hover:border-indigo-500/40 hover:text-white"
+              }`}
+            >
+              {n}
+            </button>
+          ))}
+        </div>
+        <p className="mt-1.5 text-xs text-white/30">
+          Tối đa {MAX_SLOTS} lượt. Tự giác tính dựa trên điều kiện phía dưới nhé!
+        </p>
+      </div>
+
+      {/* Number Inputs */}
+      <div className="mb-4 space-y-2">
+        <label className="mb-1.5 block text-xs font-medium text-white/60">
+          Số may mắn (1 – {MAX_NUMBER}){" "}
+          <span className="text-white/40">— mỗi số phải khác nhau</span>{" "}
+          <span className="text-red-400">*</span>
+        </label>
+        {Array.from({ length: slotCount }).map((_, i) => (
+          <div
+            key={i}
+            className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2.5"
+          >
+            <span className="shrink-0 text-xs font-bold text-indigo-400/70">#{i + 1}</span>
+            <Hash className="h-4 w-4 shrink-0 text-indigo-400" />
+            <input
+              type="text"
+              inputMode="numeric"
+              value={numbers[i] ?? ""}
+              onChange={(e) => handleNumberChange(i, e.target.value)}
+              placeholder={`Nhập số thứ ${i + 1}...`}
+              className="w-full bg-transparent text-sm font-semibold text-white outline-none placeholder:text-white/30"
+              maxLength={3}
+            />
+          </div>
+        ))}
       </div>
 
       {/* Error */}
@@ -167,7 +217,7 @@ export function NumberPickerForm({ takenNumbers, onSuccess }: NumberPickerFormPr
         ) : (
           <>
             <Check className="h-4 w-4" />
-            XÁC NHẬN CHỌN SỐ
+            XÁC NHẬN {slotCount} SỐ
           </>
         )}
       </button>

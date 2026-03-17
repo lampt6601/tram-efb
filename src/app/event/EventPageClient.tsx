@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { SpinWheelPreview } from "./SpinWheel";
 import { NumberPickerForm } from "./NumberPickerForm";
 import { EventInfo } from "./EventInfo";
@@ -27,20 +28,36 @@ interface EventPageClientProps {
   results: EventResult[];
 }
 
+const PAGE_SIZE = 20;
+
+function fmtDate(d: string) {
+  return new Date(d).toLocaleString("vi-VN", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
 export default function EventPageClient({ entries, results }: EventPageClientProps) {
   const router = useRouter();
-  const [showAllNumbers, setShowAllNumbers] = useState(false);
+  const [page, setPage] = useState(1);
 
-  const bothPrizesConfirmed = results.length >= 2;
+  const grandConfirmed = !!results.find((r) => r.prize_type === "grand");
   const takenNumbers = entries.map((e) => e.number);
 
   const handleSuccess = useCallback(() => {
     router.refresh();
+    setPage(1);
   }, [router]);
 
-  // Sort taken numbers for display
-  const sortedEntries = [...entries].sort((a, b) => a.number - b.number);
-  const displayEntries = showAllNumbers ? sortedEntries : sortedEntries.slice(0, 30);
+  // Sort by created_at newest first for the table
+  const sortedByTime = [...entries].sort(
+    (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+  );
+  const totalPages = Math.max(1, Math.ceil(sortedByTime.length / PAGE_SIZE));
+  const pageEntries = sortedByTime.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   return (
     <>
@@ -54,10 +71,10 @@ export default function EventPageClient({ entries, results }: EventPageClientPro
               key={i}
               className="absolute h-1 w-1 rounded-full bg-indigo-400/20"
               style={{
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-                animation: `float ${3 + Math.random() * 4}s ease-in-out infinite`,
-                animationDelay: `${Math.random() * 3}s`,
+                left: `${(i * 7 + 3) % 100}%`,
+                top: `${(i * 11 + 7) % 100}%`,
+                animation: `float ${3 + (i % 4)}s ease-in-out infinite`,
+                animationDelay: `${(i % 3)}s`,
               }}
             />
           ))}
@@ -72,7 +89,7 @@ export default function EventPageClient({ entries, results }: EventPageClientPro
           <h1 className="text-balance text-2xl font-extrabold tracking-tight text-white sm:text-4xl lg:text-5xl">
             MỪNG THC EFB CÁN MỐC
             <span className="mt-1 block bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-              1K VISITOR & 100 ANH EM ZALO
+              2K USER & 100 ANH EM ZALO
             </span>
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-sm text-white/60 sm:text-base">
@@ -82,8 +99,8 @@ export default function EventPageClient({ entries, results }: EventPageClientPro
         </div>
       </section>
 
-      {/* Winner Announcement (when both prizes confirmed) */}
-      {bothPrizesConfirmed && (
+      {/* Winner Announcement */}
+      {grandConfirmed && (
         <section className="gradient-bg relative border-t border-white/5">
           <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
             <WinnerAnnouncement results={results} />
@@ -108,51 +125,120 @@ export default function EventPageClient({ entries, results }: EventPageClientPro
               />
             </div>
 
-            {/* Right: Number Picker or Results */}
+            {/* Right: Number Picker Form */}
             <div className="space-y-6">
-              {!bothPrizesConfirmed && (
+              {!grandConfirmed && (
                 <NumberPickerForm
                   takenNumbers={takenNumbers}
                   onSuccess={handleSuccess}
                 />
               )}
-
-              {/* Taken Numbers */}
-              {entries.length > 0 && (
-                <div>
-                  <h3 className="mb-3 flex items-center gap-2 text-sm font-bold text-white/70">
-                    <span className="text-lg">🎯</span> Số Đã Được Chọn ({entries.length})
-                  </h3>
-                  <div className="grid grid-cols-4 gap-1.5 sm:grid-cols-5 md:grid-cols-6">
-                    {displayEntries.map((e) => (
-                      <div
-                        key={e.id}
-                        className="group relative flex flex-col items-center rounded-lg border border-white/10 bg-white/5 px-2 py-1.5 transition-all hover:border-indigo-500/30 hover:bg-indigo-500/10"
-                        title={`Zalo: ${e.zalo_name} | FB: ${e.facebook_name}`}
-                      >
-                        <span className="text-sm font-bold text-indigo-400">
-                          {e.number}
-                        </span>
-                        <span className="max-w-full truncate text-[9px] text-white/40">
-                          {e.zalo_name}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                  {sortedEntries.length > 30 && !showAllNumbers && (
-                    <button
-                      onClick={() => setShowAllNumbers(true)}
-                      className="mt-2 text-xs text-indigo-400 hover:text-indigo-300"
-                    >
-                      Xem tất cả ({sortedEntries.length} số)...
-                    </button>
-                  )}
-                </div>
-              )}
             </div>
           </div>
         </div>
       </section>
+
+      {/* Entries Table */}
+      {entries.length > 0 && (
+        <section className="gradient-bg relative border-t border-white/5">
+          <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
+            <h2 className="mb-6 flex items-center gap-2 text-lg font-bold text-white sm:text-xl">
+              <span className="text-2xl">🎯</span> Danh Sách Số Đã Đăng Ký
+              <span className="ml-1 rounded-full border border-indigo-500/30 bg-indigo-500/10 px-2.5 py-0.5 text-sm font-semibold text-indigo-300">
+                {entries.length}
+              </span>
+            </h2>
+
+            <div className="overflow-hidden rounded-2xl border border-white/10">
+              {/* Table header */}
+              <div className="grid grid-cols-[3rem_1fr_1fr_4rem_1fr] gap-x-3 border-b border-white/10 bg-white/5 px-4 py-2.5 text-xs font-semibold uppercase tracking-wider text-white/40 sm:px-6">
+                <span>STT</span>
+                <span>Tên Zalo</span>
+                <span>Tên Facebook</span>
+                <span className="text-center">Số</span>
+                <span className="hidden sm:block">Thời gian</span>
+              </div>
+
+              {/* Rows */}
+              <div className="divide-y divide-white/5">
+                {pageEntries.map((entry, idx) => (
+                  <div
+                    key={entry.id}
+                    className="grid grid-cols-[3rem_1fr_1fr_4rem_1fr] items-center gap-x-3 px-4 py-3 text-sm transition-colors hover:bg-white/5 sm:px-6"
+                  >
+                    <span className="text-xs text-white/30">
+                      {(page - 1) * PAGE_SIZE + idx + 1}
+                    </span>
+                    <span className="truncate font-medium text-white">
+                      {entry.zalo_name}
+                    </span>
+                    <span className="truncate text-white/70">
+                      {entry.facebook_name}
+                    </span>
+                    <span className="text-center text-base font-bold text-indigo-400">
+                      {entry.number}
+                    </span>
+                    <span className="hidden text-xs text-white/40 sm:block">
+                      {fmtDate(entry.created_at)}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="mt-4 flex items-center justify-center gap-2">
+                <button
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  disabled={page === 1}
+                  className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-white/60 transition-colors hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-30"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </button>
+
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => {
+                  if (
+                    p === 1 ||
+                    p === totalPages ||
+                    Math.abs(p - page) <= 1
+                  ) {
+                    return (
+                      <button
+                        key={p}
+                        onClick={() => setPage(p)}
+                        className={`flex h-8 w-8 items-center justify-center rounded-lg text-sm font-medium transition-colors ${
+                          p === page
+                            ? "bg-indigo-500 text-white"
+                            : "border border-white/10 bg-white/5 text-white/60 hover:bg-white/10"
+                        }`}
+                      >
+                        {p}
+                      </button>
+                    );
+                  }
+                  if (Math.abs(p - page) === 2) {
+                    return (
+                      <span key={p} className="text-white/30">
+                        …
+                      </span>
+                    );
+                  }
+                  return null;
+                })}
+
+                <button
+                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                  disabled={page === totalPages}
+                  className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-white/60 transition-colors hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-30"
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </button>
+              </div>
+            )}
+          </div>
+        </section>
+      )}
 
       {/* Event Info */}
       <section className="gradient-bg relative border-t border-white/5">

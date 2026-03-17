@@ -7,13 +7,13 @@ import EventPageClient from "./EventPageClient";
 export const revalidate = 0;
 
 export const metadata: Metadata = {
-  title: "🎰 Vòng Quay May Mắn - Mừng 1K Visitor & 100 Anh Em Zalo",
+  title: "🎰 Vòng Quay May Mắn - Mừng 2K User & 100 Anh Em Zalo",
   description:
     "Minigame quay số trúng thưởng cây nhà lá vườn. Chọn số, quay vòng quay và rinh acc game xịn từ THC eFootball Shop!",
   openGraph: {
     title: "🎰 Vòng Quay May Mắn - THC eFootball Shop",
     description:
-      "BIG EVENT: Mừng THC EFB cán mốc 1K Visitor & 100 Anh Em Zalo. Quay số trúng acc game cực khét!",
+      "BIG EVENT: Mừng THC EFB cán mốc 2K User & 100 Anh Em Zalo. Quay số trúng acc game cực khét!",
     url: "/event",
     images: [
       {

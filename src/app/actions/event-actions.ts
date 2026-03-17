@@ -12,16 +12,14 @@ export async function submitEventEntry(
   facebookName: string,
   number: number,
 ) {
-  if (!zaloName.trim() || !facebookName.trim()) {
-    return { error: "Vui lòng nhập đầy đủ tên Zalo và tên Facebook." };
-  }
+  const name = zaloName.trim() || facebookName.trim();
+  if (!name) return { error: "Vui lòng nhập tên Zalo hoặc Facebook." };
   if (number < 1 || number > 199 || !Number.isInteger(number)) {
     return { error: "Số phải nằm trong khoảng 1 – 199." };
   }
 
   const service = createSupabaseServiceClient();
 
-  // Check if number already taken
   const { data: existing } = await service
     .from("event_entries")
     .select("id")
@@ -35,8 +33,8 @@ export async function submitEventEntry(
   const { error } = await service
     .from("event_entries")
     .insert({
-      zalo_name: zaloName.trim(),
-      facebook_name: facebookName.trim(),
+      zalo_name: name,
+      facebook_name: name,
       number,
     });
 
@@ -49,6 +47,58 @@ export async function submitEventEntry(
 
   revalidatePath("/event");
   revalidatePath("/admin/dashboard/super/event");
+  return { success: true };
+}
+
+export async function submitMultipleEventEntries(
+  zaloName: string,
+  facebookName: string,
+  numbers: number[],
+) {
+  const name = zaloName.trim() || facebookName.trim();
+  if (!name) return { error: "Vui lòng nhập tên Zalo hoặc Facebook." };
+  if (!numbers.length || numbers.length > 10) {
+    return { error: "Số lượt phải từ 1 đến 10." };
+  }
+  for (const num of numbers) {
+    if (num < 1 || num > 199 || !Number.isInteger(num)) {
+      return { error: `Số ${num} không hợp lệ. Phải từ 1 – 199.` };
+    }
+  }
+  if (new Set(numbers).size !== numbers.length) {
+    return { error: "Các số trong danh sách không được trùng nhau." };
+  }
+
+  const service = createSupabaseServiceClient();
+
+  const { data: existing } = await service
+    .from("event_entries")
+    .select("number")
+    .in("number", numbers);
+
+  if (existing && existing.length > 0) {
+    const takenNums = (existing as { number: number }[]).map((e) => e.number).join(", ");
+    return { error: `Số ${takenNums} đã được người khác chọn rồi!` };
+  }
+
+  const rows = numbers.map((num) => ({
+    zalo_name: name,
+    facebook_name: name,
+    number: num,
+  }));
+
+  const { error } = await service.from("event_entries").insert(rows);
+
+  if (error) {
+    if (error.code === "23505") {
+      return { error: "Một trong các số bạn chọn đã bị người khác chọn mất!" };
+    }
+    return { error: error.message };
+  }
+
+  revalidatePath("/event");
+  revalidatePath("/admin/dashboard/super/event");
+  revalidatePath("/admin/dashboard/super/event/spin");
   return { success: true };
 }
 
