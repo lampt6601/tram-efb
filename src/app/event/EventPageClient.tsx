@@ -83,7 +83,7 @@ export default function EventPageClient({ entries, results }: EventPageClientPro
           <div className="mx-auto mb-4 inline-flex items-center gap-2 rounded-full border border-yellow-500/30 bg-yellow-500/10 px-4 py-1.5">
             <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-yellow-400" />
             <span className="text-xs font-bold tracking-wide text-yellow-300">
-              🚀 BIG EVENT
+              🚀 EVENT
             </span>
           </div>
           <h1 className="text-balance text-2xl font-extrabold tracking-tight text-white sm:text-4xl lg:text-5xl">

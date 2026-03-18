@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { Trophy, Users, UserPlus, MessageCircle, ShieldCheck, AlertTriangle } from "lucide-react";
+import { Trophy, Users, UserPlus, MessageCircle, ShoppingBag, ShieldCheck, AlertTriangle } from "lucide-react";
 
 const prizes = [
   {
@@ -25,6 +25,14 @@ const turnRules = [
     color: "text-emerald-400",
     bg: "bg-emerald-500/10",
     border: "border-emerald-500/20",
+  },
+  {
+    icon: ShoppingBag,
+    label: "+1 Lượt",
+    description: "Đã mua account bên shop THC EFB.",
+    color: "text-amber-400",
+    bg: "bg-amber-500/10",
+    border: "border-amber-500/20",
   },
   {
     icon: UserPlus,

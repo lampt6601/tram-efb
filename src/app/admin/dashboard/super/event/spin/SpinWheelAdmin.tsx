@@ -260,7 +260,7 @@ export function SpinWheelAdmin({ entries, results: initialResults }: SpinWheelAd
 
       <div className="grid gap-8 lg:grid-cols-[1fr_380px]">
         {/* Left: Spin Wheel */}
-        <div className="flex flex-col items-center">
+        <div className={`flex flex-col items-center ${winner ? "order-2 lg:order-none" : ""}`}>
           {/* Pointer */}
           <div className="relative z-10 mb-[-16px]">
             <div className="h-0 w-0 border-l-[16px] border-r-[16px] border-t-[26px] border-l-transparent border-r-transparent border-t-yellow-400 drop-shadow-[0_2px_10px_rgba(250,204,21,0.6)]" />
@@ -307,7 +307,7 @@ export function SpinWheelAdmin({ entries, results: initialResults }: SpinWheelAd
         </div>
 
         {/* Right: Winner + Results panel */}
-        <div className="space-y-5">
+        <div className={`space-y-5 ${winner ? "order-1 lg:order-none" : ""}`}>
           {/* Winner reveal */}
           {winner && (
             <div className="animate-in fade-in slide-in-from-bottom-4 rounded-2xl border-2 border-yellow-400/60 bg-gradient-to-br from-yellow-50 to-amber-50 p-5 shadow-lg">

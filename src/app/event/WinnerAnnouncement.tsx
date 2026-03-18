@@ -21,7 +21,7 @@ export function WinnerAnnouncement({ results }: WinnerAnnouncementProps) {
     <div className="space-y-6">
       <div className="text-center">
         <div className="mb-3 text-5xl">🎉</div>
-        <h2 className="text-2xl font-extrabold text-white sm:text-3xl">
+        <h2 className="text-xl font-extrabold text-white sm:text-3xl">
           KẾT QUẢ TRÚNG GIẢI
         </h2>
         <p className="mt-2 text-sm text-white/50">
@@ -30,10 +30,10 @@ export function WinnerAnnouncement({ results }: WinnerAnnouncementProps) {
       </div>
 
       {grand && (
-        <div className="relative overflow-hidden rounded-2xl border border-amber-500/30 bg-gradient-to-br from-amber-500/20 via-yellow-500/10 to-orange-500/20 p-6 backdrop-blur-sm">
+        <div className="relative overflow-hidden rounded-2xl border border-amber-500/30 bg-gradient-to-br from-amber-500/20 via-yellow-500/10 to-orange-500/20 p-4 backdrop-blur-sm sm:p-6">
           <div className="absolute -right-4 -top-4 text-7xl opacity-10">🏆</div>
           <div className="relative">
-            <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+            <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-center gap-2">
                 <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-500/20">
                   <Trophy className="h-5 w-5 text-amber-400" />
@@ -45,16 +45,23 @@ export function WinnerAnnouncement({ results }: WinnerAnnouncementProps) {
                   <p className="text-xs text-amber-300/60">Acc game trị giá 1xx k VND</p>
                 </div>
               </div>
-              <div className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-white/60">
-                Số trúng: <span className="font-black text-amber-300">#{grand.winning_number}</span>
+              <div className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-center">
+                <p className="text-[10px] font-semibold uppercase tracking-wider text-white/40">
+                  Số trúng
+                </p>
+                <p className="text-4xl font-black leading-none text-amber-300">
+                  #{grand.winning_number}
+                </p>
               </div>
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-[1fr_220px]">
+            <div className="grid gap-4 sm:grid-cols-[1fr_240px]">
               <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-white/50">Zalo / Facebook</span>
-                  <span className="text-sm font-bold text-white">{grand.zalo_name}</span>
+                <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+                  <p className="text-xs text-white/50">Người trúng</p>
+                  <p className="mt-1 text-base font-extrabold text-white">
+                    {grand.zalo_name}
+                  </p>
                 </div>
                 <div className="rounded-xl border border-white/10 bg-white/5 p-4">
                   <p className="text-xs text-white/50">Giải thưởng</p>
@@ -70,7 +77,7 @@ export function WinnerAnnouncement({ results }: WinnerAnnouncementProps) {
                   alt="Giải thưởng sự kiện"
                   width={800}
                   height={450}
-                  className="h-full w-full object-cover"
+                  className="aspect-video h-auto w-full object-cover"
                 />
               </div>
             </div>

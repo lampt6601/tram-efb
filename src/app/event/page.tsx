@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "🎰 Vòng Quay May Mắn - THC eFootball Shop",
     description:
-      "BIG EVENT: Mừng THC EFB cán mốc 2K User & 100 Anh Em Zalo. Quay số trúng acc game cực khét!",
+      "EVENT: Mừng THC EFB cán mốc 2K User & 100 Anh Em Zalo. Quay số trúng acc game cực khét!",
     url: "/event",
     images: [
       {
