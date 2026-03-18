@@ -20,16 +20,6 @@ export async function submitEventEntry(
 
   const service = createSupabaseServiceClient();
 
-  const { data: existing } = await service
-    .from("event_entries")
-    .select("id")
-    .eq("number", number)
-    .maybeSingle();
-
-  if (existing) {
-    return { error: `Số ${number} đã được người khác chọn rồi!` };
-  }
-
   const { error } = await service
     .from("event_entries")
     .insert({
@@ -40,7 +30,10 @@ export async function submitEventEntry(
 
   if (error) {
     if (error.code === "23505") {
-      return { error: `Số ${number} đã được người khác chọn rồi!` };
+      return {
+        error:
+          "Hệ thống đang cấu hình không cho trùng số. Cần bỏ unique constraint/index của cột `number` trong bảng `event_entries` để bật luật mới.",
+      };
     }
     return { error: error.message };
   }
@@ -71,16 +64,6 @@ export async function submitMultipleEventEntries(
 
   const service = createSupabaseServiceClient();
 
-  const { data: existing } = await service
-    .from("event_entries")
-    .select("number")
-    .in("number", numbers);
-
-  if (existing && existing.length > 0) {
-    const takenNums = (existing as { number: number }[]).map((e) => e.number).join(", ");
-    return { error: `Số ${takenNums} đã được người khác chọn rồi!` };
-  }
-
   const rows = numbers.map((num) => ({
     zalo_name: name,
     facebook_name: name,
@@ -91,7 +74,10 @@ export async function submitMultipleEventEntries(
 
   if (error) {
     if (error.code === "23505") {
-      return { error: "Một trong các số bạn chọn đã bị người khác chọn mất!" };
+      return {
+        error:
+          "Hệ thống đang cấu hình không cho trùng số. Cần bỏ unique constraint/index của cột `number` trong bảng `event_entries` để bật luật mới.",
+      };
     }
     return { error: error.message };
   }
@@ -132,12 +118,14 @@ export async function confirmPrize(
   await verifySuperAdmin();
   const service = createSupabaseServiceClient();
 
-  // Get the entry for this number
+  // Get the earliest entry for this number (if multiple people picked same number)
   const { data: entry } = await service
     .from("event_entries")
     .select("zalo_name, facebook_name")
     .eq("number", winningNumber)
-    .single();
+    .order("created_at", { ascending: true })
+    .limit(1)
+    .maybeSingle();
 
   if (!entry) {
     throw new Error("Số này chưa được ai chọn!");

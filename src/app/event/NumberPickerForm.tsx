@@ -8,11 +8,10 @@ const MAX_NUMBER = 199;
 const MAX_SLOTS = 10;
 
 interface NumberPickerFormProps {
-  takenNumbers: number[];
   onSuccess: () => void;
 }
 
-export function NumberPickerForm({ takenNumbers, onSuccess }: NumberPickerFormProps) {
+export function NumberPickerForm({ onSuccess }: NumberPickerFormProps) {
   const [name, setName] = useState("");
   const [slotCount, setSlotCount] = useState(1);
   const [numbers, setNumbers] = useState<string[]>([""]);
@@ -61,10 +60,6 @@ export function NumberPickerForm({ takenNumbers, onSuccess }: NumberPickerFormPr
       }
       if (parsed.includes(num)) {
         setError(`Bạn đã nhập số ${num} hai lần. Mỗi số phải khác nhau.`);
-        return;
-      }
-      if (takenNumbers.includes(num)) {
-        setError(`Số ${num} đã được người khác chọn rồi!`);
         return;
       }
       parsed.push(num);

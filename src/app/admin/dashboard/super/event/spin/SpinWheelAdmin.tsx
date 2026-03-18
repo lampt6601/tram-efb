@@ -53,9 +53,24 @@ export function SpinWheelAdmin({ entries, results: initialResults }: SpinWheelAd
   const [page, setPage] = useState(1);
   const PAGE_SIZE = 15;
 
-  const segments = localEntries.length > 0 ? localEntries : [];
+  const numberSegments = Array.from(new Set(localEntries.map((e) => e.number))).sort(
+    (a, b) => a - b,
+  );
 
   const grandResult = results.find((r) => r.prize_type === "grand");
+
+  const getEarliestEntryForNumber = useCallback(
+    (num: number): Entry | null => {
+      const matches = localEntries.filter((e) => e.number === num);
+      if (matches.length === 0) return null;
+      return matches.reduce((earliest, cur) =>
+        new Date(cur.created_at).getTime() < new Date(earliest.created_at).getTime()
+          ? cur
+          : earliest,
+      );
+    },
+    [localEntries],
+  );
 
   const drawWheel = useCallback(
     (rotation = 0) => {
@@ -67,7 +82,7 @@ export function SpinWheelAdmin({ entries, results: initialResults }: SpinWheelAd
       const size = 400;
       const center = size / 2;
       const radius = center - 10;
-      const segCount = segments.length;
+      const segCount = numberSegments.length;
 
       ctx.clearRect(0, 0, size, size);
 
@@ -120,7 +135,7 @@ export function SpinWheelAdmin({ entries, results: initialResults }: SpinWheelAd
         ctx.font = `bold ${fontSize}px sans-serif`;
         ctx.shadowColor = "rgba(0,0,0,0.6)";
         ctx.shadowBlur = 4;
-        ctx.fillText(String(segments[i].number), radius - 12, 4);
+        ctx.fillText(String(numberSegments[i]), radius - 12, 4);
         ctx.restore();
       }
 
@@ -149,7 +164,7 @@ export function SpinWheelAdmin({ entries, results: initialResults }: SpinWheelAd
       ctx.textBaseline = "middle";
       ctx.fillText("THC EFB", center, center);
     },
-    [segments],
+    [numberSegments],
   );
 
   useEffect(() => {
@@ -164,9 +179,9 @@ export function SpinWheelAdmin({ entries, results: initialResults }: SpinWheelAd
   }, [drawWheel]);
 
   const handleSpin = () => {
-    if (isSpinning || segments.length === 0) return;
+    if (isSpinning || numberSegments.length === 0) return;
 
-    const segCount = segments.length;
+    const segCount = numberSegments.length;
     const segDeg = 360 / segCount;
 
     // Pick random winner index
@@ -203,7 +218,8 @@ export function SpinWheelAdmin({ entries, results: initialResults }: SpinWheelAd
       } else {
         drawWheel(newRotation);
         setIsSpinning(false);
-        setWinner(segments[winnerIdx]);
+        const winningNumber = numberSegments[winnerIdx];
+        setWinner(getEarliestEntryForNumber(winningNumber));
       }
     };
     requestAnimationFrame(animate);
@@ -279,9 +295,9 @@ export function SpinWheelAdmin({ entries, results: initialResults }: SpinWheelAd
           {/* Spin Button */}
           <button
             onClick={handleSpin}
-            disabled={isSpinning || segments.length === 0}
+            disabled={isSpinning || numberSegments.length === 0}
             className={`mt-6 flex items-center gap-3 rounded-2xl px-10 py-4 text-base font-black tracking-wide shadow-lg transition-all ${
-              isSpinning || segments.length === 0
+              isSpinning || numberSegments.length === 0
                 ? "cursor-not-allowed bg-slate-200 text-slate-400"
                 : "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-indigo-300 hover:scale-[1.04] hover:shadow-xl active:scale-95"
             }`}
@@ -300,9 +316,9 @@ export function SpinWheelAdmin({ entries, results: initialResults }: SpinWheelAd
           </button>
 
           <p className="mt-2 text-xs text-slate-400">
-            {segments.length === 0
+            {numberSegments.length === 0
               ? "Chưa có số nào được đăng ký"
-              : `${segments.length} số trong vòng quay`}
+              : `${numberSegments.length} số (unique) • ${localEntries.length} lượt`}
           </p>
         </div>
 

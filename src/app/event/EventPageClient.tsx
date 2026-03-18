@@ -45,7 +45,7 @@ export default function EventPageClient({ entries, results }: EventPageClientPro
   const [page, setPage] = useState(1);
 
   const grandConfirmed = !!results.find((r) => r.prize_type === "grand");
-  const takenNumbers = entries.map((e) => e.number);
+  const uniqueNumbers = Array.from(new Set(entries.map((e) => e.number))).sort((a, b) => a - b);
 
   const handleSuccess = useCallback(() => {
     router.refresh();
@@ -118,10 +118,7 @@ export default function EventPageClient({ entries, results }: EventPageClientPro
                 🎰 Vòng Quay May Mắn
               </h2>
               <SpinWheelPreview
-                pickedNumbers={entries.map((e) => ({
-                  number: e.number,
-                  zalo_name: e.zalo_name,
-                }))}
+                pickedNumbers={uniqueNumbers.map((n) => ({ number: n, zalo_name: "" }))}
               />
             </div>
 
@@ -129,7 +126,6 @@ export default function EventPageClient({ entries, results }: EventPageClientPro
             <div className="space-y-6">
               {!grandConfirmed && (
                 <NumberPickerForm
-                  takenNumbers={takenNumbers}
                   onSuccess={handleSuccess}
                 />
               )}
