@@ -52,12 +52,39 @@ export default function EventPageClient({ entries, results }: EventPageClientPro
     setPage(1);
   }, [router]);
 
-  // Sort by created_at newest first for the table
-  const sortedByTime = [...entries].sort(
-    (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+  // Group entries by person (name). One row per person.
+  const personMap = new Map<
+    string,
+    { name: string; numbers: number[]; earliest: string; latest: string }
+  >();
+
+  for (const e of entries) {
+    const name = (e.zalo_name || e.facebook_name || "").trim() || "—";
+    const existing = personMap.get(name);
+    if (!existing) {
+      personMap.set(name, {
+        name,
+        numbers: [e.number],
+        earliest: e.created_at,
+        latest: e.created_at,
+      });
+    } else {
+      existing.numbers.push(e.number);
+      if (new Date(e.created_at).getTime() < new Date(existing.earliest).getTime()) {
+        existing.earliest = e.created_at;
+      }
+      if (new Date(e.created_at).getTime() > new Date(existing.latest).getTime()) {
+        existing.latest = e.created_at;
+      }
+    }
+  }
+
+  const people = Array.from(personMap.values()).sort(
+    (a, b) => new Date(b.latest).getTime() - new Date(a.latest).getTime(),
   );
-  const totalPages = Math.max(1, Math.ceil(sortedByTime.length / PAGE_SIZE));
-  const pageEntries = sortedByTime.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+
+  const totalPages = Math.max(1, Math.ceil(people.length / PAGE_SIZE));
+  const pagePeople = people.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   return (
     <>
@@ -141,44 +168,58 @@ export default function EventPageClient({ entries, results }: EventPageClientPro
             <h2 className="mb-6 flex items-center gap-2 text-lg font-bold text-white sm:text-xl">
               <span className="text-2xl">🎯</span> Danh Sách Số Đã Đăng Ký
               <span className="ml-1 rounded-full border border-indigo-500/30 bg-indigo-500/10 px-2.5 py-0.5 text-sm font-semibold text-indigo-300">
-                {entries.length}
+                {people.length} người • {entries.length} lượt
               </span>
             </h2>
 
             <div className="overflow-hidden rounded-2xl border border-white/10">
               {/* Table header */}
-              <div className="grid grid-cols-[3rem_1fr_1fr_4rem_1fr] gap-x-3 border-b border-white/10 bg-white/5 px-4 py-2.5 text-xs font-semibold uppercase tracking-wider text-white/40 sm:px-6">
+              <div className="grid grid-cols-[3rem_1fr_5rem_1fr_1fr] gap-x-3 border-b border-white/10 bg-white/5 px-4 py-2.5 text-xs font-semibold uppercase tracking-wider text-white/40 sm:px-6">
                 <span>STT</span>
-                <span>Tên Zalo</span>
-                <span>Tên Facebook</span>
-                <span className="text-center">Số</span>
-                <span className="hidden sm:block">Thời gian</span>
+                <span>Tên Zalo/Facebook</span>
+                <span className="text-center">Số lượt</span>
+                <span>Các số</span>
+                <span className="hidden sm:block">Cập nhật</span>
               </div>
 
               {/* Rows */}
               <div className="divide-y divide-white/5">
-                {pageEntries.map((entry, idx) => (
+                {pagePeople.map((p, idx) => {
+                  const uniqueNums = Array.from(new Set(p.numbers)).sort((a, b) => a - b);
+                  return (
                   <div
-                    key={entry.id}
-                    className="grid grid-cols-[3rem_1fr_1fr_4rem_1fr] items-center gap-x-3 px-4 py-3 text-sm transition-colors hover:bg-white/5 sm:px-6"
+                    key={p.name}
+                    className="grid grid-cols-[3rem_1fr_5rem_1fr_1fr] items-center gap-x-3 px-4 py-3 text-sm transition-colors hover:bg-white/5 sm:px-6"
                   >
                     <span className="text-xs text-white/30">
                       {(page - 1) * PAGE_SIZE + idx + 1}
                     </span>
                     <span className="truncate font-medium text-white">
-                      {entry.zalo_name}
+                      {p.name}
                     </span>
-                    <span className="truncate text-white/70">
-                      {entry.facebook_name}
+                    <span className="text-center text-sm font-bold text-indigo-300">
+                      {p.numbers.length}
                     </span>
-                    <span className="text-center text-base font-bold text-indigo-400">
-                      {entry.number}
-                    </span>
+                    <div className="flex flex-wrap gap-1.5 py-1">
+                      {uniqueNums.slice(0, 12).map((n) => (
+                        <span
+                          key={n}
+                          className="rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-xs font-semibold text-white/70"
+                        >
+                          {n}
+                        </span>
+                      ))}
+                      {uniqueNums.length > 12 && (
+                        <span className="rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-xs text-white/50">
+                          +{uniqueNums.length - 12}
+                        </span>
+                      )}
+                    </div>
                     <span className="hidden text-xs text-white/40 sm:block">
-                      {fmtDate(entry.created_at)}
+                      {fmtDate(p.latest)}
                     </span>
                   </div>
-                ))}
+                )})}
               </div>
             </div>
 
