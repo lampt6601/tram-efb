@@ -108,15 +108,17 @@ export function AccountCard({ account }: { account: PublicAccount }) {
 
       {/* Content */}
       <div className="flex flex-1 flex-col p-3 sm:p-4">
-        <h3
-          className={`truncate text-base font-semibold ${
+        <div className="min-h-[2.75rem]">
+          <h3
+          className={`text-base font-semibold line-clamp-2 ${
             isSold
               ? "text-slate-700"
               : "text-slate-900 transition-colors duration-200 group-hover:text-indigo-600"
           }`}
         >
           {account.title}
-        </h3>
+          </h3>
+        </div>
 
         <div className="mt-1.5 min-h-[1.5rem]">
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-500">
