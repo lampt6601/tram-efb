@@ -56,6 +56,10 @@ export function Sidebar({ open, onClose, isSuperAdmin = false, adminName = "", a
     router.refresh();
   };
 
+  if(pathname.includes("/admin/dashboard/super/event/spin")) {
+    return null;
+  }
+
   const isActive = (href: string) =>
     pathname === href ||
     (href !== "/admin/dashboard" && pathname.startsWith(href));
