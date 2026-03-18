@@ -260,10 +260,30 @@ export function SpinWheelAdmin({ entries, results: initialResults }: SpinWheelAd
     });
   };
 
-  const totalPages = Math.max(1, Math.ceil(localEntries.length / PAGE_SIZE));
-  const pageEntries = [...localEntries]
-    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-    .slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  // Group by person (name) for admin list
+  const personMap = new Map<
+    string,
+    { name: string; entries: Entry[]; count: number; latest: string }
+  >();
+  for (const e of localEntries) {
+    const name = (e.zalo_name || e.facebook_name || "").trim() || "—";
+    const existing = personMap.get(name);
+    if (!existing) {
+      personMap.set(name, { name, entries: [e], count: 1, latest: e.created_at });
+    } else {
+      existing.entries.push(e);
+      existing.count += 1;
+      if (new Date(e.created_at).getTime() > new Date(existing.latest).getTime()) {
+        existing.latest = e.created_at;
+      }
+    }
+  }
+
+  const people = Array.from(personMap.values()).sort(
+    (a, b) => new Date(b.latest).getTime() - new Date(a.latest).getTime(),
+  );
+  const totalPages = Math.max(1, Math.ceil(people.length / PAGE_SIZE));
+  const pagePeople = people.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   return (
     <div className="space-y-8">
@@ -407,47 +427,53 @@ export function SpinWheelAdmin({ entries, results: initialResults }: SpinWheelAd
           <h3 className="flex items-center gap-2 text-base font-bold text-slate-800">
             📋 Danh sách tham gia
             <span className="rounded-full bg-indigo-100 px-2 py-0.5 text-xs font-semibold text-indigo-700">
-              {localEntries.length}
+              {people.length} người • {localEntries.length} lượt
             </span>
           </h3>
         </div>
         <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-          <div className="grid grid-cols-[2.5rem_1fr_1fr_3.5rem_1fr_2.5rem] border-b border-slate-100 bg-slate-50 px-4 py-2.5 text-xs font-semibold uppercase tracking-wider text-slate-400">
+          <div className="grid grid-cols-[2.5rem_1fr_4rem_1fr_1fr] border-b border-slate-100 bg-slate-50 px-4 py-2.5 text-xs font-semibold uppercase tracking-wider text-slate-400">
             <span>#</span>
-            <span>Zalo</span>
-            <span>Facebook</span>
-            <span className="text-center">Số</span>
-            <span>Thời gian</span>
-            <span />
+            <span>Tên Zalo/Facebook</span>
+            <span className="text-center">Lượt</span>
+            <span>Các số</span>
+            <span>Cập nhật</span>
           </div>
           <div className="divide-y divide-slate-50">
-            {pageEntries.map((entry, idx) => (
-              <div
-                key={entry.id}
-                className="grid grid-cols-[2.5rem_1fr_1fr_3.5rem_1fr_2.5rem] items-center px-4 py-2.5 text-sm hover:bg-slate-50"
-              >
+            {pagePeople.map((p, idx) => {
+              const uniqueNums = Array.from(new Set(p.entries.map((e) => e.number))).sort(
+                (a, b) => a - b,
+              );
+              return (
+                <div
+                  key={p.name}
+                  className="grid grid-cols-[2.5rem_1fr_4rem_1fr_1fr] items-center px-4 py-2.5 text-sm hover:bg-slate-50"
+                >
                 <span className="text-xs text-slate-300">
                   {(page - 1) * PAGE_SIZE + idx + 1}
                 </span>
-                <span className="truncate font-medium text-slate-800">{entry.zalo_name}</span>
-                <span className="truncate text-slate-500">{entry.facebook_name}</span>
-                <span className="text-center text-base font-bold text-indigo-600">{entry.number}</span>
-                <span className="text-xs text-slate-400">{fmtDate(entry.created_at)}</span>
-                <button
-                  onClick={() => handleDeleteEntry(entry.id)}
-                  disabled={deletingId === entry.id || isPending}
-                  className="flex items-center justify-center text-slate-300 transition-colors hover:text-red-500 disabled:opacity-40"
-                  title="Xóa"
-                >
-                  {deletingId === entry.id ? (
-                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                  ) : (
-                    <Trash2 className="h-3.5 w-3.5" />
+                <span className="truncate font-medium text-slate-800">{p.name}</span>
+                <span className="text-center text-sm font-bold text-indigo-600">{p.count}</span>
+                <div className="flex flex-wrap gap-1.5 py-1">
+                  {uniqueNums.slice(0, 12).map((n) => (
+                    <span
+                      key={n}
+                      className="rounded-full border border-slate-200 bg-white px-2 py-0.5 text-xs font-semibold text-slate-600"
+                    >
+                      {n}
+                    </span>
+                  ))}
+                  {uniqueNums.length > 12 && (
+                    <span className="rounded-full border border-slate-200 bg-white px-2 py-0.5 text-xs text-slate-400">
+                      +{uniqueNums.length - 12}
+                    </span>
                   )}
-                </button>
+                </div>
+                <span className="text-xs text-slate-400">{fmtDate(p.latest)}</span>
               </div>
-            ))}
-            {localEntries.length === 0 && (
+              );
+            })}
+            {people.length === 0 && (
               <div className="py-12 text-center text-sm text-slate-400">
                 Chưa có ai đăng ký số
               </div>
