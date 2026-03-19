@@ -1,6 +1,7 @@
 import { createSupabaseServerClient } from "@/lib/supabase-server";
 import { Header } from "@/components/storefront/Header";
 import { Footer } from "@/components/storefront/Footer";
+import { OwnerSection } from "@/components/storefront/OwnerSection";
 import { AccountCard } from "@/components/storefront/AccountCard";
 import { AccountFilters } from "@/components/storefront/AccountFilters";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
@@ -227,6 +228,7 @@ export default async function HomePage({
         )}
       </main>
 
+      <OwnerSection />
       <Footer />
     </div>
   );
