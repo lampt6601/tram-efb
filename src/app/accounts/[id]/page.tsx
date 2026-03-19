@@ -8,7 +8,7 @@ import {
   formatNumber,
   CONTACT_ZALO_URL,
   CONTACT_ZALO_GROUP_URL,
-  CONTACT_MESSENGER_URL,
+  CONTACT_MESSENGER_URL as CONTACT_FACEBOOK_URL,
 } from "@/lib/constants";
 import {
   ArrowLeft,
@@ -16,9 +16,9 @@ import {
   Coins,
   Shield,
   MessageCircle,
-  ExternalLink,
   CheckCircle2,
   Star,
+  ExternalLink,
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -286,7 +286,7 @@ export default async function AccountDetailPage({
       )
     : 0;
   const contactMessage = encodeURIComponent(
-    `Hi, I'm interested in account: ${account.title} (ID: ${account.id})`,
+    `Chào chủ shop, mình quan tâm tài khoản ${account.title} (ID: ${account.id}).`,
   );
 
   const galleryImages = account.primary_image_url
@@ -431,25 +431,52 @@ export default async function AccountDetailPage({
                 </div>
               </div>
 
+              {/* Contact (owner shop) */}
+              <div className="mb-3 flex items-start gap-3">
+                <div className="relative shrink-0">
+                  <Image
+                    src="/avatar-owner.jpeg"
+                    alt="Chủ shop"
+                    width={44}
+                    height={44}
+                    className="h-11 w-11 rounded-2xl object-cover shadow-sm"
+                    priority
+                  />
+                  <div className="absolute -bottom-1.5 -right-1.5 flex h-7 w-7 items-center justify-center rounded-full border-2 border-white bg-emerald-500 shadow">
+                    <CheckCircle2 className="h-3.5 w-3.5 text-white" />
+                  </div>
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-slate-900">Liên hệ với chủ shop</p>
+                  <p className="mt-0.5 text-xs text-slate-500">
+                    Chọn Facebook hoặc Zalo để trao đổi nhanh.
+                  </p>
+                  <p className="mt-1 text-xs font-semibold text-slate-700">Trần Hữu Cảnh</p>
+                  <p className="mt-0.5 text-xs leading-relaxed text-slate-500">
+                    Người sáng lập THC eFootball Shop — cung cấp tài khoản chất lượng, giao dịch minh bạch và hỗ trợ tận tâm.
+                  </p>
+                </div>
+              </div>
+
               {/* CTA buttons */}
-              <div className="flex flex-col gap-2.5">
+              <div className="grid grid-cols-2 gap-2.5">
                 <a
                   href={`${CONTACT_ZALO_URL}?text=${contactMessage}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-blue-700"
+                  className="flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-blue-700"
                 >
                   <Image src={zaloIcon} alt="Zalo" className="h-5 w-5 object-contain" />
-                  Liên hệ qua Zalo
+                  Zalo
                 </a>
                 <a
-                  href={`${CONTACT_MESSENGER_URL}?ref=${contactMessage}`}
+                  href={`${CONTACT_FACEBOOK_URL}?ref=${contactMessage}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2 rounded-xl border-2 border-indigo-600 px-6 py-3 text-sm font-semibold text-indigo-600 transition-colors hover:bg-indigo-50"
+                  className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-indigo-600 px-6 py-3 text-sm font-semibold text-indigo-600 transition-colors hover:bg-indigo-50"
                 >
                   <Image src={facebookIcon} alt="Facebook" className="h-5 w-5 object-contain" />
-                  Liên hệ qua Messenger
+                  Facebook
                 </a>
               </div>
 
@@ -461,7 +488,11 @@ export default async function AccountDetailPage({
                 className="group mt-3 flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 transition-colors hover:border-amber-300 hover:bg-amber-100"
               >
                 <div className="mt-0.5 shrink-0">
-                  <Image src={zaloIcon} alt="Zalo Group" className="h-5 w-5 object-contain" />
+                  <Image
+                    src={zaloIcon}
+                    alt="Zalo Group"
+                    className="h-5 w-5 object-contain"
+                  />
                 </div>
                 <div className="min-w-0">
                   <p className="text-xs font-semibold text-amber-800">

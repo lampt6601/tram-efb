@@ -1,14 +1,12 @@
 import { Gamepad2 } from "lucide-react";
 import Image from "next/image";
 import zaloIcon from "@/assets/icons/zalo.png";
-import { OwnerSection } from "./OwnerSection";
 import { RecruitAdminSection } from "./RecruitAdminSection";
 
 export function Footer() {
   return (
     <>
       <RecruitAdminSection />
-      <OwnerSection />
       <footer className="border-t border-slate-200 bg-white">
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-between">

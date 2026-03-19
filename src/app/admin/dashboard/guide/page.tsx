@@ -16,6 +16,10 @@ import {
   Copy,
   Trash2,
   Pencil,
+  SearchCheck,
+  ExternalLink,
+  RotateCcw,
+  MessageCircle,
 } from "lucide-react";
 
 function SectionHeader({
@@ -29,7 +33,7 @@ function SectionHeader({
   icon: React.ElementType;
   title: string;
   subtitle?: string;
-  color?: "indigo" | "emerald" | "amber" | "blue" | "rose" | "purple" | "slate";
+  color?: "indigo" | "emerald" | "amber" | "blue" | "rose" | "purple" | "slate" | "cyan";
 }) {
   const colors = {
     indigo: { bg: "bg-indigo-100", icon: "text-indigo-600", badge: "bg-indigo-600", border: "border-indigo-200" },
@@ -39,6 +43,7 @@ function SectionHeader({
     rose: { bg: "bg-rose-100", icon: "text-rose-600", badge: "bg-rose-600", border: "border-rose-200" },
     purple: { bg: "bg-purple-100", icon: "text-purple-600", badge: "bg-purple-600", border: "border-purple-200" },
     slate: { bg: "bg-slate-100", icon: "text-slate-600", badge: "bg-slate-600", border: "border-slate-200" },
+    cyan: { bg: "bg-cyan-100", icon: "text-cyan-600", badge: "bg-cyan-600", border: "border-cyan-200" },
   };
   const c = colors[color];
   return (
@@ -99,6 +104,9 @@ function ActionChip({ icon: Icon, label, color = "slate" }: { icon: React.Elemen
     emerald: "bg-emerald-50 text-emerald-700",
     rose: "bg-rose-50 text-rose-700",
     amber: "bg-amber-50 text-amber-700",
+    purple: "bg-purple-50 text-purple-700",
+    blue: "bg-blue-50 text-blue-700",
+    cyan: "bg-cyan-50 text-cyan-700",
   };
   return (
     <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold ${colorMap[color] ?? colorMap.slate}`}>
@@ -128,10 +136,11 @@ export default function GuidePage() {
         <p className="mb-4 text-sm text-slate-600 leading-relaxed">
           Đây là hệ thống giúp bạn <strong>đăng bán tài khoản eFootball</strong> lên website <strong>THC eFootball Shop</strong> một cách nhanh chóng, có tổ chức. Thay vì tự repost bài mỗi ngày trên group Facebook, tài khoản của bạn sẽ được hiển thị 24/7 trên web và khách hàng tự tìm đến mua.
         </p>
-        <div className="grid gap-3 sm:grid-cols-3">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {[
             { icon: Mail, label: "Quản lý Email", desc: "Lưu thông tin email game để liên kết với acc" },
             { icon: Gamepad2, label: "Đăng Acc", desc: "Thêm, chỉnh sửa, đánh dấu đã bán" },
+            { icon: SearchCheck, label: "Yêu Cầu Tìm Acc", desc: "Ghi nhận & theo dõi yêu cầu từ khách" },
             { icon: LayoutDashboard, label: "Xem Thống Kê", desc: "Theo dõi doanh thu & lợi nhuận" },
           ].map(({ icon: Icon, label, desc }) => (
             <div key={label} className="rounded-xl border border-slate-100 bg-slate-50 p-3.5">
@@ -200,8 +209,7 @@ export default function GuidePage() {
           <div>
             <p className="mb-2 text-xs font-bold uppercase tracking-wider text-slate-400">Cài đặt</p>
             <div className="rounded-xl border border-slate-100 bg-slate-50 divide-y divide-slate-100">
-              <FieldRow label="Trạng thái" desc='"Available" = đang bán, "Pending" = tạm giữ, "Sold" = đã bán' required />
-              <FieldRow label="Nổi bật ⭐" desc="Tích vào để acc được ghim lên đầu trang chủ với biểu tượng ngôi sao" />
+              <FieldRow label="Trạng thái" desc='"Sẵn sàng" = đang bán, "Đang chờ" = tạm giữ, "Đã bán" = đã bán' required />
               <FieldRow label="Clone" desc="Tích nếu đây là acc clone (hiển thị tag riêng, khách có thể lọc)" />
             </div>
           </div>
@@ -213,7 +221,7 @@ export default function GuidePage() {
               <FieldRow label="GP" desc="Tổng số GP của acc" />
               <FieldRow label="Coins Android / iOS" desc="Số coin của từng nền tảng" />
               <FieldRow label="Lực chiến" desc="Team Strength của đội hình" />
-              <FieldRow label="Số lượng log / tháng" desc="Số lần đăng nhập cho phép mỗi tháng (mặc định: 10)" />
+              <FieldRow label="Log / tháng" desc="Số lần đăng nhập cho phép mỗi tháng (để trống nếu không giới hạn)" />
             </div>
           </div>
 
@@ -236,7 +244,7 @@ export default function GuidePage() {
           <div>
             <p className="mb-2 text-xs font-bold uppercase tracking-wider text-slate-400">Hình ảnh</p>
             <div className="rounded-xl border border-slate-100 bg-slate-50 divide-y divide-slate-100">
-              <FieldRow label="Upload ảnh" desc="Kéo thả hoặc nhấn chọn file (PNG, JPG, GIF — tối đa 5MB/ảnh). Phải có ít nhất 1 ảnh." required />
+              <FieldRow label="Upload ảnh" desc="Kéo thả hoặc nhấn chọn file (PNG, JPG, GIF — tối đa 4MB/ảnh). Phải có ít nhất 1 ảnh." required />
               <FieldRow label="Ảnh đại diện" desc='Nhấn biểu tượng ⭐ trên ảnh để đặt làm ảnh thumbnail chính hiển thị ở trang chủ' />
               <FieldRow label="Ctrl + V" desc="Dán ảnh từ clipboard thẳng vào form (nhanh hơn kéo thả)" />
             </div>
@@ -279,17 +287,20 @@ export default function GuidePage() {
           </div>
         </div>
 
-        <p className="mb-3 text-xs font-bold uppercase tracking-wider text-slate-400">Thao tác trên mỗi acc</p>
+        <p className="mb-3 text-xs font-bold uppercase tracking-wider text-slate-400">Thao tác trên mỗi acc (nút &quot;Tác vụ&quot;)</p>
         <div className="flex flex-wrap gap-2 mb-4">
           <ActionChip icon={Pencil} label="Chỉnh sửa" color="indigo" />
-          <ActionChip icon={Copy} label="Copy link" color="slate" />
+          <ActionChip icon={ExternalLink} label="Xem trang công khai" color="slate" />
+          <ActionChip icon={Link2} label="Copy link" color="slate" />
+          <ActionChip icon={Copy} label="Đánh dấu Clone" color="purple" />
           <ActionChip icon={Tag} label="Thiết lập sale" color="amber" />
           <ActionChip icon={BadgeDollarSign} label="Đánh dấu đã bán" color="emerald" />
+          <ActionChip icon={RotateCcw} label="Gỡ đánh dấu đã bán" color="blue" />
           <ActionChip icon={Trash2} label="Xóa" color="rose" />
         </div>
 
         <InfoBox type="tip">
-          Dùng <strong>Copy link</strong> để lấy link trực tiếp đến trang chi tiết acc — tiện chia sẻ cho khách hỏi qua Zalo/Facebook.
+          Dùng <strong>Copy link</strong> để lấy link trực tiếp đến trang chi tiết acc — tiện chia sẻ cho khách hỏi qua Zalo/Facebook. Nút <strong>Xem trang công khai</strong> sẽ mở ngay trang acc đó trên website.
         </InfoBox>
       </div>
 
@@ -305,7 +316,7 @@ export default function GuidePage() {
         <ol className="mb-4 space-y-3">
           {[
             'Vào danh sách Tài Khoản, tìm acc vừa bán.',
-            'Nhấn vào nút thao tác (⋮) → chọn "Đánh dấu đã bán".',
+            'Nhấn nút "Tác vụ" → chọn "Đánh dấu đã bán".',
             'Nhập giá bán thực tế (có thể khác giá niêm yết nếu thỏa thuận khác).',
             'Xác nhận — acc tự động chuyển sang trạng thái Sold và email liên kết sẽ được gỡ ra.',
           ].map((step, i) => (
@@ -317,9 +328,14 @@ export default function GuidePage() {
             </li>
           ))}
         </ol>
-        <InfoBox type="info">
-          Sau khi đánh dấu đã bán, acc vẫn hiển thị trên web trong mục <strong>&quot;Tài Khoản Đã Bán&quot;</strong> — giúp tăng độ tin cậy của shop với khách hàng mới.
-        </InfoBox>
+        <div className="space-y-3">
+          <InfoBox type="info">
+            Sau khi đánh dấu đã bán, acc vẫn hiển thị trên web trong mục <strong>&quot;Tài Khoản Đã Bán&quot;</strong> — giúp tăng độ tin cậy của shop với khách hàng mới.
+          </InfoBox>
+          <InfoBox type="tip">
+            Nếu đánh dấu nhầm, dùng <strong>&quot;Gỡ đánh dấu đã bán&quot;</strong> trong menu Tác vụ để đưa acc về trạng thái Đang bán.
+          </InfoBox>
+        </div>
       </div>
 
       {/* Step 5 — Sale */}
@@ -339,7 +355,7 @@ export default function GuidePage() {
           <FieldRow label="Giá sale thực tế" desc="Giá khách thực sự trả — phải nhỏ hơn giá gốc." required />
         </div>
         <InfoBox type="tip">
-          Bạn có thể <strong>chỉnh lại giá sale</strong> bất cứ lúc nào, hoặc <strong>xóa sale</strong> để quay về giá thường.
+          Bạn có thể <strong>chỉnh lại giá sale</strong> bất cứ lúc nào (nút &quot;Chỉnh giá sale&quot; trong Tác vụ), hoặc <strong>hủy bỏ sale</strong> để quay về giá thường.
         </InfoBox>
       </div>
 
@@ -370,6 +386,39 @@ export default function GuidePage() {
             </div>
           ))}
         </div>
+      </div>
+
+      {/* Requests */}
+      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <SectionHeader
+          icon={SearchCheck}
+          title="Yêu Cầu Tìm Acc"
+          subtitle="Menu: Yêu Cầu Tìm Acc"
+          color="cyan"
+        />
+        <p className="mb-4 text-sm text-slate-600 leading-relaxed">
+          Khi khách nhắn tin muốn tìm acc nhưng chưa có acc phù hợp ngay, bạn có thể <strong>ghi nhận yêu cầu</strong> vào đây để theo dõi và xử lý sau.
+        </p>
+
+        <div className="mb-4 rounded-xl border border-slate-100 bg-slate-50 divide-y divide-slate-100">
+          <FieldRow label="Chi tiết yêu cầu" desc='Mô tả acc khách cần. Ví dụ: "Cần acc GP 5M+, coin Android cao, giá tầm 2–3 tr"' required />
+          <FieldRow label="Mức giá" desc="Ngân sách khách đề xuất, ví dụ: 2–3 tr, thỏa thuận (không bắt buộc)" />
+          <FieldRow label="Tên người yêu cầu" desc="Tên khách hàng để nhận ra sau" required />
+          <FieldRow label="Nền tảng liên hệ" desc="Zalo, Facebook, Zalo + Facebook, hoặc Khác" required />
+        </div>
+
+        <div className="mb-4 rounded-xl border border-cyan-100 bg-cyan-50 p-4">
+          <p className="mb-2 text-xs font-bold text-cyan-700 uppercase tracking-wide">Xử lý yêu cầu</p>
+          <ul className="space-y-1 text-sm text-slate-600">
+            <li>• Yêu cầu mới tạo sẽ có trạng thái <strong>Chưa xử lý</strong></li>
+            <li>• Khi đã tìm được acc phù hợp và liên hệ khách xong, nhấn <strong>Đánh dấu hoàn tất</strong></li>
+            <li>• Yêu cầu hoàn tất sẽ được ẩn xuống dưới danh sách</li>
+          </ul>
+        </div>
+
+        <InfoBox type="info">
+          Tính năng này giúp bạn không bỏ sót khách hàng tiềm năng — thay vì phải nhớ trong đầu hay lưu ở nơi khác, mọi yêu cầu đều được ghi nhận tập trung tại đây.
+        </InfoBox>
       </div>
 
       {/* Profile */}
@@ -431,15 +480,16 @@ export default function GuidePage() {
             { step: "Tạo tài khoản mới", sub: "Menu Tài Khoản → Thêm Tài Khoản — điền đầy đủ thông tin và upload ảnh", icon: Gamepad2, color: "bg-indigo-100 text-indigo-700" },
             { step: "Liên kết email với acc vừa tạo", sub: "Chọn email ở mục Liên kết Email trong form tạo/sửa acc", icon: Link2, color: "bg-purple-100 text-purple-700" },
             { step: "Chờ duyệt (nếu cần)", sub: "Nhắn chủ shop nếu acc chưa hiển thị sau vài phút", icon: Star, color: "bg-amber-100 text-amber-700" },
-            { step: "Khi có khách mua → Đánh dấu đã bán", sub: "Nhấn ⋮ → Đánh dấu đã bán → Nhập giá thực tế", icon: BadgeDollarSign, color: "bg-emerald-100 text-emerald-700" },
+            { step: "Khi có khách muốn tìm acc → Ghi yêu cầu", sub: "Menu Yêu Cầu Tìm Acc → Thêm Yêu Cầu (tuỳ chọn)", icon: SearchCheck, color: "bg-cyan-100 text-cyan-700" },
+            { step: "Khi có khách mua → Đánh dấu đã bán", sub: 'Nút "Tác vụ" → Đánh dấu đã bán → Nhập giá thực tế', icon: BadgeDollarSign, color: "bg-emerald-100 text-emerald-700" },
             { step: "Kiểm tra lợi nhuận trên Dashboard", sub: "Menu Bảng Điều Khiển", icon: LayoutDashboard, color: "bg-rose-100 text-rose-700" },
-          ].map(({ step, sub, icon: Icon, color }, i) => (
+          ].map(({ step, sub, icon: Icon, color }, i, arr) => (
             <li key={i} className="flex items-start gap-4">
               <div className="flex flex-col items-center gap-1">
                 <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${color}`}>
                   <Icon className="h-4 w-4" />
                 </div>
-                {i < 5 && <div className="w-px flex-1 bg-slate-200 h-4" />}
+                {i < arr.length - 1 && <div className="w-px flex-1 bg-slate-200 h-4" />}
               </div>
               <div className="pb-1">
                 <p className="text-sm font-semibold text-slate-900">{step}</p>
