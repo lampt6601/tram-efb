@@ -26,11 +26,21 @@ function getStartOfWeekISO(): string {
 /** Start of current month (1st 00:00 UTC) as ISO string */
 function getStartOfMonthISO(): string {
   const d = new Date();
-  const start = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), 1, 0, 0, 0, 0));
+  const start = new Date(
+    Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), 1, 0, 0, 0, 0),
+  );
   return start.toISOString();
 }
 
-type SearchParams = { period?: string };
+function getVNDateStr(isoString: string) {
+  const d = new Date(isoString);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+type SearchParams = { period?: string; from?: string; to?: string };
 
 export default async function DashboardPage({
   searchParams,
@@ -39,6 +49,8 @@ export default async function DashboardPage({
 }) {
   const params = await searchParams;
   const period = params.period ?? "";
+  const fromDate = params.from ?? "";
+  const toDate = params.to ?? "";
 
   const supabase = await createSupabaseServerClient();
 
@@ -57,9 +69,14 @@ export default async function DashboardPage({
       : period === "month"
         ? getStartOfMonthISO()
         : null;
-  const soldInPeriod = sinceISO
-    ? soldItems.filter((a) => (a.updated_at ?? a.created_at) >= sinceISO)
-    : soldItems;
+
+  const soldInPeriod = soldItems.filter((a) => {
+    if (sinceISO && (a.updated_at ?? a.created_at) < sinceISO) return false;
+    const dStr = getVNDateStr(a.updated_at ?? a.created_at);
+    if (fromDate && dStr < fromDate) return false;
+    if (toDate && dStr > toDate) return false;
+    return true;
+  });
 
   const soldAccounts = soldInPeriod.length;
   const totalRevenue = soldInPeriod.reduce(
@@ -72,17 +89,17 @@ export default async function DashboardPage({
   );
   const totalProfit = totalRevenue - totalCost;
 
-  const periodLabel =
-    period === "week" ? " (theo tuần)" : period === "month" ? " (theo tháng)" : "";
+  let periodLabel = "";
+  if (fromDate && toDate) periodLabel = ` (${fromDate.split("-").reverse().join("/")} - ${toDate.split("-").reverse().join("/")})`;
+  else if (fromDate) periodLabel = ` (từ ${fromDate.split("-").reverse().join("/")})`;
+  else if (toDate) periodLabel = ` (đến ${toDate.split("-").reverse().join("/")})`;
+  else if (period === "week") periodLabel = " (theo tuần)";
+  else if (period === "month") periodLabel = " (theo tháng)";
 
   const now = new Date();
   const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
   const staleAccounts = items
-    .filter(
-      (a) =>
-        a.status !== "Sold" &&
-        new Date(a.created_at) < weekAgo,
-    )
+    .filter((a) => a.status !== "Sold" && new Date(a.created_at) < weekAgo)
     .sort(
       (a, b) =>
         new Date(a.created_at).getTime() - new Date(b.created_at).getTime(),
@@ -143,8 +160,8 @@ export default async function DashboardPage({
             Tài khoản đăng hơn 1 tuần chưa bán
           </h2>
           <p className="mt-1 text-sm text-slate-500">
-            Đây là những acc đã đăng trên 7 ngày nhưng vẫn chưa được bán. Bạn có thể
-            xem lại giá, mô tả hoặc bật ưu tiên để tăng khả năng bán.
+            Đây là những acc đã đăng trên 7 ngày nhưng vẫn chưa được bán. Bạn có
+            thể xem lại giá, mô tả hoặc bật ưu tiên để tăng khả năng bán.
           </p>
 
           <div className="mt-4 overflow-x-auto rounded-xl border border-slate-200 bg-white">

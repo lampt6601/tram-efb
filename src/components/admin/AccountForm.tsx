@@ -31,7 +31,6 @@ type AccountFormValues = {
   totalGp: string;
   totalCoinsAndroid: string;
   totalCoinsIos: string;
-  teamStrength: string;
   emailId: string;
   isClone: boolean;
   originalPrice: string;
@@ -69,7 +68,6 @@ export function AccountForm({ account }: AccountFormProps) {
       totalGp: account?.total_gp?.toString() ?? "",
       totalCoinsAndroid: account?.total_coins_android?.toString() ?? "",
       totalCoinsIos: account?.total_coins_ios?.toString() ?? "",
-      teamStrength: account?.team_strength?.toString() ?? "",
       emailId: account?.email_id ?? "",
       isClone: account?.is_clone ?? false,
       originalPrice: account?.original_price?.toString() ?? "",
@@ -274,7 +272,7 @@ export function AccountForm({ account }: AccountFormProps) {
         total_gp: parseInt(values.totalGp as string) || 0,
         total_coins_android: parseInt(values.totalCoinsAndroid as string) || 0,
         total_coins_ios: parseInt(values.totalCoinsIos as string) || 0,
-        team_strength: parseInt(values.teamStrength as string) || 0,
+        team_strength: 0,
         server_region: values.serverRegion || null,
         monthly_log_quota: values.monthlyLogQuota
           ? parseInt(values.monthlyLogQuota as string)
@@ -404,6 +402,12 @@ export function AccountForm({ account }: AccountFormProps) {
                 {...register("sellingPrice", {
                   required: "Vui lòng nhập giá bán",
                   min: { value: 0, message: "Phải >= 0" },
+                  validate: (val, formValues) => {
+                    const sp = parseInt(val) || 0;
+                    const pp = parseInt(formValues.purchasePrice as string) || 0;
+                    if (sp > pp * 2) return "Không được lớn hơn 2 lần Giá nhập";
+                    return true;
+                  }
                 })}
                 aria-invalid={!!errors.sellingPrice}
                 min="0"
@@ -499,9 +503,11 @@ export function AccountForm({ account }: AccountFormProps) {
           {/* ── Chỉ số ── */}
           <SectionHeader label="Chỉ số" />
 
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 items-end">
             <div>
-              <Label className="text-slate-700">GP</Label>
+              <div className="flex h-[22px] items-center">
+                <Label className="text-slate-700">GP</Label>
+              </div>
               <Input
                 type="number"
                 {...register("totalGp", { min: { value: 0, message: "Phải >= 0" } })}
@@ -515,9 +521,11 @@ export function AccountForm({ account }: AccountFormProps) {
               )}
             </div>
             <div>
-              <Label className="text-slate-700 inline-flex items-center gap-1">
-                Coins <AndroidCoinIcon size={18} />
-              </Label>
+              <div className="flex h-[22px] items-center">
+                <Label className="text-slate-700 inline-flex items-center gap-1">
+                  Coins <AndroidCoinIcon size={18} />
+                </Label>
+              </div>
               <Input
                 type="number"
                 {...register("totalCoinsAndroid", { min: { value: 0, message: "Phải >= 0" } })}
@@ -531,9 +539,11 @@ export function AccountForm({ account }: AccountFormProps) {
               )}
             </div>
             <div>
-              <Label className="text-slate-700 inline-flex items-center gap-1">
-                Coins <IosCoinIcon size={18} />
-              </Label>
+              <div className="flex h-[22px] items-center">
+                <Label className="text-slate-700 inline-flex items-center gap-1">
+                  Coins <IosCoinIcon size={18} />
+                </Label>
+              </div>
               <Input
                 type="number"
                 {...register("totalCoinsIos", { min: { value: 0, message: "Phải >= 0" } })}
@@ -547,21 +557,9 @@ export function AccountForm({ account }: AccountFormProps) {
               )}
             </div>
             <div>
-              <Label className="text-slate-700">Lực chiến</Label>
-              <Input
-                type="number"
-                {...register("teamStrength", { min: { value: 0, message: "Phải >= 0" } })}
-                aria-invalid={!!errors.teamStrength}
-                min="0"
-                className={cn(inputClass, "mt-1.5")}
-                placeholder="0"
-              />
-              {errors.teamStrength && (
-                <p className="mt-1 text-xs text-red-600">{errors.teamStrength.message}</p>
-              )}
-            </div>
-            <div>
-              <Label className="text-slate-700">Log / tháng</Label>
+              <div className="flex h-[22px] items-center">
+                <Label className="text-slate-700">Log / tháng</Label>
+              </div>
               <Input
                 type="number"
                 {...register("monthlyLogQuota", { min: { value: 1, message: "Phải >= 1" } })}

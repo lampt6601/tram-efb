@@ -31,7 +31,6 @@ type FormValues = {
   totalGp: string;
   totalCoinsAndroid: string;
   totalCoinsIos: string;
-  teamStrength: string;
   monthlyLogQuota: string;
   serverRegion: string;
   emailId: string;
@@ -66,7 +65,6 @@ export function SuperAdminAccountForm({ account, availableEmails }: Props) {
       totalGp: account.total_gp?.toString() ?? "",
       totalCoinsAndroid: account.total_coins_android?.toString() ?? "",
       totalCoinsIos: account.total_coins_ios?.toString() ?? "",
-      teamStrength: account.team_strength?.toString() ?? "",
       monthlyLogQuota: account.monthly_log_quota?.toString() ?? "",
       serverRegion: account.server_region ?? "",
       emailId: account.email_id ?? "",
@@ -157,7 +155,7 @@ export function SuperAdminAccountForm({ account, availableEmails }: Props) {
         total_gp: parseInt(values.totalGp) || 0,
         total_coins_android: parseInt(values.totalCoinsAndroid) || 0,
         total_coins_ios: parseInt(values.totalCoinsIos) || 0,
-        team_strength: parseInt(values.teamStrength) || 0,
+        team_strength: 0,
         server_region: values.serverRegion || null,
         monthly_log_quota: values.monthlyLogQuota
           ? parseInt(values.monthlyLogQuota)
@@ -266,6 +264,16 @@ export function SuperAdminAccountForm({ account, availableEmails }: Props) {
                             "Phải lớn hơn giá bán",
                         }
                       : {}),
+                    ...(name === "sellingPrice"
+                      ? {
+                          validate: (v, f) => {
+                            const sp = parseInt(v) || 0;
+                            const pp = parseInt(f.purchasePrice) || 0;
+                            if (sp > pp * 2) return "Không được lớn hơn 2x Giá nhập";
+                            return true;
+                          }
+                        }
+                      : {}),
                   })}
                   min="0"
                   step="1"
@@ -354,7 +362,6 @@ export function SuperAdminAccountForm({ account, availableEmails }: Props) {
                 { name: "totalGp", label: "Tổng GP", min: 0 },
                 { name: "totalCoinsAndroid", label: "Coins (Android)", min: 0 },
                 { name: "totalCoinsIos", label: "Coins (iOS)", min: 0 },
-                { name: "teamStrength", label: "Lực Chiến", min: 0 },
                 { name: "monthlyLogQuota", label: "Số lượng log", min: 1 },
               ] as const
             ).map(({ name, label, min }) => (

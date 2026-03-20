@@ -50,8 +50,8 @@ export default async function EmailsPage() {
             <TableHeader>
               <TableRow className="bg-slate-50 hover:bg-slate-50">
                 <TableHead className="text-slate-500">Địa chỉ Email</TableHead>
-                <TableHead className="text-slate-500">Mật khẩu</TableHead>
-                <TableHead className="text-slate-500">Thông tin khôi phục</TableHead>
+                <TableHead className="hidden sm:table-cell text-slate-500">Mật khẩu</TableHead>
+                <TableHead className="hidden sm:table-cell text-slate-500">Thông tin khôi phục</TableHead>
                 <TableHead className="text-slate-500">Trạng Thái Liên Kết</TableHead>
                 <TableHead className="text-slate-500">Hành Động</TableHead>
               </TableRow>
@@ -67,10 +67,10 @@ export default async function EmailsPage() {
                       </span>
                     </div>
                   </TableCell>
-                  <TableCell className="font-mono text-xs text-slate-600">
+                  <TableCell className="hidden sm:table-cell font-mono text-xs text-slate-600">
                     {email.password}
                   </TableCell>
-                  <TableCell className="text-slate-600">
+                  <TableCell className="hidden sm:table-cell text-slate-600">
                     {email.recovery_info || "—"}
                   </TableCell>
                   <TableCell>

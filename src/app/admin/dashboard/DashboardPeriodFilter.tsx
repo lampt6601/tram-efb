@@ -1,42 +1,80 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname, useSearchParams } from "next/navigation";
-import { cn } from "@/lib/utils";
-import { Calendar, CalendarDays, CalendarRange } from "lucide-react";
-
-const PERIODS = [
-  { value: "", label: "Tất cả", icon: CalendarRange },
-  { value: "week", label: "Theo tuần", icon: Calendar },
-  { value: "month", label: "Theo tháng", icon: CalendarDays },
-] as const;
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useState } from "react";
+import { Calendar } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export function DashboardPeriodFilter() {
+  const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const current = searchParams.get("period") ?? "";
+  
+  const currentFrom = searchParams.get("from") || "";
+  const currentTo = searchParams.get("to") || "";
+  const currentPeriod = searchParams.get("period"); // support older standard
+
+  const [from, setFrom] = useState(currentFrom);
+  const [to, setTo] = useState(currentTo);
+
+  const applyFilter = () => {
+    const params = new URLSearchParams(searchParams);
+    if (from) params.set("from", from);
+    else params.delete("from");
+
+    if (to) params.set("to", to);
+    else params.delete("to");
+
+    params.delete("period");
+
+    router.push(`${pathname}?${params.toString()}`);
+  };
+
+  const clearFilter = () => {
+    setFrom("");
+    setTo("");
+    const params = new URLSearchParams(searchParams);
+    params.delete("from");
+    params.delete("to");
+    params.delete("period");
+    router.push(`${pathname}?${params.toString()}`);
+  };
 
   return (
-    <div className="flex flex-wrap items-center gap-1 rounded-xl border border-slate-200 bg-slate-50/80 p-1">
-      {PERIODS.map(({ value, label, icon: Icon }) => {
-        const href = value ? `${pathname}?period=${value}` : pathname;
-        const isActive = current === value;
-        return (
-          <Link
-            key={value || "all"}
-            href={href}
-            className={cn(
-              "inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
-              isActive
-                ? "bg-white text-slate-900 shadow-sm ring-1 ring-slate-200"
-                : "text-slate-600 hover:bg-white/70 hover:text-slate-800"
-            )}
-          >
-            <Icon className="h-4 w-4 shrink-0" />
-            {label}
-          </Link>
-        );
-      })}
+    <div className="flex flex-wrap items-center gap-3 rounded-xl border border-slate-200 bg-white p-2 shadow-sm">
+      <div className="flex items-center gap-2 px-2">
+        <Calendar className="h-4 w-4 text-slate-500" />
+        <span className="text-sm font-medium text-slate-700">Lọc theo ngày:</span>
+      </div>
+      
+      <div className="flex items-center gap-2">
+        <input
+          type="date"
+          value={from}
+          onChange={(e) => setFrom(e.target.value)}
+          className="rounded-lg border border-slate-300 bg-slate-50 px-3 py-1.5 text-sm outline-none transition-colors focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+          title="Từ ngày"
+        />
+        <span className="text-sm text-slate-400">-</span>
+        <input
+          type="date"
+          value={to}
+          onChange={(e) => setTo(e.target.value)}
+          className="rounded-lg border border-slate-300 bg-slate-50 px-3 py-1.5 text-sm outline-none transition-colors focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+          title="Đến ngày"
+        />
+      </div>
+
+      <div className="flex items-center gap-2">
+        <Button onClick={applyFilter} size="sm" className="h-8">
+          Áp dụng
+        </Button>
+        {(currentFrom || currentTo || currentPeriod) && (
+          <Button onClick={clearFilter} variant="outline" size="sm" className="h-8">
+            Xóa lọc
+          </Button>
+        )}
+      </div>
     </div>
   );
 }

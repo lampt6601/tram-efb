@@ -28,7 +28,10 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import type { PublicAccount } from "@/types/database";
 import { ogImage } from "@/lib/image-utils";
-import { AndroidCoinIcon, IosCoinIcon } from "@/components/ui/PlatformCoinIcons";
+import {
+  AndroidCoinIcon,
+  IosCoinIcon,
+} from "@/components/ui/PlatformCoinIcons";
 
 export async function generateMetadata({
   params,
@@ -61,7 +64,9 @@ export async function generateMetadata({
   const description = isSold
     ? `Tài khoản ${account.title} đã được bán. Xem các tài khoản khác đang sẵn sàng tại THC eFootball Shop.`
     : `Mua ngay tài khoản ${account.title} với giá ${formatCurrency(account.selling_price)}. Giao dịch nhanh, uy tín tại THC eFootball Shop.`;
-  const image = account.primary_image_url ? ogImage(account.primary_image_url) : undefined;
+  const image = account.primary_image_url
+    ? ogImage(account.primary_image_url)
+    : undefined;
 
   return {
     title,
@@ -209,14 +214,17 @@ export default async function AccountDetailPage({
                           <p className="text-sm font-bold text-slate-900 flex flex-wrap items-center justify-center gap-x-1.5 gap-y-0.5">
                             {(account.total_coins_android ?? 0) > 0 && (
                               <span className="inline-flex items-center gap-0.5">
-                                <AndroidCoinIcon size={18} className="opacity-80" />
+                                <AndroidCoinIcon
+                                  size={18}
+                                  className="opacity-80"
+                                />
                                 {formatNumber(account.total_coins_android)}
                               </span>
                             )}
                             {(account.total_coins_android ?? 0) > 0 &&
                               (account.total_coins_ios ?? 0) > 0 && (
-                              <span className="text-slate-400">|</span>
-                            )}
+                                <span className="text-slate-400">|</span>
+                              )}
                             {(account.total_coins_ios ?? 0) > 0 && (
                               <span className="inline-flex items-center gap-0.5">
                                 <IosCoinIcon size={18} className="opacity-80" />
@@ -227,7 +235,7 @@ export default async function AccountDetailPage({
                           <p className="text-xs text-slate-500">Coins</p>
                         </div>
                       )}
-                    {(account.team_strength ?? 0) > 0 && (
+                      {(account.team_strength ?? 0) > 0 && (
                         <div className="rounded-xl bg-blue-50 p-4 text-center opacity-60">
                           <Shield className="mx-auto mb-1 h-5 w-5 text-blue-500" />
                           <p className="text-lg font-bold text-slate-900">
@@ -236,15 +244,13 @@ export default async function AccountDetailPage({
                           <p className="text-xs text-slate-500">Lực Chiến</p>
                         </div>
                       )}
-                    <div className="rounded-xl bg-indigo-50 p-4 text-center opacity-60">
-                      <MessageCircle className="mx-auto mb-1 h-5 w-5 text-indigo-500" />
-                      <p className="text-lg font-bold text-slate-900">
-                        {account.monthly_log_quota ?? 10}
-                      </p>
-                      <p className="text-xs text-slate-500">
-                        Số lượng log
-                      </p>
-                    </div>
+                      <div className="rounded-xl bg-indigo-50 p-4 text-center opacity-60">
+                        <MessageCircle className="mx-auto mb-1 h-5 w-5 text-indigo-500" />
+                        <p className="text-lg font-bold text-slate-900">
+                          {account.monthly_log_quota ?? 10}
+                        </p>
+                        <p className="text-xs text-slate-500">Số lượng log</p>
+                      </div>
                     </div>
                   )}
 
@@ -330,79 +336,68 @@ export default async function AccountDetailPage({
               </h1>
 
               {/* Tags */}
-              {(account.server_region || account.monthly_log_quota != null) && (
+              {account.server_region && (
                 <div className="mt-2 flex flex-wrap gap-2">
-                  {account.server_region && (
-                    <span className="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">
-                      Server: {account.server_region}
-                    </span>
-                  )}
-                  {account.monthly_log_quota != null && (
-                    <span className="inline-flex items-center rounded-full bg-indigo-50 px-3 py-1 text-xs font-medium text-indigo-700">
-                      Số lượng log: {account.monthly_log_quota}
-                    </span>
-                  )}
+                  <span className="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">
+                    Server: {account.server_region}
+                  </span>
                 </div>
               )}
 
-              {/* Stats */}
+              {/* Stats grid */}
               {Boolean(
                 (account.total_gp ?? 0) > 0 ||
                 (account.total_coins_android ?? 0) > 0 ||
                 (account.total_coins_ios ?? 0) > 0 ||
-                (account.team_strength ?? 0) > 0,
+                (account.team_strength ?? 0) > 0 ||
+                account.monthly_log_quota != null,
               ) && (
-                <div className="mt-4 grid grid-cols-2 gap-3">
+                <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3">
                   {(account.total_gp ?? 0) > 0 && (
-                    <div className="rounded-xl bg-amber-50 px-3 py-3 text-center">
-                      <Zap className="mx-auto mb-1 h-4 w-4 text-amber-500" />
-                      <p className="text-base font-bold text-slate-900">
-                        {formatNumber(account.total_gp)}
-                      </p>
-                      <p className="text-xs text-slate-500">Tổng GP</p>
+                    <div className="flex items-center gap-2.5 rounded-xl border border-amber-100 bg-amber-50 px-3 py-2.5">
+                      <Zap className="h-4 w-4 shrink-0 text-amber-500" />
+                      <div className="min-w-0">
+                        <p className="text-[10px] font-medium uppercase tracking-wide text-amber-600/70">Tổng GP</p>
+                        <p className="truncate text-sm font-bold text-slate-900">{formatNumber(account.total_gp)}</p>
+                      </div>
                     </div>
                   )}
-                  {((account.total_coins_android ?? 0) > 0 ||
-                    (account.total_coins_ios ?? 0) > 0) && (
-                    <div className="rounded-xl bg-yellow-50 px-3 py-3 text-center">
-                      <Coins className="mx-auto mb-1 h-4 w-4 text-yellow-500" />
-                      <p className="text-sm font-bold text-slate-900 leading-tight flex flex-wrap items-center justify-center gap-x-1.5 gap-y-0.5">
-                        {(account.total_coins_android ?? 0) > 0 && (
-                          <span className="inline-flex items-center gap-0.5">
-                            <AndroidCoinIcon size={16} />
-                            {formatNumber(account.total_coins_android)}
-                          </span>
-                        )}
-                        {(account.total_coins_android ?? 0) > 0 &&
-                          (account.total_coins_ios ?? 0) > 0 && (
-                          <span className="text-slate-400">·</span>
-                        )}
-                        {(account.total_coins_ios ?? 0) > 0 && (
-                          <span className="inline-flex items-center gap-0.5">
-                            <IosCoinIcon size={16} />
-                            {formatNumber(account.total_coins_ios)}
-                          </span>
-                        )}
-                      </p>
-                      <p className="text-xs text-slate-500">Coins</p>
+                  {(account.total_coins_android ?? 0) > 0 && (
+                    <div className="flex items-center gap-2.5 rounded-xl border border-emerald-100 bg-emerald-50 px-3 py-2.5">
+                      <AndroidCoinIcon size={16} className="shrink-0" />
+                      <div className="min-w-0">
+                        <p className="text-[10px] font-medium uppercase tracking-wide text-emerald-600/70">Coins Android</p>
+                        <p className="truncate text-sm font-bold text-slate-900">{formatNumber(account.total_coins_android)}</p>
+                      </div>
+                    </div>
+                  )}
+                  {(account.total_coins_ios ?? 0) > 0 && (
+                    <div className="flex items-center gap-2.5 rounded-xl border border-teal-100 bg-teal-50 px-3 py-2.5">
+                      <IosCoinIcon size={16} className="shrink-0" />
+                      <div className="min-w-0">
+                        <p className="text-[10px] font-medium uppercase tracking-wide text-teal-600/70">Coins iOS</p>
+                        <p className="truncate text-sm font-bold text-slate-900">{formatNumber(account.total_coins_ios)}</p>
+                      </div>
                     </div>
                   )}
                   {(account.team_strength ?? 0) > 0 && (
-                    <div className="rounded-xl bg-blue-50 px-3 py-3 text-center">
-                      <Shield className="mx-auto mb-1 h-4 w-4 text-blue-500" />
-                      <p className="text-base font-bold text-slate-900">
-                        {account.team_strength}
-                      </p>
-                      <p className="text-xs text-slate-500">Lực Chiến</p>
+                    <div className="flex items-center gap-2.5 rounded-xl border border-blue-100 bg-blue-50 px-3 py-2.5">
+                      <Shield className="h-4 w-4 shrink-0 text-blue-500" />
+                      <div className="min-w-0">
+                        <p className="text-[10px] font-medium uppercase tracking-wide text-blue-600/70">Lực Chiến</p>
+                        <p className="truncate text-sm font-bold text-slate-900">{account.team_strength}</p>
+                      </div>
                     </div>
                   )}
-                  <div className="rounded-xl bg-indigo-50 px-3 py-3 text-center">
-                    <MessageCircle className="mx-auto mb-1 h-4 w-4 text-indigo-500" />
-                    <p className="text-base font-bold text-slate-900">
-                      {account.monthly_log_quota ?? 10}
-                    </p>
-                    <p className="text-xs text-slate-500">Số lượng log</p>
-                  </div>
+                  {account.monthly_log_quota != null && (
+                    <div className="flex items-center gap-2.5 rounded-xl border border-indigo-100 bg-indigo-50 px-3 py-2.5">
+                      <MessageCircle className="h-4 w-4 shrink-0 text-indigo-500" />
+                      <div className="min-w-0">
+                        <p className="text-[10px] font-medium uppercase tracking-wide text-indigo-600/70">Số lượng log</p>
+                        <p className="truncate text-sm font-bold text-slate-900">{account.monthly_log_quota}</p>
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -415,7 +410,9 @@ export default async function AccountDetailPage({
                   Giá Bán
                 </p>
                 <div className="mt-1 flex items-end gap-3">
-                  <p className={`text-3xl font-extrabold ${isSale ? "text-rose-600" : "text-indigo-600"}`}>
+                  <p
+                    className={`text-3xl font-extrabold ${isSale ? "text-rose-600" : "text-indigo-600"}`}
+                  >
                     {formatCurrency(account.selling_price)}
                   </p>
                   {isSale && (
@@ -447,13 +444,15 @@ export default async function AccountDetailPage({
                   </div>
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-slate-900">Liên hệ với chủ shop</p>
-                  <p className="mt-0.5 text-xs text-slate-500">
-                    Chọn Facebook hoặc Zalo để trao đổi nhanh.
+                  <p className="text-sm font-semibold text-slate-900">
+                    Nhắn ngay với chủ shop để chốt acc này!
                   </p>
-                  <p className="mt-1 text-xs font-semibold text-slate-700">Trần Hữu Cảnh</p>
-                  <p className="mt-0.5 text-xs leading-relaxed text-slate-500">
-                    Người sáng lập THC eFootball Shop — cung cấp tài khoản chất lượng, giao dịch minh bạch và hỗ trợ tận tâm.
+                  <p className="mt-0.5 text-xs text-slate-500">
+                    Liên hệ trực tiếp với chủ shop qua Zalo hoặc Facebook — tư
+                    vấn nhanh, giao dịch uy tín.
+                  </p>
+                  <p className="mt-1 text-xs font-semibold text-slate-700">
+                    Trần Hữu Cảnh · THC eFootball Shop
                   </p>
                 </div>
               </div>
@@ -466,17 +465,25 @@ export default async function AccountDetailPage({
                   rel="noopener noreferrer"
                   className="flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-blue-700"
                 >
-                  <Image src={zaloIcon} alt="Zalo" className="h-5 w-5 object-contain" />
-                  Zalo
+                  <Image
+                    src={zaloIcon}
+                    alt="Zalo"
+                    className="h-5 w-5 object-contain"
+                  />
+                  Nhắn qua Zalo
                 </a>
                 <a
-                  href={`${CONTACT_FACEBOOK_URL}?ref=${contactMessage}`}
+                  href={CONTACT_FACEBOOK_URL}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-indigo-600 px-6 py-3 text-sm font-semibold text-indigo-600 transition-colors hover:bg-indigo-50"
                 >
-                  <Image src={facebookIcon} alt="Facebook" className="h-5 w-5 object-contain" />
-                  Facebook
+                  <Image
+                    src={facebookIcon}
+                    alt="Facebook"
+                    className="h-5 w-5 object-contain"
+                  />
+                  Nhắn qua Facebook
                 </a>
               </div>
 
@@ -496,10 +503,10 @@ export default async function AccountDetailPage({
                 </div>
                 <div className="min-w-0">
                   <p className="text-xs font-semibold text-amber-800">
-                    Mình trả lời lâu? Tham gia Group Tư Vấn ngay!
+                    Chủ shop chưa rep? Vào đây để được hỗ trợ ngay!
                   </p>
                   <p className="mt-0.5 text-xs text-amber-700">
-                    Nếu chưa nhận được phản hồi, hãy vào group — có thành viên và admin hỗ trợ bạn 24/7.
+                    Tham gia Group Zalo — có admin và cộng đồng sẵn sàng hỗ trợ bạn 24/7.
                   </p>
                 </div>
                 <ExternalLink className="mt-0.5 h-4 w-4 shrink-0 text-amber-400 transition-colors group-hover:text-amber-600" />
