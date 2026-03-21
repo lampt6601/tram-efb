@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { formatCurrency } from "@/lib/constants";
 import { StatCard } from "@/components/ui/StatCard";
 import { DashboardPeriodFilter } from "../../DashboardPeriodFilter";
+import { AdminRevenueFilter } from "./AdminRevenueFilter";
 import {
   Package,
   CheckCircle,
@@ -50,7 +51,7 @@ function getVNDateStr(isoString: string) {
   return `${year}-${month}-${day}`;
 }
 
-type SearchParams = { period?: string; from?: string; to?: string };
+type SearchParams = { period?: string; from?: string; to?: string; admins?: string };
 
 export default async function SuperRevenuePage({
   searchParams,
@@ -61,6 +62,9 @@ export default async function SuperRevenuePage({
   const period = params.period ?? "";
   const fromDate = params.from ?? "";
   const toDate = params.to ?? "";
+  const selectedAdminIds = new Set(
+    params.admins ? params.admins.split(",").filter(Boolean) : [],
+  );
 
   const supabase = await createSupabaseServerClient();
   const {
@@ -73,8 +77,27 @@ export default async function SuperRevenuePage({
 
   // Use service client to bypass RLS and get all shop data
   const service = createSupabaseServiceClient();
-  const { data: accounts } = await service.from("accounts").select("*");
+  const [{ data: accounts }, { data: usersData }] = await Promise.all([
+    service.from("accounts").select("*"),
+    service.auth.admin.listUsers({ perPage: 1000 }),
+  ]);
+
   const items = (accounts ?? []) as Account[];
+  const allUsers = usersData?.users ?? [];
+
+  // Build admin options list (excluding super admin)
+  const adminOptions = allUsers
+    .filter((u) => !checkIsSuperAdmin(u.email))
+    .sort((a, b) =>
+      (a.user_metadata?.full_name ?? a.email ?? "").localeCompare(
+        b.user_metadata?.full_name ?? b.email ?? "",
+      ),
+    )
+    .map((u) => ({
+      id: u.id,
+      name: u.user_metadata?.full_name ?? "",
+      email: u.email ?? "",
+    }));
 
   const totalAccounts = items.length;
   const availableAccounts = items.filter(
@@ -91,13 +114,15 @@ export default async function SuperRevenuePage({
           ? getStartOfMonthISO()
           : null;
 
-  const soldInPeriod = soldItems.filter((a) => {
+  function inPeriod(a: Account) {
     if (sinceISO && (a.updated_at ?? a.created_at) < sinceISO) return false;
     const dStr = getVNDateStr(a.updated_at ?? a.created_at);
     if (fromDate && dStr < fromDate) return false;
     if (toDate && dStr > toDate) return false;
     return true;
-  });
+  }
+
+  const soldInPeriod = soldItems.filter(inPeriod);
 
   const soldAccounts = soldInPeriod.length;
   const totalRevenue = soldInPeriod.reduce(
@@ -163,6 +188,56 @@ export default async function SuperRevenuePage({
     });
   }
 
+  // Per-admin stats
+  type AdminStat = {
+    id: string;
+    name: string;
+    email: string;
+    added: number;
+    available: number;
+    sold: number;
+    revenue: number;
+    cost: number;
+    profit: number;
+  };
+
+  const adminStatMap = new Map<string, AdminStat>();
+  for (const opt of adminOptions) {
+    adminStatMap.set(opt.id, {
+      id: opt.id,
+      name: opt.name,
+      email: opt.email,
+      added: 0,
+      available: 0,
+      sold: 0,
+      revenue: 0,
+      cost: 0,
+      profit: 0,
+    });
+  }
+
+  for (const a of items) {
+    const stat = adminStatMap.get(a.user_id);
+    if (!stat) continue;
+    stat.added += 1;
+    if (a.status === "Available") stat.available += 1;
+    if (a.status === "Sold" && inPeriod(a)) {
+      stat.sold += 1;
+      stat.revenue += Number(a.selling_price);
+      stat.cost += Number(a.purchase_price);
+      stat.profit += Number(a.selling_price) - Number(a.purchase_price);
+    }
+  }
+
+  const allAdminStats = Array.from(adminStatMap.values()).sort(
+    (a, b) => b.profit - a.profit,
+  );
+
+  const filteredAdminStats =
+    selectedAdminIds.size > 0
+      ? allAdminStats.filter((s) => selectedAdminIds.has(s.id))
+      : allAdminStats;
+
   return (
     <div>
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -211,6 +286,59 @@ export default async function SuperRevenuePage({
         />
       </div>
 
+      {/* ── Per-admin section ── */}
+      <AdminRevenueFilter admins={adminOptions} />
+
+      <div className="mt-4 overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm">
+        <table className="min-w-full text-left text-sm">
+          <thead className="border-b bg-slate-50 text-xs font-semibold uppercase text-slate-500">
+            <tr>
+              <th className="px-4 py-3">Admin</th>
+              <th className="px-4 py-3 text-center">Acc Đã Thêm</th>
+              <th className="px-4 py-3 text-center">Acc Sẵn Sàng</th>
+              <th className="hidden px-4 py-3 text-center sm:table-cell">Acc Đã Bán{periodLabel}</th>
+              <th className="hidden px-4 py-3 text-right md:table-cell">Doanh Thu{periodLabel}</th>
+              <th className="hidden px-4 py-3 text-right md:table-cell">Chi Phí{periodLabel}</th>
+              <th className="px-4 py-3 text-right">Lợi Nhuận{periodLabel}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredAdminStats.length === 0 ? (
+              <tr>
+                <td colSpan={7} className="px-4 py-8 text-center text-slate-500">
+                  Không có dữ liệu
+                </td>
+              </tr>
+            ) : (
+              filteredAdminStats.map((s) => (
+                <tr key={s.id} className="border-t last:border-b text-slate-700 hover:bg-slate-50">
+                  <td className="px-4 py-3">
+                    <div className="flex items-center gap-2">
+                      <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-indigo-100 text-xs font-bold text-indigo-700">
+                        {(s.name || s.email)[0].toUpperCase()}
+                      </div>
+                      <div className="min-w-0">
+                        {s.name && <p className="truncate text-sm font-semibold text-slate-900">{s.name}</p>}
+                        <p className="truncate text-xs text-slate-400">{s.email}</p>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-4 py-3 text-center font-semibold text-indigo-600">{s.added}</td>
+                  <td className="px-4 py-3 text-center font-semibold text-amber-600">{s.available}</td>
+                  <td className="hidden px-4 py-3 text-center font-semibold text-emerald-600 sm:table-cell">{s.sold}</td>
+                  <td className="hidden px-4 py-3 text-right text-slate-700 md:table-cell">{formatCurrency(s.revenue)}</td>
+                  <td className="hidden px-4 py-3 text-right text-slate-700 md:table-cell">{formatCurrency(s.cost)}</td>
+                  <td className={`px-4 py-3 text-right font-semibold ${s.profit >= 0 ? "text-emerald-600" : "text-red-500"}`}>
+                    {formatCurrency(s.profit)}
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      {/* ── Daily breakdown ── */}
       <div className="mt-8">
         <h2 className="text-lg font-semibold text-slate-900">
           Chi tiết doanh thu theo ngày{periodLabel}
