@@ -33,7 +33,7 @@ export function AccountCard({ account }: { account: PublicAccount }) {
 
   const cardContent = (
     <div
-      className={`flex h-full w-full flex-col ${!isSold ? "rounded-2xl border border-slate-200 bg-white transition-colors duration-300 hover:border-indigo-200" : ""}`}
+      className={`flex h-full w-full flex-col overflow-hidden rounded-2xl ${!isSold ? "border border-slate-200 bg-white transition-colors duration-300 group-hover:border-indigo-300" : "border border-slate-200 bg-white"}`}
     >
       {/* Image + overlay/ribbon */}
       <div className="relative overflow-hidden bg-gradient-to-br from-slate-100 to-slate-200 aspect-video">
@@ -98,8 +98,8 @@ export function AccountCard({ account }: { account: PublicAccount }) {
 
         {/* Gradient overlay + CTA for available accounts */}
         {!isSold && (
-          <div className="absolute inset-x-0 bottom-0 flex translate-y-full flex-col items-center justify-end bg-gradient-to-t from-indigo-900/80 via-indigo-900/40 to-transparent pb-4 pt-10 transition-transform duration-300 group-hover:translate-y-0">
-            <span className="flex items-center gap-1.5 rounded-full bg-white px-4 py-1.5 text-xs font-semibold text-indigo-700 shadow-lg">
+          <div className="absolute inset-x-0 bottom-0 flex translate-y-full flex-col items-center justify-end bg-gradient-to-t from-indigo-950/85 via-indigo-900/50 to-transparent pb-4 pt-12 transition-transform duration-300 ease-out group-hover:translate-y-0">
+            <span className="flex items-center gap-1.5 rounded-full bg-indigo-500 px-4 py-1.5 text-xs font-semibold text-white shadow-lg ring-1 ring-indigo-400/60 transition-colors duration-200 group-hover:bg-indigo-400">
               Xem Chi Tiết <ArrowRight className="h-3.5 w-3.5" />
             </span>
           </div>
@@ -236,7 +236,7 @@ export function AccountCard({ account }: { account: PublicAccount }) {
 
   if (isSold) {
     return (
-      <div className="group flex h-full w-full overflow-hidden rounded-2xl border border-slate-200 bg-white opacity-80 shadow-sm transition-all duration-300 hover:opacity-100 hover:shadow-md">
+      <div className="group flex h-full w-full rounded-2xl opacity-80 shadow-sm transition-all duration-300 hover:opacity-100 hover:shadow-md">
         {cardContent}
       </div>
     );
@@ -245,7 +245,7 @@ export function AccountCard({ account }: { account: PublicAccount }) {
   return (
     <Link
       href={`/accounts/${account.id}`}
-      className="group flex h-full w-full overflow-hidden rounded-2xl shadow-sm transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl hover:shadow-indigo-100/60"
+      className="group flex h-full w-full rounded-2xl shadow-sm transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl hover:shadow-indigo-200/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:ring-offset-2"
     >
       {cardContent}
     </Link>
