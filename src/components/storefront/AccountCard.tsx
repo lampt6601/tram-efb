@@ -2,17 +2,13 @@ import Link from "next/link";
 import Image from "next/image";
 import {
   Gamepad2,
-  Coins,
-  Zap,
-  Shield,
   ArrowRight,
   CheckCircle2,
   Star,
   Copy,
 } from "lucide-react";
-import { AndroidCoinIcon, IosCoinIcon } from "@/components/ui/PlatformCoinIcons";
 import { StatusBadge, Badge } from "@/components/ui/Badge";
-import { formatCurrency, formatNumber } from "@/lib/constants";
+import { formatCurrency } from "@/lib/constants";
 import type { PublicAccount } from "@/types/database";
 import { thumbCard } from "@/lib/image-utils";
 
@@ -121,59 +117,7 @@ export function AccountCard({ account }: { account: PublicAccount }) {
         </div>
 
         <div className="mt-1.5 min-h-[1.5rem]">
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-500">
-            {(account.total_gp ?? 0) > 0 && (
-              <span className="inline-flex items-center gap-1">
-                <Zap
-                  className={`h-3 w-3 ${
-                    isSold ? "text-amber-400" : "text-amber-500"
-                  }`}
-                />
-                <span>{formatNumber(account.total_gp)} GP</span>
-              </span>
-            )}
-            {((account.total_coins_android ?? 0) > 0 ||
-              (account.total_coins_ios ?? 0) > 0) && (
-              <span className="inline-flex flex-wrap items-center gap-x-1.5 gap-y-0.5">
-                <Coins
-                  className={`h-3 w-3 shrink-0 ${
-                    isSold ? "text-yellow-400" : "text-yellow-500"
-                  }`}
-                />
-                {(account.total_coins_android ?? 0) > 0 && (
-                  <span className="inline-flex items-center gap-0.5">
-                    <AndroidCoinIcon
-                      size={16}
-                      className={isSold ? "opacity-70" : ""}
-                    />
-                    <span>{formatNumber(account.total_coins_android)}</span>
-                  </span>
-                )}
-                {(account.total_coins_android ?? 0) > 0 &&
-                  (account.total_coins_ios ?? 0) > 0 && (
-                  <span className="text-slate-300" aria-hidden>·</span>
-                )}
-                {(account.total_coins_ios ?? 0) > 0 && (
-                  <span className="inline-flex items-center gap-0.5">
-                    <IosCoinIcon
-                      size={16}
-                      className={isSold ? "opacity-70" : ""}
-                    />
-                    <span>{formatNumber(account.total_coins_ios)}</span>
-                  </span>
-                )}
-              </span>
-            )}
-            {(account.team_strength ?? 0) > 0 && (
-              <span className="inline-flex items-center gap-1">
-                <Shield
-                  className={`h-3 w-3 ${
-                    isSold ? "text-blue-400" : "text-blue-500"
-                  }`}
-                />
-                <span>{account.team_strength}</span>
-              </span>
-            )}
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
             {account.server_region && (
               <Badge
                 variant="secondary"
@@ -188,14 +132,6 @@ export function AccountCard({ account }: { account: PublicAccount }) {
                 className="h-auto rounded-full px-2 py-0.5 text-[11px] text-violet-700 bg-violet-50 border-violet-200"
               >
                 Clone
-              </Badge>
-            )}
-            {!isSold && account.monthly_log_quota != null && (
-              <Badge
-                variant="outline"
-                className="h-auto rounded-full px-2 py-0.5 text-[11px] text-indigo-700 bg-indigo-50 border-indigo-200"
-              >
-                Số lượng log: {account.monthly_log_quota}
               </Badge>
             )}
           </div>
