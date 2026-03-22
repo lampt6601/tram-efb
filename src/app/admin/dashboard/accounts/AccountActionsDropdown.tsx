@@ -19,6 +19,7 @@ import {
   Copy,
   RotateCcw,
   Eye,
+  Star,
 } from "lucide-react";
 import type { AccountStatus, AccountWithEmail } from "@/types/database";
 import { notifyAdminAction } from "@/app/actions/notify-admin";
@@ -33,6 +34,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { PendingAccountDrawer } from "@/app/admin/dashboard/super/pending/PendingAccountDrawer";
+import { toggleAccountPriority } from "@/app/actions/account-actions";
+import { toast } from "sonner";
 
 interface AccountActionsDropdownProps {
   id: string;
@@ -108,7 +111,12 @@ export function AccountActionsDropdown({
 
   // Toggle states
   const [clone, setClone] = useState(isClone);
-  const [toggling, setToggling] = useState<"clone" | null>(null);
+  const [priority, setPriority] = useState(account.is_priority ?? false);
+  const [toggling, setToggling] = useState<"clone" | "priority" | null>(null);
+
+  useEffect(() => {
+    setPriority(account.is_priority ?? false);
+  }, [account.is_priority, id]);
 
   const [sellPrice, setSellPrice] = useState(currentSellingPrice.toString());
 
@@ -165,6 +173,22 @@ export function AccountActionsDropdown({
       router.refresh();
     } catch {
       // ignore
+    } finally {
+      setToggling(null);
+    }
+  };
+
+  // ── Toggle nổi bật (server: giới hạn 2 acc Available + nổi bật / admin) ───
+  const handleTogglePriority = async () => {
+    setToggling("priority");
+    try {
+      await toggleAccountPriority(id);
+      setPriority((p) => !p);
+      router.refresh();
+    } catch (e) {
+      toast.error(
+        e instanceof Error ? e.message : "Không thể cập nhật nổi bật.",
+      );
     } finally {
       setToggling(null);
     }
@@ -383,6 +407,23 @@ export function AccountActionsDropdown({
             )}
             {clone ? "Bỏ Clone" : "Đánh dấu Clone"}
           </DropdownMenuItem>
+
+          {!isSold && (
+            <DropdownMenuItem
+              onClick={handleTogglePriority}
+              disabled={toggling !== null}
+              className="gap-2"
+            >
+              {toggling === "priority" ? (
+                <Loader2 className="h-4 w-4 animate-spin text-amber-400" />
+              ) : (
+                <Star
+                  className={`h-4 w-4 ${priority ? "text-amber-500 fill-amber-500" : "text-slate-400"}`}
+                />
+              )}
+              {priority ? "Bỏ nổi bật" : "Nổi bật"}
+            </DropdownMenuItem>
+          )}
 
           {!isSold && (
             <>

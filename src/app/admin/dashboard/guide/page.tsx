@@ -293,11 +293,18 @@ export default function GuidePage() {
           <ActionChip icon={ExternalLink} label="Xem trang công khai" color="slate" />
           <ActionChip icon={Link2} label="Copy link" color="slate" />
           <ActionChip icon={Copy} label="Đánh dấu Clone" color="purple" />
+          <ActionChip icon={Star} label="Nổi bật" color="cyan" />
           <ActionChip icon={Tag} label="Thiết lập sale" color="amber" />
           <ActionChip icon={BadgeDollarSign} label="Đánh dấu đã bán" color="emerald" />
           <ActionChip icon={RotateCcw} label="Gỡ đánh dấu đã bán" color="blue" />
           <ActionChip icon={Trash2} label="Xóa" color="rose" />
         </div>
+
+        <p className="mb-3 text-sm text-slate-600">
+          <strong className="text-amber-700">Nổi bật:</strong> acc được ưu tiên trên trang chủ. Mỗi admin chỉ được tối đa{" "}
+          <strong>2</strong> acc <strong>nổi bật</strong> ở trạng thái <strong>Sẵn sàng</strong> (acc Đang chờ / Đã bán
+          không tính vào giới hạn này).
+        </p>
 
         <InfoBox type="tip">
           Dùng <strong>Copy link</strong> để lấy link trực tiếp đến trang chi tiết acc — tiện chia sẻ cho khách hỏi qua Zalo/Facebook. Nút <strong>Xem trang công khai</strong> sẽ mở ngay trang acc đó trên website.

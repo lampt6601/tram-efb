@@ -16,6 +16,7 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { adminThumb } from "@/lib/image-utils";
 import { MAX_IMAGE_UPLOAD_BYTES } from "@/lib/constants";
+import { MAX_PRIORITY_AVAILABLE_ACCOUNTS } from "@/lib/account-priority";
 
 interface Props {
   account: Account;
@@ -331,6 +332,10 @@ export function SuperAdminAccountForm({ account, availableEmails }: Props) {
                   />
                 </label>
               </div>
+              <p className="text-[11px] text-slate-500 leading-snug px-0.5">
+                Tối đa {MAX_PRIORITY_AVAILABLE_ACCOUNTS} acc nổi bật ở trạng thái &quot;Sẵn sàng&quot; cho mỗi
+                admin.
+              </p>
               <div className="flex h-[42px] items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 px-4">
                 <Controller
                   name="isClone"

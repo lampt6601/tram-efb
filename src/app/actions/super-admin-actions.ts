@@ -3,6 +3,7 @@
 import { createSupabaseServerClient } from "@/lib/supabase-server";
 import { createSupabaseServiceClient } from "@/lib/supabase-service";
 import { checkIsSuperAdmin } from "@/lib/super-admin";
+import { assertAvailablePriorityLimit } from "@/lib/account-priority";
 import { revalidatePath } from "next/cache";
 
 async function verifySuperAdmin() {
@@ -87,6 +88,19 @@ export async function superAdminUpdateAccount(
 ) {
   await verifySuperAdmin();
   const service = createSupabaseServiceClient();
+
+  const { data: current, error: fetchErr } = await service
+    .from("accounts")
+    .select("user_id, status, is_priority")
+    .eq("id", accountId)
+    .single();
+
+  if (fetchErr || !current) {
+    throw new Error(fetchErr?.message ?? "Không tìm thấy tài khoản");
+  }
+
+  await assertAvailablePriorityLimit(service, accountId, current, payload);
+
   const { error } = await service
     .from("accounts")
     .update({ ...payload, user_id: originalUserId })
