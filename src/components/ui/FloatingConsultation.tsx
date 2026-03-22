@@ -4,9 +4,8 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { ArrowUp } from "lucide-react";
-import { CONTACT_ZALO_GROUP_URL, CONTACT_MESSENGER_URL } from "@/lib/constants";
+import { CONTACT_ZALO_GROUP_URL } from "@/lib/constants";
 import zaloIcon from "@/assets/icons/zalo.png";
-import facebookIcon from "@/assets/icons/facebook.webp";
 
 export function FloatingConsultation() {
   const pathname = usePathname();
@@ -51,7 +50,7 @@ export function FloatingConsultation() {
         </div>
       </div>
 
-      {/* Social Contacts - Bottom Right */}
+      {/* Zalo — Bottom Right */}
       <div className="floating-consultation fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3 sm:bottom-8 sm:right-8 transition-opacity duration-300">
         {/* Zalo Section */}
         <div className="flex flex-col items-end gap-3">
@@ -79,21 +78,6 @@ export function FloatingConsultation() {
             <div className="absolute inset-0 -z-10 animate-ping rounded-full bg-blue-400 opacity-20"></div>
           </a>
         </div>
-
-        {/* Facebook Button */}
-        <a
-          href={CONTACT_MESSENGER_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="group relative flex h-14 w-14 items-center justify-center rounded-full bg-white shadow-xl ring-4 ring-blue-50 transition-all hover:scale-110 hover:ring-blue-100 active:scale-95 sm:h-16 sm:w-16"
-          title="Liên hệ Facebook THC eFootball Shop"
-        >
-          <Image
-            src={facebookIcon}
-            alt="Facebook"
-            className="h-9 w-9 object-contain transition-transform group-hover:scale-110 sm:h-11 sm:w-11"
-          />
-        </a>
       </div>
     </>
   );
