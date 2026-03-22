@@ -97,6 +97,47 @@ export async function superAdminUpdateAccount(
   revalidatePath("/admin/dashboard/accounts");
 }
 
+export async function copyAccountToAdmin(accountId: string, targetAdminId: string) {
+  await verifySuperAdmin();
+  const service = createSupabaseServiceClient();
+
+  const { data: source, error: sourceErr } = await service
+    .from("accounts")
+    .select("*")
+    .eq("id", accountId)
+    .single();
+
+  if (sourceErr || !source) throw new Error(sourceErr?.message ?? "Không tìm thấy tài khoản nguồn");
+
+  const copyPayload = {
+    title: source.title,
+    purchase_price: source.purchase_price,
+    selling_price: source.selling_price,
+    original_price: source.original_price,
+    images: source.images,
+    primary_image_url: source.primary_image_url,
+    status: "Available",
+    total_gp: source.total_gp,
+    total_coins_android: source.total_coins_android,
+    total_coins_ios: source.total_coins_ios,
+    team_strength: source.team_strength,
+    server_region: source.server_region,
+    monthly_log_quota: source.monthly_log_quota,
+    email_id: null, // Email là dữ liệu riêng theo admin, không copy liên kết cũ
+    user_id: targetAdminId,
+    is_priority: false,
+    is_clone: source.is_clone ?? false,
+    is_approved: false,
+  };
+
+  const { error: insertErr } = await service.from("accounts").insert(copyPayload);
+  if (insertErr) throw new Error(insertErr.message);
+
+  revalidatePath("/admin/dashboard/super/accounts");
+  revalidatePath("/admin/dashboard/super/pending");
+  revalidatePath("/admin/dashboard/accounts");
+}
+
 export async function createAdmin(email: string, password: string, name?: string) {
   await verifySuperAdmin();
   const service = createSupabaseServiceClient();

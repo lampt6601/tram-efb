@@ -16,7 +16,6 @@ import {
   UserCircle,
   BookOpen,
   SearchCheck,
-  Dices,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -32,9 +31,7 @@ const navItems = [
 const superAdminNavItems = [
   { href: "/admin/dashboard/super/revenue", label: "Doanh Thu Shop", icon: ClipboardCheck },
   { href: "/admin/dashboard/super/accounts", label: "Tất Cả Tài Khoản", icon: Globe },
-  { href: "/admin/dashboard/super/pending", label: "Phê Duyệt Tài Khoản", icon: ClipboardCheck },
   { href: "/admin/dashboard/super/admins", label: "Quản Lý Admin", icon: Users },
-  { href: "/admin/dashboard/super/event/spin", label: "Vòng Quay Sự Kiện", icon: Dices },
 ];
 
 interface SidebarProps {
@@ -56,10 +53,6 @@ export function Sidebar({ open, onClose, isSuperAdmin = false, adminName = "", a
     router.push("/admin/login");
     router.refresh();
   };
-
-  if(pathname.includes("/admin/dashboard/super/event/spin")) {
-    return null;
-  }
 
   const isActive = (href: string) =>
     pathname === href ||

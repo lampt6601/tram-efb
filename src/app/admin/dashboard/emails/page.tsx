@@ -2,7 +2,8 @@ import { createSupabaseServerClient } from "@/lib/supabase-server";
 import Link from "next/link";
 import { Plus, Mail, Pencil, Link2, Link2Off } from "lucide-react";
 import { DeleteEmailButton } from "./DeleteButton";
-import type { Email } from "@/types/database";
+import type { AccountWithEmail, Email } from "@/types/database";
+import { LinkedAccountDetailButton } from "./LinkedAccountDetailButton";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -14,7 +15,7 @@ import {
 } from "@/components/ui/table";
 
 interface EmailWithAccount extends Email {
-  accounts: { id: string; title: string } | null;
+  accounts: AccountWithEmail | null;
 }
 
 export default async function EmailsPage() {
@@ -22,7 +23,7 @@ export default async function EmailsPage() {
 
   const { data: emails } = await supabase
     .from("emails")
-    .select("*, accounts(id, title)")
+    .select("*, accounts(*, emails(*))")
     .order("created_at", { ascending: false });
 
   const items = (emails ?? []) as EmailWithAccount[];
@@ -80,13 +81,7 @@ export default async function EmailsPage() {
                           <Link2 className="h-3 w-3" />
                           Đã liên kết
                         </span>
-                        <Link
-                          href={`/admin/dashboard/accounts/${email.accounts.id}/edit`}
-                          className="max-w-[160px] truncate text-xs text-slate-400 hover:text-indigo-600 hover:underline"
-                          title={email.accounts.title}
-                        >
-                          {email.accounts.title}
-                        </Link>
+                        <LinkedAccountDetailButton account={email.accounts} />
                       </div>
                     ) : (
                       <span className="inline-flex w-fit items-center gap-1.5 rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-500">

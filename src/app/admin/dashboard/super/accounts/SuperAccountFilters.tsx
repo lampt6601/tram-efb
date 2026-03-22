@@ -39,6 +39,7 @@ export function SuperAccountFilters({ totalCount }: { totalCount: number }) {
 
   const sort = searchParams.get("sort") ?? "newest";
   const status = searchParams.get("status") ?? "all";
+  const approval = searchParams.get("approval") ?? "all";
   const search = searchParams.get("q") ?? "";
   const minPrice = searchParams.get("minPrice") ?? "";
   const maxPrice = searchParams.get("maxPrice") ?? "";
@@ -95,7 +96,13 @@ export function SuperAccountFilters({ totalCount }: { totalCount: number }) {
   useEffect(() => setLocalMinPrice(minPrice), [minPrice]);
   useEffect(() => setLocalMaxPrice(maxPrice), [maxPrice]);
 
-  const hasActiveFilters = sort !== "newest" || status !== "all" || search !== "" || minPrice !== "" || maxPrice !== "";
+  const hasActiveFilters =
+    sort !== "newest" ||
+    status !== "all" ||
+    approval !== "all" ||
+    search !== "" ||
+    minPrice !== "" ||
+    maxPrice !== "";
 
   return (
     <div className={`transition-opacity duration-200 ${isPending ? "opacity-60 pointer-events-none" : ""}`}>
@@ -115,6 +122,18 @@ export function SuperAccountFilters({ totalCount }: { totalCount: number }) {
         <select value={status} onChange={(e) => update("status", e.target.value)} className={selectClass}>
           {STATUS_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
         </select>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => update("approval", approval === "pending" ? "" : "pending")}
+          className={`h-9 rounded-xl px-3 text-sm font-semibold transition-all ${
+            approval === "pending"
+              ? "border-amber-400 bg-amber-500 text-white shadow-sm hover:bg-amber-600"
+              : "border-indigo-200 bg-indigo-50 text-indigo-700 hover:border-indigo-300 hover:bg-indigo-100"
+          }`}
+        >
+          Cần duyệt
+        </Button>
         <div className="flex items-center gap-2">
           <ArrowUpDown className="h-4 w-4 shrink-0 text-slate-400" />
           <select value={sort} onChange={(e) => update("sort", e.target.value)} className={selectClass}>

@@ -9,7 +9,9 @@ import {
   TrendingUp,
   ShoppingCart,
   BarChart3,
+  ExternalLink,
 } from "lucide-react";
+import Link from "next/link";
 import type { Account } from "@/types/database";
 
 /** Start of current week (Monday 00:00 UTC) as ISO string */
@@ -188,9 +190,14 @@ export default async function DashboardPage({
                       className="border-t last:border-b text-slate-700"
                     >
                       <td className="px-4 py-3">
-                        <div className="max-w-xs truncate font-medium">
-                          {account.title}
-                        </div>
+                        <Link
+                          href={`/accounts/${account.id}`}
+                          target="_blank"
+                          className="group inline-flex items-center gap-1.5 max-w-xs truncate font-medium text-slate-900 hover:text-indigo-600"
+                        >
+                          <span className="truncate group-hover:underline">{account.title}</span>
+                          <ExternalLink className="h-3.5 w-3.5 shrink-0 opacity-0 group-hover:opacity-60 transition-opacity" />
+                        </Link>
                       </td>
                       <td className="px-4 py-3">
                         <span className="inline-flex rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-700">

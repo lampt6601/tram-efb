@@ -26,6 +26,8 @@ import { AndroidCoinIcon, IosCoinIcon } from "@/components/ui/PlatformCoinIcons"
 interface PendingAccountDrawerProps {
   account: AccountWithEmail;
   adminEmail: string;
+  /** Show "Duyệt tài khoản" action in drawer footer (super-admin contexts only). */
+  showApproveButton?: boolean;
   /** Controlled mode: if provided, the trigger button is hidden and the caller controls open state */
   controlledOpen?: boolean;
   onControlledClose?: () => void;
@@ -62,6 +64,7 @@ function StatBox({
 export function PendingAccountDrawer({
   account,
   adminEmail,
+  showApproveButton = false,
   controlledOpen,
   onControlledClose,
 }: PendingAccountDrawerProps) {
@@ -117,6 +120,8 @@ export function PendingAccountDrawer({
     (account.total_coins_android ?? 0) > 0 ||
     (account.total_coins_ios ?? 0) > 0 ||
     (account.team_strength ?? 0) > 0;
+  const canShowApproveButton =
+    showApproveButton && !account.is_approved && account.status !== "Sold";
 
   const drawer = open && mounted
     ? createPortal(
@@ -310,14 +315,16 @@ export function PendingAccountDrawer({
             </div>
 
             {/* Footer with approve button */}
-            <div className="border-t border-slate-100 bg-slate-50 px-5 py-4">
-              <ApproveButton
-                accountId={account.id}
-                accountTitle={account.title}
-                onApproved={onClose}
-                fullWidth
-              />
-            </div>
+            {canShowApproveButton && (
+              <div className="border-t border-slate-100 bg-slate-50 px-5 py-4">
+                <ApproveButton
+                  accountId={account.id}
+                  accountTitle={account.title}
+                  onApproved={onClose}
+                  fullWidth
+                />
+              </div>
+            )}
           </div>
         </div>,
         document.body

@@ -2,14 +2,16 @@ import { createSupabaseServerClient } from "@/lib/supabase-server";
 import { createSupabaseServiceClient } from "@/lib/supabase-service";
 import { checkIsSuperAdmin } from "@/lib/super-admin";
 import { redirect } from "next/navigation";
-import { Globe, Gamepad2, Star } from "lucide-react";
+import { Globe, Gamepad2, Star, ExternalLink } from "lucide-react";
 import { StatusBadge } from "@/components/ui/Badge";
 import { SuperAccountFilters } from "../super/accounts/SuperAccountFilters";
 import { Suspense } from "react";
+import Link from "next/link";
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
 import type { AccountWithEmail } from "@/types/database";
+import { AccountDetailButton } from "./AccountDetailButton";
 
 type SearchParams = { sort?: string; status?: string; q?: string };
 
@@ -98,6 +100,7 @@ export default async function AllAccountsPage({
                 <TableHead className="text-slate-500">Tài Khoản</TableHead>
                 <TableHead className="text-slate-500">Trạng Thái</TableHead>
                 <TableHead className="hidden text-slate-500 lg:table-cell">Admin</TableHead>
+                <TableHead className="text-slate-500">Chi tiết</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -110,10 +113,15 @@ export default async function AllAccountsPage({
                         <div className="hidden h-9 w-9 items-center justify-center rounded-lg bg-indigo-50 sm:flex">
                           <Gamepad2 className="h-4 w-4 text-indigo-600" />
                         </div>
-                        <span className="flex items-center gap-1.5 max-w-[140px] sm:max-w-[220px] truncate font-medium text-slate-900">
+                        <Link
+                          href={`/accounts/${account.id}`}
+                          target="_blank"
+                          className="group flex items-center gap-1.5 max-w-[140px] sm:max-w-[220px] truncate font-medium text-slate-900 hover:text-indigo-600"
+                        >
                           {account.is_priority && <Star className="h-4 w-4 shrink-0 fill-amber-500 text-amber-500" />}
-                          <span className="truncate">{account.title}</span>
-                        </span>
+                          <span className="truncate group-hover:underline">{account.title}</span>
+                          <ExternalLink className="h-3.5 w-3.5 shrink-0 opacity-0 group-hover:opacity-60 transition-opacity" />
+                        </Link>
                       </div>
                     </TableCell>
                     <TableCell>
@@ -124,12 +132,15 @@ export default async function AllAccountsPage({
                         {adminName}
                       </span>
                     </TableCell>
+                    <TableCell>
+                      <AccountDetailButton account={account} adminName={adminName} />
+                    </TableCell>
                   </TableRow>
                 );
               })}
               {items.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={3} className="py-12 text-center text-slate-400">
+                  <TableCell colSpan={4} className="py-12 text-center text-slate-400">
                     Không tìm thấy tài khoản nào phù hợp với bộ lọc.
                   </TableCell>
                 </TableRow>

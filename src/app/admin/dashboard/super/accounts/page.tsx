@@ -2,7 +2,7 @@ import { createSupabaseServerClient } from "@/lib/supabase-server";
 import { createSupabaseServiceClient } from "@/lib/supabase-service";
 import { checkIsSuperAdmin } from "@/lib/super-admin";
 import { redirect } from "next/navigation";
-import { Globe, Gamepad2, Star } from "lucide-react";
+import { Globe, Gamepad2, Star, ExternalLink } from "lucide-react";
 import { StatusBadge } from "@/components/ui/Badge";
 import { formatCurrency } from "@/lib/constants";
 import { SuperAccountFilters } from "./SuperAccountFilters";
@@ -11,9 +11,11 @@ import { Suspense } from "react";
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
+import Link from "next/link";
 import type { AccountWithEmail } from "@/types/database";
+import { SUPER_ADMIN_EMAIL } from "@/lib/super-admin";
 
-type SearchParams = { sort?: string; status?: string; q?: string };
+type SearchParams = { sort?: string; status?: string; approval?: string; q?: string };
 
 function compactPrice(price: number): string {
   if (price >= 1_000_000) return `${(price / 1_000_000).toFixed(price % 1_000_000 === 0 ? 0 : 1)}tr`;
@@ -33,18 +35,31 @@ export default async function SuperAccountsPage({
   const params = await searchParams;
   const sort = params.sort ?? "newest";
   const statusFilter = params.status ?? "all";
+  const approvalFilter = params.approval ?? "all";
   const searchQuery = params.q ?? "";
 
   const service = createSupabaseServiceClient();
 
   // Build admin email map from all users
   const { data: usersData } = await service.auth.admin.listUsers({ perPage: 1000 });
+  const adminOptions = (usersData?.users ?? [])
+    .filter((u) => !!u.email && u.email !== SUPER_ADMIN_EMAIL)
+    .map((u) => ({
+      id: u.id,
+      label: u.user_metadata?.full_name
+        ? `${u.user_metadata.full_name} (${u.email})`
+        : (u.email as string),
+    }));
   const adminEmailMap = new Map<string, string>(
     (usersData?.users ?? []).map((u) => [u.id, u.email ?? u.id])
   );
 
   let query = service.from("accounts").select("*, emails(*)");
   if (statusFilter && statusFilter !== "all") query = query.eq("status", statusFilter);
+  if (approvalFilter === "pending") {
+    query = query.eq("is_approved", false).neq("status", "Sold");
+  }
+  if (approvalFilter === "approved") query = query.eq("is_approved", true);
   if (searchQuery) query = query.ilike("title", `%${searchQuery}%`);
 
   switch (sort) {
@@ -58,6 +73,9 @@ export default async function SuperAccountsPage({
 
   const { data: accounts } = await query;
   const items = (accounts ?? []) as AccountWithEmail[];
+  const pendingApprovalCount = items.filter(
+    (a) => !a.is_approved && a.status !== "Sold",
+  ).length;
 
   return (
     <div>
@@ -71,6 +89,9 @@ export default async function SuperAccountsPage({
           </div>
           <p className="mt-1 text-sm text-slate-500">
             Toàn bộ {items.length} tài khoản từ tất cả admin
+          </p>
+          <p className="mt-0.5 text-xs text-amber-600">
+            {pendingApprovalCount} tài khoản đang chờ duyệt
           </p>
         </div>
       </div>
@@ -88,6 +109,7 @@ export default async function SuperAccountsPage({
               <TableRow className="bg-slate-50 hover:bg-slate-50">
                 <TableHead className="text-slate-500">Tài Khoản</TableHead>
                 <TableHead className="text-slate-500">Trạng Thái</TableHead>
+                <TableHead className="hidden text-slate-500 sm:table-cell">Phê Duyệt</TableHead>
                 <TableHead className="hidden text-slate-500 md:table-cell">Giá Nhập</TableHead>
                 <TableHead className="text-slate-500">Giá Bán</TableHead>
                 <TableHead className="hidden text-slate-500 lg:table-cell">Admin</TableHead>
@@ -103,13 +125,33 @@ export default async function SuperAccountsPage({
                       <div className="hidden h-9 w-9 items-center justify-center rounded-lg bg-indigo-50 sm:flex">
                         <Gamepad2 className="h-4 w-4 text-indigo-600" />
                       </div>
-                      <span className="flex items-center gap-1.5 max-w-[120px] truncate font-medium text-slate-900 sm:max-w-none">
+                      <Link
+                        href={`/accounts/${account.id}`}
+                        target="_blank"
+                        className="group flex items-center gap-1.5 max-w-[120px] truncate font-medium text-slate-900 hover:text-indigo-600 sm:max-w-none"
+                      >
                         {account.is_priority && <Star className="h-4 w-4 shrink-0 fill-amber-500 text-amber-500" />}
-                        <span className="truncate">{account.title}</span>
-                      </span>
+                        <span className="truncate group-hover:underline">{account.title}</span>
+                        <ExternalLink className="h-3.5 w-3.5 shrink-0 opacity-0 group-hover:opacity-60 transition-opacity" />
+                      </Link>
                     </div>
                   </TableCell>
                   <TableCell><StatusBadge status={account.status} /></TableCell>
+                  <TableCell className="hidden sm:table-cell">
+                    {account.is_approved ? (
+                      <span className="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700">
+                        Đã duyệt
+                      </span>
+                    ) : account.status === "Sold" ? (
+                      <span className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-600">
+                        Không cần duyệt
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-700">
+                        Chờ duyệt
+                      </span>
+                    )}
+                  </TableCell>
                   <TableCell className="hidden text-slate-600 md:table-cell">
                     {formatCurrency(account.purchase_price)}
                   </TableCell>
@@ -135,6 +177,7 @@ export default async function SuperAccountsPage({
                     <SuperAccountActionsDropdown
                       account={account}
                       adminEmail={adminEmailMap.get(account.user_id) ?? account.user_id}
+                      adminOptions={adminOptions}
                       isApproved={account.is_approved}
                       isSold={account.status === "Sold"}
                     />
@@ -143,7 +186,7 @@ export default async function SuperAccountsPage({
               ))}
               {items.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={7} className="py-12 text-center text-slate-400">
+                  <TableCell colSpan={8} className="py-12 text-center text-slate-400">
                     Không tìm thấy tài khoản nào phù hợp với bộ lọc.
                   </TableCell>
                 </TableRow>

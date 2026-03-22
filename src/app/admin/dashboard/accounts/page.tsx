@@ -1,6 +1,6 @@
 import { createSupabaseServerClient } from "@/lib/supabase-server";
 import Link from "next/link";
-import { Plus, Gamepad2, Star, Clock, CheckCircle2 } from "lucide-react";
+import { Plus, Gamepad2, Star, Clock, CheckCircle2, ExternalLink } from "lucide-react";
 import { StatusBadge } from "@/components/ui/Badge";
 import { formatCurrency } from "@/lib/constants";
 import { AdminAccountFilters } from "./AdminAccountFilters";
@@ -44,6 +44,8 @@ export default async function AccountsPage({
   const searchQuery = params.q ?? "";
 
   const supabase = await createSupabaseServerClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  const adminEmail = user?.email ?? user?.id ?? "";
 
   let query = supabase.from("accounts").select("*, emails(*)");
 
@@ -130,12 +132,17 @@ export default async function AccountsPage({
                       <div className="hidden h-9 w-9 items-center justify-center rounded-lg bg-indigo-50 sm:flex">
                         <Gamepad2 className="h-4 w-4 text-indigo-600" />
                       </div>
-                      <span className="flex items-center gap-1.5 max-w-[120px] truncate font-medium text-slate-900 sm:max-w-none">
+                      <Link
+                        href={`/accounts/${account.id}`}
+                        target="_blank"
+                        className="group flex items-center gap-1.5 max-w-[120px] truncate font-medium text-slate-900 hover:text-indigo-600 sm:max-w-none"
+                      >
                         {account.is_priority && (
                           <Star className="h-4 w-4 shrink-0 fill-amber-500 text-amber-500 inline" />
                         )}
-                        <span className="truncate">{account.title}</span>
-                      </span>
+                        <span className="truncate group-hover:underline">{account.title}</span>
+                        <ExternalLink className="h-3.5 w-3.5 shrink-0 opacity-0 group-hover:opacity-60 transition-opacity" />
+                      </Link>
                     </div>
                   </TableCell>
                   <TableCell>
@@ -185,6 +192,8 @@ export default async function AccountsPage({
                       currentOriginalPrice={account.original_price ?? null}
                       status={account.status}
                       isClone={account.is_clone ?? false}
+                      account={account}
+                      adminEmail={adminEmail}
                     />
                   </TableCell>
                   <TableCell className="max-w-[140px] truncate text-xs text-slate-500">

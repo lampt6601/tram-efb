@@ -18,8 +18,9 @@ import {
   ExternalLink,
   Copy,
   RotateCcw,
+  Eye,
 } from "lucide-react";
-import type { AccountStatus } from "@/types/database";
+import type { AccountStatus, AccountWithEmail } from "@/types/database";
 import { notifyAdminAction } from "@/app/actions/notify-admin";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -31,6 +32,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { PendingAccountDrawer } from "@/app/admin/dashboard/super/pending/PendingAccountDrawer";
 
 interface AccountActionsDropdownProps {
   id: string;
@@ -40,6 +42,8 @@ interface AccountActionsDropdownProps {
   currentOriginalPrice: number | null;
   status: AccountStatus;
   isClone: boolean;
+  account: AccountWithEmail;
+  adminEmail: string;
 }
 
 type OpenDialog = "sell" | "sale" | "delete" | "unmark-sold" | null;
@@ -88,6 +92,8 @@ export function AccountActionsDropdown({
   currentOriginalPrice,
   status,
   isClone,
+  account,
+  adminEmail,
 }: AccountActionsDropdownProps) {
   const router = useRouter();
   const supabase = createSupabaseBrowserClient();
@@ -95,6 +101,7 @@ export function AccountActionsDropdown({
   const [openDialog, setOpenDialog] = useState<OpenDialog>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   // Copy link
   const [copied, setCopied] = useState(false);
@@ -335,6 +342,11 @@ export function AccountActionsDropdown({
             Chỉnh sửa
           </DropdownMenuItem>
 
+          <DropdownMenuItem onClick={() => setDrawerOpen(true)} className="gap-2">
+            <Eye className="h-4 w-4 text-indigo-400" />
+            Xem chi tiết
+          </DropdownMenuItem>
+
           <DropdownMenuItem
             render={
               <Link
@@ -417,6 +429,13 @@ export function AccountActionsDropdown({
         </DropdownMenuContent>
       </DropdownMenu>
 
+      {/* ── Detail drawer ─────────────────────────────────────────────────── */}
+      <PendingAccountDrawer
+        account={account}
+        adminEmail={adminEmail}
+        controlledOpen={drawerOpen}
+        onControlledClose={() => setDrawerOpen(false)}
+      />
       {/* ── Sell modal ───────────────────────────────────────────────────── */}
       <Modal open={openDialog === "sell"} onClose={closeDialog}>
         <div className="p-5">

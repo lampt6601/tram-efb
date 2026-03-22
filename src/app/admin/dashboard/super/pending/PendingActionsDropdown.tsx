@@ -130,6 +130,7 @@ export function PendingActionsDropdown({ account, adminEmail }: PendingActionsDr
       <PendingAccountDrawer
         account={account}
         adminEmail={adminEmail}
+        showApproveButton
         controlledOpen={drawerOpen}
         onControlledClose={() => setDrawerOpen(false)}
       />

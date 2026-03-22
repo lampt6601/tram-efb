@@ -13,6 +13,7 @@ import {
   X,
   ExternalLink,
   Eye,
+  UserPlus,
   Link as LinkIcon,
   Check,
   CheckCircle,
@@ -26,6 +27,7 @@ import {
   superAdminDeleteAccount,
   approveAccount,
   superAdminUpdateAccount,
+  copyAccountToAdmin,
 } from "@/app/actions/super-admin-actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -44,11 +46,12 @@ import type { AccountWithEmail } from "@/types/database";
 interface SuperAccountActionsDropdownProps {
   account: AccountWithEmail;
   adminEmail: string;
+  adminOptions: Array<{ id: string; label: string }>;
   isApproved: boolean;
   isSold: boolean;
 }
 
-type OpenDialog = "sell" | "sale" | "unapprove" | "delete" | "unmark-sold" | null;
+type OpenDialog = "sell" | "sale" | "copy" | "unapprove" | "delete" | "unmark-sold" | null;
 
 function Modal({
   open,
@@ -80,6 +83,7 @@ function Modal({
 export function SuperAccountActionsDropdown({
   account,
   adminEmail,
+  adminOptions,
   isApproved,
   isSold,
 }: SuperAccountActionsDropdownProps) {
@@ -100,6 +104,7 @@ export function SuperAccountActionsDropdown({
     account.original_price ? account.original_price.toString() : account.selling_price.toString()
   );
   const [salePrice, setSalePrice] = useState(account.selling_price.toString());
+  const [targetAdminId, setTargetAdminId] = useState("");
   const isOnSale = !!(account.original_price && account.original_price > account.selling_price);
 
   const closeDialog = useCallback(() => {
@@ -116,7 +121,34 @@ export function SuperAccountActionsDropdown({
       );
       setSalePrice(account.selling_price.toString());
     }
+    if (dialog === "copy") {
+      const firstAdminId = adminOptions[0]?.id ?? "";
+      setTargetAdminId(firstAdminId);
+    }
     setOpenDialog(dialog);
+  };
+
+  const handleCopyToAdmin = async () => {
+    if (!targetAdminId) {
+      setError("Vui lòng chọn admin nhận tài khoản.");
+      return;
+    }
+    if (targetAdminId === account.user_id) {
+      setError("Vui lòng chọn admin khác với admin hiện tại.");
+      return;
+    }
+    setLoading(true);
+    setError("");
+    try {
+      await copyAccountToAdmin(id, targetAdminId);
+      setOpenDialog(null);
+      toast.success("Đã copy tài khoản cho admin khác (ở trạng thái chờ duyệt).");
+      router.refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Đã có lỗi xảy ra");
+    } finally {
+      setLoading(false);
+    }
   };
 
   // ── Copy link ─────────────────────────────────────────────────────────────
@@ -319,6 +351,11 @@ export function SuperAccountActionsDropdown({
             Xem chi tiết
           </DropdownMenuItem>
 
+          <DropdownMenuItem onClick={() => openWith("copy")} className="gap-2">
+            <UserPlus className="h-4 w-4 text-cyan-500" />
+            Copy cho admin khác
+          </DropdownMenuItem>
+
           <DropdownMenuItem onClick={handleCopyLink} className="gap-2">
             {copied ? (
               <Check className="h-4 w-4 text-emerald-500" />
@@ -372,7 +409,7 @@ export function SuperAccountActionsDropdown({
             </>
           )}
 
-          {!isApproved && (
+          {!isApproved && !isSold && (
             <>
               <DropdownMenuSeparator />
               <DropdownMenuItem
@@ -411,6 +448,57 @@ export function SuperAccountActionsDropdown({
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+
+      {/* ── Unapprove modal ───────────────────────────────────────────────── */}
+      <Modal open={openDialog === "copy"} onClose={closeDialog}>
+        <div className="p-5">
+          <div className="mb-4 flex items-start justify-between">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-cyan-50">
+              <UserPlus className="h-5 w-5 text-cyan-600" />
+            </div>
+            <button onClick={closeDialog} disabled={loading} className="rounded-lg p-1 text-slate-400 hover:bg-slate-100">
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+          <h2 className="mb-1 text-base font-semibold text-slate-900">Copy cho admin khác</h2>
+          <p className="mb-4 text-sm text-slate-500">
+            Tạo một bản sao của tài khoản <span className="font-semibold text-slate-900">&quot;{title}&quot;</span> cho admin khác.
+          </p>
+          <Label className="mb-1.5 text-slate-700">Chọn admin nhận tài khoản</Label>
+          <select
+            value={targetAdminId}
+            onChange={(e) => setTargetAdminId(e.target.value)}
+            disabled={loading || adminOptions.length === 0}
+            className="mt-1.5 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm outline-none transition-colors focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500"
+          >
+            {adminOptions.length === 0 ? (
+              <option value="">Không có admin khả dụng</option>
+            ) : (
+              adminOptions.map((a) => (
+                <option key={a.id} value={a.id}>
+                  {a.label}
+                </option>
+              ))
+            )}
+          </select>
+          {error && <p className="mt-2 text-xs text-red-600">{error}</p>}
+          <p className="mt-2 text-xs text-slate-400">
+            Bản copy mới sẽ ở trạng thái <span className="font-semibold">Chờ duyệt</span> và không giữ email liên kết cũ.
+          </p>
+        </div>
+        <div className="flex justify-end gap-2 rounded-b-xl border-t bg-slate-50 px-5 py-3">
+          <Button variant="outline" onClick={closeDialog} disabled={loading}>Hủy</Button>
+          <Button
+            onClick={handleCopyToAdmin}
+            loading={loading}
+            loadingLabel="Đang copy..."
+            disabled={adminOptions.length === 0}
+            className="min-w-[10rem] bg-cyan-600 text-white hover:bg-cyan-700"
+          >
+            Xác nhận copy
+          </Button>
+        </div>
+      </Modal>
 
       {/* ── Unapprove modal ───────────────────────────────────────────────── */}
       <Modal open={openDialog === "unapprove"} onClose={closeDialog}>
@@ -614,6 +702,7 @@ export function SuperAccountActionsDropdown({
       <PendingAccountDrawer
         account={account}
         adminEmail={adminEmail}
+        showApproveButton
         controlledOpen={drawerOpen}
         onControlledClose={() => setDrawerOpen(false)}
       />
