@@ -222,16 +222,16 @@ export default async function HomePage({
                 </div>
               </ScrollReveal>
               <AutoScrollSlider>
-                {soldItems.map((account, i) => (
-                  <div
-                    key={account.id}
-                    className="w-[85vw] max-w-[320px] shrink-0 snap-start sm:w-[340px] lg:w-[380px]"
-                  >
-                    <ScrollReveal delay={i * 80} distance="sm">
-                      <AccountCard account={account} />
-                    </ScrollReveal>
-                  </div>
-                ))}
+                  {soldItems.map((account, i) => (
+                    <div
+                      key={account.id}
+                      className="w-[85vw] max-w-[320px] shrink-0 snap-start sm:w-[340px] lg:w-[380px]"
+                    >
+                      <ScrollReveal delay={i * 80} distance="sm">
+                        <AccountCard account={account} />
+                      </ScrollReveal>
+                    </div>
+                  ))}
               </AutoScrollSlider>
             </div>
           </section>

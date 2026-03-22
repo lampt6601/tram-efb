@@ -37,7 +37,7 @@ export function AutoScrollSlider({ children }: { children: React.ReactNode }) {
         // Delay resuming scroll after touch ends
         setTimeout(() => setIsInteracting(false), 2000);
       }}
-      className="flex w-full gap-4 sm:gap-0 snap-x snap-mandatory overflow-x-auto pb-6 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+      className="flex w-full gap-4 snap-x snap-mandatory overflow-x-auto pb-6 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
     >
       {children}
     </div>
