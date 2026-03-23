@@ -36,6 +36,7 @@ export async function notifyAdminAction(
   },
   accountId?: string,
   primaryImageUrl?: string | null,
+  needsApproval?: boolean,
 ) {
   try {
     const supabase = await createSupabaseServerClient();
@@ -75,6 +76,14 @@ export async function notifyAdminAction(
 
     if (accountId) {
       lines.push(`🔗 ${BASE_URL}/accounts/${accountId}`);
+    }
+
+    if (needsApproval && accountId) {
+      const approveSecret = process.env.APPROVE_SECRET_TOKEN;
+      if (approveSecret) {
+        lines.push("");
+        lines.push(`✅ Duyệt ngay: ${BASE_URL}/api/approve/${accountId}?token=${approveSecret}`);
+      }
     }
 
     lines.push(`🕐 ${timestamp}`);

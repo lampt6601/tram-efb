@@ -289,6 +289,7 @@ export function AccountForm({ account }: AccountFormProps) {
       };
 
       let accountId = account?.id;
+      let needsApproval = false;
 
       if (isEditing) {
         const { error: err } = await supabase
@@ -300,10 +301,11 @@ export function AccountForm({ account }: AccountFormProps) {
         const { data: inserted, error: err } = await supabase
           .from("accounts")
           .insert(payload)
-          .select("id")
+          .select("id, is_approved")
           .single();
         if (err) throw err;
         accountId = inserted?.id;
+        needsApproval = !inserted?.is_approved;
       }
 
       try {
@@ -321,6 +323,7 @@ export function AccountForm({ account }: AccountFormProps) {
           },
           accountId,
           finalPrimaryUrl ?? finalImages[0] ?? null,
+          needsApproval,
         );
       } catch (notifyErr) {
         console.error(
