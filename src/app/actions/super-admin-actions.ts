@@ -18,15 +18,6 @@ async function verifySuperAdmin() {
   return user;
 }
 
-async function getSuperAdminId(): Promise<string> {
-  const service = createSupabaseServiceClient();
-  const { data } = await service.auth.admin.listUsers({ perPage: 1000 });
-  const owner = (data?.users ?? []).find(
-    (u) => u.email === "tranhuucanh2000@gmail.com"
-  );
-  if (!owner) throw new Error("Super admin user not found");
-  return owner.id;
-}
 
 export async function setAdminAutoApprove(adminId: string, autoApprove: boolean) {
   await verifySuperAdmin();
@@ -180,18 +171,18 @@ export async function deleteAdmin(adminId: string) {
   await verifySuperAdmin();
   const service = createSupabaseServiceClient();
 
-  // Transfer all accounts and emails to the super admin before deleting
-  const ownerId = await getSuperAdminId();
-
+  // Unassign accounts and emails (set user_id = null) before deleting admin.
+  // The FK ON DELETE SET NULL would handle this automatically, but we do it
+  // explicitly to also unapprove orphaned accounts.
   const { error: e1 } = await service
     .from("accounts")
-    .update({ user_id: ownerId })
+    .update({ user_id: null, is_approved: false })
     .eq("user_id", adminId);
   if (e1) throw new Error(e1.message);
 
   const { error: e2 } = await service
     .from("emails")
-    .update({ user_id: ownerId })
+    .update({ user_id: null })
     .eq("user_id", adminId);
   if (e2) throw new Error(e2.message);
 
@@ -199,6 +190,8 @@ export async function deleteAdmin(adminId: string) {
   if (error) throw new Error(error.message);
 
   revalidatePath("/admin/dashboard/super/admins");
+  revalidatePath("/admin/dashboard/super/accounts");
+  revalidatePath("/");
 }
 
 export async function resetAdminPassword(adminId: string, newPassword: string) {
