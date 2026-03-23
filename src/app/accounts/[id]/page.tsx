@@ -1,4 +1,4 @@
-import { createSupabaseServerClient } from "@/lib/supabase-server";
+import { createSupabaseAnonClient } from "@/lib/supabase-anon";
 import { Header } from "@/components/storefront/Header";
 import { Footer } from "@/components/storefront/Footer";
 import { StatusBadge } from "@/components/ui/Badge";
@@ -39,7 +39,7 @@ export async function generateMetadata({
   params: Promise<{ id: string }>;
 }): Promise<Metadata> {
   const { id } = await params;
-  const supabase = await createSupabaseServerClient();
+  const supabase = createSupabaseAnonClient();
 
   // Try public first, fallback to sold
   const { data: pub } = await supabase
@@ -97,7 +97,7 @@ export default async function AccountDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const supabase = await createSupabaseServerClient();
+  const supabase = createSupabaseAnonClient();
 
   // Try public_accounts view first (Available/Pending)
   const { data: publicData } = await supabase

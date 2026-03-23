@@ -1,9 +1,9 @@
 import { MetadataRoute } from "next";
-import { createSupabaseServerClient } from "@/lib/supabase-server";
+import { createSupabaseAnonClient } from "@/lib/supabase-anon";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = "https://thc-efb.com";
-  const supabase = await createSupabaseServerClient();
+  const supabase = createSupabaseAnonClient();
 
   const { data: publicAccounts } = await supabase
     .from("public_accounts")

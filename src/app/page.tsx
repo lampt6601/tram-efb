@@ -1,4 +1,4 @@
-import { createSupabaseServerClient } from "@/lib/supabase-server";
+import { createSupabaseAnonClient } from "@/lib/supabase-anon";
 import { Header } from "@/components/storefront/Header";
 import { Footer } from "@/components/storefront/Footer";
 import { OwnerSection } from "@/components/storefront/OwnerSection";
@@ -53,7 +53,7 @@ export default async function HomePage({
   const cloneOnly = params.clone === "1";
   const sort = params.sort ?? "newest";
 
-  const supabase = await createSupabaseServerClient();
+  const supabase = createSupabaseAnonClient();
 
   // Build the accounts query with price + search + clone filter
   let query = supabase.from("public_accounts").select("*");
