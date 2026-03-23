@@ -176,7 +176,7 @@ export async function deleteAdmin(adminId: string) {
   // explicitly to also unapprove orphaned accounts.
   const { error: e1 } = await service
     .from("accounts")
-    .update({ user_id: null, is_approved: false })
+    .update({ user_id: null, is_approved: false, email_id: null })
     .eq("user_id", adminId);
   if (e1) throw new Error(e1.message);
 
