@@ -1,6 +1,7 @@
 import { createSupabaseServerClient } from "@/lib/supabase-server";
 import { formatCurrency } from "@/lib/constants";
 import { StatCard } from "@/components/ui/StatCard";
+import { StatusBadge } from "@/components/ui/Badge";
 import { DashboardPeriodFilter } from "./DashboardPeriodFilter";
 import {
   Package,
@@ -200,9 +201,7 @@ export default async function DashboardPage({
                         </Link>
                       </td>
                       <td className="px-4 py-3">
-                        <span className="inline-flex rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-700">
-                          {account.status}
-                        </span>
+                        <StatusBadge status={account.status} />
                       </td>
                       <td className="px-4 py-3 text-slate-500">
                         {created.toLocaleDateString("vi-VN")}

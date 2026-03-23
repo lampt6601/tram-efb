@@ -307,6 +307,8 @@ export function AccountForm({ account }: AccountFormProps) {
               : undefined,
             originalPrice: payload.original_price,
           },
+          account?.id,
+          account?.primary_image_url ?? images[0] ?? null,
         );
       } catch (notifyErr) {
         console.error(

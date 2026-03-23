@@ -1,22 +1,30 @@
 "use server";
 
 import { createSupabaseServerClient } from "@/lib/supabase-server";
-import { sendAdminNotificationMail } from "@/lib/mail";
+import { sendZaloBotNotification } from "@/lib/zalo-bot";
+import { formatCurrency } from "@/lib/constants";
 
-// Optional: define an English-to-Vietnamese mapping for action types
 const actionTypeMap: Record<string, string> = {
   CREATE: "Tạo mới",
   UPDATE: "Cập nhật",
   DELETE: "Xóa",
   SELL: "Bán",
-  UPDATE_SALE: "Cập nhật giá Sale (Gạch)",
+  UPDATE_SALE: "Cập nhật giá Sale",
 };
 
-import { formatCurrency } from "@/lib/constants";
+const actionEmoji: Record<string, string> = {
+  CREATE: "🆕",
+  UPDATE: "✏️",
+  DELETE: "🗑️",
+  SELL: "💰",
+  UPDATE_SALE: "🏷️",
+};
+
+const BASE_URL = "https://thc-efb.vercel.app";
 
 /**
- * Notifies the owner if a different admin performs an action on an account.
- * owner email = "tranhuucanh2000@gmail.com"
+ * Notifies the owner via Zalo Bot when a different admin performs an action.
+ * Non-blocking: never throws — errors are logged silently.
  */
 export async function notifyAdminAction(
   actionType: string,
@@ -26,6 +34,8 @@ export async function notifyAdminAction(
     sellingPrice?: number;
     originalPrice?: number | null;
   },
+  accountId?: string,
+  primaryImageUrl?: string | null,
 ) {
   try {
     const supabase = await createSupabaseServerClient();
@@ -33,70 +43,45 @@ export async function notifyAdminAction(
       data: { user },
     } = await supabase.auth.getUser();
 
-    if (!user) return; // Not authenticated
+    if (!user) return;
 
     const ownerEmail = "tranhuucanh2000@gmail.com";
-
-    // DO NOT notify if the action was performed by the owner themselves
-    if (user.email === ownerEmail) {
-      return;
-    }
+    if (user.email === ownerEmail) return;
 
     const actionText = actionTypeMap[actionType] || actionType;
-    const adminEmail = user.email || "Unknown Admin";
-    const adminName = (user.user_metadata?.full_name as string | undefined) || "";
+    const emoji = actionEmoji[actionType] || "🔔";
+    const adminEmail = user.email || "Unknown";
+    const adminName =
+      (user.user_metadata?.full_name as string | undefined) || "";
+    const timestamp = new Date().toLocaleString("vi-VN", {
+      timeZone: "Asia/Ho_Chi_Minh",
+    });
 
-    const subject = `[THC Shop] ${actionText}: ${accountTitle}`;
-    const htmlContent = `
-      <div style="font-family: sans-serif; line-height: 1.5; color: #333;">
-        <h2 style="color: #4f46e5;">Hành động quản trị mới</h2>
-        <p>Có một hành động vừa được thực hiện trên hệ thống bởi một quản trị viên khác:</p>
-        <table style="border-collapse: collapse; width: 100%; max-width: 600px; margin-top: 20px;">
-          ${adminName ? `
-          <tr>
-            <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold; width: 30%; background-color: #f9f9f9;">Tên Admin:</td>
-            <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold; color: #4f46e5;">${adminName}</td>
-          </tr>` : ""}
-          <tr>
-            <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold; width: 30%; background-color: #f9f9f9;">Admin Email:</td>
-            <td style="padding: 10px; border: 1px solid #ddd;">${adminEmail}</td>
-          </tr>
-          <tr>
-            <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold; width: 30%; background-color: #f9f9f9;">Admin ID:</td>
-            <td style="padding: 10px; border: 1px solid #ddd;">${user.id}</td>
-          </tr>
-          <tr>
-            <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold; width: 30%; background-color: #f9f9f9;">Hành động:</td>
-            <td style="padding: 10px; border: 1px solid #ddd;">${actionText}</td>
-          </tr>
-          <tr>
-            <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold; width: 30%; background-color: #f9f9f9;">Tên tài khoản:</td>
-            <td style="padding: 10px; border: 1px solid #ddd;">${accountTitle}</td>
-          </tr>
-          ${
-            priceDetails
-              ? `
-          <tr>
-            <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold; width: 30%; background-color: #f9f9f9;">Giá thu (Nhập):</td>
-            <td style="padding: 10px; border: 1px solid #ddd;">${priceDetails.purchasePrice != null ? formatCurrency(priceDetails.purchasePrice) : "N/A"}</td>
-          </tr>
-          <tr>
-            <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold; width: 30%; background-color: #f9f9f9;">Giá bán:</td>
-            <td style="padding: 10px; border: 1px solid #ddd; color: #e11d48; font-weight: bold;">${priceDetails.sellingPrice != null ? formatCurrency(priceDetails.sellingPrice) : "N/A"}</td>
-          </tr>
-          `
-              : ""
-          }
-          <tr>
-            <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold; width: 30%; background-color: #f9f9f9;">Thời gian:</td>
-            <td style="padding: 10px; border: 1px solid #ddd;">${new Date().toLocaleString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh" })}</td>
-          </tr>
-        </table>
-        <p style="margin-top: 30px; font-size: 12px; color: #777;">Email này được gửi tự động bởi hệ thống THC eFootball Shop.</p>
-      </div>
-    `;
+    const lines: string[] = [
+      `${emoji} ${actionText}: ${accountTitle}`,
+      `👤 Admin: ${adminName ? `${adminName} (${adminEmail})` : adminEmail}`,
+    ];
 
-    await sendAdminNotificationMail(subject, htmlContent);
+    if (priceDetails) {
+      const parts: string[] = [];
+      if (priceDetails.purchasePrice != null)
+        parts.push(`Nhập: ${formatCurrency(priceDetails.purchasePrice)}`);
+      if (priceDetails.sellingPrice != null)
+        parts.push(`Bán: ${formatCurrency(priceDetails.sellingPrice)}`);
+      if (priceDetails.originalPrice != null)
+        parts.push(`Gốc: ${formatCurrency(priceDetails.originalPrice)}`);
+      if (parts.length > 0) lines.push(`💵 ${parts.join(" | ")}`);
+    }
+
+    if (accountId) {
+      lines.push(`🔗 ${BASE_URL}/accounts/${accountId}`);
+    }
+
+    lines.push(`🕐 ${timestamp}`);
+
+    const caption = lines.join("\n");
+
+    await sendZaloBotNotification(caption, primaryImageUrl);
   } catch (error) {
     console.error("Failed to notify admin action:", error);
   }
