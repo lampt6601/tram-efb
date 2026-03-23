@@ -66,3 +66,38 @@ export async function sendZaloBotNotification(
     return false;
   }
 }
+
+/**
+ * Reply to a specific chat via Zalo Bot sendMessage.
+ * Used by the webhook to reply to whoever messaged the bot.
+ */
+export async function sendZaloBotReply(
+  chatId: string,
+  text: string,
+): Promise<boolean> {
+  const token = process.env.ZALO_BOT_TOKEN;
+
+  if (!token) {
+    console.error("ZALO_BOT_TOKEN is missing.");
+    return false;
+  }
+
+  try {
+    const res = await fetch(`${ZALO_BOT_API}${token}/sendMessage`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ chat_id: chatId, text }),
+    });
+
+    const data = await res.json();
+    if (!data.ok) {
+      console.error("Zalo Bot reply failed:", data.description ?? JSON.stringify(data));
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.error("Zalo Bot reply error:", error);
+    return false;
+  }
+}
