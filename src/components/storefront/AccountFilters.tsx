@@ -139,86 +139,91 @@ export function AccountFilters({ totalCount }: { totalCount: number }) {
 
   return (
     <div
-      className={`transition-opacity duration-200 flex flex-col gap-3 ${isPending ? "opacity-60 pointer-events-none" : "opacity-100"}`}
+      className={`transition-opacity duration-200 ${isPending ? "opacity-60 pointer-events-none" : "opacity-100"}`}
     >
-      {/* Row 1: Search — full width on mobile */}
-      <div className="relative w-full md:max-w-sm">
-        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 z-10 pointer-events-none" />
-        <Input
-          type="text"
-          placeholder="Tìm kiếm tài khoản..."
-          value={localSearch}
-          onChange={(e) => setLocalSearch(e.target.value)}
-          onFocus={() => setIsSearchFocused(true)}
-          onBlur={() => setIsSearchFocused(false)}
-          className="h-11 md:h-10 w-full rounded-2xl md:rounded-xl border-slate-200 pl-10 pr-4 text-[15px] md:text-sm text-slate-700 shadow-sm transition-all focus-visible:border-indigo-400 focus-visible:ring-4 focus-visible:ring-indigo-400/20"
-        />
-      </div>
-
-      {/* Row 2: Sort + Clone */}
-      <div className="flex items-center gap-2">
-        <div className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-2.5 shadow-sm">
-          <ArrowUpDown className="h-3.5 w-3.5 text-slate-400" />
-          <select
-            value={sort}
-            onChange={(e) => update("sort", e.target.value)}
-            className="h-9 md:h-10 bg-transparent text-sm text-slate-700 outline-none cursor-pointer"
-          >
-            {SORT_OPTIONS.map((o) => (
-              <option key={o.value} value={o.value}>
-                {o.label}
-              </option>
-            ))}
-          </select>
+      <div className="flex flex-col gap-2.5 md:flex-row md:flex-wrap md:items-center md:gap-3">
+        {/* Search */}
+        <div className="relative w-full md:flex-1 md:min-w-48">
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 z-10 pointer-events-none" />
+          <Input
+            type="text"
+            placeholder="Tìm kiếm tài khoản..."
+            value={localSearch}
+            onChange={(e) => setLocalSearch(e.target.value)}
+            onFocus={() => setIsSearchFocused(true)}
+            onBlur={() => setIsSearchFocused(false)}
+            className="h-10 w-full rounded-xl border-slate-200 pl-10 pr-4 text-sm text-slate-700 shadow-sm transition-all focus-visible:border-indigo-400 focus-visible:ring-4 focus-visible:ring-indigo-400/20"
+          />
         </div>
 
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={toggleClone}
-          className={`h-9 md:h-10 rounded-xl px-3.5 text-sm font-medium transition-all shadow-sm ${
-            cloneOnly
-              ? "border-violet-400 bg-violet-500 text-white hover:bg-violet-600 hover:border-violet-500"
-              : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900"
-          }`}
-        >
-          <Copy className="mr-1.5 h-4 w-4" />
-          Clone
-        </Button>
+        {/* Mobile: Sort + Clone + Clear in one row */}
+        <div className="flex items-center gap-2 w-full md:w-auto">
+          {/* Sort */}
+          <div className="flex flex-1 md:flex-none items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-2.5 shadow-sm">
+            <ArrowUpDown className="h-3.5 w-3.5 text-slate-400" />
+            <select
+              value={sort}
+              onChange={(e) => update("sort", e.target.value)}
+              className="h-9 w-full bg-transparent text-sm text-slate-700 outline-none cursor-pointer"
+            >
+              {SORT_OPTIONS.map((o) => (
+                <option key={o.value} value={o.value}>
+                  {o.label}
+                </option>
+              ))}
+            </select>
+          </div>
 
-        {hasActiveFilters && (
+          {/* Clone */}
           <Button
             variant="outline"
             size="sm"
-            onClick={clearAll}
-            className="h-9 md:h-10 rounded-xl border-rose-200 bg-rose-50 px-3.5 text-sm font-medium text-rose-600 transition-all hover:bg-rose-100 hover:text-rose-700 hover:border-rose-300 shadow-sm"
+            onClick={toggleClone}
+            className={`h-9 shrink-0 rounded-xl px-3 text-sm font-medium transition-all shadow-sm ${
+              cloneOnly
+                ? "border-violet-400 bg-violet-500 text-white hover:bg-violet-600 hover:border-violet-500"
+                : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+            }`}
           >
-            Xoá lọc
+            <Copy className="mr-1 h-3.5 w-3.5" />
+            Clone
           </Button>
-        )}
 
-        <span className="ml-auto text-sm font-medium text-slate-500">
-          {isPending ? "Đang lọc..." : `${totalCount} tài khoản`}
-        </span>
-      </div>
+          {/* Clear */}
+          {hasActiveFilters && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={clearAll}
+              className="h-9 shrink-0 rounded-xl border-rose-200 bg-rose-50 px-3 text-sm font-medium text-rose-600 transition-all hover:bg-rose-100 hover:text-rose-700 hover:border-rose-300 shadow-sm"
+            >
+              Xoá lọc
+            </Button>
+          )}
+        </div>
 
-      {/* Row 3: Price range — full width */}
-      <div className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white p-1 pl-3 shadow-sm">
-        <SlidersHorizontal className="h-4 w-4 shrink-0 text-slate-400" />
-        <div className="flex flex-1 items-center gap-1">
-          <PriceInput
-            placeholder="Giá từ"
-            value={localMinPrice}
-            onChange={setLocalMinPrice}
-            className="h-8 flex-1 border-0 bg-transparent px-2 text-sm text-slate-700 placeholder:text-slate-400 focus-visible:ring-0 shadow-none"
-          />
-          <span className="text-sm text-slate-300">-</span>
-          <PriceInput
-            placeholder="đến"
-            value={localMaxPrice}
-            onChange={setLocalMaxPrice}
-            className="h-8 flex-1 border-0 bg-transparent px-2 text-sm text-slate-700 placeholder:text-slate-400 focus-visible:ring-0 shadow-none"
-          />
+        {/* Mobile: Price range + count in one row */}
+        <div className="flex items-center gap-2 w-full md:w-auto">
+          <div className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white p-1 pl-2.5 shadow-sm">
+            <SlidersHorizontal className="h-3.5 w-3.5 shrink-0 text-slate-400" />
+            <PriceInput
+              placeholder="Giá từ"
+              value={localMinPrice}
+              onChange={setLocalMinPrice}
+              className="h-7 w-[4.5rem] md:w-24 border-0 bg-transparent px-1.5 text-sm text-slate-700 placeholder:text-slate-400 focus-visible:ring-0 shadow-none"
+            />
+            <span className="text-xs text-slate-300">—</span>
+            <PriceInput
+              placeholder="đến"
+              value={localMaxPrice}
+              onChange={setLocalMaxPrice}
+              className="h-7 w-[4.5rem] md:w-24 border-0 bg-transparent px-1.5 text-sm text-slate-700 placeholder:text-slate-400 focus-visible:ring-0 shadow-none"
+            />
+          </div>
+
+          <span className="ml-auto shrink-0 text-sm font-medium text-slate-500">
+            {isPending ? "Đang lọc..." : `${totalCount} tài khoản`}
+          </span>
         </div>
       </div>
     </div>
