@@ -18,7 +18,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://thc-efb.vercel.app"),
+  metadataBase: new URL("https://thc-efb.com"),
   title: {
     default: "THC eFootball Shop - Cửa Hàng Tài Khoản eFootball Uy Tín",
     template: "%s | THC eFootball Shop",
@@ -49,7 +49,7 @@ export const metadata: Metadata = {
     title: "THC eFootball Shop - Cửa Hàng Tài Khoản eFootball",
     description:
       "Chào mừng bạn đến với THC eFootball Shop. Chuyên cung cấp tài khoản eFootball chất lượng, nạp game an toàn và giao dịch nhanh chóng. Uy tín đặt lên hàng đầu!",
-    url: "https://thc-efb.vercel.app",
+    url: "https://thc-efb.com",
     images: [
       {
         url: "/thc-shop.png",
@@ -88,7 +88,7 @@ export default function RootLayout({
               "@context": "https://schema.org",
               "@type": "Person",
               name: "Trần Hữu Cảnh",
-              url: "https://thc-efb.vercel.app",
+              url: "https://thc-efb.com",
               jobTitle: "Founder",
               worksFor: {
                 "@type": "Organization",
@@ -108,7 +108,7 @@ export default function RootLayout({
               "@context": "https://schema.org",
               "@type": "Organization",
               name: "THC eFootball Shop",
-              url: "https://thc-efb.vercel.app",
+              url: "https://thc-efb.com",
               founder: {
                 "@type": "Person",
                 name: "Trần Hữu Cảnh",
@@ -129,10 +129,10 @@ export default function RootLayout({
               "@type": "WebSite",
               name: "THC eFootball Shop",
               alternateName: ["THC Shop", "THC eFootball"],
-              url: "https://thc-efb.vercel.app",
+              url: "https://thc-efb.com",
               potentialAction: {
                 "@type": "SearchAction",
-                target: "https://thc-efb.vercel.app/?q={search_term_string}",
+                target: "https://thc-efb.com/?q={search_term_string}",
                 "query-input": "required name=search_term_string",
               },
             }),

@@ -288,11 +288,23 @@ export function AccountForm({ account }: AccountFormProps) {
         user_id: user?.id,
       };
 
-      const { error: err } = isEditing
-        ? await supabase.from("accounts").update(payload).eq("id", account.id)
-        : await supabase.from("accounts").insert(payload);
+      let accountId = account?.id;
 
-      if (err) throw err;
+      if (isEditing) {
+        const { error: err } = await supabase
+          .from("accounts")
+          .update(payload)
+          .eq("id", account.id);
+        if (err) throw err;
+      } else {
+        const { data: inserted, error: err } = await supabase
+          .from("accounts")
+          .insert(payload)
+          .select("id")
+          .single();
+        if (err) throw err;
+        accountId = inserted?.id;
+      }
 
       try {
         await notifyAdminAction(
@@ -307,8 +319,8 @@ export function AccountForm({ account }: AccountFormProps) {
               : undefined,
             originalPrice: payload.original_price,
           },
-          account?.id,
-          account?.primary_image_url ?? images[0] ?? null,
+          accountId,
+          finalPrimaryUrl ?? finalImages[0] ?? null,
         );
       } catch (notifyErr) {
         console.error(

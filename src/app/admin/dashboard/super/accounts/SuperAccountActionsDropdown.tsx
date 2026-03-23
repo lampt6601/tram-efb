@@ -162,7 +162,7 @@ export function SuperAccountActionsDropdown({
   // ── Copy link ─────────────────────────────────────────────────────────────
   const handleCopyLink = async () => {
     try {
-      await navigator.clipboard.writeText(`https://thc-efb.vercel.app/accounts/${id}`);
+      await navigator.clipboard.writeText(`https://thc-efb.com/accounts/${id}`);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {

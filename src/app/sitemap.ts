@@ -2,7 +2,7 @@ import { MetadataRoute } from "next";
 import { createSupabaseServerClient } from "@/lib/supabase-server";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = "https://thc-efb.vercel.app";
+  const baseUrl = "https://thc-efb.com";
   const supabase = await createSupabaseServerClient();
 
   const { data: publicAccounts } = await supabase

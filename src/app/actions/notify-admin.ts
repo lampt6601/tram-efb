@@ -20,7 +20,7 @@ const actionEmoji: Record<string, string> = {
   UPDATE_SALE: "🏷️",
 };
 
-const BASE_URL = "https://thc-efb.vercel.app";
+const BASE_URL = "https://thc-efb.com";
 
 /**
  * Notifies the owner via Zalo Bot when a different admin performs an action.

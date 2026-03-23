@@ -528,7 +528,7 @@ export default async function AccountDetailPage({
                   priceCurrency: "VND",
                   price: account.selling_price,
                   availability: "https://schema.org/InStock",
-                  url: `https://thc-efb.vercel.app/accounts/${account.id}`,
+                  url: `https://thc-efb.com/accounts/${account.id}`,
                 },
               }),
             }}

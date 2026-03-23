@@ -150,7 +150,7 @@ export function AccountActionsDropdown({
   const handleCopyLink = async () => {
     try {
       await navigator.clipboard.writeText(
-        `https://thc-efb.vercel.app/accounts/${id}`,
+        `https://thc-efb.com/accounts/${id}`,
       );
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);

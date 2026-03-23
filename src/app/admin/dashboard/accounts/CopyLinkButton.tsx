@@ -12,7 +12,7 @@ export function CopyLinkButton({ id }: CopyLinkButtonProps) {
 
   const handleCopy = async () => {
     try {
-      const url = `https://thc-efb.vercel.app/accounts/${id}`;
+      const url = `https://thc-efb.com/accounts/${id}`;
       await navigator.clipboard.writeText(url);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
