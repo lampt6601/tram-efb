@@ -16,7 +16,6 @@ import {
   UserCircle,
   BookOpen,
   SearchCheck,
-  MessageCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -25,7 +24,6 @@ const navItems = [
   { href: "/admin/dashboard/accounts", label: "Tài Khoản", icon: Gamepad2 },
   { href: "/admin/dashboard/requests", label: "Yêu Cầu Tìm Acc", icon: SearchCheck },
   { href: "/admin/dashboard/emails", label: "Email", icon: Mail },
-  { href: "/admin/dashboard/zalo-bot", label: "Zalo Bot", icon: MessageCircle },
   { href: "/admin/dashboard/profile", label: "Hồ Sơ Cá Nhân", icon: UserCircle },
   { href: "/admin/dashboard/guide", label: "Hướng Dẫn", icon: BookOpen },
 ];
