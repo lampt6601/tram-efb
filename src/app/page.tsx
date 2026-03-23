@@ -38,6 +38,7 @@ type SearchParams = {
   maxPrice?: string;
   q?: string;
   clone?: string;
+  sort?: string;
 };
 
 export default async function HomePage({
@@ -50,6 +51,7 @@ export default async function HomePage({
   const maxPrice = params.maxPrice ? parseFloat(params.maxPrice) : null;
   const searchQuery = params.q;
   const cloneOnly = params.clone === "1";
+  const sort = params.sort ?? "newest";
 
   const supabase = await createSupabaseServerClient();
 
@@ -61,10 +63,22 @@ export default async function HomePage({
   if (searchQuery) query = query.ilike("title", `%${searchQuery}%`);
   if (cloneOnly) query = query.eq("is_clone", true);
 
-  // Priority accounts first, then newest
-  query = query
-    .order("is_priority", { ascending: false, nullsFirst: false })
-    .order("created_at", { ascending: false });
+  // Priority accounts first, then sort
+  query = query.order("is_priority", { ascending: false, nullsFirst: false });
+
+  switch (sort) {
+    case "oldest":
+      query = query.order("created_at", { ascending: true });
+      break;
+    case "price_asc":
+      query = query.order("selling_price", { ascending: true });
+      break;
+    case "price_desc":
+      query = query.order("selling_price", { ascending: false });
+      break;
+    default:
+      query = query.order("created_at", { ascending: false });
+  }
 
   const { data: accounts } = await query;
 

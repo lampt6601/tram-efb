@@ -3,13 +3,19 @@
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useCallback, useTransition, useState, useEffect, useRef } from "react";
 import { useDebounce } from "@/hooks/use-debounce";
-import { SlidersHorizontal, Search, Copy } from "lucide-react";
+import { SlidersHorizontal, Search, Copy, ArrowUpDown } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { PriceInput } from "@/components/ui/price-input";
 
-/** Chỉ tìm kiếm sau khi user dừng gõ (ms). */
 const SEARCH_DEBOUNCE_MS = 600;
+
+const SORT_OPTIONS = [
+  { value: "newest", label: "Mới nhất" },
+  { value: "oldest", label: "Cũ nhất" },
+  { value: "price_asc", label: "Giá tăng dần" },
+  { value: "price_desc", label: "Giá giảm dần" },
+];
 
 export function AccountFilters({ totalCount }: { totalCount: number }) {
   const router = useRouter();
@@ -22,6 +28,7 @@ export function AccountFilters({ totalCount }: { totalCount: number }) {
   const maxPrice = searchParams.get("maxPrice") ?? "";
   const search = searchParams.get("q") ?? "";
   const cloneOnly = searchParams.get("clone") === "1";
+  const sort = searchParams.get("sort") ?? "newest";
 
   const [localSearch, setLocalSearch] = useState(search);
   const [localMinPrice, setLocalMinPrice] = useState(minPrice);
@@ -51,10 +58,10 @@ export function AccountFilters({ totalCount }: { totalCount: number }) {
       const params = new URLSearchParams(searchParams.toString());
       if (min) params.set("minPrice", min);
       else params.delete("minPrice");
-      
+
       if (max) params.set("maxPrice", max);
       else params.delete("maxPrice");
-      
+
       startTransition(() => {
         router.replace(`${pathname}?${params.toString()}`, { scroll: false });
       });
@@ -75,7 +82,10 @@ export function AccountFilters({ totalCount }: { totalCount: number }) {
   };
 
   const lastDebouncedSearch = useRef(debouncedSearch);
-  const lastDebouncedPrices = useRef({ min: debouncedMinPrice, max: debouncedMaxPrice });
+  const lastDebouncedPrices = useRef({
+    min: debouncedMinPrice,
+    max: debouncedMaxPrice,
+  });
 
   useEffect(() => {
     if (debouncedSearch !== lastDebouncedSearch.current) {
@@ -84,31 +94,39 @@ export function AccountFilters({ totalCount }: { totalCount: number }) {
     }
   }, [debouncedSearch, search, update]);
 
-  // Handle prices together to prevent fetching when only one is typed but the other is being typed
   useEffect(() => {
-    const hasChanged = 
-      debouncedMinPrice !== lastDebouncedPrices.current.min || 
+    const hasChanged =
+      debouncedMinPrice !== lastDebouncedPrices.current.min ||
       debouncedMaxPrice !== lastDebouncedPrices.current.max;
-      
+
     if (hasChanged) {
-      lastDebouncedPrices.current = { min: debouncedMinPrice, max: debouncedMaxPrice };
-      
-      // Only update if they differ from URL state
+      lastDebouncedPrices.current = {
+        min: debouncedMinPrice,
+        max: debouncedMaxPrice,
+      };
       if (debouncedMinPrice !== minPrice || debouncedMaxPrice !== maxPrice) {
         updatePrices(debouncedMinPrice, debouncedMaxPrice);
       }
     }
   }, [debouncedMinPrice, debouncedMaxPrice, minPrice, maxPrice, updatePrices]);
 
-  // Chỉ đồng bộ URL → ô tìm kiếm khi user không đang focus ô (tránh ghi đè chữ đang gõ).
   useEffect(() => {
     if (!isSearchFocused) setLocalSearch(search);
   }, [search, isSearchFocused]);
 
-  useEffect(() => { setLocalMinPrice(minPrice); }, [minPrice]);
-  useEffect(() => { setLocalMaxPrice(maxPrice); }, [maxPrice]);
+  useEffect(() => {
+    setLocalMinPrice(minPrice);
+  }, [minPrice]);
+  useEffect(() => {
+    setLocalMaxPrice(maxPrice);
+  }, [maxPrice]);
 
-  const hasActiveFilters = minPrice !== "" || maxPrice !== "" || search !== "" || cloneOnly;
+  const hasActiveFilters =
+    minPrice !== "" ||
+    maxPrice !== "" ||
+    search !== "" ||
+    cloneOnly ||
+    sort !== "newest";
 
   const clearAll = () => {
     setLocalSearch("");
@@ -121,77 +139,87 @@ export function AccountFilters({ totalCount }: { totalCount: number }) {
 
   return (
     <div
-      className={`transition-opacity duration-200 flex flex-col gap-3 md:gap-4 ${isPending ? "opacity-60 pointer-events-none" : "opacity-100"}`}
+      className={`transition-opacity duration-200 flex flex-col gap-3 ${isPending ? "opacity-60 pointer-events-none" : "opacity-100"}`}
     >
-      <div className="flex flex-col gap-3 md:flex-row md:items-center md:gap-4">
-        {/* Search - Full width on mobile, flexible on PC */}
-        <div className="relative w-full md:max-w-xs md:flex-1">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 z-10 pointer-events-none" />
-          <Input
-            type="text"
-            placeholder="Tìm kiếm tài khoản..."
-            value={localSearch}
-            onChange={(e) => setLocalSearch(e.target.value)}
-            onFocus={() => setIsSearchFocused(true)}
-            onBlur={() => setIsSearchFocused(false)}
-            className="h-11 md:h-10 w-full rounded-2xl md:rounded-xl border-slate-200 pl-10 pr-4 text-[15px] md:text-sm text-slate-700 shadow-sm transition-all focus-visible:border-indigo-400 focus-visible:ring-4 focus-visible:ring-indigo-400/20"
-          />
+      {/* Row 1: Search — full width on mobile */}
+      <div className="relative w-full md:max-w-sm">
+        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 z-10 pointer-events-none" />
+        <Input
+          type="text"
+          placeholder="Tìm kiếm tài khoản..."
+          value={localSearch}
+          onChange={(e) => setLocalSearch(e.target.value)}
+          onFocus={() => setIsSearchFocused(true)}
+          onBlur={() => setIsSearchFocused(false)}
+          className="h-11 md:h-10 w-full rounded-2xl md:rounded-xl border-slate-200 pl-10 pr-4 text-[15px] md:text-sm text-slate-700 shadow-sm transition-all focus-visible:border-indigo-400 focus-visible:ring-4 focus-visible:ring-indigo-400/20"
+        />
+      </div>
+
+      {/* Row 2: Sort + Clone */}
+      <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-2.5 shadow-sm">
+          <ArrowUpDown className="h-3.5 w-3.5 text-slate-400" />
+          <select
+            value={sort}
+            onChange={(e) => update("sort", e.target.value)}
+            className="h-9 md:h-10 bg-transparent text-sm text-slate-700 outline-none cursor-pointer"
+          >
+            {SORT_OPTIONS.map((o) => (
+              <option key={o.value} value={o.value}>
+                {o.label}
+              </option>
+            ))}
+          </select>
         </div>
 
-        {/* Filters - Scrollable row on mobile, inline on PC */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 md:pb-0 scrollbar-hide w-full md:w-auto">
-          {/* Clone filter toggle */}
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={toggleClone}
+          className={`h-9 md:h-10 rounded-xl px-3.5 text-sm font-medium transition-all shadow-sm ${
+            cloneOnly
+              ? "border-violet-400 bg-violet-500 text-white hover:bg-violet-600 hover:border-violet-500"
+              : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+          }`}
+        >
+          <Copy className="mr-1.5 h-4 w-4" />
+          Clone
+        </Button>
+
+        {hasActiveFilters && (
           <Button
             variant="outline"
             size="sm"
-            onClick={toggleClone}
-            className={`h-9 md:h-10 shrink-0 rounded-xl md:rounded-xl px-3.5 text-sm font-medium transition-all shadow-sm ${
-              cloneOnly
-                ? "border-violet-400 bg-violet-500 text-white hover:bg-violet-600 hover:border-violet-500 hover:shadow-md"
-                : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900"
-            }`}
+            onClick={clearAll}
+            className="h-9 md:h-10 rounded-xl border-rose-200 bg-rose-50 px-3.5 text-sm font-medium text-rose-600 transition-all hover:bg-rose-100 hover:text-rose-700 hover:border-rose-300 shadow-sm"
           >
-            <Copy className="mr-1.5 h-4 w-4" />
-            Clone
+            Xoá lọc
           </Button>
+        )}
 
-          {/* Price range */}
-          <div className="flex shrink-0 items-center gap-2 rounded-xl border border-slate-200 bg-white p-1 pl-3 shadow-sm transition-all hover:border-slate-300">
-            <SlidersHorizontal className="h-4 w-4 text-slate-400" />
-            <div className="flex items-center gap-1">
-              <PriceInput
-                placeholder="Giá từ"
-                value={localMinPrice}
-                onChange={setLocalMinPrice}
-                className="h-7 w-20 md:w-24 border-0 bg-transparent px-2 text-sm text-slate-700 placeholder:text-slate-400 focus-visible:ring-0 shadow-none"
-              />
-              <span className="text-sm text-slate-300">-</span>
-              <PriceInput
-                placeholder="đến"
-                value={localMaxPrice}
-                onChange={setLocalMaxPrice}
-                className="h-7 w-20 md:w-24 border-0 bg-transparent px-2 text-sm text-slate-700 placeholder:text-slate-400 focus-visible:ring-0 shadow-none"
-              />
-            </div>
-          </div>
-
-          {/* Clear */}
-          {hasActiveFilters && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={clearAll}
-              className="h-9 md:h-10 shrink-0 rounded-xl border-rose-200 bg-rose-50 px-3.5 text-sm font-medium text-rose-600 transition-all hover:bg-rose-100 hover:text-rose-700 hover:border-rose-300 shadow-sm"
-            >
-              Xoá lọc
-            </Button>
-          )}
-        </div>
+        <span className="ml-auto text-sm font-medium text-slate-500">
+          {isPending ? "Đang lọc..." : `${totalCount} tài khoản`}
+        </span>
       </div>
 
-      {/* Result count - Below filters */}
-      <div className="text-sm font-medium text-slate-500 md:text-right px-1 md:px-0">
-        {isPending ? "Đang lọc..." : `Hiển thị ${totalCount} tài khoản`}
+      {/* Row 3: Price range — full width */}
+      <div className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white p-1 pl-3 shadow-sm">
+        <SlidersHorizontal className="h-4 w-4 shrink-0 text-slate-400" />
+        <div className="flex flex-1 items-center gap-1">
+          <PriceInput
+            placeholder="Giá từ"
+            value={localMinPrice}
+            onChange={setLocalMinPrice}
+            className="h-8 flex-1 border-0 bg-transparent px-2 text-sm text-slate-700 placeholder:text-slate-400 focus-visible:ring-0 shadow-none"
+          />
+          <span className="text-sm text-slate-300">-</span>
+          <PriceInput
+            placeholder="đến"
+            value={localMaxPrice}
+            onChange={setLocalMaxPrice}
+            className="h-8 flex-1 border-0 bg-transparent px-2 text-sm text-slate-700 placeholder:text-slate-400 focus-visible:ring-0 shadow-none"
+          />
+        </div>
       </div>
     </div>
   );
