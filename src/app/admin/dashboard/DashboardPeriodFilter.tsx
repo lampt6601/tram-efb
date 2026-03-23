@@ -66,11 +66,11 @@ export function DashboardPeriodFilter() {
       </div>
 
       <div className="flex items-center gap-2">
-        <Button onClick={applyFilter} size="sm" className="h-8">
+        <Button onClick={applyFilter} size="sm" className="h-8 rounded-xl">
           Áp dụng
         </Button>
         {(currentFrom || currentTo || currentPeriod) && (
-          <Button onClick={clearFilter} variant="outline" size="sm" className="h-8">
+          <Button onClick={clearFilter} variant="outline" size="sm" className="h-8 rounded-xl">
             Xóa lọc
           </Button>
         )}

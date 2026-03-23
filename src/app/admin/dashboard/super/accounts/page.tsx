@@ -34,7 +34,7 @@ export default async function SuperAccountsPage({
 
   const params = await searchParams;
   const sort = params.sort ?? "newest";
-  const statusFilter = params.status ?? "all";
+  const statusFilter = params.status ?? "Available";
   const approvalFilter = params.approval ?? "all";
   const searchQuery = params.q ?? "";
 

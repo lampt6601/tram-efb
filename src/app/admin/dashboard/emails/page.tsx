@@ -2,9 +2,11 @@ import { createSupabaseServerClient } from "@/lib/supabase-server";
 import Link from "next/link";
 import { Plus, Mail, Pencil, Link2, Link2Off } from "lucide-react";
 import { DeleteEmailButton } from "./DeleteButton";
+import { EmailFilters } from "./EmailFilters";
 import type { AccountWithEmail, Email } from "@/types/database";
 import { LinkedAccountDetailButton } from "./LinkedAccountDetailButton";
 import { Button } from "@/components/ui/button";
+import { Suspense } from "react";
 import {
   Table,
   TableBody,
@@ -18,15 +20,41 @@ interface EmailWithAccount extends Email {
   accounts: AccountWithEmail | null;
 }
 
-export default async function EmailsPage() {
+type SearchParams = {
+  q?: string;
+  link?: string;
+};
+
+export default async function EmailsPage({
+  searchParams,
+}: {
+  searchParams: Promise<SearchParams>;
+}) {
+  const params = await searchParams;
+  const searchQuery = params.q ?? "";
+  const linkFilter = params.link ?? "all";
+
   const supabase = await createSupabaseServerClient();
 
-  const { data: emails } = await supabase
+  let query = supabase
     .from("emails")
     .select("*, accounts(*, emails(*))")
     .order("created_at", { ascending: false });
 
-  const items = (emails ?? []) as EmailWithAccount[];
+  if (searchQuery) {
+    query = query.ilike("email_address", `%${searchQuery}%`);
+  }
+
+  const { data: emails } = await query;
+
+  let items = (emails ?? []) as EmailWithAccount[];
+
+  // Client-side link filter (Supabase join filtering is limited)
+  if (linkFilter === "linked") {
+    items = items.filter((e) => e.accounts !== null);
+  } else if (linkFilter === "unlinked") {
+    items = items.filter((e) => e.accounts === null);
+  }
 
   return (
     <div>
@@ -43,6 +71,12 @@ export default async function EmailsPage() {
         >
           <Plus className="h-4 w-4" /> Thêm Email
         </Button>
+      </div>
+
+      <div className="mb-4 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+        <Suspense fallback={null}>
+          <EmailFilters totalCount={items.length} />
+        </Suspense>
       </div>
 
       <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
@@ -109,7 +143,7 @@ export default async function EmailsPage() {
                     colSpan={5}
                     className="py-12 text-center text-slate-400"
                   >
-                    Chưa có email nào. Hãy thêm email đầu tiên để bắt đầu.
+                    Không tìm thấy email nào phù hợp với bộ lọc.
                   </TableCell>
                 </TableRow>
               )}

@@ -120,28 +120,29 @@ export function AdminAccountFilters({ totalCount }: AdminAccountFiltersProps) {
 
   return (
     <div
-      className={`transition-opacity duration-200 ${isPending ? "opacity-60 pointer-events-none" : "opacity-100"}`}
+      className={`flex flex-col gap-3 md:flex-row md:flex-wrap md:items-center transition-opacity duration-200 ${isPending ? "opacity-60 pointer-events-none" : "opacity-100"}`}
     >
-      <div className="flex flex-wrap items-center gap-3">
-        {/* Search */}
-        <div className="relative flex-1 min-w-48">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 z-10 pointer-events-none" />
-          <Input
-            type="text"
-            placeholder="Tìm theo tiêu đề..."
-            value={localSearch}
-            onChange={(e) => setLocalSearch(e.target.value)}
-            onFocus={() => setIsSearchFocused(true)}
-            onBlur={() => setIsSearchFocused(false)}
-            className="h-9 rounded-xl border-slate-200 pl-9 text-sm text-slate-700 focus-visible:border-indigo-400 focus-visible:ring-indigo-400/30"
-          />
-        </div>
+      {/* Row 1: Search (full-width on mobile) */}
+      <div className="relative w-full md:flex-1 md:min-w-48 md:w-auto">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 z-10 pointer-events-none" />
+        <Input
+          type="text"
+          placeholder="Tìm theo tiêu đề..."
+          value={localSearch}
+          onChange={(e) => setLocalSearch(e.target.value)}
+          onFocus={() => setIsSearchFocused(true)}
+          onBlur={() => setIsSearchFocused(false)}
+          className="h-9 rounded-xl border-slate-200 pl-9 text-sm text-slate-700 focus-visible:border-indigo-400 focus-visible:ring-indigo-400/30"
+        />
+      </div>
 
+      {/* Row 2: Filters (scrollable on mobile) */}
+      <div className="flex w-full items-center gap-3 overflow-x-auto scrollbar-hide md:w-auto md:flex-wrap">
         {/* Status */}
         <select
           value={status}
           onChange={(e) => update("status", e.target.value)}
-          className={selectClass}
+          className={`${selectClass} shrink-0`}
         >
           {STATUS_OPTIONS.map((o) => (
             <option key={o.value} value={o.value}>
@@ -151,7 +152,7 @@ export function AdminAccountFilters({ totalCount }: AdminAccountFiltersProps) {
         </select>
 
         {/* Sort */}
-        <div className="flex items-center gap-2">
+        <div className="flex shrink-0 items-center gap-2">
           <ArrowUpDown className="h-4 w-4 shrink-0 text-slate-400" />
           <select
             value={sort}
@@ -167,21 +168,21 @@ export function AdminAccountFilters({ totalCount }: AdminAccountFiltersProps) {
         </div>
 
         {/* Price range */}
-        <div className="flex items-center gap-2">
+        <div className="flex shrink-0 items-center gap-2">
           <SlidersHorizontal className="h-4 w-4 shrink-0 text-slate-400" />
           <div className="flex items-center gap-1.5">
             <PriceInput
               placeholder="Giá từ"
               value={localMinPrice}
               onChange={setLocalMinPrice}
-              className="h-9 rounded-xl border-slate-200 px-3 text-sm text-slate-700 focus-visible:border-indigo-400 focus-visible:ring-indigo-400/30 w-24 sm:w-28"
+              className="h-9 rounded-xl border-slate-200 px-3 text-sm text-slate-700 focus-visible:border-indigo-400 focus-visible:ring-indigo-400/30 w-24"
             />
             <span className="text-sm text-slate-400">—</span>
             <PriceInput
               placeholder="đến"
               value={localMaxPrice}
               onChange={setLocalMaxPrice}
-              className="h-9 rounded-xl border-slate-200 px-3 text-sm text-slate-700 focus-visible:border-indigo-400 focus-visible:ring-indigo-400/30 w-24 sm:w-28"
+              className="h-9 rounded-xl border-slate-200 px-3 text-sm text-slate-700 focus-visible:border-indigo-400 focus-visible:ring-indigo-400/30 w-24"
             />
           </div>
         </div>
@@ -192,13 +193,13 @@ export function AdminAccountFilters({ totalCount }: AdminAccountFiltersProps) {
             variant="outline"
             size="sm"
             onClick={clearAll}
-            className="h-9 rounded-xl border-rose-200 bg-rose-50 px-3 text-sm text-rose-600 hover:bg-rose-100 hover:text-rose-700 hover:border-rose-300"
+            className="h-9 shrink-0 rounded-xl border-rose-200 bg-rose-50 px-3 text-sm text-rose-600 hover:bg-rose-100 hover:text-rose-700 hover:border-rose-300"
           >
             Xoá bộ lọc
           </Button>
         )}
 
-        <span className="ml-auto text-sm text-slate-400">
+        <span className="ml-auto shrink-0 text-sm text-slate-400">
           {isPending ? "Đang lọc..." : `${totalCount} tài khoản`}
         </span>
       </div>

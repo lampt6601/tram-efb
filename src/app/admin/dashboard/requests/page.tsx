@@ -2,7 +2,9 @@ import { createSupabaseServerClient } from "@/lib/supabase-server";
 import Link from "next/link";
 import { Plus, SearchCheck, User, Banknote, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { RequestFilters } from "./RequestFilters";
 import type { AccountRequest } from "@/types/database";
+import { Suspense } from "react";
 import {
   Table,
   TableBody,
@@ -13,14 +15,41 @@ import {
 } from "@/components/ui/table";
 import { MarkCompleteButton } from "./MarkCompleteButton";
 
-export default async function RequestsPage() {
+type SearchParams = {
+  q?: string;
+  status?: string;
+};
+
+export default async function RequestsPage({
+  searchParams,
+}: {
+  searchParams: Promise<SearchParams>;
+}) {
+  const params = await searchParams;
+  const searchQuery = params.q ?? "";
+  const statusFilter = params.status ?? "all";
+
   const supabase = await createSupabaseServerClient();
 
-  const { data: rows } = await supabase
+  let query = supabase
     .from("account_requests")
     .select("*")
     .order("completed", { ascending: true })
     .order("created_at", { ascending: false });
+
+  if (searchQuery) {
+    query = query.or(
+      `detail.ilike.%${searchQuery}%,requester_name.ilike.%${searchQuery}%`,
+    );
+  }
+
+  if (statusFilter === "pending") {
+    query = query.eq("completed", false);
+  } else if (statusFilter === "completed") {
+    query = query.eq("completed", true);
+  }
+
+  const { data: rows } = await query;
 
   const items = (rows ?? []) as AccountRequest[];
   const pendingCount = items.filter((r) => !r.completed).length;
@@ -40,6 +69,12 @@ export default async function RequestsPage() {
         >
           <Plus className="h-4 w-4" /> Thêm Yêu Cầu
         </Button>
+      </div>
+
+      <div className="mb-4 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+        <Suspense fallback={null}>
+          <RequestFilters totalCount={items.length} />
+        </Suspense>
       </div>
 
       <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
@@ -107,7 +142,7 @@ export default async function RequestsPage() {
                     colSpan={6}
                     className="py-12 text-center text-slate-400"
                   >
-                    Chưa có yêu cầu nào. Hãy thêm yêu cầu đầu tiên từ khách.
+                    Không tìm thấy yêu cầu nào phù hợp với bộ lọc.
                   </TableCell>
                 </TableRow>
               )}
