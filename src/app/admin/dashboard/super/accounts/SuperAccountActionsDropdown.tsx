@@ -99,6 +99,14 @@ export function SuperAccountActionsDropdown({
   const [toggling, setToggling] = useState<"priority" | "clone" | null>(null);
   const [priority, setPriority] = useState(account.is_priority ?? false);
   const [clone, setClone] = useState(account.is_clone ?? false);
+
+  useEffect(() => {
+    setPriority(account.is_priority ?? false);
+  }, [account.is_priority]);
+
+  useEffect(() => {
+    setClone(account.is_clone ?? false);
+  }, [account.is_clone]);
   const [sellPrice, setSellPrice] = useState(account.selling_price.toString());
   const [saleOriginalPrice, setSaleOriginalPrice] = useState(
     account.original_price ? account.original_price.toString() : account.selling_price.toString()
@@ -367,14 +375,16 @@ export function SuperAccountActionsDropdown({
 
           <DropdownMenuSeparator />
 
-          <DropdownMenuItem onClick={handleTogglePriority} disabled={toggling !== null} className="gap-2">
-            {toggling === "priority" ? (
-              <Loader2 className="h-4 w-4 animate-spin text-amber-400" />
-            ) : (
-              <Star className={`h-4 w-4 ${priority ? "fill-amber-500 text-amber-500" : "text-slate-400"}`} />
-            )}
-            {priority ? "Bỏ nổi bật" : "Đánh dấu nổi bật"}
-          </DropdownMenuItem>
+          {!isSold && (
+            <DropdownMenuItem onClick={handleTogglePriority} disabled={toggling !== null} className="gap-2">
+              {toggling === "priority" ? (
+                <Loader2 className="h-4 w-4 animate-spin text-amber-400" />
+              ) : (
+                <Star className={`h-4 w-4 ${priority ? "fill-amber-500 text-amber-500" : "text-slate-400"}`} />
+              )}
+              {priority ? "Bỏ nổi bật" : "Đánh dấu nổi bật"}
+            </DropdownMenuItem>
+          )}
 
           <DropdownMenuItem onClick={handleToggleClone} disabled={toggling !== null} className="gap-2">
             {toggling === "clone" ? (

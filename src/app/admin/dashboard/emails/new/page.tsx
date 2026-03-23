@@ -6,6 +6,7 @@ import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 
 type EmailFormValues = {
@@ -44,6 +45,7 @@ export default function NewEmailPage() {
       return;
     }
 
+    toast.success("Đã thêm email mới");
     router.push("/admin/dashboard/emails");
     router.refresh();
   };

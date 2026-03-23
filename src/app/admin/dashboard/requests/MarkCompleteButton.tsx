@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 import { Check, Circle } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 
 export function MarkCompleteButton({
@@ -19,12 +20,19 @@ export function MarkCompleteButton({
 
   const handleToggle = async () => {
     setLoading(true);
-    await supabase
-      .from("account_requests")
-      .update({ completed: !completed })
-      .eq("id", id);
-    setLoading(false);
-    router.refresh();
+    try {
+      const { error: err } = await supabase
+        .from("account_requests")
+        .update({ completed: !completed })
+        .eq("id", id);
+      if (err) throw err;
+      toast.success(completed ? "Đã bỏ đánh dấu hoàn tất" : "Đã đánh dấu hoàn tất");
+      router.refresh();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Không thể cập nhật trạng thái.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

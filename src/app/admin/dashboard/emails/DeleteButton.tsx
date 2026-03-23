@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 import { Trash2 } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -23,10 +24,17 @@ export function DeleteEmailButton({ id }: { id: string }) {
 
   const handleDelete = async () => {
     setLoading(true);
-    await supabase.from("emails").delete().eq("id", id);
-    setLoading(false);
-    setOpen(false);
-    router.refresh();
+    try {
+      const { error: err } = await supabase.from("emails").delete().eq("id", id);
+      if (err) throw err;
+      toast.success("Đã xóa email");
+      setOpen(false);
+      router.refresh();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Không thể xóa email.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

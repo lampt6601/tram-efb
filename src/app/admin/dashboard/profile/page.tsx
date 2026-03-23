@@ -3,6 +3,7 @@ import { checkIsSuperAdmin } from "@/lib/super-admin";
 import { redirect } from "next/navigation";
 import { UserCircle, ShieldCheck } from "lucide-react";
 import { ProfileForm } from "./ProfileForm";
+import { ChangePasswordSection } from "./ChangePasswordSection";
 
 export default async function ProfilePage() {
   const supabase = await createSupabaseServerClient();
@@ -54,6 +55,10 @@ export default async function ProfilePage() {
         <div className="p-6">
           <ProfileForm currentName={currentName} email={user.email ?? ""} />
         </div>
+      </div>
+
+      <div className="mt-6">
+        <ChangePasswordSection />
       </div>
     </div>
   );

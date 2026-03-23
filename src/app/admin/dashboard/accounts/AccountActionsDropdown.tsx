@@ -170,9 +170,10 @@ export function AccountActionsDropdown({
         .eq("id", id);
       if (err) throw err;
       setClone(next);
+      toast.success(next ? "Đã đánh dấu Clone" : "Đã bỏ Clone");
       router.refresh();
-    } catch {
-      // ignore
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Không thể cập nhật trạng thái Clone.");
     } finally {
       setToggling(null);
     }
@@ -180,10 +181,12 @@ export function AccountActionsDropdown({
 
   // ── Toggle nổi bật (server: giới hạn 2 acc Available + nổi bật / admin) ───
   const handleTogglePriority = async () => {
+    const next = !priority;
     setToggling("priority");
     try {
       await toggleAccountPriority(id);
-      setPriority((p) => !p);
+      setPriority(next);
+      toast.success(next ? "Đã đánh dấu nổi bật" : "Đã bỏ nổi bật");
       router.refresh();
     } catch (e) {
       toast.error(
@@ -209,6 +212,7 @@ export function AccountActionsDropdown({
       } catch {
         /* ignore */
       }
+      toast.success("Đã gỡ đánh dấu đã bán");
       setOpenDialog(null);
       router.refresh();
     } catch (err: unknown) {
@@ -242,6 +246,7 @@ export function AccountActionsDropdown({
       } catch {
         /* ignore */
       }
+      toast.success("Đã đánh dấu bán thành công");
       setOpenDialog(null);
       router.refresh();
     } catch (err: unknown) {
@@ -285,6 +290,7 @@ export function AccountActionsDropdown({
       } catch {
         /* ignore */
       }
+      toast.success("Đã cập nhật giá sale");
       setOpenDialog(null);
       router.refresh();
     } catch (err: unknown) {
@@ -308,6 +314,7 @@ export function AccountActionsDropdown({
       } catch {
         /* ignore */
       }
+      toast.success("Đã hủy sale");
       setOpenDialog(null);
       router.refresh();
     } catch (err: unknown) {
@@ -327,6 +334,7 @@ export function AccountActionsDropdown({
       } catch {
         /* ignore */
       }
+      toast.success("Đã xóa tài khoản");
       setOpenDialog(null);
       router.refresh();
     } catch (err: unknown) {

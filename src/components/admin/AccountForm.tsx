@@ -315,6 +315,7 @@ export function AccountForm({ account }: AccountFormProps) {
         );
       }
 
+      toast.success(isEditing ? "Đã cập nhật tài khoản" : "Đã tạo tài khoản mới");
       router.refresh();
       router.push("/admin/dashboard/accounts");
     } catch (err: unknown) {
