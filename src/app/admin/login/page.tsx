@@ -79,7 +79,7 @@ export default function AdminLoginPage() {
                 Email
               </Label>
               <div className="relative mt-1.5">
-                <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500 z-10" />
+                <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 z-10" />
                 <Input
                   id="email"
                   type="email"
@@ -87,7 +87,7 @@ export default function AdminLoginPage() {
                     required: "Vui lòng nhập email",
                   })}
                   aria-invalid={!!errors.email}
-                  className="border-white/10 bg-white/5 py-5 pl-10 pr-4 text-slate-200 placeholder:text-slate-500 focus-visible:border-indigo-500 focus-visible:ring-indigo-500/30"
+                  className="border-white/10 bg-white/5 py-5 pl-10 pr-4 text-white placeholder:text-slate-400 focus-visible:border-indigo-500 focus-visible:ring-indigo-500/30 autofill:shadow-[inset_0_0_0px_1000px_rgba(255,255,255,0.05)] autofill:[-webkit-text-fill-color:#e2e8f0]"
                   placeholder="admin@example.com"
                 />
               </div>
@@ -106,7 +106,7 @@ export default function AdminLoginPage() {
                 Mật khẩu
               </Label>
               <div className="relative mt-1.5">
-                <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500 z-10" />
+                <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 z-10" />
                 <Input
                   id="password"
                   type="password"
@@ -114,7 +114,7 @@ export default function AdminLoginPage() {
                     required: "Vui lòng nhập mật khẩu",
                   })}
                   aria-invalid={!!errors.password}
-                  className="border-white/10 bg-white/5 py-5 pl-10 pr-4 text-slate-200 placeholder:text-slate-500 focus-visible:border-indigo-500 focus-visible:ring-indigo-500/30"
+                  className="border-white/10 bg-white/5 py-5 pl-10 pr-4 text-white placeholder:text-slate-400 focus-visible:border-indigo-500 focus-visible:ring-indigo-500/30 autofill:shadow-[inset_0_0_0px_1000px_rgba(255,255,255,0.05)] autofill:[-webkit-text-fill-color:#e2e8f0]"
                   placeholder="••••••••"
                 />
               </div>

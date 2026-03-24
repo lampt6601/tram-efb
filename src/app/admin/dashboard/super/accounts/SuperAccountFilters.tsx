@@ -8,7 +8,6 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { PriceInput } from "@/components/ui/price-input";
 
-/** Chỉ tìm kiếm sau khi user dừng gõ (ms). */
 const SEARCH_DEBOUNCE_MS = 600;
 
 const SORT_OPTIONS = [
@@ -26,9 +25,6 @@ const STATUS_OPTIONS = [
   { value: "Pending", label: "Đang Chờ" },
   { value: "Sold", label: "Đã Bán" },
 ];
-
-const selectClass =
-  "h-9 rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-700 outline-none transition-colors focus:border-amber-400 focus:ring-2 focus:ring-inset focus:ring-amber-400 hover:border-slate-300 cursor-pointer";
 
 export function SuperAccountFilters({ totalCount }: { totalCount: number }) {
   const router = useRouter();
@@ -61,7 +57,7 @@ export function SuperAccountFilters({ totalCount }: { totalCount: number }) {
         router.replace(`${pathname}?${params.toString()}`, { scroll: false });
       });
     },
-    [router, pathname, searchParams]
+    [router, pathname, searchParams],
   );
 
   const lastDebounced = useRef(debouncedSearch);
@@ -89,7 +85,6 @@ export function SuperAccountFilters({ totalCount }: { totalCount: number }) {
     }
   }, [debouncedMaxPrice, maxPrice, update]);
 
-  // Chỉ đồng bộ URL → ô tìm kiếm khi user không đang focus (tránh ghi đè chữ đang gõ).
   useEffect(() => {
     if (!isSearchFocused) setLocalSearch(search);
   }, [search, isSearchFocused]);
@@ -104,76 +99,119 @@ export function SuperAccountFilters({ totalCount }: { totalCount: number }) {
     minPrice !== "" ||
     maxPrice !== "";
 
-  return (
-    <div className={`flex flex-col gap-3 md:flex-row md:flex-wrap md:items-center transition-opacity duration-200 ${isPending ? "opacity-60 pointer-events-none" : ""}`}>
-      {/* Row 1: Search (full-width on mobile) */}
-      <div className="relative w-full md:flex-1 md:min-w-48 md:w-auto">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
-        <Input
-          type="text"
-          placeholder="Tìm theo tiêu đề..."
-          value={localSearch}
-          onChange={(e) => setLocalSearch(e.target.value)}
-          onFocus={() => setIsSearchFocused(true)}
-          onBlur={() => setIsSearchFocused(false)}
-          className="h-9 rounded-xl border-slate-200 pl-9 text-sm focus-visible:border-amber-400 focus-visible:ring-amber-400/30"
-        />
-      </div>
+  const clearAll = () => {
+    setLocalSearch("");
+    setLocalMinPrice("");
+    setLocalMaxPrice("");
+    startTransition(() => {
+      router.replace(pathname, { scroll: false });
+    });
+  };
 
-      {/* Row 2: Filters (scrollable on mobile) */}
-      <div className="flex w-full items-center gap-3 overflow-x-auto scrollbar-hide md:w-auto md:flex-wrap">
-        <select value={status} onChange={(e) => update("status", e.target.value)} className={`${selectClass} shrink-0`}>
-          {STATUS_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-        </select>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => update("approval", approval === "pending" ? "" : "pending")}
-          className={`h-9 shrink-0 rounded-xl px-3 text-sm font-semibold transition-all ${
-            approval === "pending"
-              ? "border-amber-400 bg-amber-500 text-white shadow-sm hover:bg-amber-600"
-              : "border-indigo-200 bg-indigo-50 text-indigo-700 hover:border-indigo-300 hover:bg-indigo-100"
-          }`}
-        >
-          Cần duyệt
-        </Button>
-        <div className="flex shrink-0 items-center gap-2">
-          <ArrowUpDown className="h-4 w-4 shrink-0 text-slate-400" />
-          <select value={sort} onChange={(e) => update("sort", e.target.value)} className={selectClass}>
-            {SORT_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-          </select>
+  return (
+    <div
+      className={`transition-opacity duration-200 ${isPending ? "opacity-60 pointer-events-none" : "opacity-100"}`}
+    >
+      <div className="flex flex-col gap-2.5 md:flex-row md:flex-wrap md:items-center md:gap-3">
+        {/* Search */}
+        <div className="relative w-full md:flex-1 md:min-w-48">
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 z-10 pointer-events-none" />
+          <Input
+            type="text"
+            placeholder="Tìm theo tiêu đề..."
+            value={localSearch}
+            onChange={(e) => setLocalSearch(e.target.value)}
+            onFocus={() => setIsSearchFocused(true)}
+            onBlur={() => setIsSearchFocused(false)}
+            className="h-10 w-full rounded-xl border-slate-200 pl-10 pr-4 text-sm text-slate-700 shadow-sm transition-all focus-visible:border-amber-400 focus-visible:ring-4 focus-visible:ring-amber-400/20"
+          />
         </div>
-        {/* Price range */}
-        <div className="flex shrink-0 items-center gap-2">
-          <SlidersHorizontal className="h-4 w-4 shrink-0 text-slate-400" />
-          <div className="flex items-center gap-1.5">
+
+        {/* Status + Approval + Sort + Clear */}
+        <div className="flex items-center gap-2 w-full md:w-auto">
+          {/* Status */}
+          <div className="flex flex-1 md:flex-none items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-2.5 shadow-sm">
+            <select
+              value={status}
+              onChange={(e) => update("status", e.target.value)}
+              className="h-9 w-full bg-transparent text-sm text-slate-700 outline-none cursor-pointer"
+            >
+              {STATUS_OPTIONS.map((o) => (
+                <option key={o.value} value={o.value}>
+                  {o.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Approval toggle */}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => update("approval", approval === "pending" ? "" : "pending")}
+            className={`h-9 shrink-0 rounded-xl px-3 text-sm font-medium transition-all shadow-sm ${
+              approval === "pending"
+                ? "border-amber-400 bg-amber-500 text-white hover:bg-amber-600 hover:border-amber-500"
+                : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+            }`}
+          >
+            Cần duyệt
+          </Button>
+
+          {/* Sort */}
+          <div className="flex flex-1 md:flex-none items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-2.5 shadow-sm">
+            <ArrowUpDown className="h-3.5 w-3.5 text-slate-400" />
+            <select
+              value={sort}
+              onChange={(e) => update("sort", e.target.value)}
+              className="h-9 w-full bg-transparent text-sm text-slate-700 outline-none cursor-pointer"
+            >
+              {SORT_OPTIONS.map((o) => (
+                <option key={o.value} value={o.value}>
+                  {o.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Clear */}
+          {hasActiveFilters && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={clearAll}
+              className="h-9 shrink-0 rounded-xl border-rose-200 bg-rose-50 px-3 text-sm font-medium text-rose-600 transition-all hover:bg-rose-100 hover:text-rose-700 hover:border-rose-300 shadow-sm"
+            >
+              Xoá lọc
+            </Button>
+          )}
+        </div>
+
+        {/* Price range + count */}
+        <div className="flex items-center gap-2 w-full md:w-auto">
+          <div className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white p-1 pl-2.5 shadow-sm">
+            <SlidersHorizontal className="h-3.5 w-3.5 shrink-0 text-slate-400" />
             <PriceInput
               placeholder="Giá từ"
               value={localMinPrice}
               onChange={setLocalMinPrice}
               accent="amber"
-              className="h-9 rounded-xl border-slate-200 px-3 text-sm text-slate-700 focus-visible:border-amber-400 focus-visible:ring-amber-400/30 w-24"
+              className="h-7 w-[4.5rem] md:w-24 border-0 bg-transparent px-1.5 text-sm text-slate-700 placeholder:text-slate-400 focus-visible:ring-0 shadow-none"
             />
-            <span className="text-sm text-slate-400">—</span>
+            <span className="text-xs text-slate-300">—</span>
             <PriceInput
               placeholder="đến"
               value={localMaxPrice}
               onChange={setLocalMaxPrice}
               accent="amber"
-              className="h-9 rounded-xl border-slate-200 px-3 text-sm text-slate-700 focus-visible:border-amber-400 focus-visible:ring-amber-400/30 w-24"
+              className="h-7 w-[4.5rem] md:w-24 border-0 bg-transparent px-1.5 text-sm text-slate-700 placeholder:text-slate-400 focus-visible:ring-0 shadow-none"
             />
           </div>
-        </div>
 
-        {hasActiveFilters && (
-          <Button variant="outline" size="sm" onClick={() => { setLocalSearch(""); setLocalMinPrice(""); setLocalMaxPrice(""); startTransition(() => router.replace(pathname, { scroll: false })); }}
-            className="h-9 shrink-0 rounded-xl border-rose-200 bg-rose-50 px-3 text-sm text-rose-600 hover:bg-rose-100 hover:border-rose-300">
-            Xoá bộ lọc
-          </Button>
-        )}
-        <span className="ml-auto shrink-0 text-sm text-slate-400">
-          {isPending ? "Đang lọc..." : `${totalCount} tài khoản`}
-        </span>
+          <span className="ml-auto shrink-0 text-sm font-medium text-slate-500">
+            {isPending ? "Đang lọc..." : `${totalCount} tài khoản`}
+          </span>
+        </div>
       </div>
     </div>
   );
