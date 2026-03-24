@@ -2,12 +2,12 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, X, UploadCloud, Star, Copy } from "lucide-react";
+import { ArrowLeft, X, UploadCloud, Star, Copy, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 import Link from "next/link";
 import type { Account, Email, AccountStatus } from "@/types/database";
 import { useForm, Controller } from "react-hook-form";
 import { superAdminUpdateAccount } from "@/app/actions/super-admin-actions";
-import { uploadImageAction } from "@/app/actions/upload-image";
+import { useParallelUpload } from "@/hooks/use-parallel-upload";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -55,6 +55,15 @@ export function SuperAdminAccountForm({ account, availableEmails }: Props) {
   const [previews, setPreviews] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [imageError, setImageError] = useState("");
+  const {
+    files: uploadFilesState,
+    overallProgress,
+    isUploading,
+    doneCount,
+    totalCount,
+    upload: startParallelUpload,
+    reset: resetUploadState,
+  } = useParallelUpload();
 
   const defaultValues = useMemo<FormValues>(
     () => ({
@@ -125,16 +134,24 @@ export function SuperAdminAccountForm({ account, availableEmails }: Props) {
         return;
       }
 
-      const uploadedUrls: string[] = [];
+      let uploadedUrls: string[] = [];
       let finalPrimaryUrl = primaryImage;
 
-      for (let i = 0; i < selectedFiles.length; i++) {
-        const file = selectedFiles[i];
-        const fd = new FormData();
-        fd.append("file", file);
-        const publicUrl = await uploadImageAction(fd);
-        uploadedUrls.push(publicUrl);
-        if (primaryImage === previews[i]) finalPrimaryUrl = publicUrl;
+      if (selectedFiles.length > 0) {
+        const results = await startParallelUpload(selectedFiles);
+        const failedCount = results.filter((url) => !url).length;
+        if (failedCount > 0) {
+          toast.error(`${failedCount} ảnh tải lên thất bại. Vui lòng thử lại.`);
+          setLoading(false);
+          return;
+        }
+        uploadedUrls = results;
+
+        for (let i = 0; i < previews.length; i++) {
+          if (primaryImage === previews[i]) {
+            finalPrimaryUrl = uploadedUrls[i];
+          }
+        }
       }
 
       const finalImages = [...images, ...uploadedUrls];
@@ -168,6 +185,7 @@ export function SuperAdminAccountForm({ account, availableEmails }: Props) {
         primary_image_url: finalPrimaryUrl,
       });
 
+      resetUploadState();
       toast.success("Đã cập nhật tài khoản thành công");
       router.push("/admin/dashboard/super/accounts");
       router.refresh();
@@ -478,6 +496,46 @@ export function SuperAdminAccountForm({ account, availableEmails }: Props) {
               <p className="mt-2 text-xs text-red-600">{imageError}</p>
             )}
 
+            {/* Upload progress bar */}
+            {totalCount > 0 && (
+              <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3">
+                <div className="mb-2 flex items-center justify-between text-xs">
+                  <span className="font-medium text-slate-600">
+                    {isUploading
+                      ? `Đang tải ${doneCount}/${totalCount} ảnh...`
+                      : `Đã tải ${doneCount}/${totalCount} ảnh`}
+                  </span>
+                  <span className="font-semibold text-indigo-600">{overallProgress}%</span>
+                </div>
+                <div className="h-2 overflow-hidden rounded-full bg-slate-200">
+                  <div
+                    className="h-full rounded-full bg-indigo-500 transition-all duration-300 ease-out"
+                    style={{ width: `${overallProgress}%` }}
+                  />
+                </div>
+                <div className="mt-2 flex flex-wrap gap-1.5">
+                  {uploadFilesState.map((f, i) => (
+                    <div
+                      key={i}
+                      className={cn(
+                        "flex items-center gap-1 rounded-md px-2 py-0.5 text-[10px] font-medium",
+                        f.status === "done" && "bg-emerald-50 text-emerald-700",
+                        f.status === "uploading" && "bg-indigo-50 text-indigo-700",
+                        f.status === "pending" && "bg-slate-100 text-slate-500",
+                        f.status === "error" && "bg-red-50 text-red-600",
+                      )}
+                    >
+                      {f.status === "done" && <CheckCircle2 className="h-3 w-3" />}
+                      {f.status === "uploading" && <Loader2 className="h-3 w-3 animate-spin" />}
+                      {f.status === "error" && <AlertCircle className="h-3 w-3" />}
+                      Ảnh {i + 1}
+                      {f.status === "uploading" && ` ${f.progress}%`}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {(images.length > 0 || previews.length > 0) && (
               <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
                 {images.map((img, i) => (
@@ -567,7 +625,7 @@ export function SuperAdminAccountForm({ account, availableEmails }: Props) {
             <Button
               type="submit"
               loading={loading}
-              loadingLabel="Đang lưu..."
+              loadingLabel={isUploading ? `Đang tải ảnh ${doneCount}/${totalCount}...` : "Đang lưu..."}
               className="h-10 min-w-[11rem] bg-indigo-600 px-6 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-50"
             >
               Cập Nhật Tài Khoản
