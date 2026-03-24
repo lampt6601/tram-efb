@@ -1,54 +1,65 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
-import { UserPlus, Zap, TrendingUp, ShieldCheck, Users, ChevronDown } from "lucide-react";
+import { UserPlus, Store, Upload, ShieldCheck, ChevronDown } from "lucide-react";
 import facebookIcon from "@/assets/icons/facebook.webp";
 import zaloIcon from "@/assets/icons/zalo.png";
 
-const VS_ITEMS = [
+const STEPS = [
   {
-    icon: Zap,
+    step: 1,
+    icon: Store,
     color: "indigo",
-    title: "Bán nhanh hơn rõ rệt",
-    web: "Acc được đăng trực tiếp lên web — khách tự tìm đến, không cần spam group",
-    fb: "Đăng group Facebook, bài trôi nhanh, phải repost liên tục",
+    title: "Mở Gian Hàng",
+    description:
+      "Nhận tài khoản quản trị (Admin) riêng biệt, miễn phí 100%.",
   },
   {
-    icon: TrendingUp,
+    step: 2,
+    icon: Upload,
     color: "emerald",
-    title: "Giữ 100% tiền lời",
-    web: "Toàn bộ tiền lãi từ mỗi acc bán được thuộc về bạn — không chia hoa hồng",
-    fb: "Tự quản lý giá, dễ bị khách/buôn ép giá hoặc so sánh liên tục",
+    title: "Tự Do Đăng Acc",
+    description:
+      "Upload hình ảnh và tự định giá. Admin sẽ duyệt nhanh bài đăng để tăng độ uy tín, giúp bạn dễ dàng chốt đơn.",
   },
   {
+    step: 3,
     icon: ShieldCheck,
     color: "amber",
-    title: "Hệ thống quản lý riêng",
-    web: "Có trang quản lý admin riêng: đăng, sửa, theo dõi trạng thái bán — mọi thứ ở một nơi",
-    fb: "Quản lý thủ công qua tin nhắn & comment, dễ nhầm lẫn, sót đơn",
-  },
-  {
-    icon: Users,
-    color: "purple",
-    title: "Tiếp cận đúng khách hàng",
-    web: "Khách vào web đã có nhu cầu mua acc — tỉ lệ chốt cao hơn",
-    fb: "Đối tượng group hỗn tạp, nhiều người xem nhưng ít người mua thật",
+    title: "Nhận Tiền An Toàn",
+    description:
+      "Khách chốt đơn qua web, THC EFB trung gian bảo lãnh. Bạn giao acc chuẩn — tiền về túi ngay.",
   },
 ];
 
-const colorMap: Record<string, { bg: string; icon: string; badge: string }> = {
-  indigo: { bg: "bg-indigo-50", icon: "text-indigo-500", badge: "bg-indigo-100 text-indigo-700" },
-  emerald: { bg: "bg-emerald-50", icon: "text-emerald-500", badge: "bg-emerald-100 text-emerald-700" },
-  amber: { bg: "bg-amber-50", icon: "text-amber-500", badge: "bg-amber-100 text-amber-700" },
-  purple: { bg: "bg-purple-50", icon: "text-purple-500", badge: "bg-purple-100 text-purple-700" },
+const colorMap: Record<string, { bg: string; icon: string; ring: string; step: string }> = {
+  indigo: { bg: "bg-indigo-50", icon: "text-indigo-500", ring: "ring-indigo-200", step: "bg-indigo-500 text-white" },
+  emerald: { bg: "bg-emerald-50", icon: "text-emerald-500", ring: "ring-emerald-200", step: "bg-emerald-500 text-white" },
+  amber: { bg: "bg-amber-50", icon: "text-amber-500", ring: "ring-amber-200", step: "bg-amber-500 text-white" },
 };
 
 export function RecruitAdminSection() {
   const [open, setOpen] = useState(false);
 
+  // Auto-open when navigated via #tuyen-ctv anchor or hero CTA click
+  useEffect(() => {
+    if (window.location.hash === "#tuyen-ctv") {
+      setOpen(true);
+    }
+
+    const onOpen = () => setOpen(true);
+    window.addEventListener("hashchange", () => {
+      if (window.location.hash === "#tuyen-ctv") setOpen(true);
+    });
+    window.addEventListener("open-recruit", onOpen);
+    return () => {
+      window.removeEventListener("open-recruit", onOpen);
+    };
+  }, []);
+
   return (
-    <section className="border-t border-indigo-100 bg-gradient-to-br from-indigo-50 via-slate-50 to-purple-50">
+    <section id="tuyen-ctv" className="scroll-mt-16 border-t border-indigo-100 bg-gradient-to-br from-indigo-50 via-slate-50 to-purple-50">
       {/* Collapse trigger */}
       <button
         type="button"
@@ -63,7 +74,7 @@ export function RecruitAdminSection() {
             </div>
             <div className="flex items-center gap-2.5">
               <span className="text-sm font-bold text-slate-800">
-                Tuyển Cộng Tác Viên Đăng Bán Acc
+                Trở Thành Đối Tác Bán Hàng
               </span>
               <span className="inline-flex items-center gap-1.5 rounded-full border border-indigo-200 bg-indigo-50 px-2.5 py-0.5 text-[11px] font-semibold text-indigo-600">
                 <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-indigo-500" />
@@ -84,43 +95,41 @@ export function RecruitAdminSection() {
         }`}
       >
         <div className="mx-auto max-w-7xl px-4 pb-12 sm:px-6 lg:px-8">
-          {/* Description */}
-          <p className="mb-8 max-w-2xl text-sm text-slate-500 sm:text-base">
-            Bạn đang tự bán acc eFootball trên Facebook group nhưng mất quá nhiều thời gian? Hãy thử
-            cách khác — đăng bán qua{" "}
-            <span className="font-semibold text-slate-700">THC eFootball Shop</span> và tập trung
-            vào việc kiếm tiền thay vì repost bài mỗi ngày.
-          </p>
+          {/* Header */}
+          <div className="mb-8 max-w-2xl">
+            <h2 className="text-xl font-bold text-slate-900 sm:text-2xl">
+              Trở Thành Đối Tác Bán Hàng Cùng THC EFB
+            </h2>
+            <p className="mt-3 text-sm text-slate-500 sm:text-base">
+              Bạn có nhiều acc ngon nhưng bán trên Group quá chật vật? Mở ngay
+              &ldquo;gian hàng&rdquo; miễn phí trên hệ thống của chúng tôi để
+              tối ưu hóa lợi nhuận!
+            </p>
+          </div>
 
-          {/* VS comparison cards */}
-          <div className="mb-10 grid gap-4 sm:grid-cols-2">
-            {VS_ITEMS.map(({ icon: Icon, color, title, web, fb }) => {
+          {/* 3-step cards */}
+          <div className="mb-10 grid gap-4 sm:grid-cols-3">
+            {STEPS.map(({ step, icon: Icon, color, title, description }) => {
               const c = colorMap[color];
               return (
                 <div
-                  key={title}
-                  className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm"
+                  key={step}
+                  className={`relative overflow-hidden rounded-xl border border-slate-200 bg-white p-5 shadow-sm`}
                 >
-                  <div className="flex items-center gap-3 border-b border-slate-100 px-5 py-3.5">
-                    <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${c.bg}`}>
-                      <Icon className={`h-4 w-4 ${c.icon}`} />
-                    </div>
-                    <h3 className="text-sm font-bold text-slate-900">{title}</h3>
-                  </div>
-                  <div className="divide-y divide-slate-50 px-5">
-                    <div className="flex items-start gap-3 py-3.5">
-                      <span className={`mt-0.5 shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ${c.badge}`}>
-                        Web
-                      </span>
-                      <p className="text-sm text-slate-700">{web}</p>
-                    </div>
-                    <div className="flex items-start gap-3 py-3.5">
-                      <span className="mt-0.5 shrink-0 rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-slate-500">
-                        Group FB
-                      </span>
-                      <p className="text-sm text-slate-400">{fb}</p>
+                  <div className="mb-4 flex items-center gap-3">
+                    <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold ${c.step}`}>
+                      {step}
+                    </span>
+                    <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${c.bg} ring-1 ${c.ring}`}>
+                      <Icon className={`h-4.5 w-4.5 ${c.icon}`} />
                     </div>
                   </div>
+                  <h3 className="mb-1.5 text-sm font-bold text-slate-900">
+                    {title}
+                  </h3>
+                  <p className="text-sm leading-relaxed text-slate-500">
+                    {description}
+                  </p>
                 </div>
               );
             })}

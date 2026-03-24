@@ -7,6 +7,7 @@ import { AccountFilters } from "@/components/storefront/AccountFilters";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { AutoScrollSlider } from "@/components/ui/AutoScrollSlider";
 import { Gamepad2, Search, BadgeCheck, Flame, Clock } from "lucide-react";
+import { RecruitHeroCTA } from "@/components/storefront/RecruitHeroCTA";
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import type { PublicAccount } from "@/types/database";
@@ -124,6 +125,9 @@ export default async function HomePage({
                   Chọn nhanh tài khoản phù hợp với ngân sách và lối chơi của
                   bạn, cập nhật liên tục mỗi ngày.
                 </p>
+
+                {/* Recruitment CTA */}
+                <RecruitHeroCTA />
               </div>
             </div>
           </div>
