@@ -19,7 +19,7 @@ export function ResetPasswordModal({ adminId, adminEmail }: { adminId: string; a
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (password.length < 6) { setError("Mật khẩu phải có ít nhất 6 ký tự."); return; }
+    if (password.length < 8) { setError("Mật khẩu phải có ít nhất 8 ký tự."); return; }
     setLoading(true); setError("");
     try {
       await resetAdminPassword(adminId, password);

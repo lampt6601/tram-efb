@@ -3,6 +3,7 @@
 import { createSupabaseServerClient } from "@/lib/supabase-server";
 import { sendZaloBotNotification } from "@/lib/zalo-bot";
 import { formatCurrency } from "@/lib/constants";
+import { SUPER_ADMIN_EMAIL } from "@/lib/super-admin";
 
 const actionTypeMap: Record<string, string> = {
   CREATE: "Tạo mới",
@@ -46,8 +47,7 @@ export async function notifyAdminAction(
 
     if (!user) return;
 
-    const ownerEmail = "tranhuucanh2000@gmail.com";
-    if (user.email === ownerEmail) return;
+    if (user.email === SUPER_ADMIN_EMAIL) return;
 
     const actionText = actionTypeMap[actionType] || actionType;
     const emoji = actionEmoji[actionType] || "🔔";

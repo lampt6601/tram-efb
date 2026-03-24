@@ -264,6 +264,8 @@ export function AccountForm({ account }: AccountFormProps) {
         data: { user },
       } = await supabase.auth.getUser();
 
+      if (!user) throw new Error("Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.");
+
       const payload = {
         title: values.title,
         purchase_price: parseInt(values.purchasePrice as string) || 0,
@@ -285,7 +287,7 @@ export function AccountForm({ account }: AccountFormProps) {
           : null,
         images: finalImages,
         primary_image_url: finalPrimaryUrl,
-        user_id: user?.id,
+        user_id: user.id,
       };
 
       let accountId = account?.id;

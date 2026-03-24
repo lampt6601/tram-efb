@@ -145,6 +145,8 @@ export async function copyAccountToAdmin(accountId: string, targetAdminId: strin
 
 export async function createAdmin(email: string, password: string, name?: string) {
   await verifySuperAdmin();
+  if (!email || !email.includes("@")) throw new Error("Email không hợp lệ.");
+  if (!password || password.length < 8) throw new Error("Mật khẩu phải có ít nhất 8 ký tự.");
   const service = createSupabaseServiceClient();
   const { data, error } = await service.auth.admin.createUser({
     email,

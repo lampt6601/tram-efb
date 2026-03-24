@@ -1,7 +1,7 @@
 "use server";
 
 import { createSupabaseServerClient } from "@/lib/supabase-server";
-import { createSupabaseServiceClient } from "@/lib/supabase-service";
+import { createSupabaseAnonClient } from "@/lib/supabase-anon";
 import { revalidatePath } from "next/cache";
 
 export async function updateMyProfile(name: string) {
@@ -30,9 +30,10 @@ export async function changeMyPassword(
   } = await supabase.auth.getUser();
 
   if (!user || !user.email) throw new Error("Unauthorized");
+  if (!newPassword || newPassword.length < 8) throw new Error("Mật khẩu mới phải có ít nhất 8 ký tự.");
 
-  // Verify current password by attempting sign-in
-  const { error: signInError } = await createSupabaseServiceClient()
+  // Verify current password by attempting sign-in with anon client
+  const { error: signInError } = await createSupabaseAnonClient()
     .auth.signInWithPassword({
       email: user.email,
       password: currentPassword,

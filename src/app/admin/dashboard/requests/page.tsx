@@ -38,9 +38,13 @@ export default async function RequestsPage({
     .order("created_at", { ascending: false });
 
   if (searchQuery) {
-    query = query.or(
-      `detail.ilike.%${searchQuery}%,requester_name.ilike.%${searchQuery}%`,
-    );
+    // Sanitize: escape PostgREST special chars to prevent filter injection
+    const sanitized = searchQuery.replace(/[%_\\,().]/g, "");
+    if (sanitized) {
+      query = query.or(
+        `detail.ilike.%${sanitized}%,requester_name.ilike.%${sanitized}%`,
+      );
+    }
   }
 
   if (statusFilter === "pending") {
