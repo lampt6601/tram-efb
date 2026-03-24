@@ -24,8 +24,8 @@ export function Header() {
           title="Tham gia Group Zalo Mua Bán Acc"
         >
           <Image src={zaloIcon} alt="Zalo" className="h-4 w-4 object-contain sm:h-5 sm:w-5" />
-          <span className="hidden sm:inline">Group Mua Bán Acc</span>
-          <span className="sm:hidden">Zalo Group</span>
+          <span className="hidden sm:inline">Shop Account Trên Zalo</span>
+          <span className="sm:hidden">Zalo Box</span>
         </a>
       </div>
     </header>

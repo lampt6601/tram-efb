@@ -41,10 +41,10 @@ export function Footer() {
             >
               <Image
                 src={zaloIcon}
-                alt="Zalo Group Mua Bán"
+                alt="Shop Zalo Trên Zalo"
                 className="h-5 w-5 object-contain"
               />
-              <span>Group Mua Bán Acc</span>
+              <span>Shop Zalo Trên Zalo</span>
             </a>
           </div>
 
