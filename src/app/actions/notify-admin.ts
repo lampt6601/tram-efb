@@ -8,6 +8,7 @@ import { SUPER_ADMIN_EMAIL } from "@/lib/super-admin";
 const actionTypeMap: Record<string, string> = {
   CREATE: "Tạo mới",
   UPDATE: "Cập nhật",
+  RE_APPROVAL: "Cần duyệt lại",
   DELETE: "Xóa",
   SELL: "Bán",
   UPDATE_SALE: "Cập nhật giá Sale",
@@ -16,6 +17,7 @@ const actionTypeMap: Record<string, string> = {
 const actionEmoji: Record<string, string> = {
   CREATE: "🆕",
   UPDATE: "✏️",
+  RE_APPROVAL: "🔄",
   DELETE: "🗑️",
   SELL: "💰",
   UPDATE_SALE: "🏷️",

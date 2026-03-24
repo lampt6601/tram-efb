@@ -18,6 +18,7 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { adminThumb } from "@/lib/image-utils";
 import { MAX_IMAGE_UPLOAD_BYTES } from "@/lib/constants";
+import { checkIsSuperAdmin } from "@/lib/super-admin";
 
 interface AccountFormProps {
   account?: Account | null;
@@ -55,6 +56,8 @@ export function AccountForm({ account }: AccountFormProps) {
   const [availableEmails, setAvailableEmails] = useState<Email[]>([]);
   const [loading, setLoading] = useState(false);
   const [imageError, setImageError] = useState("");
+  /** True if admin is restricted (non-super, no auto_approve) — updates need re-approval */
+  const [isRestricted, setIsRestricted] = useState(false);
   const {
     files: uploadFiles,
     overallProgress,
@@ -134,6 +137,22 @@ export function AccountForm({ account }: AccountFormProps) {
     };
     fetchEmails();
   }, [supabase, isEditing, account]);
+
+  // Determine if current admin is restricted (needs re-approval on edits)
+  useEffect(() => {
+    const checkRestricted = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      if (checkIsSuperAdmin(user.email)) { setIsRestricted(false); return; }
+      const { data: settings } = await supabase
+        .from("admin_settings")
+        .select("auto_approve")
+        .eq("user_id", user.id)
+        .single();
+      setIsRestricted(!settings?.auto_approve);
+    };
+    checkRestricted();
+  }, [supabase]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -305,6 +324,32 @@ export function AccountForm({ account }: AccountFormProps) {
       let accountId = account?.id;
       let needsApproval = false;
 
+      // Re-approval check for restricted admins editing approved accounts
+      if (isEditing && isRestricted && account.is_approved) {
+        const priceDecreased = payload.selling_price < (account.selling_price ?? 0);
+        const onlyPriceChanged =
+          payload.title === (account.title ?? "") &&
+          payload.purchase_price === (account.purchase_price ?? 0) &&
+          payload.status === (account.status ?? "Available") &&
+          payload.total_gp === (account.total_gp ?? 0) &&
+          payload.total_coins_android === (account.total_coins_android ?? 0) &&
+          payload.total_coins_ios === (account.total_coins_ios ?? 0) &&
+          (payload.server_region ?? null) === (account.server_region ?? null) &&
+          (payload.monthly_log_quota ?? null) === (account.monthly_log_quota ?? null) &&
+          (payload.email_id ?? null) === (account.email_id ?? null) &&
+          payload.is_clone === (account.is_clone ?? false) &&
+          (payload.original_price ?? null) === (account.original_price ?? null) &&
+          JSON.stringify(payload.images) === JSON.stringify(account.images ?? []) &&
+          (payload.primary_image_url ?? null) === (account.primary_image_url ?? null);
+
+        const skipReApproval = priceDecreased && onlyPriceChanged;
+
+        if (!skipReApproval) {
+          (payload as Record<string, unknown>).is_approved = false;
+          needsApproval = true;
+        }
+      }
+
       if (isEditing) {
         const { error: err } = await supabase
           .from("accounts")
@@ -323,8 +368,11 @@ export function AccountForm({ account }: AccountFormProps) {
       }
 
       try {
+        const actionType = isEditing
+          ? needsApproval ? "RE_APPROVAL" : "UPDATE"
+          : "CREATE";
         await notifyAdminAction(
-          isEditing ? "UPDATE" : "CREATE",
+          actionType,
           payload.title,
           {
             purchasePrice: payload.purchase_price
@@ -347,7 +395,11 @@ export function AccountForm({ account }: AccountFormProps) {
       }
 
       resetUploadState();
-      toast.success(isEditing ? "Đã cập nhật tài khoản" : "Đã tạo tài khoản mới");
+      if (isEditing && needsApproval) {
+        toast.info("Tài khoản đã chuyển về chờ duyệt do có thay đổi nội dung.");
+      } else {
+        toast.success(isEditing ? "Đã cập nhật tài khoản" : "Đã tạo tài khoản mới");
+      }
       router.refresh();
       router.push("/admin/dashboard/accounts");
     } catch (err: unknown) {
