@@ -28,7 +28,7 @@ export async function RelatedAccounts({
     .lte("selling_price", maxPrice)
     .order("is_priority", { ascending: false })
     .order("created_at", { ascending: false })
-    .limit(4);
+    .limit(3);
 
   const accounts = (data ?? []) as PublicAccount[];
 
@@ -41,7 +41,7 @@ export async function RelatedAccounts({
       .not("id", "in", `(${existingIds.join(",")})`)
       .order("is_priority", { ascending: false })
       .order("created_at", { ascending: false })
-      .limit(4 - accounts.length);
+      .limit(3 - accounts.length);
 
     if (fallback) {
       accounts.push(...(fallback as PublicAccount[]));
@@ -55,9 +55,12 @@ export async function RelatedAccounts({
       <h2 className="mb-4 text-lg font-bold text-slate-900 sm:text-xl">
         Tài Khoản Tương Tự
       </h2>
-      <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+      {/* Horizontal scroll on mobile, grid on sm+ */}
+      <div className="-mx-4 flex gap-3 overflow-x-auto px-4 pb-3 snap-x snap-mandatory scrollbar-hide sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-4 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-3">
         {accounts.map((account) => (
-          <AccountCard key={account.id} account={account} />
+          <div key={account.id} className="w-[65vw] max-w-[280px] shrink-0 snap-start sm:w-auto sm:max-w-none sm:shrink">
+            <AccountCard account={account} />
+          </div>
         ))}
       </div>
     </section>
