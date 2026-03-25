@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createSupabaseServiceClient } from "@/lib/supabase-service";
 import { revalidatePath } from "next/cache";
+import { rateLimit, getClientIp } from "@/lib/rate-limit";
 
 const BASE_URL = "https://thc-efb.com";
 
@@ -116,6 +117,16 @@ export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
+  // Rate limit: 10 approve attempts per minute per IP
+  const ip = getClientIp(request.headers);
+  const rl = rateLimit(`approve:${ip}`, { limit: 10, windowSeconds: 60 });
+  if (!rl.success) {
+    return htmlResponse(
+      buildPage("Quá nhiều yêu cầu", "⏳", "Vui lòng thử lại sau vài phút."),
+      429,
+    );
+  }
+
   const { id } = await params;
   const secret = process.env.APPROVE_SECRET_TOKEN;
   const token = request.nextUrl.searchParams.get("token");

@@ -16,6 +16,8 @@ import {
   UserCircle,
   BookOpen,
   SearchCheck,
+  Star,
+  UserPlus,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -32,6 +34,8 @@ const superAdminNavItems = [
   { href: "/admin/dashboard/super/revenue", label: "Doanh Thu Shop", icon: ClipboardCheck },
   { href: "/admin/dashboard/super/accounts", label: "Tất Cả Tài Khoản", icon: Globe },
   { href: "/admin/dashboard/super/admins", label: "Quản Lý Admin", icon: Users },
+  { href: "/admin/dashboard/super/reviews", label: "Đánh Giá", icon: Star },
+  { href: "/admin/dashboard/super/applications", label: "Đơn Đăng Ký CTV", icon: UserPlus },
 ];
 
 interface SidebarProps {

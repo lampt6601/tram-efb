@@ -40,6 +40,9 @@ type SearchParams = {
   q?: string;
   clone?: string;
   sort?: string;
+  server?: string;
+  minStrength?: string;
+  minGp?: string;
 };
 
 export default async function HomePage({
@@ -53,16 +56,22 @@ export default async function HomePage({
   const searchQuery = params.q;
   const cloneOnly = params.clone === "1";
   const sort = params.sort ?? "newest";
+  const serverFilter = params.server ?? "";
+  const minStrength = params.minStrength ? parseInt(params.minStrength, 10) : null;
+  const minGp = params.minGp ? parseInt(params.minGp, 10) : null;
 
   const supabase = createSupabaseAnonClient();
 
-  // Build the accounts query with price + search + clone filter
+  // Build the accounts query with all filters
   let query = supabase.from("public_accounts").select("*");
 
   if (minPrice !== null) query = query.gte("selling_price", minPrice);
   if (maxPrice !== null) query = query.lte("selling_price", maxPrice);
   if (searchQuery) query = query.ilike("title", `%${searchQuery}%`);
   if (cloneOnly) query = query.eq("is_clone", true);
+  if (serverFilter) query = query.eq("server_region", serverFilter);
+  if (minStrength !== null) query = query.gte("team_strength", minStrength);
+  if (minGp !== null) query = query.gte("total_gp", minGp);
 
   // Priority accounts first, then sort
   query = query.order("is_priority", { ascending: false, nullsFirst: false });
@@ -76,6 +85,12 @@ export default async function HomePage({
       break;
     case "price_desc":
       query = query.order("selling_price", { ascending: false });
+      break;
+    case "strength_desc":
+      query = query.order("team_strength", { ascending: false, nullsFirst: false });
+      break;
+    case "gp_desc":
+      query = query.order("total_gp", { ascending: false, nullsFirst: false });
       break;
     default:
       query = query.order("created_at", { ascending: false });
@@ -91,6 +106,18 @@ export default async function HomePage({
       "id, title, selling_price, images, primary_image_url, status, total_gp, total_coins_android, total_coins_ios, team_strength, created_at",
     )
     .order("created_at", { ascending: false });
+
+  // Fetch distinct server regions for dynamic filter dropdown
+  const { data: serverData } = await supabase
+    .from("public_accounts")
+    .select("server_region");
+  const serverRegions = [
+    ...new Set(
+      (serverData ?? [])
+        .map((r: { server_region: string | null }) => r.server_region)
+        .filter(Boolean) as string[],
+    ),
+  ].sort();
 
   const allItems = (accounts ?? []) as PublicAccount[];
   const soldItems = (soldAccountsRaw ?? []) as PublicAccount[];
@@ -143,7 +170,7 @@ export default async function HomePage({
 
           <ScrollReveal delay={120} className="mb-5 sm:mb-8">
             <Suspense fallback={null}>
-              <AccountFilters totalCount={allItems.length} />
+              <AccountFilters totalCount={allItems.length} serverRegions={serverRegions} />
             </Suspense>
           </ScrollReveal>
 

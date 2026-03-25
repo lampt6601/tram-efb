@@ -1,8 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createSupabaseServerClient } from "@/lib/supabase-server";
 import { uploadFileToImageKit } from "@/lib/imagekit";
+import { rateLimit, getClientIp, rateLimitHeaders } from "@/lib/rate-limit";
 
 export async function POST(request: NextRequest) {
+  // Rate limit: 20 uploads per minute per IP
+  const ip = getClientIp(request.headers);
+  const rl = rateLimit(`upload:${ip}`, { limit: 20, windowSeconds: 60 });
+  if (!rl.success) {
+    return NextResponse.json(
+      { error: "Quá nhiều yêu cầu. Vui lòng thử lại sau." },
+      { status: 429, headers: rateLimitHeaders(rl) },
+    );
+  }
+
   // Auth check
   const supabase = await createSupabaseServerClient();
   const {

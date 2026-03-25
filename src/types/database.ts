@@ -68,6 +68,40 @@ export interface AccountRequest {
   updated_at: string;
 }
 
+export interface Review {
+  id: string;
+  account_id: string;
+  reviewer_name: string;
+  rating: number;
+  comment: string | null;
+  is_approved: boolean;
+  created_at: string;
+}
+
+export interface PublicReview {
+  id: string;
+  account_id: string;
+  reviewer_name: string;
+  rating: number;
+  comment: string | null;
+  created_at: string;
+}
+
+export type ApplicationStatus = "pending" | "approved" | "rejected";
+
+export interface SellerApplication {
+  id: string;
+  full_name: string;
+  email: string;
+  phone: string | null;
+  zalo_link: string | null;
+  reason: string | null;
+  status: ApplicationStatus;
+  admin_note: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface AdminSettings {
   user_id: string;
   auto_approve: boolean;

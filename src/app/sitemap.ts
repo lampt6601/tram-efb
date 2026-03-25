@@ -5,19 +5,37 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = "https://thc-efb.com";
   const supabase = createSupabaseAnonClient();
 
+  // Available accounts (high priority)
   const { data: publicAccounts } = await supabase
     .from("public_accounts")
-    .select("id, updated_at")
-    .order("updated_at", { ascending: false });
+    .select("id, created_at")
+    .order("created_at", { ascending: false });
 
-  const accountEntries =
+  const availableEntries =
     publicAccounts?.map((account) => ({
       url: `${baseUrl}/accounts/${account.id}`,
-      lastModified: account.updated_at
-        ? new Date(account.updated_at as string)
+      lastModified: account.created_at
+        ? new Date(account.created_at as string)
         : new Date(),
       changeFrequency: "weekly" as const,
       priority: 0.8,
+    })) ?? [];
+
+  // Sold accounts (lower priority, still indexed for social proof)
+  const { data: soldAccounts } = await supabase
+    .from("public_sold_accounts")
+    .select("id, created_at")
+    .order("created_at", { ascending: false })
+    .limit(50);
+
+  const soldEntries =
+    soldAccounts?.map((account) => ({
+      url: `${baseUrl}/accounts/${account.id}`,
+      lastModified: account.created_at
+        ? new Date(account.created_at as string)
+        : new Date(),
+      changeFrequency: "monthly" as const,
+      priority: 0.3,
     })) ?? [];
 
   return [
@@ -27,6 +45,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "daily",
       priority: 1,
     },
-    ...accountEntries,
+    ...availableEntries,
+    ...soldEntries,
   ];
 }

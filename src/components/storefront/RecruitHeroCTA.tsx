@@ -1,22 +1,10 @@
-"use client";
-
+import Link from "next/link";
 import { UserPlus } from "lucide-react";
 
 export function RecruitHeroCTA() {
-  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault();
-    const el = document.getElementById("tuyen-ctv");
-    if (el) {
-      el.scrollIntoView({ behavior: "smooth" });
-      // Dispatch custom event so the collapse opens
-      window.dispatchEvent(new CustomEvent("open-recruit"));
-    }
-  };
-
   return (
-    <a
-      href="#tuyen-ctv"
-      onClick={handleClick}
+    <Link
+      href="/seller/apply"
       className="mx-auto mt-6 inline-flex items-center gap-2.5 rounded-full border border-white/15 bg-white/5 px-5 py-2.5 text-sm font-semibold text-indigo-300 backdrop-blur-sm transition-all hover:bg-white/10 hover:text-white active:scale-95 sm:mt-8 lg:mx-0"
     >
       <UserPlus className="h-4 w-4" />
@@ -25,6 +13,6 @@ export function RecruitHeroCTA() {
         <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-indigo-400" />
         Đang tuyển
       </span>
-    </a>
+    </Link>
   );
 }

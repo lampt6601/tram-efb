@@ -26,8 +26,9 @@ import facebookIcon from "@/assets/icons/facebook.webp";
 import zaloIcon from "@/assets/icons/zalo.png";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import type { PublicAccount } from "@/types/database";
+import type { PublicAccount, PublicReview } from "@/types/database";
 import { ogImage } from "@/lib/image-utils";
+import { ReviewSection } from "@/components/storefront/ReviewSection";
 import {
   AndroidCoinIcon,
   IosCoinIcon,
@@ -117,6 +118,15 @@ export default async function AccountDetailPage({
       .single();
 
     if (!soldData) notFound();
+
+    // Fetch reviews for sold account
+    const { data: reviewsData } = await supabase
+      .from("public_reviews")
+      .select("*")
+      .eq("account_id", id)
+      .order("created_at", { ascending: false })
+      .limit(20);
+    const reviews = (reviewsData ?? []) as PublicReview[];
 
     const account = soldData as PublicAccount;
     const galleryImages = account.primary_image_url
@@ -272,12 +282,24 @@ export default async function AccountDetailPage({
                 </div>
               </div>
             </div>
+
+            {/* Reviews */}
+            <ReviewSection accountId={id} reviews={reviews} isSold={true} />
           </div>
         </main>
         <Footer />
       </div>
     );
   }
+
+  // Fetch reviews for available account
+  const { data: availReviews } = await supabase
+    .from("public_reviews")
+    .select("*")
+    .eq("account_id", id)
+    .order("created_at", { ascending: false })
+    .limit(20);
+  const accountReviews = (availReviews ?? []) as PublicReview[];
 
   // Normal available/pending account
   const account = publicData as PublicAccount;
@@ -513,6 +535,9 @@ export default async function AccountDetailPage({
               </a>
             </div>
           </div>
+          {/* Reviews */}
+          <ReviewSection accountId={id} reviews={accountReviews} isSold={false} />
+
           <script
             type="application/ld+json"
             dangerouslySetInnerHTML={{
@@ -521,15 +546,30 @@ export default async function AccountDetailPage({
                 "@type": "Product",
                 name: account.title,
                 image: galleryImages,
-                description: `Tài khoản eFootball với lực chiến ${account.team_strength ?? 0} và tổng GP ${account.total_gp ?? 0}.`,
+                description: `Tài khoản eFootball ${account.server_region ? `server ${account.server_region}` : ""} với lực chiến ${account.team_strength ?? 0}, tổng GP ${account.total_gp ?? 0}.`,
                 sku: account.id,
+                brand: {
+                  "@type": "Brand",
+                  name: "eFootball",
+                },
+                category: "Game Accounts",
                 offers: {
                   "@type": "Offer",
                   priceCurrency: "VND",
                   price: account.selling_price,
                   availability: "https://schema.org/InStock",
                   url: `https://thc-efb.com/accounts/${account.id}`,
+                  seller: {
+                    "@type": "Organization",
+                    name: "THC eFootball Shop",
+                    url: "https://thc-efb.com",
+                  },
                 },
+                additionalProperty: [
+                  ...(account.team_strength ? [{ "@type": "PropertyValue", name: "Team Strength", value: account.team_strength }] : []),
+                  ...(account.total_gp ? [{ "@type": "PropertyValue", name: "Total GP", value: account.total_gp }] : []),
+                  ...(account.server_region ? [{ "@type": "PropertyValue", name: "Server Region", value: account.server_region }] : []),
+                ],
               }),
             }}
           />

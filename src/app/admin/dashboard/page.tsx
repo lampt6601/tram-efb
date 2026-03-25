@@ -3,6 +3,7 @@ import { formatCurrency } from "@/lib/constants";
 import { StatCard } from "@/components/ui/StatCard";
 import { StatusBadge } from "@/components/ui/Badge";
 import { DashboardPeriodFilter } from "./DashboardPeriodFilter";
+import { SalesTrendChart } from "@/components/admin/SalesTrendChart";
 import {
   Package,
   CheckCircle,
@@ -11,6 +12,7 @@ import {
   ShoppingCart,
   BarChart3,
   ExternalLink,
+  Timer,
 } from "lucide-react";
 import Link from "next/link";
 import type { Account } from "@/types/database";
@@ -99,7 +101,40 @@ export default async function DashboardPage({
   else if (period === "week") periodLabel = " (theo tuần)";
   else if (period === "month") periodLabel = " (theo tháng)";
 
+  // Sales trend data (last 30 days)
   const now = new Date();
+  const salesTrendData = (() => {
+    const days = 30;
+    const result: { date: string; count: number; revenue: number }[] = [];
+    for (let i = days - 1; i >= 0; i--) {
+      const d = new Date(now);
+      d.setDate(d.getDate() - i);
+      const dateStr = d.toISOString().split("T")[0];
+      const daySold = soldItems.filter((a) => {
+        const aDate = getVNDateStr(a.updated_at ?? a.created_at);
+        return aDate === dateStr;
+      });
+      result.push({
+        date: dateStr,
+        count: daySold.length,
+        revenue: daySold.reduce((s, a) => s + Number(a.selling_price), 0),
+      });
+    }
+    return result;
+  })();
+
+  // Avg time to sell (days from created to updated for sold accounts)
+  const avgTimeToSell = (() => {
+    const soldWithTime = soldItems.filter((a) => a.updated_at && a.created_at);
+    if (soldWithTime.length === 0) return null;
+    const totalDays = soldWithTime.reduce((sum, a) => {
+      const created = new Date(a.created_at).getTime();
+      const sold = new Date(a.updated_at).getTime();
+      return sum + Math.max(0, (sold - created) / (1000 * 60 * 60 * 24));
+    }, 0);
+    return Math.round(totalDays / soldWithTime.length * 10) / 10;
+  })();
+
   const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
   const staleAccounts = items
     .filter((a) => a.status !== "Sold" && new Date(a.created_at) < weekAgo)
@@ -155,6 +190,22 @@ export default async function DashboardPage({
             totalProfit >= 0 ? "ring-1 ring-emerald-200" : "ring-1 ring-red-200"
           }
         />
+      </div>
+
+      {/* Avg time to sell */}
+      {avgTimeToSell !== null && (
+        <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <StatCard
+            label="Thời gian bán TB"
+            value={`${avgTimeToSell} ngày`}
+            icon={<Timer className="h-6 w-6" />}
+          />
+        </div>
+      )}
+
+      {/* Sales trend chart */}
+      <div className="mt-6">
+        <SalesTrendChart data={salesTrendData} />
       </div>
 
       {staleAccounts.length > 0 && (
