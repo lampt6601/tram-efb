@@ -29,6 +29,7 @@ import type { Metadata } from "next";
 import type { PublicAccount, PublicReview } from "@/types/database";
 import { ogImage } from "@/lib/image-utils";
 import { ReviewSection } from "@/components/storefront/ReviewSection";
+import { RelatedAccounts } from "@/components/storefront/RelatedAccounts";
 import {
   AndroidCoinIcon,
   IosCoinIcon,
@@ -283,6 +284,13 @@ export default async function AccountDetailPage({
 
             {/* Reviews */}
             <ReviewSection accountId={id} reviews={reviews} isSold={true} />
+
+            {/* Related accounts */}
+            <RelatedAccounts
+              currentAccountId={id}
+              currentPrice={account.selling_price}
+              onlyAvailable
+            />
           </div>
         </main>
         <Footer />
@@ -290,14 +298,7 @@ export default async function AccountDetailPage({
     );
   }
 
-  // Fetch reviews for available account
-  const { data: availReviews } = await supabase
-    .from("public_reviews")
-    .select("*")
-    .eq("account_id", id)
-    .order("created_at", { ascending: false })
-    .limit(20);
-  const accountReviews = (availReviews ?? []) as PublicReview[];
+  // No reviews for available accounts (reviews are only for sold accounts)
 
   // Normal available/pending account
   const account = publicData as PublicAccount;
@@ -533,8 +534,11 @@ export default async function AccountDetailPage({
               </a>
             </div>
           </div>
-          {/* Reviews */}
-          <ReviewSection accountId={id} reviews={accountReviews} isSold={false} />
+          {/* Related accounts */}
+          <RelatedAccounts
+            currentAccountId={id}
+            currentPrice={account.selling_price}
+          />
 
           <script
             type="application/ld+json"
@@ -568,34 +572,6 @@ export default async function AccountDetailPage({
                   ...(account.total_gp ? [{ "@type": "PropertyValue", name: "Total GP", value: account.total_gp }] : []),
                   ...(account.server_region ? [{ "@type": "PropertyValue", name: "Server Region", value: account.server_region }] : []),
                 ],
-                ...(accountReviews.length > 0
-                  ? {
-                      aggregateRating: {
-                        "@type": "AggregateRating",
-                        ratingValue: (
-                          accountReviews.reduce((sum, r) => sum + r.rating, 0) /
-                          accountReviews.length
-                        ).toFixed(1),
-                        reviewCount: accountReviews.length,
-                        bestRating: 5,
-                        worstRating: 1,
-                      },
-                      review: accountReviews.slice(0, 5).map((r) => ({
-                        "@type": "Review",
-                        author: {
-                          "@type": "Person",
-                          name: r.reviewer_name,
-                        },
-                        reviewRating: {
-                          "@type": "Rating",
-                          ratingValue: r.rating,
-                          bestRating: 5,
-                        },
-                        ...(r.comment ? { reviewBody: r.comment } : {}),
-                        datePublished: r.created_at,
-                      })),
-                    }
-                  : {}),
               }),
             }}
           />
