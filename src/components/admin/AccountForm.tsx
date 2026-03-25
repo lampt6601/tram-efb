@@ -9,6 +9,7 @@ import Link from "next/link";
 import type { Account, Email, AccountStatus } from "@/types/database";
 import { useForm, Controller } from "react-hook-form";
 import { notifyAdminAction } from "@/app/actions/notify-admin";
+import { checkAdminRestricted } from "@/app/actions/account-actions";
 import { useParallelUpload } from "@/hooks/use-parallel-upload";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -18,7 +19,6 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { adminThumb } from "@/lib/image-utils";
 import { MAX_IMAGE_UPLOAD_BYTES } from "@/lib/constants";
-import { checkIsSuperAdmin } from "@/lib/super-admin";
 
 interface AccountFormProps {
   account?: Account | null;
@@ -139,20 +139,10 @@ export function AccountForm({ account }: AccountFormProps) {
   }, [supabase, isEditing, account]);
 
   // Determine if current admin is restricted (needs re-approval on edits)
+  // Uses server action to bypass RLS on admin_settings table
   useEffect(() => {
-    const checkRestricted = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-      if (checkIsSuperAdmin(user.email)) { setIsRestricted(false); return; }
-      const { data: settings } = await supabase
-        .from("admin_settings")
-        .select("auto_approve")
-        .eq("user_id", user.id)
-        .single();
-      setIsRestricted(!settings?.auto_approve);
-    };
-    checkRestricted();
-  }, [supabase]);
+    checkAdminRestricted().then(setIsRestricted);
+  }, []);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {

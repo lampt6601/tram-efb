@@ -1,6 +1,8 @@
 "use server";
 
 import { createSupabaseServerClient } from "@/lib/supabase-server";
+import { createSupabaseServiceClient } from "@/lib/supabase-service";
+import { checkIsSuperAdmin } from "@/lib/super-admin";
 import { assertAvailablePriorityLimit } from "@/lib/account-priority";
 import { revalidatePath } from "next/cache";
 
@@ -39,4 +41,27 @@ export async function toggleAccountPriority(accountId: string) {
 
   revalidatePath("/admin/dashboard/accounts");
   revalidatePath("/"); // slider acc nổi bật trang chủ
+}
+
+/**
+ * Check if the current admin is restricted (non-super, no auto_approve).
+ * Uses service client to bypass RLS on admin_settings table.
+ */
+export async function checkAdminRestricted(): Promise<boolean> {
+  const supabase = await createSupabaseServerClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return true;
+
+  if (checkIsSuperAdmin(user.email)) return false;
+
+  const service = createSupabaseServiceClient();
+  const { data: settings } = await service
+    .from("admin_settings")
+    .select("auto_approve")
+    .eq("user_id", user.id)
+    .single();
+
+  return !settings?.auto_approve;
 }
