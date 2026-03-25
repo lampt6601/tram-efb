@@ -5,6 +5,7 @@ import { OwnerSection } from "@/components/storefront/OwnerSection";
 import { AccountCard } from "@/components/storefront/AccountCard";
 import { AccountFilters } from "@/components/storefront/AccountFilters";
 import { StatsBar } from "@/components/storefront/StatsBar";
+import { ZaloNotify } from "@/components/storefront/ZaloNotify";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { AutoScrollSlider } from "@/components/ui/AutoScrollSlider";
 import { Gamepad2, Search, BadgeCheck, Flame, Clock } from "lucide-react";
@@ -291,6 +292,13 @@ export default async function HomePage({
           </section>
         )}
       </main>
+
+      {/* Zalo notification CTA */}
+      <section className="border-t border-slate-200 dark:border-slate-700">
+        <div className="mx-auto max-w-xl px-4 py-8 sm:px-6 sm:py-10">
+          <ZaloNotify />
+        </div>
+      </section>
 
       <OwnerSection />
       <Footer />
