@@ -68,7 +68,7 @@ export function EmailFilters({ totalCount }: { totalCount: number }) {
       <div className="flex flex-col gap-2.5 md:flex-row md:flex-wrap md:items-center md:gap-3">
         {/* Search */}
         <div className="relative w-full md:flex-1 md:min-w-48">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 z-10 pointer-events-none" />
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 dark:text-slate-500 z-10 pointer-events-none" />
           <Input
             type="text"
             placeholder="Tìm theo email..."
@@ -76,17 +76,17 @@ export function EmailFilters({ totalCount }: { totalCount: number }) {
             onChange={(e) => setLocalSearch(e.target.value)}
             onFocus={() => setIsSearchFocused(true)}
             onBlur={() => setIsSearchFocused(false)}
-            className="h-10 w-full rounded-xl border-slate-200 pl-10 pr-4 text-sm text-slate-700 shadow-sm transition-all focus-visible:border-indigo-400 focus-visible:ring-4 focus-visible:ring-indigo-400/20"
+            className="h-10 w-full rounded-xl border-slate-200 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 pl-10 pr-4 text-sm text-slate-700 shadow-sm transition-all focus-visible:border-indigo-400 focus-visible:ring-4 focus-visible:ring-indigo-400/20"
           />
         </div>
 
         {/* Link status + Clear + Count */}
         <div className="flex items-center gap-2 w-full md:w-auto">
-          <div className="flex flex-1 md:flex-none items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-2.5 shadow-sm">
+          <div className="flex flex-1 md:flex-none items-center gap-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-2.5 shadow-sm">
             <select
               value={link}
               onChange={(e) => update("link", e.target.value)}
-              className="h-9 w-full bg-transparent text-sm text-slate-700 outline-none cursor-pointer"
+              className="h-9 w-full bg-transparent text-sm text-slate-700 dark:text-slate-200 outline-none cursor-pointer"
             >
               {LINK_OPTIONS.map((o) => (
                 <option key={o.value} value={o.value}>
@@ -107,7 +107,7 @@ export function EmailFilters({ totalCount }: { totalCount: number }) {
             </Button>
           )}
 
-          <span className="ml-auto shrink-0 text-sm font-medium text-slate-500">
+          <span className="ml-auto shrink-0 text-sm font-medium text-slate-500 dark:text-slate-400">
             {isPending ? "Đang lọc..." : `${totalCount} email`}
           </span>
         </div>

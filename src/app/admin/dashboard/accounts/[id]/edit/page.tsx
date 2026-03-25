@@ -29,14 +29,14 @@ export default function EditAccountPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <Loader2 className="h-8 w-8 animate-spin text-indigo-600" />
+        <Loader2 className="h-8 w-8 animate-spin text-indigo-600 dark:text-indigo-400" />
       </div>
     );
   }
 
   if (!account) {
     return (
-      <div className="py-20 text-center text-slate-400">
+      <div className="py-20 text-center text-slate-400 dark:text-slate-500">
         Không tìm thấy tài khoản.
       </div>
     );

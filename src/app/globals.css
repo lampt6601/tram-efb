@@ -3,6 +3,11 @@
 @tailwind utilities;
 
 @layer base {
+  html {
+    transition: background-color 0.3s ease, color 0.3s ease;
+    color-scheme: light;
+  }
+
   :root {
     --color-primary: #6366f1;
     --color-primary-dark: #4f46e5;
@@ -37,6 +42,7 @@
   }
 
   .dark {
+    color-scheme: dark;
     --background: oklch(0.145 0 0);
     --foreground: oklch(0.985 0 0);
     --card: oklch(0.205 0 0);
@@ -76,6 +82,8 @@
     font-family: var(--font-sans), sans-serif;
   }
 }
+
+/* Dark mode: each component manages its own dark: classes via Tailwind */
 
 @layer utilities {
   .gradient-bg {

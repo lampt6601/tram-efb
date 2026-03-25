@@ -40,8 +40,8 @@ export function AutoApproveToggle({ adminId, adminEmail, enabled }: AutoApproveT
       title={active ? "Tắt auto duyệt" : "Bật auto duyệt"}
       className={`inline-flex items-center justify-center gap-2 rounded-lg border px-2 py-1 text-xs font-medium transition-colors disabled:opacity-60 disabled:cursor-not-allowed ${
         active
-          ? "border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
-          : "border-slate-200 bg-slate-50 text-slate-500 hover:bg-slate-100"
+          ? "border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-400 dark:hover:bg-emerald-500/20"
+          : "border-slate-200 bg-slate-50 text-slate-500 hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-slate-700"
       }`}
     >
       <span className="inline-flex items-center justify-center gap-2">

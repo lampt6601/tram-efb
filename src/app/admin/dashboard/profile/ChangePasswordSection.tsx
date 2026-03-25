@@ -61,15 +61,15 @@ export function ChangePasswordSection() {
     currentPassword && newPassword && confirmPassword && !loading;
 
   return (
-    <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-      <div className="border-b border-slate-100 bg-slate-50 px-6 py-4">
+    <div className="overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm">
+      <div className="border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 px-6 py-4">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100">
-            <KeyRound className="h-5 w-5 text-slate-600" />
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-700">
+            <KeyRound className="h-5 w-5 text-slate-600 dark:text-slate-300" />
           </div>
           <div>
-            <h2 className="font-semibold text-slate-900">Đổi Mật Khẩu</h2>
-            <p className="text-sm text-slate-500">
+            <h2 className="font-semibold text-slate-900 dark:text-slate-100">Đổi Mật Khẩu</h2>
+            <p className="text-sm text-slate-500 dark:text-slate-400">
               Cập nhật mật khẩu đăng nhập của bạn
             </p>
           </div>
@@ -78,7 +78,7 @@ export function ChangePasswordSection() {
 
       <form onSubmit={handleSubmit} className="space-y-4 p-6">
         <div>
-          <Label className="text-slate-700">Mật khẩu hiện tại</Label>
+          <Label className="text-slate-700 dark:text-slate-200">Mật khẩu hiện tại</Label>
           <div className="relative mt-1.5">
             <Input
               type={showCurrent ? "text" : "password"}
@@ -89,13 +89,13 @@ export function ChangePasswordSection() {
               }}
               placeholder="Nhập mật khẩu hiện tại"
               disabled={loading}
-              className="rounded-xl border-slate-300 pr-10"
+              className="rounded-xl border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 pr-10"
             />
             <button
               type="button"
               onClick={() => setShowCurrent(!showCurrent)}
               tabIndex={-1}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300"
             >
               {showCurrent ? (
                 <EyeOff className="h-4 w-4" />
@@ -107,7 +107,7 @@ export function ChangePasswordSection() {
         </div>
 
         <div>
-          <Label className="text-slate-700">Mật khẩu mới</Label>
+          <Label className="text-slate-700 dark:text-slate-200">Mật khẩu mới</Label>
           <div className="relative mt-1.5">
             <Input
               type={showNew ? "text" : "password"}
@@ -118,13 +118,13 @@ export function ChangePasswordSection() {
               }}
               placeholder="Tối thiểu 6 ký tự"
               disabled={loading}
-              className="rounded-xl border-slate-300 pr-10"
+              className="rounded-xl border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 pr-10"
             />
             <button
               type="button"
               onClick={() => setShowNew(!showNew)}
               tabIndex={-1}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300"
             >
               {showNew ? (
                 <EyeOff className="h-4 w-4" />
@@ -136,7 +136,7 @@ export function ChangePasswordSection() {
         </div>
 
         <div>
-          <Label className="text-slate-700">Xác nhận mật khẩu mới</Label>
+          <Label className="text-slate-700 dark:text-slate-200">Xác nhận mật khẩu mới</Label>
           <Input
             type={showNew ? "text" : "password"}
             value={confirmPassword}
@@ -146,11 +146,11 @@ export function ChangePasswordSection() {
             }}
             placeholder="Nhập lại mật khẩu mới"
             disabled={loading}
-            className="mt-1.5 rounded-xl border-slate-300"
+            className="mt-1.5 rounded-xl border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100"
           />
         </div>
 
-        {error && <p className="text-sm text-red-600">{error}</p>}
+        {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
 
         <div className="flex justify-end pt-2">
           <Button

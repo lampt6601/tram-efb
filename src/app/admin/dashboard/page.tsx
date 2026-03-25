@@ -148,8 +148,8 @@ export default async function DashboardPage({
     <div>
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Bảng Điều Khiển</h1>
-          <p className="mt-1 text-sm text-slate-500">
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Bảng Điều Khiển</h1>
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
             Tổng quan về cửa hàng eFootball của bạn
           </p>
         </div>
@@ -187,7 +187,7 @@ export default async function DashboardPage({
           value={formatCurrency(totalProfit)}
           icon={<TrendingUp className="h-6 w-6" />}
           className={
-            totalProfit >= 0 ? "ring-1 ring-emerald-200" : "ring-1 ring-red-200"
+            totalProfit >= 0 ? "ring-1 ring-emerald-200 dark:ring-emerald-500/30" : "ring-1 ring-red-200 dark:ring-red-500/30"
           }
         />
       </div>
@@ -210,17 +210,17 @@ export default async function DashboardPage({
 
       {staleAccounts.length > 0 && (
         <div className="mt-8">
-          <h2 className="text-lg font-semibold text-slate-900">
+          <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
             Tài khoản đăng hơn 1 tuần chưa bán
           </h2>
-          <p className="mt-1 text-sm text-slate-500">
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
             Đây là những acc đã đăng trên 7 ngày nhưng vẫn chưa được bán. Bạn có
             thể xem lại giá, mô tả hoặc bật ưu tiên để tăng khả năng bán.
           </p>
 
-          <div className="mt-4 overflow-x-auto rounded-xl border border-slate-200 bg-white">
+          <div className="mt-4 overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
             <table className="min-w-full text-left text-sm">
-              <thead className="border-b bg-slate-50 text-xs font-semibold uppercase text-slate-500">
+              <thead className="border-b bg-slate-50 dark:bg-slate-800 text-xs font-semibold uppercase text-slate-500 dark:text-slate-400">
                 <tr>
                   <th className="px-4 py-3">Tài khoản</th>
                   <th className="px-4 py-3">Trạng thái</th>
@@ -239,13 +239,13 @@ export default async function DashboardPage({
                   return (
                     <tr
                       key={account.id}
-                      className="border-t last:border-b text-slate-700"
+                      className="border-t last:border-b text-slate-700 dark:text-slate-200"
                     >
                       <td className="px-4 py-3">
                         <Link
                           href={`/accounts/${account.id}`}
                           target="_blank"
-                          className="group inline-flex items-center gap-1.5 max-w-xs truncate font-medium text-slate-900 hover:text-indigo-600"
+                          className="group inline-flex items-center gap-1.5 max-w-xs truncate font-medium text-slate-900 dark:text-slate-100 hover:text-indigo-600 dark:hover:text-indigo-400"
                         >
                           <span className="truncate group-hover:underline">{account.title}</span>
                           <ExternalLink className="h-3.5 w-3.5 shrink-0 opacity-0 group-hover:opacity-60 transition-opacity" />
@@ -254,10 +254,10 @@ export default async function DashboardPage({
                       <td className="px-4 py-3">
                         <StatusBadge status={account.status} />
                       </td>
-                      <td className="px-4 py-3 text-slate-500">
+                      <td className="px-4 py-3 text-slate-500 dark:text-slate-400">
                         {created.toLocaleDateString("vi-VN")}
                       </td>
-                      <td className="px-4 py-3 text-right text-slate-800">
+                      <td className="px-4 py-3 text-right text-slate-800 dark:text-slate-200">
                         {days} ngày
                       </td>
                     </tr>

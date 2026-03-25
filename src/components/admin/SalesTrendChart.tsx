@@ -29,28 +29,28 @@ export function SalesTrendChart({ data }: SalesTrendChartProps) {
 
   if (data.length === 0) {
     return (
-      <div className="rounded-xl border border-slate-200 bg-white p-5">
+      <div className="rounded-xl border border-slate-200 bg-white p-5 dark:border-slate-700 dark:bg-slate-800">
         <div className="flex items-center gap-2 mb-4">
           <BarChart3 className="h-5 w-5 text-indigo-500" />
-          <h3 className="text-sm font-semibold text-slate-900">
+          <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">
             Xu hướng bán hàng (30 ngày)
           </h3>
         </div>
-        <p className="text-sm text-slate-400">Chưa có dữ liệu bán hàng.</p>
+        <p className="text-sm text-slate-400 dark:text-slate-500">Chưa có dữ liệu bán hàng.</p>
       </div>
     );
   }
 
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-5">
+    <div className="rounded-xl border border-slate-200 bg-white p-5 dark:border-slate-700 dark:bg-slate-800">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <BarChart3 className="h-5 w-5 text-indigo-500" />
-          <h3 className="text-sm font-semibold text-slate-900">
+          <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">
             Xu hướng bán hàng (30 ngày)
           </h3>
         </div>
-        <div className="flex items-center gap-4 text-xs text-slate-500">
+        <div className="flex items-center gap-4 text-xs text-slate-500 dark:text-slate-400">
           <span className="flex items-center gap-1">
             <span className="h-2.5 w-2.5 rounded-sm bg-indigo-500" /> Số acc bán
           </span>
@@ -62,14 +62,14 @@ export function SalesTrendChart({ data }: SalesTrendChartProps) {
 
       {/* Summary stats */}
       <div className="mb-4 flex gap-4">
-        <div className="flex items-center gap-2 rounded-lg bg-indigo-50 px-3 py-1.5">
+        <div className="flex items-center gap-2 rounded-lg bg-indigo-50 px-3 py-1.5 dark:bg-indigo-500/10">
           <TrendingUp className="h-3.5 w-3.5 text-indigo-500" />
-          <span className="text-xs font-semibold text-indigo-700">
+          <span className="text-xs font-semibold text-indigo-700 dark:text-indigo-400">
             {totalSold} acc bán
           </span>
         </div>
-        <div className="flex items-center gap-2 rounded-lg bg-emerald-50 px-3 py-1.5">
-          <span className="text-xs font-semibold text-emerald-700">
+        <div className="flex items-center gap-2 rounded-lg bg-emerald-50 px-3 py-1.5 dark:bg-emerald-500/10">
+          <span className="text-xs font-semibold text-emerald-700 dark:text-emerald-400">
             {new Intl.NumberFormat("vi-VN", {
               style: "currency",
               currency: "VND",
@@ -93,7 +93,7 @@ export function SalesTrendChart({ data }: SalesTrendChartProps) {
               className="group relative flex flex-col items-center flex-1 min-w-0"
             >
               {/* Tooltip */}
-              <div className="absolute -top-16 left-1/2 -translate-x-1/2 hidden group-hover:block z-10 whitespace-nowrap rounded-lg bg-slate-800 px-2.5 py-1.5 text-[10px] text-white shadow-lg">
+              <div className="absolute -top-16 left-1/2 -translate-x-1/2 hidden group-hover:block z-10 whitespace-nowrap rounded-lg bg-slate-800 px-2.5 py-1.5 text-[10px] text-white shadow-lg dark:bg-slate-700">
                 <p className="font-medium">{label}</p>
                 <p>Bán: {bar.count} acc</p>
                 <p>
@@ -119,7 +119,7 @@ export function SalesTrendChart({ data }: SalesTrendChartProps) {
 
               {/* Date label (show every few days to avoid crowding) */}
               {(i === 0 || i === bars.length - 1 || i % 7 === 0) && (
-                <span className="mt-1 text-[9px] text-slate-400">{label}</span>
+                <span className="mt-1 text-[9px] text-slate-400 dark:text-slate-500">{label}</span>
               )}
             </div>
           );

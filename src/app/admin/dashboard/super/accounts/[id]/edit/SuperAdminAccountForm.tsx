@@ -40,9 +40,9 @@ type FormValues = {
 };
 
 const inputClass =
-  "w-full rounded-xl border-slate-300 px-4 py-2.5 text-sm focus-visible:border-indigo-500 focus-visible:ring-indigo-500/30";
+  "w-full rounded-xl border-slate-300 px-4 py-2.5 text-sm focus-visible:border-indigo-500 focus-visible:ring-indigo-500/30 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100";
 const selectClass =
-  "w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm outline-none transition-colors focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 bg-white";
+  "w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm outline-none transition-colors focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 bg-white dark:bg-slate-800 dark:border-slate-600 dark:text-slate-100";
 
 export function SuperAdminAccountForm({ account, availableEmails }: Props) {
   const router = useRouter();
@@ -205,18 +205,18 @@ export function SuperAdminAccountForm({ account, availableEmails }: Props) {
     <div className="mx-auto max-w-3xl">
       <Link
         href="/admin/dashboard/super/accounts"
-        className="mb-6 inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-amber-600"
+        className="mb-6 inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-amber-600 dark:text-slate-400 dark:hover:text-amber-400"
       >
         <ArrowLeft className="h-4 w-4" /> Quay lại Tất Cả Tài Khoản
       </Link>
 
-      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800">
         <div className="mb-6 flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-100">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-100 dark:bg-amber-500/10">
             <Star className="h-4 w-4 text-amber-600" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-slate-900">
+            <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">
               Chỉnh Sửa Tài Khoản
             </h1>
             <p className="text-xs text-amber-600">
@@ -227,7 +227,7 @@ export function SuperAdminAccountForm({ account, availableEmails }: Props) {
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div>
-            <Label className="mb-1.5 text-slate-700">
+            <Label className="mb-1.5 text-slate-700 dark:text-slate-200">
               Tiêu Đề <span className="text-red-500">*</span>
             </Label>
             <Input
@@ -260,10 +260,10 @@ export function SuperAdminAccountForm({ account, availableEmails }: Props) {
               },
             ].map(({ name, label, required }) => (
               <div key={name}>
-                <Label className="mb-1.5 text-slate-700">
+                <Label className="mb-1.5 text-slate-700 dark:text-slate-200">
                   {label} {required && <span className="text-red-500">*</span>}
                   {!required && (
-                    <span className="ml-1 text-slate-400 font-normal text-xs">
+                    <span className="ml-1 text-slate-400 dark:text-slate-500 font-normal text-xs">
                       (Tuỳ chọn)
                     </span>
                   )}
@@ -312,7 +312,7 @@ export function SuperAdminAccountForm({ account, availableEmails }: Props) {
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <Label className="mb-1.5 text-slate-700">
+              <Label className="mb-1.5 text-slate-700 dark:text-slate-200">
                 Trạng Thái <span className="text-red-500">*</span>
               </Label>
               <select
@@ -325,10 +325,10 @@ export function SuperAdminAccountForm({ account, availableEmails }: Props) {
               </select>
             </div>
             <div className="flex flex-col justify-center gap-2">
-              <Label className="mb-1.5 hidden text-slate-700 sm:flex">
+              <Label className="mb-1.5 hidden text-slate-700 dark:text-slate-200 sm:flex">
                 Tùy Chọn Khác
               </Label>
-              <div className="flex h-[42px] items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 px-4 mt-1.5">
+              <div className="flex h-[42px] items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 dark:border-slate-700 dark:bg-slate-800 px-4 mt-1.5">
                 <Controller
                   name="isPriority"
                   control={control}
@@ -342,19 +342,19 @@ export function SuperAdminAccountForm({ account, availableEmails }: Props) {
                 />
                 <label
                   htmlFor="isPriority"
-                  className="flex flex-1 cursor-pointer items-center justify-between gap-1.5 text-sm font-medium text-slate-700 select-none"
+                  className="flex flex-1 cursor-pointer items-center justify-between gap-1.5 text-sm font-medium text-slate-700 dark:text-slate-200 select-none"
                 >
                   Tài Khoản Nổi Bật
                   <Star
-                    className={`h-4 w-4 ${isPriorityValue ? "text-amber-500 fill-amber-500" : "text-slate-400"}`}
+                    className={`h-4 w-4 ${isPriorityValue ? "text-amber-500 fill-amber-500" : "text-slate-400 dark:text-slate-500"}`}
                   />
                 </label>
               </div>
-              <p className="text-[11px] text-slate-500 leading-snug px-0.5">
+              <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-snug px-0.5">
                 Tối đa {MAX_PRIORITY_AVAILABLE_ACCOUNTS} acc nổi bật ở trạng thái &quot;Sẵn sàng&quot; cho mỗi
                 admin.
               </p>
-              <div className="flex h-[42px] items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 px-4">
+              <div className="flex h-[42px] items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 dark:border-slate-700 dark:bg-slate-800 px-4">
                 <Controller
                   name="isClone"
                   control={control}
@@ -368,11 +368,11 @@ export function SuperAdminAccountForm({ account, availableEmails }: Props) {
                 />
                 <label
                   htmlFor="isClone"
-                  className="flex flex-1 cursor-pointer items-center justify-between gap-1.5 text-sm font-medium text-slate-700 select-none"
+                  className="flex flex-1 cursor-pointer items-center justify-between gap-1.5 text-sm font-medium text-slate-700 dark:text-slate-200 select-none"
                 >
                   Tài Khoản Clone
                   <Copy
-                    className={`h-4 w-4 ${isCloneValue ? "text-violet-500" : "text-slate-400"}`}
+                    className={`h-4 w-4 ${isCloneValue ? "text-violet-500" : "text-slate-400 dark:text-slate-500"}`}
                   />
                 </label>
               </div>
@@ -389,9 +389,9 @@ export function SuperAdminAccountForm({ account, availableEmails }: Props) {
               ] as const
             ).map(({ name, label, min }) => (
               <div key={name}>
-                <Label className="mb-1.5 text-slate-700">
+                <Label className="mb-1.5 text-slate-700 dark:text-slate-200">
                   {label}{" "}
-                  <span className="text-slate-400 font-normal text-xs">
+                  <span className="text-slate-400 dark:text-slate-500 font-normal text-xs">
                     (Tuỳ chọn)
                   </span>
                 </Label>
@@ -415,9 +415,9 @@ export function SuperAdminAccountForm({ account, availableEmails }: Props) {
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <Label className="mb-1.5 text-slate-700">
+              <Label className="mb-1.5 text-slate-700 dark:text-slate-200">
                 Email Liên Kết{" "}
-                <span className="ml-1 text-xs font-normal text-slate-400">
+                <span className="ml-1 text-xs font-normal text-slate-400 dark:text-slate-500">
                   (chỉ email chưa liên kết)
                 </span>
               </Label>
@@ -434,7 +434,7 @@ export function SuperAdminAccountForm({ account, availableEmails }: Props) {
               </select>
             </div>
             <div>
-              <Label className="mb-1.5 text-slate-700">Server / Vùng</Label>
+              <Label className="mb-1.5 text-slate-700 dark:text-slate-200">Server / Vùng</Label>
               <select
                 {...register("serverRegion")}
                 className={cn(selectClass, "mt-1.5")}
@@ -449,7 +449,7 @@ export function SuperAdminAccountForm({ account, availableEmails }: Props) {
           </div>
 
           <div>
-            <Label className="mb-1.5 text-slate-700">
+            <Label className="mb-1.5 text-slate-700 dark:text-slate-200">
               Hình Ảnh <span className="text-red-500">*</span>
             </Label>
             <div
@@ -458,10 +458,10 @@ export function SuperAdminAccountForm({ account, availableEmails }: Props) {
                 e.preventDefault();
                 addImageFiles(Array.from(e.dataTransfer.files));
               }}
-              className="mt-1.5 flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-300 bg-slate-50/50 px-6 py-8 hover:border-indigo-500 hover:bg-slate-50"
+              className="mt-1.5 flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-300 bg-slate-50/50 px-6 py-8 hover:border-indigo-500 hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-800/50 dark:hover:border-indigo-400 dark:hover:bg-slate-700/50"
             >
-              <UploadCloud className="mb-3 h-10 w-10 text-slate-400" />
-              <div className="flex text-sm text-slate-600">
+              <UploadCloud className="mb-3 h-10 w-10 text-slate-400 dark:text-slate-500" />
+              <div className="flex text-sm text-slate-600 dark:text-slate-300">
                 <label
                   htmlFor="sa-file-upload"
                   className="cursor-pointer font-semibold text-indigo-600 hover:text-indigo-500"
@@ -481,12 +481,12 @@ export function SuperAdminAccountForm({ account, availableEmails }: Props) {
                 </label>
                 <p className="pl-1">hoặc kéo thả vào đây</p>
               </div>
-              <p className="mt-2 flex items-center gap-1 text-xs text-slate-400">
-                <kbd className="rounded border border-slate-200 bg-white px-1.5 py-0.5 font-mono text-[10px] shadow-sm">
+              <p className="mt-2 flex items-center gap-1 text-xs text-slate-400 dark:text-slate-500">
+                <kbd className="rounded border border-slate-200 bg-white px-1.5 py-0.5 font-mono text-[10px] shadow-sm dark:border-slate-600 dark:bg-slate-700">
                   Ctrl
                 </kbd>
                 +
-                <kbd className="rounded border border-slate-200 bg-white px-1.5 py-0.5 font-mono text-[10px] shadow-sm">
+                <kbd className="rounded border border-slate-200 bg-white px-1.5 py-0.5 font-mono text-[10px] shadow-sm dark:border-slate-600 dark:bg-slate-700">
                   V
                 </kbd>
                 để dán ảnh từ clipboard
@@ -498,16 +498,16 @@ export function SuperAdminAccountForm({ account, availableEmails }: Props) {
 
             {/* Upload progress bar */}
             {totalCount > 0 && (
-              <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3">
+              <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3 dark:border-slate-700 dark:bg-slate-800">
                 <div className="mb-2 flex items-center justify-between text-xs">
-                  <span className="font-medium text-slate-600">
+                  <span className="font-medium text-slate-600 dark:text-slate-300">
                     {isUploading
                       ? `Đang tải ${doneCount}/${totalCount} ảnh...`
                       : `Đã tải ${doneCount}/${totalCount} ảnh`}
                   </span>
-                  <span className="font-semibold text-indigo-600">{overallProgress}%</span>
+                  <span className="font-semibold text-indigo-600 dark:text-indigo-400">{overallProgress}%</span>
                 </div>
-                <div className="h-2 overflow-hidden rounded-full bg-slate-200">
+                <div className="h-2 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-700">
                   <div
                     className="h-full rounded-full bg-indigo-500 transition-all duration-300 ease-out"
                     style={{ width: `${overallProgress}%` }}
@@ -519,10 +519,10 @@ export function SuperAdminAccountForm({ account, availableEmails }: Props) {
                       key={i}
                       className={cn(
                         "flex items-center gap-1 rounded-md px-2 py-0.5 text-[10px] font-medium",
-                        f.status === "done" && "bg-emerald-50 text-emerald-700",
-                        f.status === "uploading" && "bg-indigo-50 text-indigo-700",
-                        f.status === "pending" && "bg-slate-100 text-slate-500",
-                        f.status === "error" && "bg-red-50 text-red-600",
+                        f.status === "done" && "bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400",
+                        f.status === "uploading" && "bg-indigo-50 text-indigo-700 dark:bg-indigo-500/10 dark:text-indigo-400",
+                        f.status === "pending" && "bg-slate-100 text-slate-500 dark:bg-slate-700 dark:text-slate-400",
+                        f.status === "error" && "bg-red-50 text-red-600 dark:bg-red-500/10 dark:text-red-400",
                       )}
                     >
                       {f.status === "done" && <CheckCircle2 className="h-3 w-3" />}
@@ -541,7 +541,7 @@ export function SuperAdminAccountForm({ account, availableEmails }: Props) {
                 {images.map((img, i) => (
                   <div
                     key={`e-${i}`}
-                    className={`relative aspect-video rounded-xl border-2 overflow-hidden ${primaryImage === img ? "border-indigo-500" : "border-slate-200"}`}
+                    className={`relative aspect-video rounded-xl border-2 overflow-hidden ${primaryImage === img ? "border-indigo-500" : "border-slate-200 dark:border-slate-700"}`}
                   >
                     {primaryImage === img && (
                       <div className="absolute top-2 left-2 z-10 flex items-center gap-1 rounded-md bg-indigo-600/90 px-2 py-0.5 text-[10px] font-medium text-white">
@@ -580,7 +580,7 @@ export function SuperAdminAccountForm({ account, availableEmails }: Props) {
                 {previews.map((preview, i) => (
                   <div
                     key={`n-${i}`}
-                    className={`relative aspect-video rounded-xl border-2 overflow-hidden ${primaryImage === preview ? "border-indigo-500" : "border-slate-200"}`}
+                    className={`relative aspect-video rounded-xl border-2 overflow-hidden ${primaryImage === preview ? "border-indigo-500" : "border-slate-200 dark:border-slate-700"}`}
                   >
                     <div className="absolute top-2 left-2 z-10 rounded-md bg-slate-800/80 px-2 py-0.5 text-[10px] font-medium text-white">
                       {primaryImage === preview ? "Trình diện" : "MỚI"}
@@ -621,7 +621,7 @@ export function SuperAdminAccountForm({ account, availableEmails }: Props) {
             )}
           </div>
 
-          <div className="flex gap-3 border-t border-slate-100 pt-6">
+          <div className="flex gap-3 border-t border-slate-100 pt-6 dark:border-slate-700">
             <Button
               type="submit"
               loading={loading}
@@ -634,7 +634,7 @@ export function SuperAdminAccountForm({ account, availableEmails }: Props) {
               type="button"
               variant="outline"
               onClick={() => router.push("/admin/dashboard/super/accounts")}
-              className="h-10 px-6 text-sm text-slate-700"
+              className="h-10 px-6 text-sm text-slate-700 dark:text-slate-200"
             >
               Hủy
             </Button>

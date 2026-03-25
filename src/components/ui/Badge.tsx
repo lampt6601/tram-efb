@@ -53,15 +53,15 @@ function Badge({
 const STATUS_CONFIG: Record<AccountStatus, { label: string; className: string }> = {
   Available: {
     label: "Còn hàng",
-    className: "bg-emerald-50 text-emerald-700 border-emerald-200",
+    className: "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-500/15 dark:text-emerald-400 dark:border-emerald-500/30",
   },
   Pending: {
     label: "Đang chờ",
-    className: "bg-amber-50 text-amber-700 border-amber-200",
+    className: "bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-500/15 dark:text-amber-400 dark:border-amber-500/30",
   },
   Sold: {
     label: "Đã bán",
-    className: "bg-slate-100 text-slate-500 border-slate-200",
+    className: "bg-slate-100 text-slate-500 border-slate-200 dark:bg-slate-700 dark:text-slate-400 dark:border-slate-600",
   },
 }
 

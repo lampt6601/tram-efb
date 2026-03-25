@@ -13,7 +13,7 @@ function StarDisplay({ rating }: { rating: number }) {
       {[1, 2, 3, 4, 5].map((s) => (
         <Star
           key={s}
-          className={`h-3.5 w-3.5 ${s <= rating ? "fill-amber-400 text-amber-400" : "fill-slate-200 text-slate-200"}`}
+          className={`h-3.5 w-3.5 ${s <= rating ? "fill-amber-400 text-amber-400" : "fill-slate-200 dark:fill-slate-600 text-slate-200 dark:text-slate-600"}`}
         />
       ))}
     </div>
@@ -63,16 +63,16 @@ export default function ManageReviewsPage() {
   if (loading) {
     return (
       <div className="p-6">
-        <h1 className="text-xl font-bold text-slate-900">Quản lý đánh giá</h1>
-        <p className="mt-4 text-sm text-slate-500">Đang tải...</p>
+        <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">Quản lý đánh giá</h1>
+        <p className="mt-4 text-sm text-slate-500 dark:text-slate-400">Đang tải...</p>
       </div>
     );
   }
 
   return (
     <div className="p-6">
-      <h1 className="text-xl font-bold text-slate-900">Quản lý đánh giá</h1>
-      <p className="mt-1 text-sm text-slate-500">
+      <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">Quản lý đánh giá</h1>
+      <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
         Duyệt hoặc xoá đánh giá từ người mua
       </p>
 
@@ -81,7 +81,7 @@ export default function ManageReviewsPage() {
         <div className="mt-6">
           <div className="flex items-center gap-2 mb-3">
             <Clock className="h-4 w-4 text-amber-500" />
-            <h2 className="text-sm font-semibold text-amber-700 uppercase tracking-wide">
+            <h2 className="text-sm font-semibold text-amber-700 dark:text-amber-400 uppercase tracking-wide">
               Chờ duyệt ({pendingReviews.length})
             </h2>
           </div>
@@ -89,22 +89,22 @@ export default function ManageReviewsPage() {
             {pendingReviews.map((review) => (
               <div
                 key={review.id}
-                className="rounded-xl border border-amber-200 bg-amber-50 p-4"
+                className="rounded-xl border border-amber-200 dark:border-amber-500/20 bg-amber-50 dark:bg-amber-500/10 p-4"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <div className="flex items-center gap-2">
-                      <p className="text-sm font-semibold text-slate-800">
+                      <p className="text-sm font-semibold text-slate-800 dark:text-slate-200">
                         {review.reviewer_name}
                       </p>
                       <StarDisplay rating={review.rating} />
                     </div>
                     {review.comment && (
-                      <p className="mt-1.5 text-sm text-slate-600">
+                      <p className="mt-1.5 text-sm text-slate-600 dark:text-slate-300">
                         {review.comment}
                       </p>
                     )}
-                    <p className="mt-1 text-xs text-slate-400">
+                    <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">
                       Account: {review.account_id.slice(0, 8)}... ·{" "}
                       {new Date(review.created_at).toLocaleDateString("vi-VN")}
                     </p>
@@ -137,32 +137,32 @@ export default function ManageReviewsPage() {
 
       {/* Approved */}
       <div className="mt-8">
-        <h2 className="text-sm font-semibold text-slate-500 uppercase tracking-wide mb-3">
+        <h2 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-3">
           Đã duyệt ({approvedReviews.length})
         </h2>
         {approvedReviews.length === 0 ? (
-          <p className="text-sm text-slate-400">Chưa có đánh giá nào được duyệt.</p>
+          <p className="text-sm text-slate-400 dark:text-slate-500">Chưa có đánh giá nào được duyệt.</p>
         ) : (
           <div className="space-y-3">
             {approvedReviews.map((review) => (
               <div
                 key={review.id}
-                className="rounded-xl border border-slate-200 bg-white p-4"
+                className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <div className="flex items-center gap-2">
-                      <p className="text-sm font-semibold text-slate-800">
+                      <p className="text-sm font-semibold text-slate-800 dark:text-slate-200">
                         {review.reviewer_name}
                       </p>
                       <StarDisplay rating={review.rating} />
                     </div>
                     {review.comment && (
-                      <p className="mt-1.5 text-sm text-slate-600">
+                      <p className="mt-1.5 text-sm text-slate-600 dark:text-slate-300">
                         {review.comment}
                       </p>
                     )}
-                    <p className="mt-1 text-xs text-slate-400">
+                    <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">
                       {new Date(review.created_at).toLocaleDateString("vi-VN")}
                     </p>
                   </div>

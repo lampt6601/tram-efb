@@ -33,45 +33,45 @@ export function ResetPasswordModal({ adminId, adminEmail }: { adminId: string; a
   return (
     <>
       <button onClick={() => setOpen(true)}
-        className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-slate-50 px-2 py-1 text-xs font-medium text-slate-600 hover:bg-slate-100">
+        className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-slate-50 px-2 py-1 text-xs font-medium text-slate-600 hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700">
         <KeyRound className="h-3.5 w-3.5" /> Đổi MK
       </button>
 
       {open && (
         <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/30 backdrop-blur-[2px]" onClick={handleClose} />
-          <div className="relative z-10 w-full max-w-sm rounded-xl bg-white shadow-xl ring-1 ring-black/10">
+          <div className="relative z-10 w-full max-w-sm rounded-xl bg-white shadow-xl ring-1 ring-black/10 dark:bg-slate-800 dark:ring-white/10">
             <form onSubmit={handleSubmit}>
               <div className="p-5">
                 <div className="mb-4 flex items-start justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100">
-                      <KeyRound className="h-5 w-5 text-slate-600" />
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-700">
+                      <KeyRound className="h-5 w-5 text-slate-600 dark:text-slate-300" />
                     </div>
                     <div>
-                      <h2 className="text-base font-semibold text-slate-900">Đổi Mật Khẩu</h2>
-                      <p className="text-xs text-slate-500 truncate max-w-[160px]">{adminEmail}</p>
+                      <h2 className="text-base font-semibold text-slate-900 dark:text-slate-100">Đổi Mật Khẩu</h2>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 truncate max-w-[160px]">{adminEmail}</p>
                     </div>
                   </div>
                   <button type="button" onClick={handleClose} disabled={loading}
-                    className="rounded-lg p-1 text-slate-400 hover:bg-slate-100"><X className="h-4 w-4" /></button>
+                    className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 dark:text-slate-500 dark:hover:bg-slate-700"><X className="h-4 w-4" /></button>
                 </div>
                 <div>
-                  <Label className="text-slate-700">Mật Khẩu Mới</Label>
+                  <Label className="text-slate-700 dark:text-slate-200">Mật Khẩu Mới</Label>
                   <div className="relative mt-1.5">
                     <Input type={showPassword ? "text" : "password"} value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="Tối thiểu 6 ký tự" disabled={loading}
-                      className="rounded-xl border-slate-300 pr-10" autoFocus />
+                      className="rounded-xl border-slate-300 pr-10 dark:bg-slate-800 dark:border-slate-600 dark:text-slate-100" autoFocus />
                     <button type="button" onClick={() => setShowPassword(!showPassword)} tabIndex={-1}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300">
                       {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </button>
                   </div>
-                  {error && <p className="mt-1.5 text-xs text-red-600">{error}</p>}
+                  {error && <p className="mt-1.5 text-xs text-red-600 dark:text-red-400">{error}</p>}
                 </div>
               </div>
-              <div className="flex justify-end gap-2 rounded-b-xl border-t bg-slate-50 px-5 py-3">
+              <div className="flex justify-end gap-2 rounded-b-xl border-t bg-slate-50 px-5 py-3 dark:border-slate-700 dark:bg-slate-800">
                 <Button type="button" variant="outline" onClick={handleClose} disabled={loading}>Hủy</Button>
                 <Button
                   type="submit"

@@ -56,7 +56,7 @@ export function EditAdminNameModal({ adminId, adminEmail, currentName }: EditAdm
         variant="outline"
         size="sm"
         onClick={() => setOpen(true)}
-        className="h-8 rounded-lg border-slate-200 px-2.5 text-slate-600 hover:bg-slate-50"
+        className="h-8 rounded-lg border-slate-200 px-2.5 text-slate-600 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-700"
       >
         <Pencil className="h-3.5 w-3.5" />
       </Button>
@@ -64,43 +64,43 @@ export function EditAdminNameModal({ adminId, adminEmail, currentName }: EditAdm
       {open && (
         <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/30 backdrop-blur-[2px]" onClick={handleClose} />
-          <div className="relative z-10 w-full max-w-sm rounded-xl bg-white shadow-xl ring-1 ring-black/10">
+          <div className="relative z-10 w-full max-w-sm rounded-xl bg-white shadow-xl ring-1 ring-black/10 dark:bg-slate-800 dark:ring-white/10">
             <form onSubmit={handleSubmit}>
               <div className="p-6">
                 <div className="mb-5 flex items-start justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50">
-                      <Pencil className="h-5 w-5 text-indigo-600" />
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 dark:bg-indigo-500/10">
+                      <Pencil className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
                     </div>
                     <div>
-                      <h2 className="text-base font-semibold text-slate-900">Chỉnh Sửa Tên</h2>
-                      <p className="max-w-[200px] truncate text-xs text-slate-500">{adminEmail}</p>
+                      <h2 className="text-base font-semibold text-slate-900 dark:text-slate-100">Chỉnh Sửa Tên</h2>
+                      <p className="max-w-[200px] truncate text-xs text-slate-500 dark:text-slate-400">{adminEmail}</p>
                     </div>
                   </div>
                   <button
                     type="button"
                     onClick={handleClose}
                     disabled={loading}
-                    className="rounded-lg p-1 text-slate-400 hover:bg-slate-100"
+                    className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 dark:text-slate-500 dark:hover:bg-slate-700"
                   >
                     <X className="h-4 w-4" />
                   </button>
                 </div>
                 <div>
-                  <Label className="text-slate-700">Tên Admin</Label>
+                  <Label className="text-slate-700 dark:text-slate-200">Tên Admin</Label>
                   <Input
                     type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="Nguyễn Văn A"
                     disabled={loading}
-                    className="mt-1.5 rounded-xl border-slate-300"
+                    className="mt-1.5 rounded-xl border-slate-300 dark:bg-slate-800 dark:border-slate-600 dark:text-slate-100"
                     autoFocus
                   />
-                  {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
+                  {error && <p className="mt-2 text-sm text-red-600 dark:text-red-400">{error}</p>}
                 </div>
               </div>
-              <div className="flex justify-end gap-2 rounded-b-xl border-t bg-slate-50 px-6 py-4">
+              <div className="flex justify-end gap-2 rounded-b-xl border-t bg-slate-50 px-6 py-4 dark:border-slate-700 dark:bg-slate-800">
                 <Button type="button" variant="outline" onClick={handleClose} disabled={loading}>
                   Hủy
                 </Button>

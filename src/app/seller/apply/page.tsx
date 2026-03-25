@@ -73,17 +73,17 @@ export default function SellerApplyPage() {
 
   if (submitted) {
     return (
-      <div className="flex min-h-screen flex-col bg-slate-50">
+      <div className="flex min-h-screen flex-col bg-slate-50 dark:bg-slate-900">
         <Header />
         <main className="flex flex-1 items-center justify-center px-4 py-16">
           <div className="max-w-md text-center">
-            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-100">
-              <CheckCircle2 className="h-8 w-8 text-emerald-600" />
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-100 dark:bg-emerald-500/20">
+              <CheckCircle2 className="h-8 w-8 text-emerald-600 dark:text-emerald-400" />
             </div>
-            <h1 className="text-2xl font-bold text-slate-900">
+            <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
               Đăng ký thành công!
             </h1>
-            <p className="mt-3 text-slate-600">
+            <p className="mt-3 text-slate-600 dark:text-slate-400">
               Đơn đăng ký của bạn đã được gửi. Chúng tôi sẽ xem xét và liên hệ
               qua email hoặc Zalo sớm nhất có thể.
             </p>
@@ -101,19 +101,19 @@ export default function SellerApplyPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-slate-50">
+    <div className="flex min-h-screen flex-col bg-slate-50 dark:bg-slate-900">
       <Header />
       <main className="flex-1">
         <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
           {/* Header */}
           <div className="text-center">
-            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-100">
-              <UserPlus className="h-7 w-7 text-indigo-600" />
+            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-100 dark:bg-indigo-500/20">
+              <UserPlus className="h-7 w-7 text-indigo-600 dark:text-indigo-400" />
             </div>
-            <h1 className="text-2xl font-bold text-slate-900 sm:text-3xl">
+            <h1 className="text-2xl font-bold text-slate-900 sm:text-3xl dark:text-slate-100">
               Trở Thành Cộng Tác Viên Bán Hàng
             </h1>
-            <p className="mt-2 text-slate-600">
+            <p className="mt-2 text-slate-600 dark:text-slate-400">
               Đăng ký để bắt đầu đăng bán tài khoản eFootball trên THC Shop
             </p>
           </div>
@@ -123,11 +123,11 @@ export default function SellerApplyPage() {
             {benefits.map((b) => (
               <div
                 key={b.title}
-                className="rounded-xl border border-slate-200 bg-white p-4 text-center"
+                className="rounded-xl border border-slate-200 bg-white p-4 text-center dark:border-slate-700 dark:bg-slate-800"
               >
                 <b.icon className="mx-auto mb-2 h-6 w-6 text-indigo-500" />
-                <p className="text-sm font-semibold text-slate-800">{b.title}</p>
-                <p className="mt-1 text-xs text-slate-500">{b.desc}</p>
+                <p className="text-sm font-semibold text-slate-800 dark:text-slate-200">{b.title}</p>
+                <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{b.desc}</p>
               </div>
             ))}
           </div>
@@ -135,24 +135,24 @@ export default function SellerApplyPage() {
           {/* Form */}
           <form
             onSubmit={handleSubmit}
-            className="mx-auto mt-8 max-w-lg rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8"
+            className="mx-auto mt-8 max-w-lg rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8 dark:border-slate-700 dark:bg-slate-800"
           >
-            <h2 className="text-lg font-bold text-slate-900">
+            <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100">
               Thông tin đăng ký
             </h2>
-            <p className="mt-1 text-sm text-slate-500">
+            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
               Điền thông tin bên dưới, chúng tôi sẽ liên hệ trong 24h
             </p>
 
             {error && (
-              <div className="mt-4 rounded-lg bg-rose-50 px-4 py-3 text-sm text-rose-700">
+              <div className="mt-4 rounded-lg bg-rose-50 px-4 py-3 text-sm text-rose-700 dark:bg-rose-500/10 dark:text-rose-400">
                 {error}
               </div>
             )}
 
             <div className="mt-5 space-y-4">
               <div>
-                <Label htmlFor="fullName" className="text-slate-700">
+                <Label htmlFor="fullName" className="text-slate-700 dark:text-slate-300">
                   Họ tên <span className="text-rose-500">*</span>
                 </Label>
                 <Input
@@ -162,12 +162,12 @@ export default function SellerApplyPage() {
                   required
                   maxLength={100}
                   placeholder="Nguyễn Văn A"
-                  className="mt-1.5 rounded-lg border-slate-200"
+                  className="mt-1.5 rounded-lg border-slate-200 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200"
                 />
               </div>
 
               <div>
-                <Label htmlFor="email" className="text-slate-700">
+                <Label htmlFor="email" className="text-slate-700 dark:text-slate-300">
                   Email <span className="text-rose-500">*</span>
                 </Label>
                 <Input
@@ -177,15 +177,15 @@ export default function SellerApplyPage() {
                   onChange={(e) => setEmail(e.target.value)}
                   required
                   placeholder="email@example.com"
-                  className="mt-1.5 rounded-lg border-slate-200"
+                  className="mt-1.5 rounded-lg border-slate-200 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200"
                 />
-                <p className="mt-1 text-xs text-slate-400">
+                <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">
                   Email này sẽ được dùng để đăng nhập quản trị
                 </p>
               </div>
 
               <div>
-                <Label htmlFor="phone" className="text-slate-700">
+                <Label htmlFor="phone" className="text-slate-700 dark:text-slate-300">
                   Số điện thoại
                 </Label>
                 <Input
@@ -194,12 +194,12 @@ export default function SellerApplyPage() {
                   onChange={(e) => setPhone(e.target.value)}
                   maxLength={20}
                   placeholder="0969xxxxxx"
-                  className="mt-1.5 rounded-lg border-slate-200"
+                  className="mt-1.5 rounded-lg border-slate-200 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200"
                 />
               </div>
 
               <div>
-                <Label htmlFor="zalo" className="text-slate-700">
+                <Label htmlFor="zalo" className="text-slate-700 dark:text-slate-300">
                   Link Zalo
                 </Label>
                 <Input
@@ -208,12 +208,12 @@ export default function SellerApplyPage() {
                   onChange={(e) => setZaloLink(e.target.value)}
                   maxLength={200}
                   placeholder="https://zalo.me/..."
-                  className="mt-1.5 rounded-lg border-slate-200"
+                  className="mt-1.5 rounded-lg border-slate-200 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200"
                 />
               </div>
 
               <div>
-                <Label htmlFor="reason" className="text-slate-700">
+                <Label htmlFor="reason" className="text-slate-700 dark:text-slate-300">
                   Lý do muốn tham gia
                 </Label>
                 <textarea
@@ -223,7 +223,7 @@ export default function SellerApplyPage() {
                   maxLength={1000}
                   rows={3}
                   placeholder="Bạn đã có kinh nghiệm bán acc chưa? Kể thêm về bạn..."
-                  className="mt-1.5 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/20 resize-none"
+                  className="mt-1.5 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/20 resize-none dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200 dark:placeholder:text-slate-500"
                 />
               </div>
             </div>

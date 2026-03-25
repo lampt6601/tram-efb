@@ -64,12 +64,12 @@ export default async function SuperAdminsPage() {
       <div className="mb-6 flex items-center justify-between">
         <div>
           <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-100">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-100 dark:bg-amber-500/20">
               <Users className="h-4 w-4 text-amber-600" />
             </div>
-            <h1 className="text-2xl font-bold text-slate-900">Quản Lý Admin</h1>
+            <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Quản Lý Admin</h1>
           </div>
-          <p className="mt-1 text-sm text-slate-500">
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
             {admins.length} admin · {(accountRows ?? []).length} tài khoản · {(emailRows ?? []).length} email
           </p>
         </div>
@@ -77,20 +77,20 @@ export default async function SuperAdminsPage() {
       </div>
 
       {owner && (
-        <div className="mb-6 overflow-hidden rounded-xl border border-amber-200 bg-gradient-to-r from-amber-50 to-orange-50 p-5 shadow-sm">
+        <div className="mb-6 overflow-hidden rounded-xl border border-amber-200 dark:border-amber-500/20 bg-gradient-to-r from-amber-50 dark:from-amber-500/10 to-orange-50 dark:to-orange-500/10 p-5 shadow-sm">
           <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-amber-100">
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-amber-100 dark:bg-amber-500/20">
               <ShieldCheck className="h-5 w-5 text-amber-600" />
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
                 {owner.user_metadata?.full_name && (
-                  <span className="text-sm font-bold text-slate-900 truncate">{owner.user_metadata.full_name}</span>
+                  <span className="text-sm font-bold text-slate-900 dark:text-slate-100 truncate">{owner.user_metadata.full_name}</span>
                 )}
-                <span className="text-sm font-semibold text-slate-500 truncate">{owner.email}</span>
-                <span className="shrink-0 rounded-full bg-amber-200 px-2 py-0.5 text-xs font-semibold text-amber-800">Owner</span>
+                <span className="text-sm font-semibold text-slate-500 dark:text-slate-400 truncate">{owner.email}</span>
+                <span className="shrink-0 rounded-full bg-amber-200 dark:bg-amber-500/20 px-2 py-0.5 text-xs font-semibold text-amber-800 dark:text-amber-300">Owner</span>
               </div>
-              <div className="mt-1 flex flex-wrap gap-3 text-xs text-slate-500">
+              <div className="mt-1 flex flex-wrap gap-3 text-xs text-slate-500 dark:text-slate-400">
                 <span className="flex items-center gap-1"><Calendar className="h-3 w-3" /> Tạo: {fmtDate(owner.created_at)}</span>
                 <span className="flex items-center gap-1"><Gamepad2 className="h-3 w-3" /> {acctCount.get(owner.id) ?? 0} tài khoản</span>
                 <span className="flex items-center gap-1"><Mail className="h-3 w-3" /> {emailCount.get(owner.id) ?? 0} email</span>
@@ -100,59 +100,59 @@ export default async function SuperAdminsPage() {
         </div>
       )}
 
-      <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-        <div className="border-b border-slate-100 bg-slate-50 px-5 py-3">
-          <h2 className="text-sm font-semibold text-slate-700">Danh Sách Admin ({admins.length})</h2>
+      <div className="overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm">
+        <div className="border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 px-5 py-3">
+          <h2 className="text-sm font-semibold text-slate-700 dark:text-slate-200">Danh Sách Admin ({admins.length})</h2>
         </div>
         <div className="overflow-x-auto">
           <Table>
             <TableHeader>
-              <TableRow className="bg-slate-50 hover:bg-slate-50">
-                <TableHead className="text-slate-500">Admin</TableHead>
-                <TableHead className="hidden text-slate-500 sm:table-cell">Tài Khoản</TableHead>
-                <TableHead className="hidden text-slate-500 sm:table-cell">Email</TableHead>
-                <TableHead className="hidden text-slate-500 md:table-cell">Ngày Tạo</TableHead>
-                <TableHead className="hidden text-slate-500 lg:table-cell">Đăng Nhập Cuối</TableHead>
-                <TableHead className="hidden text-slate-500 md:table-cell">Duyệt TK</TableHead>
-                <TableHead className="hidden text-slate-500 md:table-cell">Xem Tất Cả</TableHead>
-                <TableHead className="text-slate-500">Hành Động</TableHead>
+              <TableRow className="bg-slate-50 dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800">
+                <TableHead className="text-slate-500 dark:text-slate-400">Admin</TableHead>
+                <TableHead className="hidden text-slate-500 dark:text-slate-400 sm:table-cell">Tài Khoản</TableHead>
+                <TableHead className="hidden text-slate-500 dark:text-slate-400 sm:table-cell">Email</TableHead>
+                <TableHead className="hidden text-slate-500 dark:text-slate-400 md:table-cell">Ngày Tạo</TableHead>
+                <TableHead className="hidden text-slate-500 dark:text-slate-400 lg:table-cell">Đăng Nhập Cuối</TableHead>
+                <TableHead className="hidden text-slate-500 dark:text-slate-400 md:table-cell">Duyệt TK</TableHead>
+                <TableHead className="hidden text-slate-500 dark:text-slate-400 md:table-cell">Xem Tất Cả</TableHead>
+                <TableHead className="text-slate-500 dark:text-slate-400">Hành Động</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {admins.map((admin) => (
-                <TableRow key={admin.id} className="hover:bg-slate-50">
+                <TableRow key={admin.id} className="hover:bg-slate-50 dark:hover:bg-slate-700">
                   <TableCell>
                     <div className="flex items-center gap-2.5">
-                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-sm font-semibold text-slate-600">
+                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800 text-sm font-semibold text-slate-600 dark:text-slate-300">
                         {(admin.user_metadata?.full_name ?? admin.email ?? "?")[0].toUpperCase()}
                       </div>
                       <div className="min-w-0">
                         {admin.user_metadata?.full_name ? (
                           <>
-                            <p className="truncate text-sm font-semibold text-slate-900">{admin.user_metadata.full_name}</p>
-                            <p className="max-w-[180px] truncate text-xs text-slate-400">{admin.email ?? "—"}</p>
+                            <p className="truncate text-sm font-semibold text-slate-900 dark:text-slate-100">{admin.user_metadata.full_name}</p>
+                            <p className="max-w-[180px] truncate text-xs text-slate-400 dark:text-slate-500">{admin.email ?? "—"}</p>
                           </>
                         ) : (
-                          <p className="max-w-[180px] truncate text-sm font-medium text-slate-900">{admin.email ?? "—"}</p>
+                          <p className="max-w-[180px] truncate text-sm font-medium text-slate-900 dark:text-slate-100">{admin.email ?? "—"}</p>
                         )}
                       </div>
                     </div>
                   </TableCell>
                   <TableCell className="hidden sm:table-cell">
-                    <div className="flex items-center gap-1 text-sm text-slate-600">
+                    <div className="flex items-center gap-1 text-sm text-slate-600 dark:text-slate-300">
                       <Gamepad2 className="h-3.5 w-3.5 text-indigo-400" /> {acctCount.get(admin.id) ?? 0}
                     </div>
                   </TableCell>
                   <TableCell className="hidden sm:table-cell">
-                    <div className="flex items-center gap-1 text-sm text-slate-600">
-                      <Mail className="h-3.5 w-3.5 text-slate-400" /> {emailCount.get(admin.id) ?? 0}
+                    <div className="flex items-center gap-1 text-sm text-slate-600 dark:text-slate-300">
+                      <Mail className="h-3.5 w-3.5 text-slate-400 dark:text-slate-500" /> {emailCount.get(admin.id) ?? 0}
                     </div>
                   </TableCell>
-                  <TableCell className="hidden text-sm text-slate-500 md:table-cell">
-                    <div className="flex items-center gap-1"><Calendar className="h-3.5 w-3.5 text-slate-400" /> {fmtDate(admin.created_at)}</div>
+                  <TableCell className="hidden text-sm text-slate-500 dark:text-slate-400 md:table-cell">
+                    <div className="flex items-center gap-1"><Calendar className="h-3.5 w-3.5 text-slate-400 dark:text-slate-500" /> {fmtDate(admin.created_at)}</div>
                   </TableCell>
-                  <TableCell className="hidden text-sm text-slate-500 lg:table-cell">
-                    <div className="flex items-center gap-1"><Clock className="h-3.5 w-3.5 text-slate-400" /> {fmtDateTime(admin.last_sign_in_at ?? null)}</div>
+                  <TableCell className="hidden text-sm text-slate-500 dark:text-slate-400 lg:table-cell">
+                    <div className="flex items-center gap-1"><Clock className="h-3.5 w-3.5 text-slate-400 dark:text-slate-500" /> {fmtDateTime(admin.last_sign_in_at ?? null)}</div>
                   </TableCell>
                   <TableCell className="hidden md:table-cell">
                     <AutoApproveToggle
@@ -180,7 +180,7 @@ export default async function SuperAdminsPage() {
               ))}
               {admins.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={8} className="py-12 text-center text-slate-400">
+                  <TableCell colSpan={8} className="py-12 text-center text-slate-400 dark:text-slate-500">
                     Chưa có admin nào. Nhấn &quot;Thêm Admin&quot; để tạo mới.
                   </TableCell>
                 </TableRow>

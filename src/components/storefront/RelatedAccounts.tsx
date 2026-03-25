@@ -52,7 +52,7 @@ export async function RelatedAccounts({
 
   return (
     <section className="mt-8 sm:mt-10">
-      <h2 className="mb-4 text-lg font-bold text-slate-900 sm:text-xl">
+      <h2 className="mb-4 text-lg font-bold text-slate-900 sm:text-xl dark:text-slate-100">
         Tài Khoản Tương Tự
       </h2>
       {/* Horizontal scroll on mobile, grid on sm+ */}

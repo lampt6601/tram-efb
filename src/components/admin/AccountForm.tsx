@@ -40,10 +40,10 @@ type AccountFormValues = {
 };
 
 const inputClass =
-  "w-full rounded-xl border-slate-300 px-4 py-2.5 text-sm focus-visible:border-indigo-500 focus-visible:ring-indigo-500/30";
+  "w-full rounded-xl border-slate-300 px-4 py-2.5 text-sm focus-visible:border-indigo-500 focus-visible:ring-indigo-500/30 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100";
 
 const selectClass =
-  "w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm outline-none transition-colors focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 bg-white";
+  "w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm outline-none transition-colors focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 bg-white dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100";
 
 export function AccountForm({ account }: AccountFormProps) {
   const isEditing = !!account;
@@ -402,10 +402,10 @@ export function AccountForm({ account }: AccountFormProps) {
 
   const SectionHeader = ({ label }: { label: string }) => (
     <div className="flex items-center gap-3 pt-1">
-      <span className="text-[11px] font-semibold uppercase tracking-widest text-slate-400">
+      <span className="text-[11px] font-semibold uppercase tracking-widest text-slate-400 dark:text-slate-500">
         {label}
       </span>
-      <div className="flex-1 border-t border-slate-100" />
+      <div className="flex-1 border-t border-slate-100 dark:border-slate-700" />
     </div>
   );
 
@@ -413,13 +413,13 @@ export function AccountForm({ account }: AccountFormProps) {
     <div className="mx-auto max-w-3xl">
       <Link
         href="/admin/dashboard/accounts"
-        className="mb-6 inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-indigo-600"
+        className="mb-6 inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400"
       >
         <ArrowLeft className="h-4 w-4" /> Quay lại danh sách
       </Link>
 
-      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-        <h1 className="text-xl font-bold text-slate-900">
+      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+        <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">
           {isEditing ? "Chỉnh Sửa Tài Khoản" : "Thêm Tài Khoản Mới"}
         </h1>
 
@@ -429,7 +429,7 @@ export function AccountForm({ account }: AccountFormProps) {
           <SectionHeader label="Thông tin" />
 
           <div>
-            <Label className="text-slate-700">
+            <Label className="text-slate-700 dark:text-slate-300">
               Tiêu đề <span className="text-red-500">*</span>
             </Label>
             <Input
@@ -449,7 +449,7 @@ export function AccountForm({ account }: AccountFormProps) {
 
           <div className="grid gap-4 sm:grid-cols-3">
             <div>
-              <Label className="text-slate-700">
+              <Label className="text-slate-700 dark:text-slate-300">
                 Giá nhập <span className="text-red-500">*</span>
               </Label>
               <Input
@@ -469,7 +469,7 @@ export function AccountForm({ account }: AccountFormProps) {
               )}
             </div>
             <div>
-              <Label className="text-slate-700">
+              <Label className="text-slate-700 dark:text-slate-300">
                 Giá bán <span className="text-red-500">*</span>
               </Label>
               <Input
@@ -495,9 +495,9 @@ export function AccountForm({ account }: AccountFormProps) {
               )}
             </div>
             <div>
-              <Label className="text-slate-700">
+              <Label className="text-slate-700 dark:text-slate-300">
                 Giá gốc{" "}
-                <span className="font-normal text-slate-400">(gạch ngang)</span>
+                <span className="font-normal text-slate-400 dark:text-slate-500">(gạch ngang)</span>
               </Label>
               <Input
                 type="number"
@@ -527,7 +527,7 @@ export function AccountForm({ account }: AccountFormProps) {
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <Label className="text-slate-700">
+              <Label className="text-slate-700 dark:text-slate-300">
                 Trạng thái <span className="text-red-500">*</span>
               </Label>
               <select {...register("status")} className={cn(selectClass, "mt-1.5")}>
@@ -538,14 +538,14 @@ export function AccountForm({ account }: AccountFormProps) {
             </div>
 
             <div>
-              <Label className="text-slate-700">Phân loại</Label>
+              <Label className="text-slate-700 dark:text-slate-300">Phân loại</Label>
               <div className="mt-1.5 grid grid-cols-2 gap-2">
                 <div
                   className={cn(
                     "flex cursor-pointer items-center gap-2.5 rounded-xl border px-3 py-2.5 transition-colors",
                     isCloneValue
-                      ? "border-violet-300 bg-violet-50"
-                      : "border-slate-200 bg-slate-50 hover:border-slate-300",
+                      ? "border-violet-300 bg-violet-50 dark:border-violet-500/30 dark:bg-violet-500/10"
+                      : "border-slate-200 bg-slate-50 hover:border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:hover:border-slate-500",
                   )}
                   onClick={() => {
                     const el = document.getElementById("isClone");
@@ -565,7 +565,7 @@ export function AccountForm({ account }: AccountFormProps) {
                   />
                   <label
                     htmlFor="isClone"
-                    className="flex flex-1 cursor-pointer items-center justify-between text-sm font-medium text-slate-700 select-none"
+                    className="flex flex-1 cursor-pointer items-center justify-between text-sm font-medium text-slate-700 dark:text-slate-300 select-none"
                   >
                     Clone
                     <Copy className={`h-4 w-4 ${isCloneValue ? "text-violet-500" : "text-slate-300"}`} />
@@ -581,7 +581,7 @@ export function AccountForm({ account }: AccountFormProps) {
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 items-end">
             <div>
               <div className="flex h-[22px] items-center">
-                <Label className="text-slate-700">GP</Label>
+                <Label className="text-slate-700 dark:text-slate-300">GP</Label>
               </div>
               <Input
                 type="number"
@@ -633,7 +633,7 @@ export function AccountForm({ account }: AccountFormProps) {
             </div>
             <div>
               <div className="flex h-[22px] items-center">
-                <Label className="text-slate-700">Log / tháng</Label>
+                <Label className="text-slate-700 dark:text-slate-300">Log / tháng</Label>
               </div>
               <Input
                 type="number"
@@ -655,7 +655,7 @@ export function AccountForm({ account }: AccountFormProps) {
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <Label className="text-slate-700">Email</Label>
+              <Label className="text-slate-700 dark:text-slate-300">Email</Label>
               <select {...register("emailId")} className={cn(selectClass, "mt-1.5")}>
                 <option value="">Không có</option>
                 {availableEmails.map((e) => (
@@ -666,7 +666,7 @@ export function AccountForm({ account }: AccountFormProps) {
               </select>
             </div>
             <div>
-              <Label className="text-slate-700">Server / Vùng</Label>
+              <Label className="text-slate-700 dark:text-slate-300">Server / Vùng</Label>
               <select {...register("serverRegion")} className={cn(selectClass, "mt-1.5")}>
                 <option value="">Chưa chọn</option>
                 <option value="Japan">Nhật (Japan)</option>
@@ -685,11 +685,11 @@ export function AccountForm({ account }: AccountFormProps) {
               onDragOver={onDragOver}
               onDrop={onDrop}
               tabIndex={0}
-              className="flex items-center justify-center gap-4 rounded-xl border-2 border-dashed border-slate-300 bg-slate-50/50 px-6 py-5 transition-colors hover:border-indigo-400 hover:bg-slate-50 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
+              className="flex items-center justify-center gap-4 rounded-xl border-2 border-dashed border-slate-300 bg-slate-50/50 px-6 py-5 transition-colors hover:border-indigo-400 hover:bg-slate-50 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 dark:border-slate-600 dark:bg-slate-800/50 dark:hover:border-indigo-500 dark:hover:bg-slate-800"
             >
-              <UploadCloud className="h-8 w-8 shrink-0 text-slate-400" aria-hidden="true" />
+              <UploadCloud className="h-8 w-8 shrink-0 text-slate-400 dark:text-slate-500" aria-hidden="true" />
               <div className="flex flex-col gap-0.5">
-                <div className="flex items-center gap-1 text-sm text-slate-600">
+                <div className="flex items-center gap-1 text-sm text-slate-600 dark:text-slate-300">
                   <label
                     htmlFor="file-upload"
                     className="cursor-pointer font-semibold text-indigo-600 hover:text-indigo-500"
@@ -707,9 +707,9 @@ export function AccountForm({ account }: AccountFormProps) {
                   </label>
                   <span>hoặc kéo thả vào đây</span>
                 </div>
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-slate-400 dark:text-slate-500">
                   PNG, JPG, GIF · tối đa 5MB ·{" "}
-                  <kbd className="rounded border border-slate-200 bg-white px-1 py-0.5 font-mono text-[10px] text-slate-500">Ctrl+V</kbd>
+                  <kbd className="rounded border border-slate-200 bg-white px-1 py-0.5 font-mono text-[10px] text-slate-500 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-400">Ctrl+V</kbd>
                   {" "}để dán
                 </p>
               </div>
@@ -721,16 +721,16 @@ export function AccountForm({ account }: AccountFormProps) {
 
             {/* Upload progress bar */}
             {totalCount > 0 && (
-              <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3">
+              <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3 dark:border-slate-700 dark:bg-slate-800">
                 <div className="mb-2 flex items-center justify-between text-xs">
-                  <span className="font-medium text-slate-600">
+                  <span className="font-medium text-slate-600 dark:text-slate-300">
                     {isUploading
                       ? `Đang tải ${doneCount}/${totalCount} ảnh...`
                       : `Đã tải ${doneCount}/${totalCount} ảnh`}
                   </span>
                   <span className="font-semibold text-indigo-600">{overallProgress}%</span>
                 </div>
-                <div className="h-2 overflow-hidden rounded-full bg-slate-200">
+                <div className="h-2 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-700">
                   <div
                     className="h-full rounded-full bg-indigo-500 transition-all duration-300 ease-out"
                     style={{ width: `${overallProgress}%` }}
@@ -743,10 +743,10 @@ export function AccountForm({ account }: AccountFormProps) {
                       key={i}
                       className={cn(
                         "flex items-center gap-1 rounded-md px-2 py-0.5 text-[10px] font-medium",
-                        f.status === "done" && "bg-emerald-50 text-emerald-700",
-                        f.status === "uploading" && "bg-indigo-50 text-indigo-700",
-                        f.status === "pending" && "bg-slate-100 text-slate-500",
-                        f.status === "error" && "bg-red-50 text-red-600",
+                        f.status === "done" && "bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400",
+                        f.status === "uploading" && "bg-indigo-50 text-indigo-700 dark:bg-indigo-500/10 dark:text-indigo-400",
+                        f.status === "pending" && "bg-slate-100 text-slate-500 dark:bg-slate-700 dark:text-slate-400",
+                        f.status === "error" && "bg-red-50 text-red-600 dark:bg-red-500/10 dark:text-red-400",
                       )}
                     >
                       {f.status === "done" && <CheckCircle2 className="h-3 w-3" />}
@@ -766,8 +766,8 @@ export function AccountForm({ account }: AccountFormProps) {
                   <div
                     key={`existing-${i}`}
                     className={cn(
-                      "relative aspect-video overflow-hidden rounded-xl border-2 bg-slate-50 shadow-sm",
-                      primaryImage === img ? "border-indigo-500" : "border-slate-200",
+                      "relative aspect-video overflow-hidden rounded-xl border-2 bg-slate-50 shadow-sm dark:bg-slate-800",
+                      primaryImage === img ? "border-indigo-500" : "border-slate-200 dark:border-slate-600",
                     )}
                   >
                     {primaryImage === img && (
@@ -798,8 +798,8 @@ export function AccountForm({ account }: AccountFormProps) {
                   <div
                     key={`new-${i}`}
                     className={cn(
-                      "relative aspect-video overflow-hidden rounded-xl border-2 bg-slate-50 shadow-sm",
-                      primaryImage === preview ? "border-indigo-500" : "border-slate-200",
+                      "relative aspect-video overflow-hidden rounded-xl border-2 bg-slate-50 shadow-sm dark:bg-slate-800",
+                      primaryImage === preview ? "border-indigo-500" : "border-slate-200 dark:border-slate-600",
                     )}
                   >
                     <div className="absolute left-2 top-2 z-10 flex items-center gap-1 rounded-md px-2 py-0.5 text-[10px] font-medium tracking-wide text-white shadow-sm backdrop-blur-sm
@@ -831,7 +831,7 @@ export function AccountForm({ account }: AccountFormProps) {
           </div>
 
           {/* ── Submit ── */}
-          <div className="flex gap-3 border-t border-slate-100 pt-5">
+          <div className="flex gap-3 border-t border-slate-100 pt-5 dark:border-slate-700">
             <Button
               type="submit"
               loading={loading}
@@ -843,7 +843,7 @@ export function AccountForm({ account }: AccountFormProps) {
             <Button
               variant="outline"
               render={<Link href="/admin/dashboard/accounts" />}
-              className="h-10 px-6 text-sm font-medium text-slate-700"
+              className="h-10 px-6 text-sm font-medium text-slate-700 dark:text-slate-300"
             >
               Hủy
             </Button>

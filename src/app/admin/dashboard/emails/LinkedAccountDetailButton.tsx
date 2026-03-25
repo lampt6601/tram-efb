@@ -18,7 +18,7 @@ export function LinkedAccountDetailButton({
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="max-w-[160px] truncate text-left text-xs text-slate-400 transition-colors hover:text-indigo-600 hover:underline"
+        className="max-w-[160px] truncate text-left text-xs text-slate-400 transition-colors hover:text-indigo-600 hover:underline dark:text-slate-500 dark:hover:text-indigo-400"
         title={account.title}
       >
         {account.title}

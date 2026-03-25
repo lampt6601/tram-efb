@@ -50,9 +50,9 @@ export function AdminRevenueFilter({ admins }: { admins: AdminOption[] }) {
     <div className="mt-8">
       <div className="mb-4 flex items-center gap-2">
         <Users className="h-5 w-5 text-indigo-500" />
-        <h2 className="text-lg font-semibold text-slate-900">Doanh thu theo admin</h2>
+        <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Doanh thu theo admin</h2>
         {selected.size > 0 && (
-          <span className="rounded-full bg-indigo-100 px-2 py-0.5 text-xs font-semibold text-indigo-700">
+          <span className="rounded-full bg-indigo-100 dark:bg-indigo-500/10 px-2 py-0.5 text-xs font-semibold text-indigo-700 dark:text-indigo-400">
             {selected.size} đang chọn
           </span>
         )}
@@ -68,7 +68,7 @@ export function AdminRevenueFilter({ admins }: { admins: AdminOption[] }) {
               className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-sm font-medium transition-colors ${
                 isActive
                   ? "border-indigo-300 bg-indigo-600 text-white"
-                  : "border-slate-200 bg-white text-slate-700 hover:border-indigo-300 hover:text-indigo-700"
+                  : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:border-indigo-300 hover:text-indigo-700 dark:hover:text-indigo-400"
               }`}
             >
               <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-white/20 text-[10px] font-bold leading-none">
@@ -91,7 +91,7 @@ export function AdminRevenueFilter({ admins }: { admins: AdminOption[] }) {
           <Button
             variant="outline"
             onClick={clear}
-            className="h-8 px-4 text-xs text-slate-600"
+            className="h-8 px-4 text-xs text-slate-600 dark:text-slate-300"
           >
             Bỏ chọn
           </Button>

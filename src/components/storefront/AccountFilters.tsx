@@ -221,19 +221,19 @@ export function AccountFilters({
             onChange={(e) => setLocalSearch(e.target.value)}
             onFocus={() => setIsSearchFocused(true)}
             onBlur={() => setIsSearchFocused(false)}
-            className="h-10 w-full rounded-xl border-slate-200 pl-10 pr-4 text-sm text-slate-700 shadow-sm transition-all focus-visible:border-indigo-400 focus-visible:ring-4 focus-visible:ring-indigo-400/20"
+            className="h-10 w-full rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-800 pl-10 pr-4 text-sm text-slate-700 dark:text-slate-200 shadow-sm transition-all focus-visible:border-indigo-400 focus-visible:ring-4 focus-visible:ring-indigo-400/20"
           />
         </div>
 
         {/* Mobile: Sort + Clone + Advanced + Clear in one row */}
         <div className="flex items-center gap-2 w-full md:w-auto">
           {/* Sort */}
-          <div className="flex flex-1 md:flex-none items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-2.5 shadow-sm">
+          <div className="flex flex-1 md:flex-none items-center gap-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-2.5 shadow-sm">
             <ArrowUpDown className="h-3.5 w-3.5 text-slate-400" />
             <select
               value={sort}
               onChange={(e) => update("sort", e.target.value)}
-              className="h-9 w-full bg-transparent text-sm text-slate-700 outline-none cursor-pointer"
+              className="h-9 w-full bg-transparent text-sm text-slate-700 dark:text-slate-200 outline-none cursor-pointer"
             >
               {SORT_OPTIONS.map((o) => (
                 <option key={o.value} value={o.value}>
@@ -251,7 +251,7 @@ export function AccountFilters({
             className={`h-9 shrink-0 rounded-xl px-3 text-sm font-medium transition-all shadow-sm ${
               cloneOnly
                 ? "border-violet-400 bg-violet-500 text-white hover:bg-violet-600 hover:border-violet-500"
-                : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-slate-100"
             }`}
           >
             <Copy className="mr-1 h-3.5 w-3.5" />
@@ -266,7 +266,7 @@ export function AccountFilters({
             className={`h-9 shrink-0 rounded-xl px-3 text-sm font-medium transition-all shadow-sm ${
               showAdvanced || advancedFilterCount > 0
                 ? "border-indigo-400 bg-indigo-500 text-white hover:bg-indigo-600 hover:border-indigo-500"
-                : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-slate-100"
             }`}
           >
             <SlidersHorizontal className="mr-1 h-3.5 w-3.5" />
@@ -294,7 +294,7 @@ export function AccountFilters({
 
         {/* Mobile: Price range + count in one row */}
         <div className="flex items-center gap-2 w-full md:w-auto">
-          <div className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white p-1 pl-2.5 shadow-sm">
+          <div className="flex items-center gap-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-1 pl-2.5 shadow-sm">
             <SlidersHorizontal className="h-3.5 w-3.5 shrink-0 text-slate-400" />
             <PriceInput
               placeholder="Giá từ"
@@ -311,7 +311,7 @@ export function AccountFilters({
             />
           </div>
 
-          <span className="ml-auto shrink-0 text-sm font-medium text-slate-500">
+          <span className="ml-auto shrink-0 text-sm font-medium text-slate-500 dark:text-slate-400">
             {isPending ? "Đang lọc..." : `${totalCount} tài khoản`}
           </span>
         </div>
@@ -319,18 +319,18 @@ export function AccountFilters({
 
       {/* Advanced Filters Panel */}
       {showAdvanced && (
-        <div className="mt-3 rounded-xl border border-slate-200 bg-white p-3 shadow-sm animate-in fade-in slide-in-from-top-2 duration-200">
+        <div className="mt-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-3 shadow-sm animate-in fade-in slide-in-from-top-2 duration-200">
           <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-end sm:gap-4">
             {/* Server Region */}
             <div className="flex flex-col gap-1 sm:min-w-[160px]">
-              <label className="flex items-center gap-1.5 text-xs font-medium text-slate-500">
+              <label className="flex items-center gap-1.5 text-xs font-medium text-slate-500 dark:text-slate-400">
                 <Globe className="h-3 w-3" /> Server
               </label>
-              <div className="flex items-center rounded-lg border border-slate-200 bg-white px-2.5">
+              <div className="flex items-center rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-2.5">
                 <select
                   value={server}
                   onChange={(e) => update("server", e.target.value)}
-                  className="h-8 w-full bg-transparent text-sm text-slate-700 outline-none cursor-pointer"
+                  className="h-8 w-full bg-transparent text-sm text-slate-700 dark:text-slate-200 outline-none cursor-pointer"
                 >
                   {dynamicServers.map((s) => (
                     <option key={s.value} value={s.value}>
@@ -343,14 +343,14 @@ export function AccountFilters({
 
             {/* Team Strength */}
             <div className="flex flex-col gap-1 sm:min-w-[160px]">
-              <label className="flex items-center gap-1.5 text-xs font-medium text-slate-500">
+              <label className="flex items-center gap-1.5 text-xs font-medium text-slate-500 dark:text-slate-400">
                 <Shield className="h-3 w-3" /> Lực chiến tối thiểu
               </label>
-              <div className="flex items-center rounded-lg border border-slate-200 bg-white px-2.5">
+              <div className="flex items-center rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-2.5">
                 <select
                   value={minStrength}
                   onChange={(e) => update("minStrength", e.target.value)}
-                  className="h-8 w-full bg-transparent text-sm text-slate-700 outline-none cursor-pointer"
+                  className="h-8 w-full bg-transparent text-sm text-slate-700 dark:text-slate-200 outline-none cursor-pointer"
                 >
                   {TEAM_STRENGTH_PRESETS.map((s) => (
                     <option key={s.value} value={s.value}>
@@ -363,7 +363,7 @@ export function AccountFilters({
 
             {/* Min GP */}
             <div className="flex flex-col gap-1 sm:min-w-[140px]">
-              <label className="flex items-center gap-1.5 text-xs font-medium text-slate-500">
+              <label className="flex items-center gap-1.5 text-xs font-medium text-slate-500 dark:text-slate-400">
                 <Zap className="h-3 w-3" /> GP tối thiểu
               </label>
               <Input
@@ -372,7 +372,7 @@ export function AccountFilters({
                 value={minGp}
                 min={0}
                 onChange={(e) => update("minGp", e.target.value)}
-                className="h-8 rounded-lg border-slate-200 text-sm text-slate-700"
+                className="h-8 rounded-lg border-slate-200 dark:border-slate-700 dark:bg-slate-800 text-sm text-slate-700 dark:text-slate-200"
               />
             </div>
 

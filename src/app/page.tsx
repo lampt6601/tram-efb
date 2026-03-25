@@ -4,6 +4,7 @@ import { Footer } from "@/components/storefront/Footer";
 import { OwnerSection } from "@/components/storefront/OwnerSection";
 import { AccountCard } from "@/components/storefront/AccountCard";
 import { AccountFilters } from "@/components/storefront/AccountFilters";
+import { StatsBar } from "@/components/storefront/StatsBar";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { AutoScrollSlider } from "@/components/ui/AutoScrollSlider";
 import { Gamepad2, Search, BadgeCheck, Flame, Clock } from "lucide-react";
@@ -131,7 +132,7 @@ export default async function HomePage({
   const regularItems = allItems.filter((a) => !a.is_priority);
 
   return (
-    <div className="flex min-h-screen flex-col bg-slate-50">
+    <div className="flex min-h-screen flex-col bg-slate-50 dark:bg-slate-900">
       <Header />
       <main className="flex-1">
         {/* Hero */}
@@ -160,6 +161,9 @@ export default async function HomePage({
 
                 {/* Recruitment CTA */}
                 <RecruitHeroCTA />
+
+                {/* Social proof stats */}
+                <StatsBar />
               </div>
             </div>
           </div>
@@ -168,7 +172,7 @@ export default async function HomePage({
         {/* Account Grid */}
         <section className="mx-auto max-w-7xl px-3 py-6 sm:px-6 sm:py-12 lg:px-8 lg:py-10">
           <ScrollReveal direction="left" className="mb-3 sm:mb-4">
-            <h2 className="text-xl font-semibold text-slate-900 sm:text-2xl">
+            <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100 sm:text-2xl">
               Tài Khoản Đang Bán
             </h2>
           </ScrollReveal>
@@ -181,12 +185,12 @@ export default async function HomePage({
 
           {allItems.length === 0 ? (
             <ScrollReveal>
-              <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-200 py-20">
-                <Search className="mb-4 h-12 w-12 text-slate-300" />
-                <h3 className="text-lg font-semibold text-slate-500">
+              <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-700 py-20">
+                <Search className="mb-4 h-12 w-12 text-slate-300 dark:text-slate-600" />
+                <h3 className="text-lg font-semibold text-slate-500 dark:text-slate-400">
                   Không tìm thấy tài khoản nào
                 </h3>
-                <p className="mt-1 text-sm text-slate-400">
+                <p className="mt-1 text-sm text-slate-400 dark:text-slate-500">
                   Thử thay đổi bộ lọc hoặc xoá bộ lọc để xem tất cả.
                 </p>
               </div>
@@ -199,7 +203,7 @@ export default async function HomePage({
                   <ScrollReveal direction="left" className="mb-4">
                     <div className="flex items-center gap-2">
                       <Flame className="h-5 w-5 text-orange-500" />
-                      <h3 className="text-base font-semibold text-orange-600 uppercase tracking-wide">
+                      <h3 className="text-base font-semibold text-orange-600 uppercase tracking-wide dark:text-orange-400">
                         Tài Khoản Nổi Bật
                       </h3>
                     </div>
@@ -252,20 +256,20 @@ export default async function HomePage({
 
         {/* Sold Accounts */}
         {soldItems.length > 0 && (
-          <section className="border-t border-slate-200 bg-slate-100/60">
+          <section className="border-t border-slate-200 bg-slate-100/60 dark:border-slate-700 dark:bg-slate-800/50">
             <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-12 lg:px-8 lg:py-14">
               <ScrollReveal direction="left" className="mb-6 sm:mb-8">
                 <div className="flex flex-col gap-2">
                   <div className="flex items-center gap-2">
                     <BadgeCheck className="h-5 w-5 text-emerald-500" />
-                    <span className="text-xs font-semibold uppercase tracking-widest text-emerald-600">
+                    <span className="text-xs font-semibold uppercase tracking-widest text-emerald-600 dark:text-emerald-400">
                       Đã Giao Dịch Thành Công
                     </span>
                   </div>
-                  <h2 className="text-xl font-semibold text-slate-900 sm:text-2xl">
+                  <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100 sm:text-2xl">
                     Tài Khoản Đã Bán
                   </h2>
-                  <p className="mt-1 text-sm text-slate-500">
+                  <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
                     {soldItems.length} giao dịch thành công — minh chứng uy tín
                     của shop
                   </p>

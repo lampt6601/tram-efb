@@ -5,6 +5,8 @@ import Script from "next/script";
 import "./globals.css";
 import { FloatingConsultation } from "@/components/ui/FloatingConsultation";
 import { Toaster } from "@/components/ui/sonner";
+
+import { ThemeProvider } from "@/components/storefront/ThemeProvider";
 import { cn } from "@/lib/utils";
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
@@ -91,13 +93,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="vi" className={cn("font-sans", geist.variable)}>
-      <meta
-        name="google-site-verification"
-        content="trJhJ1lGcDKXthkx1ozmLiOXoxCM9nhp536tTfFd-dE"
-      />
+    <html lang="vi" className={cn("font-sans", geist.variable)} suppressHydrationWarning>
+      <head>
+        <meta
+          name="google-site-verification"
+          content="trJhJ1lGcDKXthkx1ozmLiOXoxCM9nhp536tTfFd-dE"
+        />
+        {/* Inline script to set dark mode before React hydration to prevent FOUC */}
+        <script dangerouslySetInnerHTML={{ __html: `(function(){try{var t=sessionStorage.getItem('theme');var d=t==='dark'||(t!=='light'&&window.matchMedia('(prefers-color-scheme:dark)').matches);if(d)document.documentElement.classList.add('dark')}catch(e){}})()` }} />
+      </head>
       <body className={`${inter.variable} font-sans antialiased`}>
-        {children}
+        <ThemeProvider>
+            {children}
+        </ThemeProvider>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{

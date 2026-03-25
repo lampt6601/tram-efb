@@ -8,6 +8,7 @@ import {
   Copy,
 } from "lucide-react";
 import { StatusBadge, Badge } from "@/components/ui/Badge";
+
 import { formatCurrency } from "@/lib/constants";
 import type { PublicAccount } from "@/types/database";
 import { thumbCard } from "@/lib/image-utils";
@@ -29,10 +30,10 @@ export function AccountCard({ account }: { account: PublicAccount }) {
 
   const cardContent = (
     <div
-      className={`flex h-full w-full flex-col overflow-hidden rounded-2xl ${!isSold ? "border border-slate-200 bg-white transition-colors duration-300 group-hover:border-indigo-300" : "border border-slate-200 bg-white"}`}
+      className={`flex h-full w-full flex-col overflow-hidden rounded-2xl ${!isSold ? "border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800 transition-colors duration-300 group-hover:border-indigo-300 dark:group-hover:border-indigo-500" : "border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800"}`}
     >
       {/* Image + overlay/ribbon */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-slate-100 to-slate-200 aspect-video">
+      <div className="relative overflow-hidden bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-800 aspect-video">
         {optimizedThumb ? (
           <Image
             src={optimizedThumb}
@@ -104,16 +105,18 @@ export function AccountCard({ account }: { account: PublicAccount }) {
 
       {/* Content */}
       <div className="flex flex-1 flex-col p-3 sm:p-4">
-        <div className="min-h-[2.75rem]">
-          <h3
-          className={`text-base font-semibold line-clamp-2 ${
-            isSold
-              ? "text-slate-700"
-              : "text-slate-900 transition-colors duration-200 group-hover:text-indigo-600"
-          }`}
-        >
-          {account.title}
-          </h3>
+        <div className="mb-2 flex items-start justify-between gap-2">
+          <div className="min-h-[2.75rem] flex-1">
+            <h3
+            className={`text-base font-semibold line-clamp-2 ${
+              isSold
+                ? "text-slate-700 dark:text-slate-300"
+                : "text-slate-900 dark:text-slate-100 transition-colors duration-200 group-hover:text-indigo-600 dark:group-hover:text-indigo-400"
+            }`}
+          >
+            {account.title}
+            </h3>
+          </div>
         </div>
 
         <div className="mt-1.5 min-h-[1.5rem]">
@@ -121,7 +124,7 @@ export function AccountCard({ account }: { account: PublicAccount }) {
             {account.server_region && (
               <Badge
                 variant="secondary"
-                className="h-auto rounded-full px-2 py-0.5 text-[11px] text-slate-600 bg-slate-100"
+                className="h-auto rounded-full px-2 py-0.5 text-[11px] text-slate-600 bg-slate-100 dark:text-slate-300 dark:bg-slate-700"
               >
                 Server: {account.server_region}
               </Badge>
@@ -129,7 +132,7 @@ export function AccountCard({ account }: { account: PublicAccount }) {
             {!isSold && account.is_clone && (
               <Badge
                 variant="outline"
-                className="h-auto rounded-full px-2 py-0.5 text-[11px] text-violet-700 bg-violet-50 border-violet-200"
+                className="h-auto rounded-full px-2 py-0.5 text-[11px] text-violet-700 bg-violet-50 border-violet-200 dark:text-violet-300 dark:bg-violet-500/15 dark:border-violet-500/30"
               >
                 Clone
               </Badge>
@@ -137,7 +140,7 @@ export function AccountCard({ account }: { account: PublicAccount }) {
           </div>
         </div>
 
-        <div className="mt-3 sm:mt-4 flex items-end justify-between border-t border-slate-100 pt-2.5 sm:pt-3">
+        <div className="mt-3 sm:mt-4 flex items-end justify-between border-t border-slate-100 dark:border-slate-700 pt-2.5 sm:pt-3">
           <div className="flex flex-col">
             <div className="flex h-[18px] items-center">
               {!isSold && isSale && (
@@ -158,7 +161,7 @@ export function AccountCard({ account }: { account: PublicAccount }) {
           </div>
           <div className="shrink-0 mb-1">
             {isSold ? (
-              <span className="rounded-lg bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-600">
+              <span className="rounded-lg bg-emerald-50 dark:bg-emerald-500/15 px-3 py-1 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
                 Đã giao dịch
               </span>
             ) : (
@@ -184,7 +187,7 @@ export function AccountCard({ account }: { account: PublicAccount }) {
   return (
     <Link
       href={`/accounts/${account.id}`}
-      className="group flex h-full w-full rounded-2xl shadow-sm transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl hover:shadow-indigo-200/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:ring-offset-2"
+      className="group flex h-full w-full rounded-2xl shadow-sm transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl hover:shadow-indigo-200/70 dark:hover:shadow-indigo-900/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:ring-offset-2"
     >
       {cardContent}
     </Link>

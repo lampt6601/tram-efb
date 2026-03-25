@@ -72,24 +72,24 @@ export function Sidebar({ open, onClose, isSuperAdmin = false, adminName = "", a
       )}
 
       <aside
-        className={`fixed inset-y-0 left-0 z-50 flex w-64 flex-col border-r border-slate-200 bg-white transition-transform lg:static lg:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-50 flex w-64 flex-col border-r border-slate-200 bg-white transition-transform dark:border-slate-700 dark:bg-slate-900 lg:static lg:translate-x-0 ${
           open ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        <div className="flex h-16 items-center justify-between border-b border-slate-200 px-6">
+        <div className="flex h-16 items-center justify-between border-b border-slate-200 px-6 dark:border-slate-700">
           <Link href="/admin/dashboard" className="flex items-center gap-2.5">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-600">
               <Gamepad2 className="h-4 w-4 text-white" />
             </div>
-            <span className="text-sm font-bold text-slate-900">
-              Quản Trị <span className="text-indigo-600">eFootball</span>
+            <span className="text-sm font-bold text-slate-900 dark:text-slate-100">
+              Quản Trị <span className="text-indigo-600 dark:text-indigo-400">eFootball</span>
             </span>
           </Link>
           <Button
             variant="ghost"
             size="icon"
             onClick={onClose}
-            className="lg:hidden text-slate-400 hover:text-slate-600"
+            className="lg:hidden text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300"
           >
             <X className="h-5 w-5" />
           </Button>
@@ -103,12 +103,12 @@ export function Sidebar({ open, onClose, isSuperAdmin = false, adminName = "", a
               onClick={onClose}
               className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors ${
                 isActive(item.href)
-                  ? "bg-indigo-50 text-indigo-700"
-                  : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                  ? "bg-indigo-50 text-indigo-700 dark:bg-indigo-500/10 dark:text-indigo-400"
+                  : "text-slate-600 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-slate-100"
               }`}
             >
               <item.icon
-                className={`h-5 w-5 ${isActive(item.href) ? "text-indigo-600" : "text-slate-400"}`}
+                className={`h-5 w-5 ${isActive(item.href) ? "text-indigo-600 dark:text-indigo-400" : "text-slate-400 dark:text-slate-500"}`}
               />
               {item.label}
             </Link>
@@ -118,22 +118,22 @@ export function Sidebar({ open, onClose, isSuperAdmin = false, adminName = "", a
             <div className="mt-4">
               <div className="mb-2 flex items-center gap-2 px-3">
                 <Globe className="h-3.5 w-3.5 text-indigo-500" />
-                <span className="text-xs font-semibold uppercase tracking-wider text-indigo-600">
+                <span className="text-xs font-semibold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">
                   Được Cấp Phép
                 </span>
               </div>
-              <div className="space-y-1 rounded-xl border border-indigo-100 bg-indigo-50/50 p-1.5">
+              <div className="space-y-1 rounded-xl border border-indigo-100 bg-indigo-50/50 p-1.5 dark:border-indigo-500/20 dark:bg-indigo-500/10">
                 <Link
                   href="/admin/dashboard/all-accounts"
                   onClick={onClose}
                   className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
                     isActive("/admin/dashboard/all-accounts")
-                      ? "bg-indigo-100 text-indigo-800"
-                      : "text-indigo-700 hover:bg-indigo-100 hover:text-indigo-900"
+                      ? "bg-indigo-100 text-indigo-800 dark:bg-indigo-500/20 dark:text-indigo-300"
+                      : "text-indigo-700 hover:bg-indigo-100 hover:text-indigo-900 dark:text-indigo-400 dark:hover:bg-indigo-500/20 dark:hover:text-indigo-300"
                   }`}
                 >
                   <Globe
-                    className={`h-5 w-5 ${isActive("/admin/dashboard/all-accounts") ? "text-indigo-600" : "text-indigo-400"}`}
+                    className={`h-5 w-5 ${isActive("/admin/dashboard/all-accounts") ? "text-indigo-600 dark:text-indigo-400" : "text-indigo-400 dark:text-indigo-500"}`}
                   />
                   Tất Cả Tài Khoản
                 </Link>
@@ -145,11 +145,11 @@ export function Sidebar({ open, onClose, isSuperAdmin = false, adminName = "", a
             <div className="mt-4">
               <div className="mb-2 flex items-center gap-2 px-3">
                 <ShieldCheck className="h-3.5 w-3.5 text-amber-500" />
-                <span className="text-xs font-semibold uppercase tracking-wider text-amber-600">
+                <span className="text-xs font-semibold uppercase tracking-wider text-amber-600 dark:text-amber-400">
                   Super Admin
                 </span>
               </div>
-              <div className="space-y-1 rounded-xl border border-amber-100 bg-amber-50/50 p-1.5">
+              <div className="space-y-1 rounded-xl border border-amber-100 bg-amber-50/50 p-1.5 dark:border-amber-500/20 dark:bg-amber-500/10">
                 {superAdminNavItems.map((item) => (
                   <Link
                     key={item.href}
@@ -157,12 +157,12 @@ export function Sidebar({ open, onClose, isSuperAdmin = false, adminName = "", a
                     onClick={onClose}
                     className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
                       isActive(item.href)
-                        ? "bg-amber-100 text-amber-800"
-                        : "text-amber-700 hover:bg-amber-100 hover:text-amber-900"
+                        ? "bg-amber-100 text-amber-800 dark:bg-amber-500/20 dark:text-amber-300"
+                        : "text-amber-700 hover:bg-amber-100 hover:text-amber-900 dark:text-amber-400 dark:hover:bg-amber-500/20 dark:hover:text-amber-300"
                     }`}
                   >
                     <item.icon
-                      className={`h-5 w-5 ${isActive(item.href) ? "text-amber-600" : "text-amber-400"}`}
+                      className={`h-5 w-5 ${isActive(item.href) ? "text-amber-600 dark:text-amber-400" : "text-amber-400 dark:text-amber-500"}`}
                     />
                     {item.label}
                   </Link>
@@ -172,21 +172,21 @@ export function Sidebar({ open, onClose, isSuperAdmin = false, adminName = "", a
           )}
         </nav>
 
-        <div className="border-t border-slate-200 p-4">
+        <div className="border-t border-slate-200 p-4 dark:border-slate-700">
           {(adminName || adminEmail) && (
-            <div className={`mb-3 flex items-center gap-2.5 rounded-lg px-3 py-2 ${isSuperAdmin ? "bg-amber-50" : "bg-slate-50"}`}>
-              <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-xs font-bold ${isSuperAdmin ? "bg-amber-100 text-amber-700" : "bg-indigo-100 text-indigo-700"}`}>
+            <div className={`mb-3 flex items-center gap-2.5 rounded-lg px-3 py-2 ${isSuperAdmin ? "bg-amber-50 dark:bg-amber-500/10" : "bg-slate-50 dark:bg-slate-800"}`}>
+              <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-xs font-bold ${isSuperAdmin ? "bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400" : "bg-indigo-100 text-indigo-700 dark:bg-indigo-500/20 dark:text-indigo-400"}`}>
                 {(adminName || adminEmail || "?")[0].toUpperCase()}
               </div>
               <div className="min-w-0">
                 {adminName && (
-                  <p className={`truncate text-xs font-semibold ${isSuperAdmin ? "text-amber-800" : "text-slate-800"}`}>{adminName}</p>
+                  <p className={`truncate text-xs font-semibold ${isSuperAdmin ? "text-amber-800 dark:text-amber-200" : "text-slate-800 dark:text-slate-200"}`}>{adminName}</p>
                 )}
-                <p className="truncate text-xs text-slate-400">{adminEmail}</p>
+                <p className="truncate text-xs text-slate-400 dark:text-slate-500">{adminEmail}</p>
                 {isSuperAdmin && (
                   <div className="flex items-center gap-1 mt-0.5">
                     <ShieldCheck className="h-3 w-3 text-amber-500" />
-                    <span className="text-xs font-medium text-amber-600">Owner</span>
+                    <span className="text-xs font-medium text-amber-600 dark:text-amber-400">Owner</span>
                   </div>
                 )}
               </div>
@@ -195,9 +195,9 @@ export function Sidebar({ open, onClose, isSuperAdmin = false, adminName = "", a
           <Button
             variant="ghost"
             onClick={handleLogout}
-            className="w-full justify-start gap-3 px-3 py-2.5 text-sm font-medium text-slate-600 hover:bg-red-50 hover:text-red-700"
+            className="w-full justify-start gap-3 px-3 py-2.5 text-sm font-medium text-slate-600 hover:bg-red-50 hover:text-red-700 dark:text-slate-300 dark:hover:bg-red-500/10 dark:hover:text-red-400"
           >
-            <LogOut className="h-5 w-5 text-slate-400" />
+            <LogOut className="h-5 w-5 text-slate-400 dark:text-slate-500" />
             Đăng Xuất
           </Button>
         </div>

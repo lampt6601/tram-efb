@@ -72,7 +72,7 @@ function Modal({
   return createPortal(
     <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/30 backdrop-blur-[2px]" onClick={onClose} />
-      <div className="relative z-10 w-full max-w-sm rounded-xl bg-white shadow-xl ring-1 ring-black/10">
+      <div className="relative z-10 w-full max-w-sm rounded-xl bg-white shadow-xl ring-1 ring-black/10 dark:bg-slate-800 dark:ring-white/10">
         {children}
       </div>
     </div>,
@@ -320,7 +320,7 @@ export function SuperAccountActionsDropdown({
       <DropdownMenu>
         <DropdownMenuTrigger
           render={
-            <button className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-2.5 py-1.5 text-xs font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900">
+            <button className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-2.5 py-1.5 text-xs font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-700 dark:hover:text-slate-100">
               Tác vụ
               <ChevronDown className="h-3.5 w-3.5" />
             </button>
@@ -463,23 +463,23 @@ export function SuperAccountActionsDropdown({
       <Modal open={openDialog === "copy"} onClose={closeDialog}>
         <div className="p-5">
           <div className="mb-4 flex items-start justify-between">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-cyan-50">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-cyan-50 dark:bg-cyan-500/10">
               <UserPlus className="h-5 w-5 text-cyan-600" />
             </div>
-            <button onClick={closeDialog} disabled={loading} className="rounded-lg p-1 text-slate-400 hover:bg-slate-100">
+            <button onClick={closeDialog} disabled={loading} className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 dark:text-slate-500 dark:hover:bg-slate-700">
               <X className="h-4 w-4" />
             </button>
           </div>
-          <h2 className="mb-1 text-base font-semibold text-slate-900">Copy cho admin khác</h2>
-          <p className="mb-4 text-sm text-slate-500">
-            Tạo một bản sao của tài khoản <span className="font-semibold text-slate-900">&quot;{title}&quot;</span> cho admin khác.
+          <h2 className="mb-1 text-base font-semibold text-slate-900 dark:text-slate-100">Copy cho admin khác</h2>
+          <p className="mb-4 text-sm text-slate-500 dark:text-slate-400">
+            Tạo một bản sao của tài khoản <span className="font-semibold text-slate-900 dark:text-slate-100">&quot;{title}&quot;</span> cho admin khác.
           </p>
-          <Label className="mb-1.5 text-slate-700">Chọn admin nhận tài khoản</Label>
+          <Label className="mb-1.5 text-slate-700 dark:text-slate-200">Chọn admin nhận tài khoản</Label>
           <select
             value={targetAdminId}
             onChange={(e) => setTargetAdminId(e.target.value)}
             disabled={loading || adminOptions.length === 0}
-            className="mt-1.5 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm outline-none transition-colors focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500"
+            className="mt-1.5 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm outline-none transition-colors focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100"
           >
             {adminOptions.length === 0 ? (
               <option value="">Không có admin khả dụng</option>
@@ -491,12 +491,12 @@ export function SuperAccountActionsDropdown({
               ))
             )}
           </select>
-          {error && <p className="mt-2 text-xs text-red-600">{error}</p>}
-          <p className="mt-2 text-xs text-slate-400">
+          {error && <p className="mt-2 text-xs text-red-600 dark:text-red-400">{error}</p>}
+          <p className="mt-2 text-xs text-slate-400 dark:text-slate-500">
             Bản copy mới sẽ ở trạng thái <span className="font-semibold">Chờ duyệt</span> và không giữ email liên kết cũ.
           </p>
         </div>
-        <div className="flex justify-end gap-2 rounded-b-xl border-t bg-slate-50 px-5 py-3">
+        <div className="flex justify-end gap-2 rounded-b-xl border-t bg-slate-50 px-5 py-3 dark:border-slate-700 dark:bg-slate-800">
           <Button variant="outline" onClick={closeDialog} disabled={loading}>Hủy</Button>
           <Button
             onClick={handleCopyToAdmin}
@@ -514,19 +514,19 @@ export function SuperAccountActionsDropdown({
       <Modal open={openDialog === "unapprove"} onClose={closeDialog}>
         <div className="p-5">
           <div className="mb-4 flex items-start justify-between">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 dark:bg-amber-500/10">
               <RotateCcw className="h-5 w-5 text-amber-600" />
             </div>
-            <button onClick={closeDialog} disabled={loading} className="rounded-lg p-1 text-slate-400 hover:bg-slate-100">
+            <button onClick={closeDialog} disabled={loading} className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 dark:text-slate-500 dark:hover:bg-slate-700">
               <X className="h-4 w-4" />
             </button>
           </div>
-          <h2 className="mb-1 text-base font-semibold text-slate-900">Chuyển về chờ duyệt</h2>
-          <p className="text-sm text-slate-500">
-            Tài khoản <span className="font-semibold text-slate-900">&quot;{title}&quot;</span> sẽ không còn hiển thị công khai và cần được duyệt lại.
+          <h2 className="mb-1 text-base font-semibold text-slate-900 dark:text-slate-100">Chuyển về chờ duyệt</h2>
+          <p className="text-sm text-slate-500 dark:text-slate-400">
+            Tài khoản <span className="font-semibold text-slate-900 dark:text-slate-100">&quot;{title}&quot;</span> sẽ không còn hiển thị công khai và cần được duyệt lại.
           </p>
         </div>
-        <div className="flex justify-end gap-2 rounded-b-xl border-t bg-slate-50 px-5 py-3">
+        <div className="flex justify-end gap-2 rounded-b-xl border-t bg-slate-50 px-5 py-3 dark:border-slate-700 dark:bg-slate-800">
           <Button variant="outline" onClick={closeDialog} disabled={loading}>Hủy</Button>
           <Button
             onClick={handleUnapprove}
@@ -543,20 +543,20 @@ export function SuperAccountActionsDropdown({
       <Modal open={openDialog === "delete"} onClose={closeDialog}>
         <div className="p-5">
           <div className="mb-4 flex items-start justify-between">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-50">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-50 dark:bg-red-500/10">
               <Trash2 className="h-5 w-5 text-red-600" />
             </div>
-            <button onClick={closeDialog} disabled={loading} className="rounded-lg p-1 text-slate-400 hover:bg-slate-100">
+            <button onClick={closeDialog} disabled={loading} className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 dark:text-slate-500 dark:hover:bg-slate-700">
               <X className="h-4 w-4" />
             </button>
           </div>
-          <h2 className="mb-1 text-base font-semibold text-slate-900">Xóa tài khoản</h2>
-          <p className="text-sm text-slate-500">
+          <h2 className="mb-1 text-base font-semibold text-slate-900 dark:text-slate-100">Xóa tài khoản</h2>
+          <p className="text-sm text-slate-500 dark:text-slate-400">
             Bạn có chắc muốn xóa{" "}
-            <span className="font-semibold text-slate-900">&quot;{title}&quot;</span>? Hành động này không thể hoàn tác.
+            <span className="font-semibold text-slate-900 dark:text-slate-100">&quot;{title}&quot;</span>? Hành động này không thể hoàn tác.
           </p>
         </div>
-        <div className="flex justify-end gap-2 rounded-b-xl border-t bg-slate-50 px-5 py-3">
+        <div className="flex justify-end gap-2 rounded-b-xl border-t bg-slate-50 px-5 py-3 dark:border-slate-700 dark:bg-slate-800">
           <Button variant="outline" onClick={closeDialog} disabled={loading}>Hủy</Button>
           <Button
             onClick={handleDelete}
@@ -573,18 +573,18 @@ export function SuperAccountActionsDropdown({
       <Modal open={openDialog === "sell"} onClose={closeDialog}>
         <div className="p-5">
           <div className="mb-4 flex items-start justify-between">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-green-50">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-green-50 dark:bg-green-500/10">
               <ShoppingCart className="h-5 w-5 text-green-600" />
             </div>
-            <button onClick={closeDialog} disabled={loading} className="rounded-lg p-1 text-slate-400 hover:bg-slate-100">
+            <button onClick={closeDialog} disabled={loading} className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 dark:text-slate-500 dark:hover:bg-slate-700">
               <X className="h-4 w-4" />
             </button>
           </div>
-          <h2 className="mb-1 text-base font-semibold text-slate-900">Xác Nhận Bán Tài Khoản</h2>
-          <p className="mb-4 text-sm text-slate-500">
+          <h2 className="mb-1 text-base font-semibold text-slate-900 dark:text-slate-100">Xác Nhận Bán Tài Khoản</h2>
+          <p className="mb-4 text-sm text-slate-500 dark:text-slate-400">
             Giá dự kiến sẽ cập nhật thành giá bán thực tế. Email liên kết sẽ bị gỡ tự động.
           </p>
-          <Label className="mb-1.5 text-slate-700">Giá Bán Thực Tế (VNĐ)</Label>
+          <Label className="mb-1.5 text-slate-700 dark:text-slate-200">Giá Bán Thực Tế (VNĐ)</Label>
           <Input
             type="number"
             value={sellPrice}
@@ -592,12 +592,12 @@ export function SuperAccountActionsDropdown({
             min={0}
             step={1}
             disabled={loading}
-            className="mt-1.5 rounded-xl border-slate-300"
+            className="mt-1.5 rounded-xl border-slate-300 dark:border-slate-600"
             autoFocus
           />
-          {error && <p className="mt-1.5 text-xs text-red-600">{error}</p>}
+          {error && <p className="mt-1.5 text-xs text-red-600 dark:text-red-400">{error}</p>}
         </div>
-        <div className="flex justify-end gap-2 rounded-b-xl border-t bg-slate-50 px-5 py-3">
+        <div className="flex justify-end gap-2 rounded-b-xl border-t bg-slate-50 px-5 py-3 dark:border-slate-700 dark:bg-slate-800">
           <Button variant="outline" onClick={closeDialog} disabled={loading}>Hủy</Button>
           <Button
             onClick={handleSell}
@@ -614,20 +614,20 @@ export function SuperAccountActionsDropdown({
       <Modal open={openDialog === "sale"} onClose={closeDialog}>
         <div className="p-5">
           <div className="mb-4 flex items-start justify-between">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-rose-50">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-rose-50 dark:bg-rose-500/10">
               <Tag className="h-5 w-5 text-rose-600" />
             </div>
-            <button onClick={closeDialog} disabled={loading} className="rounded-lg p-1 text-slate-400 hover:bg-slate-100">
+            <button onClick={closeDialog} disabled={loading} className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 dark:text-slate-500 dark:hover:bg-slate-700">
               <X className="h-4 w-4" />
             </button>
           </div>
-          <h2 className="mb-1 text-base font-semibold text-slate-900">Cài Đặt Khuyến Mãi (Sale)</h2>
-          <p className="mb-4 text-sm text-slate-500">
+          <h2 className="mb-1 text-base font-semibold text-slate-900 dark:text-slate-100">Cài Đặt Khuyến Mãi (Sale)</h2>
+          <p className="mb-4 text-sm text-slate-500 dark:text-slate-400">
             Thiết lập giá gốc và giá giảm để tạo hiệu ứng thẻ sale nổi bật.
           </p>
           <div className="space-y-3">
             <div>
-              <Label className="text-slate-700">Giá Bị Gạch / Giá Gốc (VNĐ)</Label>
+              <Label className="text-slate-700 dark:text-slate-200">Giá Bị Gạch / Giá Gốc (VNĐ)</Label>
               <Input
                 type="number"
                 value={saleOriginalPrice}
@@ -635,12 +635,12 @@ export function SuperAccountActionsDropdown({
                 min={0}
                 step={1}
                 disabled={loading}
-                className="mt-1.5 rounded-xl border-slate-300"
+                className="mt-1.5 rounded-xl border-slate-300 dark:border-slate-600"
                 placeholder="Để trống nếu không có"
               />
             </div>
             <div>
-              <Label className="text-slate-700">Giá Sale Bán Thực Tế (VNĐ)</Label>
+              <Label className="text-slate-700 dark:text-slate-200">Giá Sale Bán Thực Tế (VNĐ)</Label>
               <Input
                 type="number"
                 value={salePrice}
@@ -648,13 +648,13 @@ export function SuperAccountActionsDropdown({
                 min={0}
                 step={1}
                 disabled={loading}
-                className="mt-1.5 rounded-xl border-rose-300 bg-rose-50/30"
+                className="mt-1.5 rounded-xl border-rose-300 bg-rose-50/30 dark:border-rose-500/30 dark:bg-rose-500/10"
               />
             </div>
-            {error && <p className="text-xs text-red-600">{error}</p>}
+            {error && <p className="text-xs text-red-600 dark:text-red-400">{error}</p>}
           </div>
         </div>
-        <div className="rounded-b-xl border-t bg-slate-50 px-5 py-3">
+        <div className="rounded-b-xl border-t bg-slate-50 px-5 py-3 dark:border-slate-700 dark:bg-slate-800">
           <div className="flex justify-end gap-2">
             <Button variant="outline" onClick={closeDialog} disabled={loading}>Hủy</Button>
             <Button
@@ -670,7 +670,7 @@ export function SuperAccountActionsDropdown({
             <button
               onClick={handleRemoveSale}
               disabled={loading}
-              className="mt-2 w-full rounded-lg py-1.5 text-center text-sm text-slate-500 hover:text-slate-700 hover:underline disabled:opacity-50"
+              className="mt-2 w-full rounded-lg py-1.5 text-center text-sm text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:underline disabled:opacity-50"
             >
               Hủy bỏ sale cho tài khoản này
             </button>
@@ -682,20 +682,20 @@ export function SuperAccountActionsDropdown({
       <Modal open={openDialog === "unmark-sold"} onClose={closeDialog}>
         <div className="p-5">
           <div className="mb-4 flex items-start justify-between">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-500/10">
               <RotateCcw className="h-5 w-5 text-blue-600" />
             </div>
-            <button onClick={closeDialog} disabled={loading} className="rounded-lg p-1 text-slate-400 hover:bg-slate-100">
+            <button onClick={closeDialog} disabled={loading} className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 dark:text-slate-500 dark:hover:bg-slate-700">
               <X className="h-4 w-4" />
             </button>
           </div>
-          <h2 className="mb-1 text-base font-semibold text-slate-900">Gỡ đánh dấu đã bán</h2>
-          <p className="text-sm text-slate-500">
-            Tài khoản <span className="font-semibold text-slate-900">&quot;{title}&quot;</span> sẽ được chuyển về trạng thái Còn hàng.
+          <h2 className="mb-1 text-base font-semibold text-slate-900 dark:text-slate-100">Gỡ đánh dấu đã bán</h2>
+          <p className="text-sm text-slate-500 dark:text-slate-400">
+            Tài khoản <span className="font-semibold text-slate-900 dark:text-slate-100">&quot;{title}&quot;</span> sẽ được chuyển về trạng thái Còn hàng.
           </p>
-          {error && <p className="mt-2 text-xs text-red-600">{error}</p>}
+          {error && <p className="mt-2 text-xs text-red-600 dark:text-red-400">{error}</p>}
         </div>
-        <div className="flex justify-end gap-2 rounded-b-xl border-t bg-slate-50 px-5 py-3">
+        <div className="flex justify-end gap-2 rounded-b-xl border-t bg-slate-50 px-5 py-3 dark:border-slate-700 dark:bg-slate-800">
           <Button variant="outline" onClick={closeDialog} disabled={loading}>Hủy</Button>
           <Button
             onClick={handleUnmarkSold}

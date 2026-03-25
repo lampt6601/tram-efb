@@ -5,7 +5,7 @@ import zaloIcon from "@/assets/icons/zalo.png";
 
 export function OwnerSection() {
   return (
-    <section className="border-t border-slate-200 bg-white">
+    <section className="border-t border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800">
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
         <div className="flex flex-col items-center gap-6 sm:flex-row sm:items-center sm:gap-8">
           {/* Avatar */}
@@ -17,7 +17,7 @@ export function OwnerSection() {
                 alt="Trần Hữu Cảnh"
                 className="h-full w-full rounded-2xl object-cover shadow-lg"
               />
-              <div className="absolute -bottom-1.5 -right-1.5 flex h-7 w-7 items-center justify-center rounded-full border-2 border-white bg-emerald-500 shadow">
+              <div className="absolute -bottom-1.5 -right-1.5 flex h-7 w-7 items-center justify-center rounded-full border-2 border-white bg-emerald-500 shadow dark:border-slate-800">
                 <ShieldCheck className="h-3.5 w-3.5 text-white" />
               </div>
             </div>
@@ -25,15 +25,15 @@ export function OwnerSection() {
 
           {/* Info */}
           <div className="flex-1 text-center sm:text-left">
-            <p className="mb-1 text-xs font-semibold uppercase tracking-widest text-indigo-500">
+            <p className="mb-1 text-xs font-semibold uppercase tracking-widest text-indigo-500 dark:text-indigo-400">
               Chủ Shop
             </p>
-            <h2 className="text-2xl font-extrabold text-slate-900 sm:text-3xl">
+            <h2 className="text-2xl font-extrabold text-slate-900 dark:text-slate-100 sm:text-3xl">
               Trần Hữu Cảnh
             </h2>
-            <p className="mt-1.5 max-w-lg text-sm text-slate-500">
+            <p className="mt-1.5 max-w-lg text-sm text-slate-500 dark:text-slate-400">
               Người sáng lập{" "}
-              <span className="font-semibold text-slate-700">
+              <span className="font-semibold text-slate-700 dark:text-slate-200">
                 THC eFootball Shop
               </span>{" "}
               — chuyên cung cấp tài khoản eFootball chất lượng, giao dịch minh
@@ -45,7 +45,7 @@ export function OwnerSection() {
                 target="_blank"
                 rel="noopener noreferrer"
                 title="Facebook cá nhân — Trần Hữu Cảnh"
-                className="group flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 transition-all hover:bg-blue-100 hover:scale-110 active:scale-95"
+                className="group flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 transition-all hover:bg-blue-100 hover:scale-110 active:scale-95 dark:bg-slate-700 dark:hover:bg-slate-600"
               >
                 <Image
                   src={facebookIcon}
@@ -59,7 +59,7 @@ export function OwnerSection() {
                 target="_blank"
                 rel="noopener noreferrer"
                 title="Zalo cá nhân — Trần Hữu Cảnh"
-                className="group flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 transition-all hover:bg-blue-100 hover:scale-110 active:scale-95"
+                className="group flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 transition-all hover:bg-blue-100 hover:scale-110 active:scale-95 dark:bg-slate-700 dark:hover:bg-slate-600"
               >
                 <Image
                   src={zaloIcon}
@@ -74,22 +74,22 @@ export function OwnerSection() {
           {/* Stats */}
           <div className="flex shrink-0 gap-4 sm:gap-6">
             <div className="flex flex-col items-center gap-1">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50">
-                <Zap className="h-5 w-5 text-indigo-500" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 dark:bg-indigo-500/15">
+                <Zap className="h-5 w-5 text-indigo-500 dark:text-indigo-400" />
               </div>
-              <span className="text-xs font-medium text-slate-500">Nhanh Chóng</span>
+              <span className="text-xs font-medium text-slate-500 dark:text-slate-400">Nhanh Chóng</span>
             </div>
             <div className="flex flex-col items-center gap-1">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50">
-                <ShieldCheck className="h-5 w-5 text-emerald-500" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 dark:bg-emerald-500/15">
+                <ShieldCheck className="h-5 w-5 text-emerald-500 dark:text-emerald-400" />
               </div>
-              <span className="text-xs font-medium text-slate-500">Uy Tín</span>
+              <span className="text-xs font-medium text-slate-500 dark:text-slate-400">Uy Tín</span>
             </div>
             <div className="flex flex-col items-center gap-1">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-rose-50">
-                <HeartHandshake className="h-5 w-5 text-rose-500" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-rose-50 dark:bg-rose-500/15">
+                <HeartHandshake className="h-5 w-5 text-rose-500 dark:text-rose-400" />
               </div>
-              <span className="text-xs font-medium text-slate-500">Hỗ Trợ 24/7</span>
+              <span className="text-xs font-medium text-slate-500 dark:text-slate-400">Hỗ Trợ 24/7</span>
             </div>
           </div>
         </div>

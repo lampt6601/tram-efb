@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Gamepad2 } from "lucide-react";
 import zaloIcon from "@/assets/icons/zalo.png";
+import { ThemeToggle } from "./ThemeToggle";
 
 export function Header() {
   return (
@@ -16,17 +17,20 @@ export function Header() {
           </h1>
         </Link>
 
-        <a
-          href="https://zalo.me/g/umniisdttnw5kcubv74y"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center gap-2 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-3 py-1.5 text-xs font-semibold text-emerald-300 transition-all hover:bg-emerald-500/20 hover:text-emerald-200 sm:px-4 sm:text-sm"
-          title="Tham gia Group Zalo Mua Bán Acc"
-        >
-          <Image src={zaloIcon} alt="Zalo" className="h-4 w-4 object-contain sm:h-5 sm:w-5" />
-          <span className="hidden sm:inline">Shop Account Trên Zalo</span>
-          <span className="sm:hidden">Zalo Box</span>
-        </a>
+        <div className="flex items-center gap-2 sm:gap-3">
+          <ThemeToggle />
+          <a
+            href="https://zalo.me/g/umniisdttnw5kcubv74y"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-3 py-1.5 text-xs font-semibold text-emerald-300 transition-all hover:bg-emerald-500/20 hover:text-emerald-200 sm:px-4 sm:text-sm"
+            title="Tham gia Group Zalo Mua Bán Acc"
+          >
+            <Image src={zaloIcon} alt="Zalo" className="h-4 w-4 object-contain sm:h-5 sm:w-5" />
+            <span className="hidden sm:inline">Shop Account Trên Zalo</span>
+            <span className="sm:hidden">Zalo Box</span>
+          </a>
+        </div>
       </div>
     </header>
   );

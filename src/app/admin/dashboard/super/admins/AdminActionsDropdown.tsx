@@ -61,7 +61,7 @@ function Modal({
   return createPortal(
     <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/30 backdrop-blur-[2px]" onClick={onClose} />
-      <div className="relative z-10 w-full max-w-sm rounded-xl bg-white shadow-xl ring-1 ring-black/10">
+      <div className="relative z-10 w-full max-w-sm rounded-xl bg-white shadow-xl ring-1 ring-black/10 dark:bg-slate-800 dark:ring-white/10">
         {children}
       </div>
     </div>,
@@ -167,7 +167,7 @@ export function AdminActionsDropdown({
       <DropdownMenu>
         <DropdownMenuTrigger
           render={
-            <button className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-2.5 py-1.5 text-xs font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900">
+            <button className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-2.5 py-1.5 text-xs font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-700 dark:hover:text-slate-100">
               Tác vụ
               <ChevronDown className="h-3.5 w-3.5" />
             </button>
@@ -208,36 +208,36 @@ export function AdminActionsDropdown({
           <div className="p-5">
             <div className="mb-4 flex items-start justify-between">
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50">
-                  <Pencil className="h-5 w-5 text-indigo-600" />
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 dark:bg-indigo-500/10">
+                  <Pencil className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
                 </div>
                 <div>
-                  <h2 className="text-base font-semibold text-slate-900">Chỉnh Sửa Tên</h2>
-                  <p className="max-w-[200px] truncate text-xs text-slate-500">{adminEmail}</p>
+                  <h2 className="text-base font-semibold text-slate-900 dark:text-slate-100">Chỉnh Sửa Tên</h2>
+                  <p className="max-w-[200px] truncate text-xs text-slate-500 dark:text-slate-400">{adminEmail}</p>
                 </div>
               </div>
               <button
                 type="button"
                 onClick={closeDialog}
                 disabled={loading}
-                className="rounded-lg p-1 text-slate-400 hover:bg-slate-100"
+                className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 dark:text-slate-500 dark:hover:bg-slate-700"
               >
                 <X className="h-4 w-4" />
               </button>
             </div>
-            <Label className="text-slate-700">Tên Admin</Label>
+            <Label className="text-slate-700 dark:text-slate-200">Tên Admin</Label>
             <Input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Nguyễn Văn A"
               disabled={loading}
-              className="mt-1.5 rounded-xl border-slate-300"
+              className="mt-1.5 rounded-xl border-slate-300 dark:border-slate-600"
               autoFocus
             />
-            {error && <p className="mt-2 text-xs text-red-600">{error}</p>}
+            {error && <p className="mt-2 text-xs text-red-600 dark:text-red-400">{error}</p>}
           </div>
-          <div className="flex justify-end gap-2 rounded-b-xl border-t bg-slate-50 px-5 py-3">
+          <div className="flex justify-end gap-2 rounded-b-xl border-t bg-slate-50 px-5 py-3 dark:border-slate-700 dark:bg-slate-800">
             <Button type="button" variant="outline" onClick={closeDialog} disabled={loading}>Hủy</Button>
             <Button
               type="submit"
@@ -257,24 +257,24 @@ export function AdminActionsDropdown({
           <div className="p-5">
             <div className="mb-4 flex items-start justify-between">
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100">
-                  <KeyRound className="h-5 w-5 text-slate-600" />
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-700">
+                  <KeyRound className="h-5 w-5 text-slate-600 dark:text-slate-300" />
                 </div>
                 <div>
-                  <h2 className="text-base font-semibold text-slate-900">Đổi Mật Khẩu</h2>
-                  <p className="max-w-[200px] truncate text-xs text-slate-500">{adminEmail}</p>
+                  <h2 className="text-base font-semibold text-slate-900 dark:text-slate-100">Đổi Mật Khẩu</h2>
+                  <p className="max-w-[200px] truncate text-xs text-slate-500 dark:text-slate-400">{adminEmail}</p>
                 </div>
               </div>
               <button
                 type="button"
                 onClick={closeDialog}
                 disabled={loading}
-                className="rounded-lg p-1 text-slate-400 hover:bg-slate-100"
+                className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 dark:text-slate-500 dark:hover:bg-slate-700"
               >
                 <X className="h-4 w-4" />
               </button>
             </div>
-            <Label className="text-slate-700">Mật Khẩu Mới</Label>
+            <Label className="text-slate-700 dark:text-slate-200">Mật Khẩu Mới</Label>
             <div className="relative mt-1.5">
               <Input
                 type={showPassword ? "text" : "password"}
@@ -282,21 +282,21 @@ export function AdminActionsDropdown({
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Tối thiểu 6 ký tự"
                 disabled={loading}
-                className="rounded-xl border-slate-300 pr-10"
+                className="rounded-xl border-slate-300 pr-10 dark:border-slate-600"
                 autoFocus
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
                 tabIndex={-1}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300"
               >
                 {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </button>
             </div>
-            {error && <p className="mt-1.5 text-xs text-red-600">{error}</p>}
+            {error && <p className="mt-1.5 text-xs text-red-600 dark:text-red-400">{error}</p>}
           </div>
-          <div className="flex justify-end gap-2 rounded-b-xl border-t bg-slate-50 px-5 py-3">
+          <div className="flex justify-end gap-2 rounded-b-xl border-t bg-slate-50 px-5 py-3 dark:border-slate-700 dark:bg-slate-800">
             <Button type="button" variant="outline" onClick={closeDialog} disabled={loading}>Hủy</Button>
             <Button
               type="submit"
@@ -314,29 +314,29 @@ export function AdminActionsDropdown({
       <Modal open={openDialog === "delete"} onClose={closeDialog}>
         <div className="p-5">
           <div className="mb-4 flex items-start justify-between">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-50">
-              <Trash2 className="h-5 w-5 text-red-600" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-50 dark:bg-red-500/10">
+              <Trash2 className="h-5 w-5 text-red-600 dark:text-red-400" />
             </div>
-            <button onClick={closeDialog} disabled={loading} className="rounded-lg p-1 text-slate-400 hover:bg-slate-100">
+            <button onClick={closeDialog} disabled={loading} className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 dark:text-slate-500 dark:hover:bg-slate-700">
               <X className="h-4 w-4" />
             </button>
           </div>
-          <h2 className="mb-1 text-base font-semibold text-slate-900">Xóa tài khoản admin</h2>
-          <p className="text-sm text-slate-500">
+          <h2 className="mb-1 text-base font-semibold text-slate-900 dark:text-slate-100">Xóa tài khoản admin</h2>
+          <p className="text-sm text-slate-500 dark:text-slate-400">
             Bạn có chắc muốn xóa admin{" "}
-            <span className="font-semibold text-slate-900">{adminEmail}</span>?
+            <span className="font-semibold text-slate-900 dark:text-slate-100">{adminEmail}</span>?
           </p>
           {accountCount > 0 && (
-            <div className="mt-3 flex items-start gap-2 rounded-lg bg-amber-50 p-3">
+            <div className="mt-3 flex items-start gap-2 rounded-lg bg-amber-50 p-3 dark:bg-amber-500/10">
               <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-500" />
-              <p className="text-xs text-amber-700">
+              <p className="text-xs text-amber-700 dark:text-amber-400">
                 Admin này có <span className="font-semibold">{accountCount} tài khoản</span> và các email liên kết. Tất cả sẽ được chuyển về cho Owner trước khi xóa.
               </p>
             </div>
           )}
-          {error && <p className="mt-2 text-xs text-red-600">{error}</p>}
+          {error && <p className="mt-2 text-xs text-red-600 dark:text-red-400">{error}</p>}
         </div>
-        <div className="flex justify-end gap-2 rounded-b-xl border-t bg-slate-50 px-5 py-3">
+        <div className="flex justify-end gap-2 rounded-b-xl border-t bg-slate-50 px-5 py-3 dark:border-slate-700 dark:bg-slate-800">
           <Button variant="outline" onClick={closeDialog} disabled={loading}>Hủy</Button>
           <Button
             onClick={handleDelete}

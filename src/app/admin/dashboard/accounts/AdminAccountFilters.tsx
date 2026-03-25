@@ -120,7 +120,7 @@ export function AdminAccountFilters({ totalCount }: AdminAccountFiltersProps) {
       <div className="flex flex-col gap-2.5 md:flex-row md:flex-wrap md:items-center md:gap-3">
         {/* Search */}
         <div className="relative w-full md:flex-1 md:min-w-48">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 z-10 pointer-events-none" />
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 dark:text-slate-500 z-10 pointer-events-none" />
           <Input
             type="text"
             placeholder="Tìm theo tiêu đề..."
@@ -128,18 +128,18 @@ export function AdminAccountFilters({ totalCount }: AdminAccountFiltersProps) {
             onChange={(e) => setLocalSearch(e.target.value)}
             onFocus={() => setIsSearchFocused(true)}
             onBlur={() => setIsSearchFocused(false)}
-            className="h-10 w-full rounded-xl border-slate-200 pl-10 pr-4 text-sm text-slate-700 shadow-sm transition-all focus-visible:border-indigo-400 focus-visible:ring-4 focus-visible:ring-indigo-400/20"
+            className="h-10 w-full rounded-xl border-slate-200 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 pl-10 pr-4 text-sm text-slate-700 shadow-sm transition-all focus-visible:border-indigo-400 focus-visible:ring-4 focus-visible:ring-indigo-400/20"
           />
         </div>
 
         {/* Status + Sort + Clear */}
         <div className="flex items-center gap-2 w-full md:w-auto">
           {/* Status */}
-          <div className="flex flex-1 md:flex-none items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-2.5 shadow-sm">
+          <div className="flex flex-1 md:flex-none items-center gap-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-2.5 shadow-sm">
             <select
               value={status}
               onChange={(e) => update("status", e.target.value)}
-              className="h-9 w-full bg-transparent text-sm text-slate-700 outline-none cursor-pointer"
+              className="h-9 w-full bg-transparent text-sm text-slate-700 dark:text-slate-200 outline-none cursor-pointer"
             >
               {STATUS_OPTIONS.map((o) => (
                 <option key={o.value} value={o.value}>
@@ -150,12 +150,12 @@ export function AdminAccountFilters({ totalCount }: AdminAccountFiltersProps) {
           </div>
 
           {/* Sort */}
-          <div className="flex flex-1 md:flex-none items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-2.5 shadow-sm">
-            <ArrowUpDown className="h-3.5 w-3.5 text-slate-400" />
+          <div className="flex flex-1 md:flex-none items-center gap-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-2.5 shadow-sm">
+            <ArrowUpDown className="h-3.5 w-3.5 text-slate-400 dark:text-slate-500" />
             <select
               value={sort}
               onChange={(e) => update("sort", e.target.value)}
-              className="h-9 w-full bg-transparent text-sm text-slate-700 outline-none cursor-pointer"
+              className="h-9 w-full bg-transparent text-sm text-slate-700 dark:text-slate-200 outline-none cursor-pointer"
             >
               {SORT_OPTIONS.map((o) => (
                 <option key={o.value} value={o.value}>
@@ -180,24 +180,24 @@ export function AdminAccountFilters({ totalCount }: AdminAccountFiltersProps) {
 
         {/* Price range + count */}
         <div className="flex items-center gap-2 w-full md:w-auto">
-          <div className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white p-1 pl-2.5 shadow-sm">
-            <SlidersHorizontal className="h-3.5 w-3.5 shrink-0 text-slate-400" />
+          <div className="flex items-center gap-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-1 pl-2.5 shadow-sm">
+            <SlidersHorizontal className="h-3.5 w-3.5 shrink-0 text-slate-400 dark:text-slate-500" />
             <PriceInput
               placeholder="Giá từ"
               value={localMinPrice}
               onChange={setLocalMinPrice}
-              className="h-7 w-[4.5rem] md:w-24 border-0 bg-transparent px-1.5 text-sm text-slate-700 placeholder:text-slate-400 focus-visible:ring-0 shadow-none"
+              className="h-7 w-[4.5rem] md:w-24 border-0 bg-transparent px-1.5 text-sm text-slate-700 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus-visible:ring-0 shadow-none"
             />
-            <span className="text-xs text-slate-300">—</span>
+            <span className="text-xs text-slate-300 dark:text-slate-600">—</span>
             <PriceInput
               placeholder="đến"
               value={localMaxPrice}
               onChange={setLocalMaxPrice}
-              className="h-7 w-[4.5rem] md:w-24 border-0 bg-transparent px-1.5 text-sm text-slate-700 placeholder:text-slate-400 focus-visible:ring-0 shadow-none"
+              className="h-7 w-[4.5rem] md:w-24 border-0 bg-transparent px-1.5 text-sm text-slate-700 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus-visible:ring-0 shadow-none"
             />
           </div>
 
-          <span className="ml-auto shrink-0 text-sm font-medium text-slate-500">
+          <span className="ml-auto shrink-0 text-sm font-medium text-slate-500 dark:text-slate-400">
             {isPending ? "Đang lọc..." : `${totalCount} tài khoản`}
           </span>
         </div>

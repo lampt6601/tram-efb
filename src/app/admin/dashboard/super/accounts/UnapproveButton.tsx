@@ -17,7 +17,7 @@ export function UnapproveButton({ accountId, accountTitle }: UnapproveButtonProp
   if (confirming) {
     return (
       <div className="flex items-center gap-1">
-        <span className="hidden text-xs text-amber-700 sm:inline">Xác nhận?</span>
+        <span className="hidden text-xs text-amber-700 sm:inline dark:text-amber-400">Xác nhận?</span>
         <button
           onClick={async () => {
             setConfirming(false);
@@ -38,7 +38,7 @@ export function UnapproveButton({ accountId, accountTitle }: UnapproveButtonProp
         </button>
         <button
           onClick={() => setConfirming(false)}
-          className="rounded-lg border border-slate-200 px-2 py-1 text-xs text-slate-500 hover:bg-slate-100 transition-colors"
+          className="rounded-lg border border-slate-200 px-2 py-1 text-xs text-slate-500 hover:bg-slate-100 transition-colors dark:border-slate-700 dark:text-slate-400 dark:hover:bg-slate-700"
         >
           Huỷ
         </button>
@@ -50,7 +50,7 @@ export function UnapproveButton({ accountId, accountTitle }: UnapproveButtonProp
     <button
       onClick={() => setConfirming(true)}
       disabled={loading}
-      className="inline-flex items-center justify-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-2 py-1 text-xs font-medium text-amber-700 hover:bg-amber-100 hover:border-amber-300 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
+      className="inline-flex items-center justify-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-2 py-1 text-xs font-medium text-amber-700 hover:bg-amber-100 hover:border-amber-300 disabled:opacity-60 disabled:cursor-not-allowed transition-colors dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-400 dark:hover:bg-amber-500/20"
     >
       <span className="inline-flex items-center justify-center gap-2">
         {loading ? (

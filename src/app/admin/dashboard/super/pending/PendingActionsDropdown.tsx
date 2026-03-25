@@ -41,7 +41,7 @@ function Modal({
   return createPortal(
     <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/30 backdrop-blur-[2px]" onClick={onClose} />
-      <div className="relative z-10 w-full max-w-sm rounded-xl bg-white shadow-xl ring-1 ring-black/10">
+      <div className="relative z-10 w-full max-w-sm rounded-xl bg-white shadow-xl ring-1 ring-black/10 dark:bg-slate-800 dark:ring-white/10">
         {children}
       </div>
     </div>,
@@ -92,7 +92,7 @@ export function PendingActionsDropdown({ account, adminEmail }: PendingActionsDr
       <DropdownMenu>
         <DropdownMenuTrigger
           render={
-            <button className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-2.5 py-1.5 text-xs font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900">
+            <button className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-2.5 py-1.5 text-xs font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-700 dark:hover:text-slate-100">
               Tác vụ
               <ChevronDown className="h-3.5 w-3.5" />
             </button>
@@ -139,20 +139,20 @@ export function PendingActionsDropdown({ account, adminEmail }: PendingActionsDr
       <Modal open={deleteOpen} onClose={closeDelete}>
         <div className="p-5">
           <div className="mb-4 flex items-start justify-between">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-50">
-              <Trash2 className="h-5 w-5 text-red-600" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-50 dark:bg-red-500/10">
+              <Trash2 className="h-5 w-5 text-red-600 dark:text-red-400" />
             </div>
-            <button onClick={closeDelete} disabled={deleting} className="rounded-lg p-1 text-slate-400 hover:bg-slate-100">
+            <button onClick={closeDelete} disabled={deleting} className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 dark:text-slate-500 dark:hover:bg-slate-700">
               <X className="h-4 w-4" />
             </button>
           </div>
-          <h2 className="mb-1 text-base font-semibold text-slate-900">Xóa tài khoản</h2>
-          <p className="text-sm text-slate-500">
+          <h2 className="mb-1 text-base font-semibold text-slate-900 dark:text-slate-100">Xóa tài khoản</h2>
+          <p className="text-sm text-slate-500 dark:text-slate-400">
             Bạn có chắc muốn xóa{" "}
-            <span className="font-semibold text-slate-900">&quot;{account.title}&quot;</span>? Hành động này không thể hoàn tác.
+            <span className="font-semibold text-slate-900 dark:text-slate-100">&quot;{account.title}&quot;</span>? Hành động này không thể hoàn tác.
           </p>
         </div>
-        <div className="flex justify-end gap-2 rounded-b-xl border-t bg-slate-50 px-5 py-3">
+        <div className="flex justify-end gap-2 rounded-b-xl border-t bg-slate-50 px-5 py-3 dark:border-slate-700 dark:bg-slate-800">
           <Button variant="outline" onClick={closeDelete} disabled={deleting}>Hủy</Button>
           <Button
             onClick={handleDelete}

@@ -30,6 +30,7 @@ import type { PublicAccount, PublicReview } from "@/types/database";
 import { ogImage } from "@/lib/image-utils";
 import { ReviewSection } from "@/components/storefront/ReviewSection";
 import { RelatedAccounts } from "@/components/storefront/RelatedAccounts";
+import { ShareButtons } from "@/components/storefront/ShareButtons";
 import {
   AndroidCoinIcon,
   IosCoinIcon,
@@ -138,14 +139,14 @@ export default async function AccountDetailPage({
       : account.images || [];
 
     return (
-      <div className="flex min-h-screen flex-col bg-slate-50">
+      <div className="flex min-h-screen flex-col bg-slate-50 dark:bg-slate-900">
         <Header />
         <main className="flex-1">
           <div className="mx-auto w-full max-w-4xl overflow-x-hidden px-0 py-4 sm:px-6 sm:py-8 lg:px-8">
             <div className="mb-4 px-4 sm:mb-6 sm:px-0">
               <Link
                 href="/"
-                className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 transition-colors hover:text-indigo-600"
+                className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 transition-colors hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400"
               >
                 <ArrowLeft className="h-4 w-4" /> Quay lại Cửa Hàng
               </Link>
@@ -167,17 +168,17 @@ export default async function AccountDetailPage({
                 <div className="flex flex-col">
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex flex-col gap-2">
-                      <h1 className="text-2xl font-bold text-slate-700 line-through decoration-slate-400 lg:text-3xl">
+                      <h1 className="text-2xl font-bold text-slate-700 line-through decoration-slate-400 dark:text-slate-300 dark:decoration-slate-500 lg:text-3xl">
                         {account.title}
                       </h1>
                       <div className="flex flex-wrap gap-2">
                         {account.server_region && (
-                          <span className="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">
+                          <span className="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600 dark:bg-slate-700 dark:text-slate-300">
                             Server: {account.server_region}
                           </span>
                         )}
                         {account.monthly_log_quota != null && (
-                          <span className="inline-flex items-center rounded-full bg-indigo-50 px-3 py-1 text-xs font-medium text-indigo-700">
+                          <span className="inline-flex items-center rounded-full bg-indigo-50 px-3 py-1 text-xs font-medium text-indigo-700 dark:bg-indigo-500/10 dark:text-indigo-300">
                             Số lượng log: {account.monthly_log_quota}
                           </span>
                         )}
@@ -187,13 +188,13 @@ export default async function AccountDetailPage({
                   </div>
 
                   {/* Sold banner */}
-                  <div className="mt-5 flex items-center gap-3 rounded-2xl bg-emerald-50 border border-emerald-100 px-5 py-4">
+                  <div className="mt-5 flex items-center gap-3 rounded-2xl bg-emerald-50 border border-emerald-100 px-5 py-4 dark:bg-emerald-500/10 dark:border-emerald-500/20">
                     <CheckCircle2 className="h-8 w-8 shrink-0 text-emerald-500" />
                     <div>
-                      <p className="font-semibold text-emerald-800">
+                      <p className="font-semibold text-emerald-800 dark:text-emerald-300">
                         Tài khoản đã được bán
                       </p>
-                      <p className="mt-0.5 text-sm text-emerald-600">
+                      <p className="mt-0.5 text-sm text-emerald-600 dark:text-emerald-400">
                         Tài khoản này đã có chủ. Khám phá các tài khoản khác
                         đang sẵn sàng ngay bên dưới!
                       </p>
@@ -208,19 +209,19 @@ export default async function AccountDetailPage({
                   ) && (
                     <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 gap-4">
                       {(account.total_gp ?? 0) > 0 && (
-                        <div className="rounded-xl bg-amber-50 p-4 text-center opacity-60">
+                        <div className="rounded-xl bg-amber-50 p-4 text-center opacity-60 dark:bg-amber-500/10">
                           <Zap className="mx-auto mb-1 h-5 w-5 text-amber-500" />
-                          <p className="text-lg font-bold text-slate-900">
+                          <p className="text-lg font-bold text-slate-900 dark:text-slate-100">
                             {formatNumber(account.total_gp)}
                           </p>
-                          <p className="text-xs text-slate-500">Tổng GP</p>
+                          <p className="text-xs text-slate-500 dark:text-slate-400">Tổng GP</p>
                         </div>
                       )}
                       {((account.total_coins_android ?? 0) > 0 ||
                         (account.total_coins_ios ?? 0) > 0) && (
-                        <div className="rounded-xl bg-yellow-50 p-4 text-center opacity-60">
+                        <div className="rounded-xl bg-yellow-50 p-4 text-center opacity-60 dark:bg-yellow-500/10">
                           <Coins className="mx-auto mb-1 h-5 w-5 text-yellow-500" />
-                          <p className="text-sm font-bold text-slate-900 flex flex-wrap items-center justify-center gap-x-1.5 gap-y-0.5">
+                          <p className="text-sm font-bold text-slate-900 dark:text-slate-100 flex flex-wrap items-center justify-center gap-x-1.5 gap-y-0.5">
                             {(account.total_coins_android ?? 0) > 0 && (
                               <span className="inline-flex items-center gap-0.5">
                                 <AndroidCoinIcon
@@ -232,7 +233,7 @@ export default async function AccountDetailPage({
                             )}
                             {(account.total_coins_android ?? 0) > 0 &&
                               (account.total_coins_ios ?? 0) > 0 && (
-                                <span className="text-slate-400">|</span>
+                                <span className="text-slate-400 dark:text-slate-500">|</span>
                               )}
                             {(account.total_coins_ios ?? 0) > 0 && (
                               <span className="inline-flex items-center gap-0.5">
@@ -241,32 +242,32 @@ export default async function AccountDetailPage({
                               </span>
                             )}
                           </p>
-                          <p className="text-xs text-slate-500">Coins</p>
+                          <p className="text-xs text-slate-500 dark:text-slate-400">Coins</p>
                         </div>
                       )}
                       {(account.team_strength ?? 0) > 0 && (
-                        <div className="rounded-xl bg-blue-50 p-4 text-center opacity-60">
+                        <div className="rounded-xl bg-blue-50 p-4 text-center opacity-60 dark:bg-blue-500/10">
                           <Shield className="mx-auto mb-1 h-5 w-5 text-blue-500" />
-                          <p className="text-lg font-bold text-slate-900">
+                          <p className="text-lg font-bold text-slate-900 dark:text-slate-100">
                             {account.team_strength}
                           </p>
-                          <p className="text-xs text-slate-500">Lực Chiến</p>
+                          <p className="text-xs text-slate-500 dark:text-slate-400">Lực Chiến</p>
                         </div>
                       )}
-                      <div className="rounded-xl bg-indigo-50 p-4 text-center opacity-60">
+                      <div className="rounded-xl bg-indigo-50 p-4 text-center opacity-60 dark:bg-indigo-500/10">
                         <MessageCircle className="mx-auto mb-1 h-5 w-5 text-indigo-500" />
-                        <p className="text-lg font-bold text-slate-900">
+                        <p className="text-lg font-bold text-slate-900 dark:text-slate-100">
                           {account.monthly_log_quota ?? 10}
                         </p>
-                        <p className="text-xs text-slate-500">Số lượng log</p>
+                        <p className="text-xs text-slate-500 dark:text-slate-400">Số lượng log</p>
                       </div>
                     </div>
                   )}
 
                   <div className="mt-auto pt-8">
                     <div className="mb-6">
-                      <p className="text-sm text-slate-500">Giá Đã Bán</p>
-                      <p className="text-3xl font-extrabold text-slate-400 line-through decoration-slate-300">
+                      <p className="text-sm text-slate-500 dark:text-slate-400">Giá Đã Bán</p>
+                      <p className="text-3xl font-extrabold text-slate-400 line-through decoration-slate-300 dark:text-slate-500 dark:decoration-slate-600">
                         {formatCurrency(account.selling_price)}
                       </p>
                     </div>
@@ -326,30 +327,31 @@ export default async function AccountDetailPage({
     : account.images || [];
 
   return (
-    <div className="flex min-h-screen flex-col bg-slate-50">
+    <div className="flex min-h-screen flex-col bg-slate-50 dark:bg-slate-900">
       <Header />
       <main className="flex-1">
         <div className="mx-auto w-full max-w-4xl overflow-x-hidden px-4 py-4 sm:px-6 sm:py-8 lg:px-8">
-          {/* Back link */}
-          <div className="mb-4">
+          {/* Back link + Share */}
+          <div className="mb-4 flex items-center justify-between">
             <Link
               href="/"
-              className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 transition-colors hover:text-indigo-600"
+              className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 transition-colors hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400"
             >
               <ArrowLeft className="h-4 w-4" /> Quay lại Cửa Hàng
             </Link>
+            <ShareButtons accountId={id} />
           </div>
 
           <div className="grid min-w-0 max-w-full grid-cols-1 gap-6">
             {/* Left — Images: min-w-0 + max-w-full for iOS Safari (aspect-ratio in grid is buggy) */}
-            <div className="min-w-0 max-w-full overflow-hidden rounded-2xl bg-white shadow-sm">
+            <div className="min-w-0 max-w-full overflow-hidden rounded-2xl bg-white shadow-sm dark:bg-slate-800">
               <ImageGallery images={galleryImages} title={account.title} />
             </div>
 
             {/* Right — Info card */}
-            <div className="min-w-0 overflow-hidden rounded-2xl bg-white p-5 shadow-sm sm:p-6">
+            <div className="min-w-0 overflow-hidden rounded-2xl bg-white p-5 shadow-sm sm:p-6 dark:bg-slate-800">
               {/* Title */}
-              <h1 className="flex items-start gap-2 text-xl font-bold leading-snug text-slate-900 sm:text-2xl">
+              <h1 className="flex items-start gap-2 text-xl font-bold leading-snug text-slate-900 sm:text-2xl dark:text-slate-100">
                 <span>{account.title}</span>
                 {account.is_priority && (
                   <Star className="mt-0.5 h-5 w-5 shrink-0 fill-amber-500 text-amber-500" />
@@ -359,7 +361,7 @@ export default async function AccountDetailPage({
               {/* Tags */}
               {account.server_region && (
                 <div className="mt-2 flex flex-wrap gap-2">
-                  <span className="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">
+                  <span className="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600 dark:bg-slate-700 dark:text-slate-300">
                     Server: {account.server_region}
                   </span>
                 </div>
@@ -375,47 +377,47 @@ export default async function AccountDetailPage({
               ) && (
                 <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3">
                   {(account.total_gp ?? 0) > 0 && (
-                    <div className="flex items-center gap-2.5 rounded-xl border border-amber-100 bg-amber-50 px-3 py-2.5">
+                    <div className="flex items-center gap-2.5 rounded-xl border border-amber-100 bg-amber-50 px-3 py-2.5 dark:border-amber-500/20 dark:bg-amber-500/10">
                       <Zap className="h-4 w-4 shrink-0 text-amber-500" />
                       <div className="min-w-0">
-                        <p className="text-[10px] font-medium uppercase tracking-wide text-amber-600/70">Tổng GP</p>
-                        <p className="truncate text-sm font-bold text-slate-900">{formatNumber(account.total_gp)}</p>
+                        <p className="text-[10px] font-medium uppercase tracking-wide text-amber-600/70 dark:text-amber-400/70">Tổng GP</p>
+                        <p className="truncate text-sm font-bold text-slate-900 dark:text-slate-100">{formatNumber(account.total_gp)}</p>
                       </div>
                     </div>
                   )}
                   {(account.total_coins_android ?? 0) > 0 && (
-                    <div className="flex items-center gap-2.5 rounded-xl border border-emerald-100 bg-emerald-50 px-3 py-2.5">
+                    <div className="flex items-center gap-2.5 rounded-xl border border-emerald-100 bg-emerald-50 px-3 py-2.5 dark:border-emerald-500/20 dark:bg-emerald-500/10">
                       <AndroidCoinIcon size={16} className="shrink-0" />
                       <div className="min-w-0">
-                        <p className="text-[10px] font-medium uppercase tracking-wide text-emerald-600/70">Coins Android</p>
-                        <p className="truncate text-sm font-bold text-slate-900">{formatNumber(account.total_coins_android)}</p>
+                        <p className="text-[10px] font-medium uppercase tracking-wide text-emerald-600/70 dark:text-emerald-400/70">Coins Android</p>
+                        <p className="truncate text-sm font-bold text-slate-900 dark:text-slate-100">{formatNumber(account.total_coins_android)}</p>
                       </div>
                     </div>
                   )}
                   {(account.total_coins_ios ?? 0) > 0 && (
-                    <div className="flex items-center gap-2.5 rounded-xl border border-teal-100 bg-teal-50 px-3 py-2.5">
+                    <div className="flex items-center gap-2.5 rounded-xl border border-teal-100 bg-teal-50 px-3 py-2.5 dark:border-teal-500/20 dark:bg-teal-500/10">
                       <IosCoinIcon size={16} className="shrink-0" />
                       <div className="min-w-0">
-                        <p className="text-[10px] font-medium uppercase tracking-wide text-teal-600/70">Coins iOS</p>
-                        <p className="truncate text-sm font-bold text-slate-900">{formatNumber(account.total_coins_ios)}</p>
+                        <p className="text-[10px] font-medium uppercase tracking-wide text-teal-600/70 dark:text-teal-400/70">Coins iOS</p>
+                        <p className="truncate text-sm font-bold text-slate-900 dark:text-slate-100">{formatNumber(account.total_coins_ios)}</p>
                       </div>
                     </div>
                   )}
                   {(account.team_strength ?? 0) > 0 && (
-                    <div className="flex items-center gap-2.5 rounded-xl border border-blue-100 bg-blue-50 px-3 py-2.5">
+                    <div className="flex items-center gap-2.5 rounded-xl border border-blue-100 bg-blue-50 px-3 py-2.5 dark:border-blue-500/20 dark:bg-blue-500/10">
                       <Shield className="h-4 w-4 shrink-0 text-blue-500" />
                       <div className="min-w-0">
-                        <p className="text-[10px] font-medium uppercase tracking-wide text-blue-600/70">Lực Chiến</p>
-                        <p className="truncate text-sm font-bold text-slate-900">{account.team_strength}</p>
+                        <p className="text-[10px] font-medium uppercase tracking-wide text-blue-600/70 dark:text-blue-400/70">Lực Chiến</p>
+                        <p className="truncate text-sm font-bold text-slate-900 dark:text-slate-100">{account.team_strength}</p>
                       </div>
                     </div>
                   )}
                   {account.monthly_log_quota != null && (
-                    <div className="flex items-center gap-2.5 rounded-xl border border-indigo-100 bg-indigo-50 px-3 py-2.5">
+                    <div className="flex items-center gap-2.5 rounded-xl border border-indigo-100 bg-indigo-50 px-3 py-2.5 dark:border-indigo-500/20 dark:bg-indigo-500/10">
                       <MessageCircle className="h-4 w-4 shrink-0 text-indigo-500" />
                       <div className="min-w-0">
-                        <p className="text-[10px] font-medium uppercase tracking-wide text-indigo-600/70">Số lượng log</p>
-                        <p className="truncate text-sm font-bold text-slate-900">{account.monthly_log_quota}</p>
+                        <p className="text-[10px] font-medium uppercase tracking-wide text-indigo-600/70 dark:text-indigo-400/70">Số lượng log</p>
+                        <p className="truncate text-sm font-bold text-slate-900 dark:text-slate-100">{account.monthly_log_quota}</p>
                       </div>
                     </div>
                   )}
@@ -423,25 +425,25 @@ export default async function AccountDetailPage({
               )}
 
               {/* Divider */}
-              <div className="my-5 border-t border-slate-100" />
+              <div className="my-5 border-t border-slate-100 dark:border-slate-700" />
 
               {/* Price */}
               <div className="mb-4">
-                <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
+                <p className="text-xs font-medium uppercase tracking-wide text-slate-400 dark:text-slate-500">
                   Giá Bán
                 </p>
                 <div className="mt-1 flex items-end gap-3">
                   <p
-                    className={`text-3xl font-extrabold ${isSale ? "text-rose-600" : "text-indigo-600"}`}
+                    className={`text-3xl font-extrabold ${isSale ? "text-rose-600 dark:text-rose-400" : "text-indigo-600 dark:text-indigo-400"}`}
                   >
                     {formatCurrency(account.selling_price)}
                   </p>
                   {isSale && (
                     <div className="mb-0.5 flex flex-col">
-                      <span className="text-sm font-medium text-slate-400 line-through">
+                      <span className="text-sm font-medium text-slate-400 line-through dark:text-slate-500">
                         {formatCurrency(account.original_price!)}
                       </span>
-                      <span className="inline-flex w-fit items-center rounded-md bg-rose-100 px-1.5 py-0.5 text-xs font-bold text-rose-600">
+                      <span className="inline-flex w-fit items-center rounded-md bg-rose-100 px-1.5 py-0.5 text-xs font-bold text-rose-600 dark:bg-rose-500/15 dark:text-rose-400">
                         -{discount}% GIẢM
                       </span>
                     </div>
@@ -460,19 +462,19 @@ export default async function AccountDetailPage({
                     className="h-11 w-11 rounded-2xl object-cover shadow-sm"
                     priority
                   />
-                  <div className="absolute -bottom-1.5 -right-1.5 flex h-7 w-7 items-center justify-center rounded-full border-2 border-white bg-emerald-500 shadow">
+                  <div className="absolute -bottom-1.5 -right-1.5 flex h-7 w-7 items-center justify-center rounded-full border-2 border-white bg-emerald-500 shadow dark:border-slate-800">
                     <CheckCircle2 className="h-3.5 w-3.5 text-white" />
                   </div>
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-slate-900">
+                  <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">
                     Nhắn ngay với chủ shop để chốt acc này!
                   </p>
-                  <p className="mt-0.5 text-xs text-slate-500">
+                  <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
                     Liên hệ trực tiếp với chủ shop qua Zalo hoặc Facebook — tư
                     vấn nhanh, giao dịch uy tín.
                   </p>
-                  <p className="mt-1 text-xs font-semibold text-slate-700">
+                  <p className="mt-1 text-xs font-semibold text-slate-700 dark:text-slate-300">
                     Trần Hữu Cảnh · THC eFootball Shop
                   </p>
                 </div>
@@ -497,7 +499,7 @@ export default async function AccountDetailPage({
                   href={CONTACT_FACEBOOK_URL}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-indigo-600 px-6 py-3 text-sm font-semibold text-indigo-600 transition-colors hover:bg-indigo-50"
+                  className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-indigo-600 px-6 py-3 text-sm font-semibold text-indigo-600 transition-colors hover:bg-indigo-50 dark:border-indigo-400 dark:text-indigo-400 dark:hover:bg-indigo-500/10"
                 >
                   <Image
                     src={facebookIcon}
@@ -513,7 +515,7 @@ export default async function AccountDetailPage({
                 href={CONTACT_ZALO_GROUP_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group mt-3 flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 transition-colors hover:border-amber-300 hover:bg-amber-100"
+                className="group mt-3 flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 transition-colors hover:border-amber-300 hover:bg-amber-100 dark:border-amber-500/30 dark:bg-amber-500/10 dark:hover:border-amber-500/50 dark:hover:bg-amber-500/20"
               >
                 <div className="mt-0.5 shrink-0">
                   <Image
@@ -523,14 +525,14 @@ export default async function AccountDetailPage({
                   />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-xs font-semibold text-amber-800">
+                  <p className="text-xs font-semibold text-amber-800 dark:text-amber-300">
                     Chủ shop chưa rep? Vào đây để được hỗ trợ ngay!
                   </p>
-                  <p className="mt-0.5 text-xs text-amber-700">
+                  <p className="mt-0.5 text-xs text-amber-700 dark:text-amber-400">
                     Tham gia Group Zalo — có admin và cộng đồng sẵn sàng hỗ trợ bạn 24/7.
                   </p>
                 </div>
-                <ExternalLink className="mt-0.5 h-4 w-4 shrink-0 text-amber-400 transition-colors group-hover:text-amber-600" />
+                <ExternalLink className="mt-0.5 h-4 w-4 shrink-0 text-amber-400 transition-colors group-hover:text-amber-600 dark:text-amber-500 dark:group-hover:text-amber-300" />
               </a>
             </div>
           </div>

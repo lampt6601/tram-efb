@@ -242,8 +242,8 @@ export default async function SuperRevenuePage({
     <div>
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Doanh Thu Toàn Shop</h1>
-          <p className="mt-1 text-sm text-slate-500">
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Doanh Thu Toàn Shop</h1>
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
             Tổng quan doanh thu của tất cả tài khoản trên hệ thống
           </p>
         </div>
@@ -289,9 +289,9 @@ export default async function SuperRevenuePage({
       {/* ── Per-admin section ── */}
       <AdminRevenueFilter admins={adminOptions} />
 
-      <div className="mt-4 overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm">
+      <div className="mt-4 overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm">
         <table className="min-w-full text-left text-sm">
-          <thead className="border-b bg-slate-50 text-xs font-semibold uppercase text-slate-500">
+          <thead className="border-b bg-slate-50 dark:bg-slate-800 text-xs font-semibold uppercase text-slate-500 dark:text-slate-400">
             <tr>
               <th className="px-4 py-3">Admin</th>
               <th className="px-4 py-3 text-center">Acc Đã Thêm</th>
@@ -305,29 +305,29 @@ export default async function SuperRevenuePage({
           <tbody>
             {filteredAdminStats.length === 0 ? (
               <tr>
-                <td colSpan={7} className="px-4 py-8 text-center text-slate-500">
+                <td colSpan={7} className="px-4 py-8 text-center text-slate-500 dark:text-slate-400">
                   Không có dữ liệu
                 </td>
               </tr>
             ) : (
               filteredAdminStats.map((s) => (
-                <tr key={s.id} className="border-t last:border-b text-slate-700 hover:bg-slate-50">
+                <tr key={s.id} className="border-t last:border-b text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700">
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2">
-                      <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-indigo-100 text-xs font-bold text-indigo-700">
+                      <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-indigo-100 dark:bg-indigo-500/10 text-xs font-bold text-indigo-700 dark:text-indigo-400">
                         {(s.name || s.email)[0].toUpperCase()}
                       </div>
                       <div className="min-w-0">
-                        {s.name && <p className="truncate text-sm font-semibold text-slate-900">{s.name}</p>}
-                        <p className="truncate text-xs text-slate-400">{s.email}</p>
+                        {s.name && <p className="truncate text-sm font-semibold text-slate-900 dark:text-slate-100">{s.name}</p>}
+                        <p className="truncate text-xs text-slate-400 dark:text-slate-500">{s.email}</p>
                       </div>
                     </div>
                   </td>
-                  <td className="px-4 py-3 text-center font-semibold text-indigo-600">{s.added}</td>
+                  <td className="px-4 py-3 text-center font-semibold text-indigo-600 dark:text-indigo-400">{s.added}</td>
                   <td className="px-4 py-3 text-center font-semibold text-amber-600">{s.available}</td>
                   <td className="hidden px-4 py-3 text-center font-semibold text-emerald-600 sm:table-cell">{s.sold}</td>
-                  <td className="hidden px-4 py-3 text-right text-slate-700 md:table-cell">{formatCurrency(s.revenue)}</td>
-                  <td className="hidden px-4 py-3 text-right text-slate-700 md:table-cell">{formatCurrency(s.cost)}</td>
+                  <td className="hidden px-4 py-3 text-right text-slate-700 dark:text-slate-200 md:table-cell">{formatCurrency(s.revenue)}</td>
+                  <td className="hidden px-4 py-3 text-right text-slate-700 dark:text-slate-200 md:table-cell">{formatCurrency(s.cost)}</td>
                   <td className={`px-4 py-3 text-right font-semibold ${s.profit >= 0 ? "text-emerald-600" : "text-red-500"}`}>
                     {formatCurrency(s.profit)}
                   </td>
@@ -340,12 +340,12 @@ export default async function SuperRevenuePage({
 
       {/* ── Daily breakdown ── */}
       <div className="mt-8">
-        <h2 className="text-lg font-semibold text-slate-900">
+        <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
           Chi tiết doanh thu theo ngày{periodLabel}
         </h2>
-        <div className="mt-4 overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm">
+        <div className="mt-4 overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm">
           <table className="min-w-full text-left text-sm">
-            <thead className="border-b bg-slate-50 text-xs font-semibold uppercase text-slate-500">
+            <thead className="border-b bg-slate-50 dark:bg-slate-800 text-xs font-semibold uppercase text-slate-500 dark:text-slate-400">
               <tr>
                 <th className="px-4 py-3">Ngày</th>
                 <th className="px-4 py-3 text-center">Acc Đã Thêm</th>
@@ -357,20 +357,20 @@ export default async function SuperRevenuePage({
             <tbody>
               {displayStats.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-4 py-8 text-center text-slate-500">
+                  <td colSpan={5} className="px-4 py-8 text-center text-slate-500 dark:text-slate-400">
                     Không có dữ liệu trong khoảng thời gian này
                   </td>
                 </tr>
               ) : (
                 displayStats.map((stat) => (
-                  <tr key={stat.dateStr} className="border-t last:border-b text-slate-700 hover:bg-slate-50">
-                    <td className="px-4 py-3 font-medium text-slate-900">
+                  <tr key={stat.dateStr} className="border-t last:border-b text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700">
+                    <td className="px-4 py-3 font-medium text-slate-900 dark:text-slate-100">
                       {stat.dateStr.split("-").reverse().join("/")}
                     </td>
-                    <td className="px-4 py-3 text-center text-indigo-600 font-semibold">{stat.added}</td>
+                    <td className="px-4 py-3 text-center text-indigo-600 dark:text-indigo-400 font-semibold">{stat.added}</td>
                     <td className="px-4 py-3 text-center text-amber-600 font-semibold">{stat.available}</td>
                     <td className="px-4 py-3 text-center text-emerald-600 font-semibold">{stat.sold}</td>
-                    <td className="px-4 py-3 text-right font-semibold text-slate-900">
+                    <td className="px-4 py-3 text-right font-semibold text-slate-900 dark:text-slate-100">
                       {formatCurrency(stat.profit)}
                     </td>
                   </tr>

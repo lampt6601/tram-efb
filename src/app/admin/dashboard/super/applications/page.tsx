@@ -8,9 +8,9 @@ import { Button } from "@/components/ui/button";
 import type { SellerApplication } from "@/types/database";
 
 const statusConfig = {
-  pending: { label: "Chờ duyệt", color: "bg-amber-100 text-amber-800", icon: Clock },
-  approved: { label: "Đã duyệt", color: "bg-emerald-100 text-emerald-800", icon: Check },
-  rejected: { label: "Từ chối", color: "bg-rose-100 text-rose-800", icon: X },
+  pending: { label: "Chờ duyệt", color: "bg-amber-100 dark:bg-amber-500/20 text-amber-800 dark:text-amber-300", icon: Clock },
+  approved: { label: "Đã duyệt", color: "bg-emerald-100 dark:bg-emerald-500/20 text-emerald-800 dark:text-emerald-300", icon: Check },
+  rejected: { label: "Từ chối", color: "bg-rose-100 dark:bg-rose-500/20 text-rose-800 dark:text-rose-300", icon: X },
 };
 
 export default function ManageApplicationsPage() {
@@ -44,8 +44,8 @@ export default function ManageApplicationsPage() {
   if (loading) {
     return (
       <div className="p-6">
-        <h1 className="text-xl font-bold text-slate-900">Đơn đăng ký CTV</h1>
-        <p className="mt-4 text-sm text-slate-500">Đang tải...</p>
+        <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">Đơn đăng ký CTV</h1>
+        <p className="mt-4 text-sm text-slate-500 dark:text-slate-400">Đang tải...</p>
       </div>
     );
   }
@@ -55,8 +55,8 @@ export default function ManageApplicationsPage() {
 
   return (
     <div className="p-6">
-      <h1 className="text-xl font-bold text-slate-900">Đơn đăng ký CTV</h1>
-      <p className="mt-1 text-sm text-slate-500">
+      <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">Đơn đăng ký CTV</h1>
+      <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
         Quản lý đơn đăng ký cộng tác viên bán hàng ({apps.length} đơn)
       </p>
 
@@ -64,7 +64,7 @@ export default function ManageApplicationsPage() {
         <div className="mt-6">
           <div className="flex items-center gap-2 mb-3">
             <Clock className="h-4 w-4 text-amber-500" />
-            <h2 className="text-sm font-semibold text-amber-700 uppercase tracking-wide">
+            <h2 className="text-sm font-semibold text-amber-700 dark:text-amber-400 uppercase tracking-wide">
               Chờ xử lý ({pending.length})
             </h2>
           </div>
@@ -84,7 +84,7 @@ export default function ManageApplicationsPage() {
 
       {others.length > 0 && (
         <div className="mt-8">
-          <h2 className="text-sm font-semibold text-slate-500 uppercase tracking-wide mb-3">
+          <h2 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-3">
             Đã xử lý ({others.length})
           </h2>
           <div className="space-y-3">
@@ -96,7 +96,7 @@ export default function ManageApplicationsPage() {
       )}
 
       {apps.length === 0 && (
-        <p className="mt-6 text-sm text-slate-400">Chưa có đơn đăng ký nào.</p>
+        <p className="mt-6 text-sm text-slate-400 dark:text-slate-500">Chưa có đơn đăng ký nào.</p>
       )}
     </div>
   );
@@ -117,17 +117,17 @@ function ApplicationCard({
   const StatusIcon = status.icon;
 
   return (
-    <div className={`rounded-xl border p-4 ${app.status === "pending" ? "border-amber-200 bg-amber-50" : "border-slate-200 bg-white"}`}>
+    <div className={`rounded-xl border p-4 ${app.status === "pending" ? "border-amber-200 dark:border-amber-500/20 bg-amber-50 dark:bg-amber-500/10" : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800"}`}>
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
-            <p className="text-sm font-semibold text-slate-800">{app.full_name}</p>
+            <p className="text-sm font-semibold text-slate-800 dark:text-slate-200">{app.full_name}</p>
             <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${status.color}`}>
               <StatusIcon className="h-3 w-3" /> {status.label}
             </span>
           </div>
 
-          <div className="mt-2 flex flex-wrap gap-3 text-xs text-slate-500">
+          <div className="mt-2 flex flex-wrap gap-3 text-xs text-slate-500 dark:text-slate-400">
             <span className="flex items-center gap-1">
               <Mail className="h-3 w-3" /> {app.email}
             </span>
@@ -141,7 +141,7 @@ function ApplicationCard({
                 href={app.zalo_link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-1 text-indigo-600 hover:underline"
+                className="flex items-center gap-1 text-indigo-600 dark:text-indigo-400 hover:underline"
               >
                 <MessageCircle className="h-3 w-3" /> Zalo
               </a>
@@ -149,10 +149,10 @@ function ApplicationCard({
           </div>
 
           {app.reason && (
-            <p className="mt-2 text-sm text-slate-600">{app.reason}</p>
+            <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">{app.reason}</p>
           )}
 
-          <p className="mt-1 text-xs text-slate-400">
+          <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">
             {new Date(app.created_at).toLocaleDateString("vi-VN", {
               day: "2-digit",
               month: "2-digit",

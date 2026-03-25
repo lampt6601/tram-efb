@@ -287,9 +287,9 @@ export function SpinWheelAdmin({ entries, results: initialResults }: SpinWheelAd
 
   return (
     <div className="space-y-8">
-      <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3">
+      <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 dark:border-amber-500/30 dark:bg-amber-500/10">
         <Trophy className="h-4 w-4 text-amber-600" />
-        <p className="text-sm font-semibold text-amber-800">
+        <p className="text-sm font-semibold text-amber-800 dark:text-amber-300">
           Chỉ có <span className="font-black">1 giải duy nhất</span> (Grand) — xác nhận kết quả để hiển thị lên trang /event
         </p>
       </div>
@@ -318,7 +318,7 @@ export function SpinWheelAdmin({ entries, results: initialResults }: SpinWheelAd
             disabled={isSpinning || numberSegments.length === 0}
             className={`mt-6 flex items-center gap-3 rounded-2xl px-10 py-4 text-base font-black tracking-wide shadow-lg transition-all ${
               isSpinning || numberSegments.length === 0
-                ? "cursor-not-allowed bg-slate-200 text-slate-400"
+                ? "cursor-not-allowed bg-slate-200 text-slate-400 dark:bg-slate-700 dark:text-slate-500"
                 : "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-indigo-300 hover:scale-[1.04] hover:shadow-xl active:scale-95"
             }`}
           >
@@ -335,7 +335,7 @@ export function SpinWheelAdmin({ entries, results: initialResults }: SpinWheelAd
             )}
           </button>
 
-          <p className="mt-2 text-xs text-slate-400">
+          <p className="mt-2 text-xs text-slate-400 dark:text-slate-500">
             {numberSegments.length === 0
               ? "Chưa có số nào được đăng ký"
               : `${numberSegments.length} số (unique) • ${localEntries.length} lượt`}
@@ -346,17 +346,17 @@ export function SpinWheelAdmin({ entries, results: initialResults }: SpinWheelAd
         <div className={`space-y-5 ${winner ? "order-1 lg:order-none" : ""}`}>
           {/* Winner reveal */}
           {winner && (
-            <div className="animate-in fade-in slide-in-from-bottom-4 rounded-2xl border-2 border-yellow-400/60 bg-gradient-to-br from-yellow-50 to-amber-50 p-5 shadow-lg">
+            <div className="animate-in fade-in slide-in-from-bottom-4 rounded-2xl border-2 border-yellow-400/60 bg-gradient-to-br from-yellow-50 to-amber-50 p-5 shadow-lg dark:from-yellow-500/10 dark:to-amber-500/10">
               <div className="mb-3 text-center text-4xl">🎉</div>
               <h3 className="mb-1 text-center text-sm font-bold uppercase tracking-wider text-amber-600">
                 Kết quả vòng quay
               </h3>
-              <div className="mt-3 rounded-xl bg-white/80 p-4 text-center">
-                <div className="mb-1 text-5xl font-black text-indigo-600">
+              <div className="mt-3 rounded-xl bg-white/80 p-4 text-center dark:bg-slate-800/80">
+                <div className="mb-1 text-5xl font-black text-indigo-600 dark:text-indigo-400">
                   #{winner.number}
                 </div>
-                <p className="text-base font-bold text-slate-800">{winner.zalo_name}</p>
-                <p className="text-sm text-slate-500">{winner.facebook_name}</p>
+                <p className="text-base font-bold text-slate-800 dark:text-slate-200">{winner.zalo_name}</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400">{winner.facebook_name}</p>
               </div>
               <div className="mt-4 flex gap-2">
                 <button
@@ -373,7 +373,7 @@ export function SpinWheelAdmin({ entries, results: initialResults }: SpinWheelAd
                 </button>
                 <button
                   onClick={() => setWinner(null)}
-                  className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-500 transition-all hover:bg-slate-50"
+                  className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-500 transition-all hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-slate-700"
                 >
                   Quay lại
                 </button>
@@ -382,14 +382,14 @@ export function SpinWheelAdmin({ entries, results: initialResults }: SpinWheelAd
           )}
 
           {/* Confirmed Results */}
-          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-            <h3 className="mb-3 text-sm font-bold text-slate-700">
+          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+            <h3 className="mb-3 text-sm font-bold text-slate-700 dark:text-slate-200">
               🏆 Kết Quả Đã Xác Nhận
             </h3>
             <div className="space-y-3">
               {/* Grand Prize */}
               <div
-                className={`rounded-xl border p-3 ${grandResult ? "border-amber-200 bg-amber-50" : "border-dashed border-slate-200 bg-slate-50"}`}
+                className={`rounded-xl border p-3 ${grandResult ? "border-amber-200 bg-amber-50 dark:border-amber-500/30 dark:bg-amber-500/10" : "border-dashed border-slate-200 bg-slate-50 dark:border-slate-700 dark:bg-slate-800"}`}
               >
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-amber-600">🥇 Giải duy nhất (Grand)</span>
@@ -406,14 +406,14 @@ export function SpinWheelAdmin({ entries, results: initialResults }: SpinWheelAd
                 </div>
                 {grandResult ? (
                   <div className="mt-1.5">
-                    <span className="text-xl font-black text-amber-700">
+                    <span className="text-xl font-black text-amber-700 dark:text-amber-400">
                       #{grandResult.winning_number}
                     </span>
-                    <p className="text-sm font-semibold text-slate-700">{grandResult.zalo_name}</p>
-                    <p className="text-xs text-slate-500">{grandResult.facebook_name}</p>
+                    <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">{grandResult.zalo_name}</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">{grandResult.facebook_name}</p>
                   </div>
                 ) : (
-                  <p className="mt-1 text-xs text-slate-400">Chưa có kết quả</p>
+                  <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">Chưa có kết quả</p>
                 )}
               </div>
             </div>
@@ -424,22 +424,22 @@ export function SpinWheelAdmin({ entries, results: initialResults }: SpinWheelAd
       {/* Entries Table */}
       <div>
         <div className="mb-3 flex items-center justify-between">
-          <h3 className="flex items-center gap-2 text-base font-bold text-slate-800">
+          <h3 className="flex items-center gap-2 text-base font-bold text-slate-800 dark:text-slate-200">
             📋 Danh sách tham gia
-            <span className="rounded-full bg-indigo-100 px-2 py-0.5 text-xs font-semibold text-indigo-700">
+            <span className="rounded-full bg-indigo-100 px-2 py-0.5 text-xs font-semibold text-indigo-700 dark:bg-indigo-500/10 dark:text-indigo-400">
               {people.length} người • {localEntries.length} lượt
             </span>
           </h3>
         </div>
-        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-          <div className="grid grid-cols-[2.5rem_1fr_4rem_1fr_1fr] border-b border-slate-100 bg-slate-50 px-4 py-2.5 text-xs font-semibold uppercase tracking-wider text-slate-400">
+        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-800">
+          <div className="grid grid-cols-[2.5rem_1fr_4rem_1fr_1fr] border-b border-slate-100 bg-slate-50 px-4 py-2.5 text-xs font-semibold uppercase tracking-wider text-slate-400 dark:border-slate-800 dark:bg-slate-800 dark:text-slate-500">
             <span>#</span>
             <span>Tên Zalo/Facebook</span>
             <span className="text-center">Lượt</span>
             <span>Các số</span>
             <span>Cập nhật</span>
           </div>
-          <div className="divide-y divide-slate-50">
+          <div className="divide-y divide-slate-50 dark:divide-slate-700">
             {pagePeople.map((p, idx) => {
               const uniqueNums = Array.from(new Set(p.entries.map((e) => e.number))).sort(
                 (a, b) => a - b,
@@ -447,34 +447,34 @@ export function SpinWheelAdmin({ entries, results: initialResults }: SpinWheelAd
               return (
                 <div
                   key={p.name}
-                  className="grid grid-cols-[2.5rem_1fr_4rem_1fr_1fr] items-center px-4 py-2.5 text-sm hover:bg-slate-50"
+                  className="grid grid-cols-[2.5rem_1fr_4rem_1fr_1fr] items-center px-4 py-2.5 text-sm hover:bg-slate-50 dark:hover:bg-slate-700"
                 >
-                <span className="text-xs text-slate-300">
+                <span className="text-xs text-slate-300 dark:text-slate-600">
                   {(page - 1) * PAGE_SIZE + idx + 1}
                 </span>
-                <span className="truncate font-medium text-slate-800">{p.name}</span>
-                <span className="text-center text-sm font-bold text-indigo-600">{p.count}</span>
+                <span className="truncate font-medium text-slate-800 dark:text-slate-200">{p.name}</span>
+                <span className="text-center text-sm font-bold text-indigo-600 dark:text-indigo-400">{p.count}</span>
                 <div className="flex flex-wrap gap-1.5 py-1">
                   {uniqueNums.slice(0, 12).map((n) => (
                     <span
                       key={n}
-                      className="rounded-full border border-slate-200 bg-white px-2 py-0.5 text-xs font-semibold text-slate-600"
+                      className="rounded-full border border-slate-200 bg-white px-2 py-0.5 text-xs font-semibold text-slate-600 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
                     >
                       {n}
                     </span>
                   ))}
                   {uniqueNums.length > 12 && (
-                    <span className="rounded-full border border-slate-200 bg-white px-2 py-0.5 text-xs text-slate-400">
+                    <span className="rounded-full border border-slate-200 bg-white px-2 py-0.5 text-xs text-slate-400 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-500">
                       +{uniqueNums.length - 12}
                     </span>
                   )}
                 </div>
-                <span className="text-xs text-slate-400">{fmtDate(p.latest)}</span>
+                <span className="text-xs text-slate-400 dark:text-slate-500">{fmtDate(p.latest)}</span>
               </div>
               );
             })}
             {people.length === 0 && (
-              <div className="py-12 text-center text-sm text-slate-400">
+              <div className="py-12 text-center text-sm text-slate-400 dark:text-slate-500">
                 Chưa có ai đăng ký số
               </div>
             )}
@@ -487,7 +487,7 @@ export function SpinWheelAdmin({ entries, results: initialResults }: SpinWheelAd
             <button
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page === 1}
-              className="rounded-lg border border-slate-200 px-2.5 py-1.5 text-xs font-medium text-slate-500 transition-colors hover:bg-slate-50 disabled:opacity-40"
+              className="rounded-lg border border-slate-200 px-2.5 py-1.5 text-xs font-medium text-slate-500 transition-colors hover:bg-slate-50 disabled:opacity-40 dark:border-slate-700 dark:text-slate-400 dark:hover:bg-slate-700"
             >
               ‹
             </button>
@@ -498,7 +498,7 @@ export function SpinWheelAdmin({ entries, results: initialResults }: SpinWheelAd
                 className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
                   p === page
                     ? "bg-indigo-500 text-white"
-                    : "border border-slate-200 text-slate-500 hover:bg-slate-50"
+                    : "border border-slate-200 text-slate-500 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-400 dark:hover:bg-slate-700"
                 }`}
               >
                 {p}
@@ -507,7 +507,7 @@ export function SpinWheelAdmin({ entries, results: initialResults }: SpinWheelAd
             <button
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page === totalPages}
-              className="rounded-lg border border-slate-200 px-2.5 py-1.5 text-xs font-medium text-slate-500 transition-colors hover:bg-slate-50 disabled:opacity-40"
+              className="rounded-lg border border-slate-200 px-2.5 py-1.5 text-xs font-medium text-slate-500 transition-colors hover:bg-slate-50 disabled:opacity-40 dark:border-slate-700 dark:text-slate-400 dark:hover:bg-slate-700"
             >
               ›
             </button>

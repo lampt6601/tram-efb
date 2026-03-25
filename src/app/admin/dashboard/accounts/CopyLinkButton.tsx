@@ -25,7 +25,7 @@ export function CopyLinkButton({ id }: CopyLinkButtonProps) {
     <button
       onClick={handleCopy}
       title="Copy Link"
-      className="rounded-lg p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600"
+      className="rounded-lg p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 dark:text-slate-500 dark:hover:bg-slate-700 dark:hover:text-slate-300"
     >
       {copied ? (
         <Check className="h-4 w-4 text-emerald-500" />

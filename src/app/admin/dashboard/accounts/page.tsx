@@ -90,8 +90,8 @@ export default async function AccountsPage({
     <div>
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Tài Khoản</h1>
-          <p className="mt-1 text-sm text-slate-500">
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Tài Khoản</h1>
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
             {items.length} tài khoản game
           </p>
         </div>
@@ -104,38 +104,38 @@ export default async function AccountsPage({
       </div>
 
       {/* Filters */}
-      <div className="mb-4 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+      <div className="mb-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4 shadow-sm">
         <Suspense fallback={null}>
           <AdminAccountFilters totalCount={items.length} />
         </Suspense>
       </div>
 
-      <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+      <div className="overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm">
         <div className="overflow-x-auto">
           <Table>
             <TableHeader>
-              <TableRow className="bg-slate-50 hover:bg-slate-50">
-                <TableHead className="text-slate-500">Tài Khoản</TableHead>
-                <TableHead className="text-slate-500">Trạng Thái</TableHead>
-                <TableHead className="hidden text-slate-500 sm:table-cell">Phê Duyệt</TableHead>
-                <TableHead className="hidden text-slate-500 md:table-cell">Giá Nhập</TableHead>
-                <TableHead className="text-slate-500">Giá Bán</TableHead>
-                <TableHead className="text-slate-500">Hành Động</TableHead>
-                <TableHead className="text-slate-500">Email Liên Kết</TableHead>
+              <TableRow className="bg-slate-50 dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800">
+                <TableHead className="text-slate-500 dark:text-slate-400">Tài Khoản</TableHead>
+                <TableHead className="text-slate-500 dark:text-slate-400">Trạng Thái</TableHead>
+                <TableHead className="hidden text-slate-500 dark:text-slate-400 sm:table-cell">Phê Duyệt</TableHead>
+                <TableHead className="hidden text-slate-500 dark:text-slate-400 md:table-cell">Giá Nhập</TableHead>
+                <TableHead className="text-slate-500 dark:text-slate-400">Giá Bán</TableHead>
+                <TableHead className="text-slate-500 dark:text-slate-400">Hành Động</TableHead>
+                <TableHead className="text-slate-500 dark:text-slate-400">Email Liên Kết</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {items.map((account) => (
-                <TableRow key={account.id} className="hover:bg-slate-50">
+                <TableRow key={account.id} className="hover:bg-slate-50 dark:hover:bg-slate-700">
                   <TableCell>
                     <div className="flex items-center gap-3">
-                      <div className="hidden h-9 w-9 items-center justify-center rounded-lg bg-indigo-50 sm:flex">
-                        <Gamepad2 className="h-4 w-4 text-indigo-600" />
+                      <div className="hidden h-9 w-9 items-center justify-center rounded-lg bg-indigo-50 dark:bg-indigo-500/10 sm:flex">
+                        <Gamepad2 className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
                       </div>
                       <Link
                         href={`/accounts/${account.id}`}
                         target="_blank"
-                        className="group flex items-center gap-1.5 max-w-[120px] truncate font-medium text-slate-900 hover:text-indigo-600 sm:max-w-none"
+                        className="group flex items-center gap-1.5 max-w-[120px] truncate font-medium text-slate-900 dark:text-slate-100 hover:text-indigo-600 dark:hover:text-indigo-400 sm:max-w-none"
                       >
                         {account.is_priority && (
                           <Star className="h-4 w-4 shrink-0 fill-amber-500 text-amber-500 inline" />
@@ -150,24 +150,24 @@ export default async function AccountsPage({
                   </TableCell>
                   <TableCell className="hidden sm:table-cell">
                     {account.is_approved ? (
-                      <span className="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700">
+                      <span className="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 dark:bg-emerald-500/10 px-2 py-0.5 text-xs font-medium text-emerald-700 dark:text-emerald-400">
                         <CheckCircle2 className="h-3 w-3" />
                         Đã duyệt
                       </span>
                     ) : (
-                      <span className="inline-flex items-center gap-1 rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-700">
+                      <span className="inline-flex items-center gap-1 rounded-full border border-amber-200 bg-amber-50 dark:bg-amber-500/10 px-2 py-0.5 text-xs font-medium text-amber-700 dark:text-amber-400">
                         <Clock className="h-3 w-3" />
                         Chờ duyệt
                       </span>
                     )}
                   </TableCell>
-                  <TableCell className="hidden text-slate-600 md:table-cell">
+                  <TableCell className="hidden text-slate-600 dark:text-slate-300 md:table-cell">
                     {formatCurrency(account.purchase_price)}
                   </TableCell>
-                  <TableCell className="font-medium text-indigo-600">
+                  <TableCell className="font-medium text-indigo-600 dark:text-indigo-400">
                     {account.original_price &&
                       account.original_price > account.selling_price && (
-                        <div className="text-xs text-slate-400 line-through font-normal">
+                        <div className="text-xs text-slate-400 dark:text-slate-500 line-through font-normal">
                           <span className="sm:hidden">
                             {formatCompactPrice(account.original_price)}
                           </span>
@@ -196,7 +196,7 @@ export default async function AccountsPage({
                       adminEmail={adminEmail}
                     />
                   </TableCell>
-                  <TableCell className="max-w-[140px] truncate text-xs text-slate-500">
+                  <TableCell className="max-w-[140px] truncate text-xs text-slate-500 dark:text-slate-400">
                     {account.emails?.email_address || "—"}
                   </TableCell>
                 </TableRow>
@@ -205,7 +205,7 @@ export default async function AccountsPage({
                 <TableRow>
                   <TableCell
                     colSpan={7}
-                    className="py-12 text-center text-slate-400"
+                    className="py-12 text-center text-slate-400 dark:text-slate-500"
                   >
                     Không tìm thấy tài khoản nào phù hợp với bộ lọc.
                   </TableCell>

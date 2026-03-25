@@ -42,26 +42,26 @@ export function ProfileForm({ currentName, email }: ProfileFormProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
       <div>
-        <Label className="text-slate-700">Email</Label>
+        <Label className="text-slate-700 dark:text-slate-200">Email</Label>
         <Input
           type="email"
           value={email}
           disabled
-          className="mt-1.5 rounded-xl border-slate-200 bg-slate-50 text-slate-500"
+          className="mt-1.5 rounded-xl border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-500 dark:text-slate-400"
         />
-        <p className="mt-1 text-xs text-slate-400">Email không thể thay đổi.</p>
+        <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">Email không thể thay đổi.</p>
       </div>
       <div>
-        <Label className="text-slate-700">Tên hiển thị</Label>
+        <Label className="text-slate-700 dark:text-slate-200">Tên hiển thị</Label>
         <Input
           type="text"
           value={name}
           onChange={(e) => { setName(e.target.value); setError(""); }}
           placeholder="Nguyễn Văn A"
           disabled={loading}
-          className="mt-1.5 rounded-xl border-slate-300"
+          className="mt-1.5 rounded-xl border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100"
         />
-        {error && <p className="mt-1.5 text-sm text-red-600">{error}</p>}
+        {error && <p className="mt-1.5 text-sm text-red-600 dark:text-red-400">{error}</p>}
       </div>
       <div className="flex justify-end pt-2">
         <Button
