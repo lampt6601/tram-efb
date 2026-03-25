@@ -15,20 +15,25 @@ import type { PublicAccount } from "@/types/database";
 export const revalidate = 0; // dynamic because filters change per request
 
 export const metadata: Metadata = {
-  title: "THC eFootball Shop - Cửa Hàng Tài Khoản eFootball",
+  title:
+    "Shop Acc eFootball Mobile Uy Tín | Mua Bán Tài Khoản eFootball Giá Rẻ",
   description:
-    "Chào mừng bạn đến với THC eFootball Shop. Chuyên cung cấp tài khoản eFootball chất lượng, nạp game an toàn và giao dịch nhanh chóng. Uy tín đặt lên hàng đầu!",
+    "Shop acc eFootball mobile uy tín #1 Việt Nam. Mua bán acc eFootball giá rẻ, acc clone chất lượng cao. Giao dịch an toàn, bảo hành đổi trả, cập nhật acc mới mỗi ngày. 160+ giao dịch thành công.",
+  alternates: {
+    canonical: "https://thc-efb.com",
+  },
   openGraph: {
-    title: "THC eFootball Shop - Cửa Hàng Tài Khoản eFootball",
+    title:
+      "Shop Acc eFootball Mobile Uy Tín | Mua Bán Tài Khoản - THC EFB",
     description:
-      "Chào mừng bạn đến với THC eFootball Shop. Chuyên cung cấp tài khoản eFootball chất lượng, nạp game an toàn và giao dịch nhanh chóng. Uy tín đặt lên hàng đầu!",
+      "Mua bán acc eFootball mobile giá rẻ, uy tín. 160+ giao dịch thành công. Acc clone chất lượng, giao dịch an toàn, bảo hành đổi trả.",
     url: "/",
     images: [
       {
-        url: "/thc-shop.jpg",
+        url: "/thc-shop.png",
         width: 1200,
         height: 630,
-        alt: "THC eFootball Shop",
+        alt: "THC eFootball Shop - Shop Acc eFootball Mobile Uy Tín",
       },
     ],
   },

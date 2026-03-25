@@ -19,51 +19,68 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://thc-efb.com"),
+  alternates: {
+    canonical: "https://thc-efb.com",
+  },
   title: {
-    default: "THC eFootball Shop - Cửa Hàng Tài Khoản eFootball Uy Tín",
+    default:
+      "Shop Acc eFootball Mobile Uy Tín | Mua Bán Tài Khoản eFootball - THC EFB",
     template: "%s | THC eFootball Shop",
   },
   description:
-    "Chào mừng bạn đến với THC eFootball Shop. Chuyên cung cấp tài khoản eFootball chất lượng, nạp game an toàn và giao dịch nhanh chóng. Uy tín đặt lên hàng đầu!",
+    "Shop acc eFootball mobile uy tín #1. Mua bán tài khoản eFootball giá rẻ, acc clone chất lượng, giao dịch an toàn, bảo hành đổi trả. Cập nhật acc mới mỗi ngày tại THC eFootball Shop.",
   keywords: [
-    "trần hữu cảnh efootball",
-    "tran huu canh efootball",
-    "trần hữu cảnh thc shop",
-    "trần hữu cảnh fb",
-    "account efootball",
-    "mua bán acc efootball",
-    "shop account efootball uy tín",
+    "shop acc efootball",
+    "mua acc efootball",
+    "bán acc efootball",
+    "acc efootball mobile",
+    "acc clone efootball",
+    "shop acc efootball uy tín",
+    "mua bán acc efootball mobile",
+    "acc efootball giá rẻ",
+    "tài khoản efootball",
+    "shop efootball mobile",
+    "acc efootball 2025",
+    "acc efootball 2026",
+    "mua acc pes mobile",
+    "shop acc pes",
     "thc efootball shop",
-    "thc efootball",
+    "trần hữu cảnh efootball",
   ],
   authors: [{ name: "Trần Hữu Cảnh" }],
   robots: {
     index: true,
     follow: true,
-    googleBot: { index: true, follow: true },
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
   },
   openGraph: {
     type: "website",
     locale: "vi_VN",
     siteName: "THC eFootball Shop",
-    title: "THC eFootball Shop - Cửa Hàng Tài Khoản eFootball",
+    title: "Shop Acc eFootball Mobile Uy Tín | Mua Bán Tài Khoản - THC EFB",
     description:
-      "Chào mừng bạn đến với THC eFootball Shop. Chuyên cung cấp tài khoản eFootball chất lượng, nạp game an toàn và giao dịch nhanh chóng. Uy tín đặt lên hàng đầu!",
+      "Shop acc eFootball mobile uy tín. Mua bán tài khoản eFootball giá rẻ, acc clone chất lượng, giao dịch an toàn, bảo hành đổi trả. Cập nhật mỗi ngày.",
     url: "https://thc-efb.com",
     images: [
       {
         url: "/thc-shop.png",
         width: 1200,
         height: 630,
-        alt: "THC eFootball Shop",
+        alt: "THC eFootball Shop - Shop Acc eFootball Mobile Uy Tín",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "THC eFootball Shop - Cửa Hàng Tài Khoản eFootball",
+    title: "Shop Acc eFootball Mobile Uy Tín | THC eFootball Shop",
     description:
-      "Chào mừng bạn đến với THC eFootball Shop. Chuyên cung cấp tài khoản eFootball chất lượng, nạp game an toàn và giao dịch nhanh chóng. Uy tín đặt lên hàng đầu!",
+      "Mua bán acc eFootball mobile giá rẻ, uy tín. Acc clone chất lượng, giao dịch an toàn, bảo hành đổi trả.",
     images: ["/thc-shop.png"],
   },
 };
@@ -108,11 +125,21 @@ export default function RootLayout({
               "@context": "https://schema.org",
               "@type": "Organization",
               name: "THC eFootball Shop",
+              alternateName: "Shop Acc eFootball THC EFB",
               url: "https://thc-efb.com",
+              logo: "https://thc-efb.com/thc-shop.png",
+              description:
+                "Shop mua bán tài khoản eFootball mobile uy tín. Acc clone chất lượng, giao dịch an toàn, bảo hành đổi trả.",
               founder: {
                 "@type": "Person",
                 name: "Trần Hữu Cảnh",
                 url: "https://www.facebook.com/share/1B7kgySoVd/?mibextid=wwXIfr",
+              },
+              contactPoint: {
+                "@type": "ContactPoint",
+                contactType: "customer service",
+                availableLanguage: "Vietnamese",
+                url: "https://zalo.me/0969347283",
               },
               sameAs: [
                 "https://zalo.me/0969347283",
@@ -128,12 +155,20 @@ export default function RootLayout({
               "@context": "https://schema.org",
               "@type": "WebSite",
               name: "THC eFootball Shop",
-              alternateName: ["THC Shop", "THC eFootball"],
+              alternateName: [
+                "THC Shop",
+                "THC eFootball",
+                "Shop Acc eFootball",
+                "THC EFB Shop",
+              ],
               url: "https://thc-efb.com",
+              inLanguage: "vi",
               potentialAction: {
                 "@type": "SearchAction",
-                target: "https://thc-efb.com/?q={search_term_string}",
-                "query-input": "required name=search_term_string",
+                target:
+                  "https://thc-efb.com/?q={search_term_string}",
+                "query-input":
+                  "required name=search_term_string",
               },
             }),
           }}

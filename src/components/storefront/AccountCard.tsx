@@ -172,9 +172,12 @@ export function AccountCard({ account }: { account: PublicAccount }) {
 
   if (isSold) {
     return (
-      <div className="group flex h-full w-full rounded-2xl opacity-80 shadow-sm transition-all duration-300 hover:opacity-100 hover:shadow-md">
+      <Link
+        href={`/accounts/${account.id}`}
+        className="group flex h-full w-full rounded-2xl opacity-80 shadow-sm transition-all duration-300 hover:opacity-100 hover:shadow-md"
+      >
         {cardContent}
-      </div>
+      </Link>
     );
   }
 

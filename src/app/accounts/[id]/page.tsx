@@ -111,9 +111,7 @@ export default async function AccountDetailPage({
   if (!publicData) {
     const { data: soldData } = await supabase
       .from("public_sold_accounts")
-      .select(
-        "id, title, selling_price, images, primary_image_url, status, total_gp, total_coins_android, total_coins_ios, team_strength, server_region, created_at",
-      )
+      .select("*")
       .eq("id", id)
       .single();
 
@@ -546,7 +544,7 @@ export default async function AccountDetailPage({
                 "@type": "Product",
                 name: account.title,
                 image: galleryImages,
-                description: `Tài khoản eFootball ${account.server_region ? `server ${account.server_region}` : ""} với lực chiến ${account.team_strength ?? 0}, tổng GP ${account.total_gp ?? 0}.`,
+                description: `Mua acc eFootball ${account.server_region ? `server ${account.server_region}` : ""} với lực chiến ${account.team_strength ?? 0}, tổng GP ${account.total_gp ?? 0}. Giao dịch uy tín tại THC eFootball Shop.`,
                 sku: account.id,
                 brand: {
                   "@type": "Brand",
@@ -569,6 +567,57 @@ export default async function AccountDetailPage({
                   ...(account.team_strength ? [{ "@type": "PropertyValue", name: "Team Strength", value: account.team_strength }] : []),
                   ...(account.total_gp ? [{ "@type": "PropertyValue", name: "Total GP", value: account.total_gp }] : []),
                   ...(account.server_region ? [{ "@type": "PropertyValue", name: "Server Region", value: account.server_region }] : []),
+                ],
+                ...(accountReviews.length > 0
+                  ? {
+                      aggregateRating: {
+                        "@type": "AggregateRating",
+                        ratingValue: (
+                          accountReviews.reduce((sum, r) => sum + r.rating, 0) /
+                          accountReviews.length
+                        ).toFixed(1),
+                        reviewCount: accountReviews.length,
+                        bestRating: 5,
+                        worstRating: 1,
+                      },
+                      review: accountReviews.slice(0, 5).map((r) => ({
+                        "@type": "Review",
+                        author: {
+                          "@type": "Person",
+                          name: r.reviewer_name,
+                        },
+                        reviewRating: {
+                          "@type": "Rating",
+                          ratingValue: r.rating,
+                          bestRating: 5,
+                        },
+                        ...(r.comment ? { reviewBody: r.comment } : {}),
+                        datePublished: r.created_at,
+                      })),
+                    }
+                  : {}),
+              }),
+            }}
+          />
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "BreadcrumbList",
+                itemListElement: [
+                  {
+                    "@type": "ListItem",
+                    position: 1,
+                    name: "Trang chủ",
+                    item: "https://thc-efb.com",
+                  },
+                  {
+                    "@type": "ListItem",
+                    position: 2,
+                    name: account.title,
+                    item: `https://thc-efb.com/accounts/${account.id}`,
+                  },
                 ],
               }),
             }}
