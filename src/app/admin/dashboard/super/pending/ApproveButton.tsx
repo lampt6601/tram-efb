@@ -4,10 +4,12 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { CheckCircle, Loader2 } from "lucide-react";
 import { approveAccount } from "@/app/actions/super-admin-actions";
+import { openFacebookShare } from "@/lib/facebook-share";
 
 interface ApproveButtonProps {
   accountId: string;
   accountTitle: string;
+  sellingPrice?: number;
   onApproved?: () => void;
   fullWidth?: boolean;
 }
@@ -15,6 +17,7 @@ interface ApproveButtonProps {
 export function ApproveButton({
   accountId,
   accountTitle,
+  sellingPrice,
   onApproved,
   fullWidth = false,
 }: ApproveButtonProps) {
@@ -24,7 +27,14 @@ export function ApproveButton({
     setLoading(true);
     try {
       await approveAccount(accountId);
-      toast.success(`Đã duyệt tài khoản "${accountTitle}"`);
+      toast.success(`Đã duyệt tài khoản "${accountTitle}"`, {
+        description: "Chia sẻ acc này lên Facebook của bạn?",
+        action: {
+          label: "📤 Đăng Facebook",
+          onClick: () => openFacebookShare(accountId, accountTitle, sellingPrice),
+        },
+        duration: 10000,
+      });
       onApproved?.();
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Có lỗi xảy ra");

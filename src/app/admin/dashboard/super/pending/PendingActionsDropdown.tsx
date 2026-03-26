@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { ChevronDown, CheckCircle, Eye, Loader2, Trash2, X } from "lucide-react";
 import { toast } from "sonner";
 import { approveAccount, superAdminDeleteAccount } from "@/app/actions/super-admin-actions";
+import { openFacebookShare } from "@/lib/facebook-share";
 import { PendingAccountDrawer } from "./PendingAccountDrawer";
 import { Button } from "@/components/ui/button";
 import {
@@ -64,7 +65,15 @@ export function PendingActionsDropdown({ account, adminEmail }: PendingActionsDr
     setApproving(true);
     try {
       await approveAccount(account.id);
-      toast.success(`Đã duyệt tài khoản "${account.title}"`);
+      toast.success(`Đã duyệt tài khoản "${account.title}"`, {
+        description: "Chia sẻ acc này lên Facebook của bạn?",
+        action: {
+          label: "📤 Đăng Facebook",
+          onClick: () =>
+            openFacebookShare(account.id, account.title, account.selling_price),
+        },
+        duration: 10000,
+      });
       router.refresh();
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Có lỗi xảy ra");

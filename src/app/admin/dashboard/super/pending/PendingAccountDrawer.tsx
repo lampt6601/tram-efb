@@ -320,6 +320,7 @@ export function PendingAccountDrawer({
                 <ApproveButton
                   accountId={account.id}
                   accountTitle={account.title}
+                  sellingPrice={account.selling_price}
                   onApproved={onClose}
                   fullWidth
                 />
