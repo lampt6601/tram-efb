@@ -637,9 +637,9 @@ export function AccountForm({ account }: AccountFormProps) {
               </div>
               <Input
                 type="number"
-                {...register("monthlyLogQuota", { min: { value: 1, message: "Phải >= 1" } })}
+                {...register("monthlyLogQuota", { min: { value: 0, message: "Phải >= 0" } })}
                 aria-invalid={!!errors.monthlyLogQuota}
-                min="1"
+                min="0"
                 step="1"
                 className={cn(inputClass, "mt-1.5")}
                 placeholder="—"

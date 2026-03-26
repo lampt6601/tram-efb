@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Moon, Sun } from 'lucide-react';
-import { useTheme } from './ThemeProvider';
+import { useTheme } from 'next-themes';
 
 interface ThemeToggleProps {
   className?: string;
@@ -11,13 +11,13 @@ interface ThemeToggleProps {
 const defaultClass = "flex h-8 w-8 items-center justify-center rounded-lg border border-slate-300 bg-slate-100 transition-colors hover:bg-slate-200 dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10";
 
 export function ThemeToggle({ className }: ThemeToggleProps = {}) {
-  const { isDark, setTheme } = useTheme();
+  const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => setMounted(true), []);
 
   const toggleTheme = () => {
-    setTheme(isDark ? 'light' : 'dark');
+    setTheme(resolvedTheme === 'dark' ? 'light' : 'dark');
   };
 
   const btnClass = className ?? defaultClass;
@@ -38,9 +38,9 @@ export function ThemeToggle({ className }: ThemeToggleProps = {}) {
     <button
       onClick={toggleTheme}
       className={btnClass}
-      aria-label={isDark ? 'Chuyển sang chế độ sáng' : 'Chuyển sang chế độ tối'}
+      aria-label={resolvedTheme === 'dark' ? 'Chuyển sang chế độ sáng' : 'Chuyển sang chế độ tối'}
     >
-      {isDark ? (
+      {resolvedTheme === 'dark' ? (
         <Sun className="h-4 w-4 text-yellow-400 transition-transform" />
       ) : (
         <Moon className="h-4 w-4 text-slate-600 dark:text-slate-300 transition-transform" />

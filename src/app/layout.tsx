@@ -99,8 +99,6 @@ export default function RootLayout({
           name="google-site-verification"
           content="trJhJ1lGcDKXthkx1ozmLiOXoxCM9nhp536tTfFd-dE"
         />
-        {/* Inline script to set dark mode before React hydration to prevent FOUC */}
-        <script dangerouslySetInnerHTML={{ __html: `(function(){try{var t=localStorage.getItem('theme');var d=t==='dark'||(t!=='light'&&window.matchMedia('(prefers-color-scheme:dark)').matches);if(d)document.documentElement.classList.add('dark')}catch(e){}})()` }} />
       </head>
       <body className={`${inter.variable} font-sans antialiased`}>
         <ThemeProvider>
