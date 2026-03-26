@@ -16,7 +16,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   // Read initial dark state from DOM (set by inline script in layout.tsx)
   const [theme, setThemeState] = useState<Theme>(() => {
     if (typeof window === 'undefined') return 'system';
-    return (sessionStorage.getItem('theme') as Theme) || 'system';
+    return (localStorage.getItem('theme') as Theme) || 'system';
   });
   const [isDark, setIsDark] = useState(() => {
     if (typeof window === 'undefined') return false;
@@ -25,7 +25,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   // Sync on mount (in case inline script ran)
   useEffect(() => {
-    const storedTheme = sessionStorage.getItem('theme') as Theme | null;
+    const storedTheme = localStorage.getItem('theme') as Theme | null;
     if (storedTheme) setThemeState(storedTheme);
     setIsDark(document.documentElement.classList.contains('dark'));
   }, []);
@@ -60,7 +60,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
     // Store preference
     if (typeof window !== 'undefined') {
-      sessionStorage.setItem('theme', newTheme);
+      localStorage.setItem('theme', newTheme);
     }
 
     // Determine if dark mode should be active
