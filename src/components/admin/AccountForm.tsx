@@ -297,7 +297,7 @@ export function AccountForm({ account }: AccountFormProps) {
         total_coins_ios: parseInt(values.totalCoinsIos as string) || 0,
         team_strength: 0,
         server_region: values.serverRegion || null,
-        monthly_log_quota: values.monthlyLogQuota
+        monthly_log_quota: values.monthlyLogQuota !== ""
           ? parseInt(values.monthlyLogQuota as string)
           : null,
         email_id: values.emailId || null,
