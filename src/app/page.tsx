@@ -142,27 +142,23 @@ export default async function HomePage({
           <div className="relative mx-auto max-w-7xl px-4 py-2 sm:px-6 sm:py-8 lg:px-8 lg:py-10">
             <div className="flex flex-col py-3 sm:py-6 md:py-10">
               <div className="text-center lg:text-left">
-                <div className="mx-auto mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-600/20 ring-1 ring-indigo-500/40 lg:mx-0">
-                  <Gamepad2 className="h-7 w-7 text-indigo-400" />
-                </div>
-                <div className="mx-auto mb-4 inline-flex items-center gap-2 rounded-full border border-indigo-500/30 bg-indigo-500/10 px-4 py-1.5 lg:mx-0">
-                  <span className="h-1.5 w-1.5 rounded-full bg-indigo-400 animate-pulse" />
+                <div className="mx-auto mb-5 inline-flex items-center gap-2.5 rounded-full border border-indigo-500/30 bg-indigo-500/10 py-1.5 pl-1.5 pr-4 lg:mx-0">
+                  <img
+                    src="/avatar-owner.jpeg"
+                    alt="Trần Hữu Cảnh"
+                    className="h-7 w-7 rounded-full object-cover ring-2 ring-indigo-400/50"
+                  />
                   <span className="text-xs font-semibold tracking-wide text-indigo-300">
                     Shop của <span className="text-white">Trần Hữu Cảnh</span>
                   </span>
+                  <BadgeCheck className="h-4 w-4 text-indigo-400" />
                 </div>
                 <h1 className="text-balance text-3xl font-extrabold tracking-tight text-white sm:text-4xl lg:text-5xl">
                   Tài Khoản eFootball{" "}
                   <span className="block text-indigo-400">Uy Tín, Giá Tốt</span>
                 </h1>
-                <p className="mx-auto mt-4 max-w-xl text-pretty text-base text-slate-300 sm:text-lg lg:mx-0">
-                  Chọn nhanh tài khoản phù hợp với ngân sách và lối chơi của
-                  bạn, cập nhật liên tục mỗi ngày.
-                </p>
-
                 {/* Recruitment CTA */}
                 <RecruitHeroCTA />
-
                 {/* Social proof stats */}
                 <StatsBar />
               </div>

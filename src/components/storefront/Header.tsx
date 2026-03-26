@@ -18,7 +18,7 @@ export function Header() {
         </Link>
 
         <div className="flex items-center gap-2 sm:gap-3">
-          <ThemeToggle />
+          <ThemeToggle className="hidden sm:flex h-8 w-8 items-center justify-center rounded-lg border border-slate-300 bg-slate-100 transition-colors hover:bg-slate-200 dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10" />
           <a
             href="https://zalo.me/g/umniisdttnw5kcubv74y"
             target="_blank"

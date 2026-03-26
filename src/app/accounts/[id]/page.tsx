@@ -493,7 +493,7 @@ export default async function AccountDetailPage({
                     alt="Zalo"
                     className="h-5 w-5 object-contain"
                   />
-                  Nhắn qua Zalo
+                  <span className="hidden sm:inline">Nhắn qua</span> Zalo
                 </a>
                 <a
                   href={CONTACT_FACEBOOK_URL}
@@ -506,7 +506,7 @@ export default async function AccountDetailPage({
                     alt="Facebook"
                     className="h-5 w-5 object-contain"
                   />
-                  Nhắn qua Facebook
+                  <span className="hidden sm:inline">Nhắn qua</span> Facebook
                 </a>
               </div>
 

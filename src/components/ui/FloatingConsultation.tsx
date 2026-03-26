@@ -53,7 +53,7 @@ export function FloatingConsultation() {
       {/* Zalo — Bottom Right */}
       <div className="floating-consultation fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3 sm:bottom-8 sm:right-8 transition-opacity duration-300">
         {/* Zalo Section */}
-        <div className="flex flex-col items-end gap-3">
+        <div className="flex flex-col items-end gap-1">
           {/* Tooltip / Label */}
           <div className="animate-bounce rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white shadow-lg sm:text-sm relative">
             Tư vấn miễn phí
@@ -65,7 +65,7 @@ export function FloatingConsultation() {
             href={CONTACT_ZALO_GROUP_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="group relative flex h-14 w-14 items-center justify-center rounded-full bg-white shadow-xl ring-4 ring-blue-50 transition-all hover:scale-110 hover:ring-blue-100 active:scale-95 sm:h-16 sm:w-16 self-end"
+            className="group relative flex h-14 w-14 items-center justify-center rounded-full transition-all hover:scale-110 active:scale-95 sm:h-16 sm:w-16 self-end"
             title="Tham gia Nhóm Zalo Tư Vấn"
           >
             <Image
@@ -75,7 +75,7 @@ export function FloatingConsultation() {
             />
 
             {/* Pulse effect on Zalo */}
-            <div className="absolute inset-0 -z-10 animate-ping rounded-full bg-blue-400 opacity-20"></div>
+            <div className="absolute inset-2 -z-10 animate-ping rounded-full bg-blue-400 opacity-20 sm:inset-3"></div>
           </a>
         </div>
       </div>

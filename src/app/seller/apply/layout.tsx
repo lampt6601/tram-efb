@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Đăng Ký Bán Acc eFootball | THC eFootball Shop",
     description:
-      "Trở thành đối tác bán hàng tại THC eFootball Shop. Gian hàng riêng, tiếp cận hàng trăm khách mua mỗi ngày.",
+      "Trở thành cộng tác viên bán hàng tại THC eFootball Shop. Gian hàng riêng, tiếp cận hàng trăm khách mua mỗi ngày.",
     url: "/seller/apply",
   },
 };
