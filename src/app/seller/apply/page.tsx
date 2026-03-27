@@ -47,13 +47,46 @@ const benefits = [
 ];
 
 const comparisonRows = [
-  { feature: "Tiếp cận khách hàng", thc: true, free: false },
-  { feature: "Gian hàng chuyên nghiệp", thc: true, free: false },
-  { feature: "Hỗ trợ định giá từ admin", thc: true, free: false },
-  { feature: "Theo dõi doanh thu", thc: true, free: false },
-  { feature: "Hỗ trợ khi có tranh chấp", thc: true, free: false },
-  { feature: "Không cần vốn lớn", thc: true, free: true },
-  { feature: "Tự do thời gian", thc: true, free: true },
+  {
+    feature: "Bài đăng bán acc",
+    thc: "Luôn hiển thị trên web, không bị trôi",
+    fb: "Trôi nhanh trong group, phải đăng lại liên tục",
+  },
+  {
+    feature: "Khách hàng",
+    thc: "Chất lượng cao — liên hệ Zalo là đã xác định mua",
+    fb: "Nhiều người hỏi giá rồi biến, bị ép giá",
+  },
+  {
+    feature: "Thời gian bán",
+    thc: "Đăng 1 lần, tự động hiển thị đến khi bán xong",
+    fb: "Tốn thời gian đăng bài, trả lời comment, nhắn tin",
+  },
+  {
+    feature: "Bị ép giá",
+    thc: "Giá niêm yết rõ ràng, khách liên hệ khi chấp nhận giá",
+    fb: "Thường xuyên bị trả giá, ép giá trong comment",
+  },
+  {
+    feature: "Tập trung công việc",
+    thc: "Chỉ cần thu mua acc, shop lo phần bán",
+    fb: "Vừa thu mua, vừa đăng bài, vừa chăm khách",
+  },
+  {
+    feature: "Hỗ trợ định giá",
+    thc: "Admin hỗ trợ tư vấn giá phù hợp",
+    fb: "Tự định giá, dễ bán lỗ hoặc bán quá cao",
+  },
+  {
+    feature: "Theo dõi doanh thu",
+    thc: "Dashboard tự động tính lợi nhuận, thống kê",
+    fb: "Tự ghi chép, dễ quên, không rõ lời lỗ",
+  },
+  {
+    feature: "Uy tín với khách",
+    thc: "Có thương hiệu shop, 174+ giao dịch thành công",
+    fb: "Phải tự build trust, khách dễ nghi lừa đảo",
+  },
 ];
 
 const faqs = [
@@ -243,50 +276,37 @@ function SellerApplyForm() {
           <div className="mt-8 overflow-hidden rounded-2xl border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800">
             <div className="border-b border-slate-200 bg-slate-50 px-5 py-4 dark:border-slate-700 dark:bg-slate-800">
               <h2 className="text-base font-bold text-slate-900 dark:text-slate-100">
-                Bán trên THC vs Bán tự do
+                Bán trên THC Shop vs Đăng Facebook
               </h2>
+              <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                Tại sao CTV chọn THC thay vì tự đăng group Facebook?
+              </p>
             </div>
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b bg-slate-50/50 dark:bg-slate-800/50">
-                  <th className="px-5 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400">
-                    Tính năng
-                  </th>
-                  <th className="px-4 py-3 text-center text-xs font-semibold text-indigo-600 dark:text-indigo-400">
-                    THC Shop
-                  </th>
-                  <th className="px-4 py-3 text-center text-xs font-semibold text-slate-500 dark:text-slate-400">
-                    Tự bán
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {comparisonRows.map((row) => (
-                  <tr
-                    key={row.feature}
-                    className="border-b last:border-0 dark:border-slate-700"
-                  >
-                    <td className="px-5 py-3 text-slate-700 dark:text-slate-300">
-                      {row.feature}
-                    </td>
-                    <td className="px-4 py-3 text-center">
-                      {row.thc ? (
-                        <Check className="mx-auto h-4 w-4 text-emerald-500" />
-                      ) : (
-                        <X className="mx-auto h-4 w-4 text-slate-300 dark:text-slate-600" />
-                      )}
-                    </td>
-                    <td className="px-4 py-3 text-center">
-                      {row.free ? (
-                        <Check className="mx-auto h-4 w-4 text-emerald-500" />
-                      ) : (
-                        <X className="mx-auto h-4 w-4 text-slate-300 dark:text-slate-600" />
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <div className="divide-y divide-slate-100 dark:divide-slate-700">
+              {comparisonRows.map((row) => (
+                <div key={row.feature} className="px-5 py-4">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500">
+                    {row.feature}
+                  </p>
+                  <div className="mt-2 grid gap-2 sm:grid-cols-2">
+                    <div className="flex gap-2.5 rounded-lg border border-emerald-100 bg-emerald-50/50 px-3 py-2.5 dark:border-emerald-500/10 dark:bg-emerald-500/5">
+                      <Check className="mt-0.5 h-4 w-4 shrink-0 text-emerald-500" />
+                      <div>
+                        <p className="text-[11px] font-semibold text-emerald-700 dark:text-emerald-400">THC Shop</p>
+                        <p className="text-xs text-slate-600 dark:text-slate-400">{row.thc}</p>
+                      </div>
+                    </div>
+                    <div className="flex gap-2.5 rounded-lg border border-red-100 bg-red-50/30 px-3 py-2.5 dark:border-red-500/10 dark:bg-red-500/5">
+                      <X className="mt-0.5 h-4 w-4 shrink-0 text-red-400" />
+                      <div>
+                        <p className="text-[11px] font-semibold text-red-600 dark:text-red-400">Facebook</p>
+                        <p className="text-xs text-slate-600 dark:text-slate-400">{row.fb}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
 
           <div className="mt-8 grid gap-8 lg:grid-cols-2">
