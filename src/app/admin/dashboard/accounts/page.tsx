@@ -45,7 +45,7 @@ export default async function AccountsPage({
 
   const supabase = await createSupabaseServerClient();
   const { data: { user } } = await supabase.auth.getUser();
-  const adminEmail = user?.email ?? user?.id ?? "";
+  const adminEmail = user?.user_metadata?.full_name ?? user?.email ?? user?.id ?? "";
 
   let query = supabase.from("accounts").select("*, emails(*)");
 
@@ -121,7 +121,7 @@ export default async function AccountsPage({
                 <TableHead className="hidden text-slate-500 dark:text-slate-400 md:table-cell">Giá Nhập</TableHead>
                 <TableHead className="text-slate-500 dark:text-slate-400">Giá Bán</TableHead>
                 <TableHead className="text-slate-500 dark:text-slate-400">Hành Động</TableHead>
-                <TableHead className="text-slate-500 dark:text-slate-400">Email Liên Kết</TableHead>
+                <TableHead className="hidden text-slate-500 dark:text-slate-400 sm:table-cell">Email Liên Kết</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -196,7 +196,7 @@ export default async function AccountsPage({
                       adminEmail={adminEmail}
                     />
                   </TableCell>
-                  <TableCell className="max-w-[140px] truncate text-xs text-slate-500 dark:text-slate-400">
+                  <TableCell className="hidden max-w-[140px] truncate text-xs text-slate-500 dark:text-slate-400 sm:table-cell">
                     {account.emails?.email_address || "—"}
                   </TableCell>
                 </TableRow>

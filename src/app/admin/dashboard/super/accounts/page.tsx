@@ -51,7 +51,7 @@ export default async function SuperAccountsPage({
         : (u.email as string),
     }));
   const adminEmailMap = new Map<string, string>(
-    (usersData?.users ?? []).map((u) => [u.id, u.email ?? u.id])
+    (usersData?.users ?? []).map((u) => [u.id, u.user_metadata?.full_name ?? u.email ?? u.id])
   );
 
   let query = service.from("accounts").select("*, emails(*)");

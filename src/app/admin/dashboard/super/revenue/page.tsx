@@ -294,11 +294,11 @@ export default async function SuperRevenuePage({
           <thead className="border-b bg-slate-50 dark:bg-slate-800 text-xs font-semibold uppercase text-slate-500 dark:text-slate-400">
             <tr>
               <th className="px-4 py-3">Admin</th>
-              <th className="px-4 py-3 text-center">Acc Đã Thêm</th>
-              <th className="px-4 py-3 text-center">Acc Sẵn Sàng</th>
-              <th className="hidden px-4 py-3 text-center sm:table-cell">Acc Đã Bán{periodLabel}</th>
-              <th className="hidden px-4 py-3 text-right md:table-cell">Doanh Thu{periodLabel}</th>
-              <th className="hidden px-4 py-3 text-right md:table-cell">Chi Phí{periodLabel}</th>
+              <th className="hidden px-4 py-3 text-center sm:table-cell">Đã Thêm</th>
+              <th className="hidden px-4 py-3 text-center sm:table-cell">Sẵn Sàng</th>
+              <th className="hidden px-4 py-3 text-center md:table-cell">Đã Bán{periodLabel}</th>
+              <th className="hidden px-4 py-3 text-right lg:table-cell">Doanh Thu{periodLabel}</th>
+              <th className="hidden px-4 py-3 text-right lg:table-cell">Chi Phí{periodLabel}</th>
               <th className="px-4 py-3 text-right">Lợi Nhuận{periodLabel}</th>
             </tr>
           </thead>
@@ -314,20 +314,20 @@ export default async function SuperRevenuePage({
                 <tr key={s.id} className="border-t last:border-b text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700">
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2">
-                      <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-indigo-100 dark:bg-indigo-500/10 text-xs font-bold text-indigo-700 dark:text-indigo-400">
+                      <div className="hidden h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-indigo-100 dark:bg-indigo-500/10 text-xs font-bold text-indigo-700 dark:text-indigo-400 sm:flex">
                         {(s.name || s.email)[0].toUpperCase()}
                       </div>
-                      <div className="min-w-0">
+                      <div className="min-w-0 max-w-[100px] sm:max-w-[180px]">
                         {s.name && <p className="truncate text-sm font-semibold text-slate-900 dark:text-slate-100">{s.name}</p>}
                         <p className="truncate text-xs text-slate-400 dark:text-slate-500">{s.email}</p>
                       </div>
                     </div>
                   </td>
-                  <td className="px-4 py-3 text-center font-semibold text-indigo-600 dark:text-indigo-400">{s.added}</td>
-                  <td className="px-4 py-3 text-center font-semibold text-amber-600">{s.available}</td>
-                  <td className="hidden px-4 py-3 text-center font-semibold text-emerald-600 sm:table-cell">{s.sold}</td>
-                  <td className="hidden px-4 py-3 text-right text-slate-700 dark:text-slate-200 md:table-cell">{formatCurrency(s.revenue)}</td>
-                  <td className="hidden px-4 py-3 text-right text-slate-700 dark:text-slate-200 md:table-cell">{formatCurrency(s.cost)}</td>
+                  <td className="hidden px-4 py-3 text-center font-semibold text-indigo-600 dark:text-indigo-400 sm:table-cell">{s.added}</td>
+                  <td className="hidden px-4 py-3 text-center font-semibold text-amber-600 sm:table-cell">{s.available}</td>
+                  <td className="hidden px-4 py-3 text-center font-semibold text-emerald-600 md:table-cell">{s.sold}</td>
+                  <td className="hidden px-4 py-3 text-right text-slate-700 dark:text-slate-200 lg:table-cell">{formatCurrency(s.revenue)}</td>
+                  <td className="hidden px-4 py-3 text-right text-slate-700 dark:text-slate-200 lg:table-cell">{formatCurrency(s.cost)}</td>
                   <td className={`px-4 py-3 text-right font-semibold ${s.profit >= 0 ? "text-emerald-600" : "text-red-500"}`}>
                     {formatCurrency(s.profit)}
                   </td>
@@ -348,9 +348,9 @@ export default async function SuperRevenuePage({
             <thead className="border-b bg-slate-50 dark:bg-slate-800 text-xs font-semibold uppercase text-slate-500 dark:text-slate-400">
               <tr>
                 <th className="px-4 py-3">Ngày</th>
-                <th className="px-4 py-3 text-center">Acc Đã Thêm</th>
-                <th className="px-4 py-3 text-center">Acc Sẵn Sàng</th>
-                <th className="px-4 py-3 text-center">Acc Đã Bán</th>
+                <th className="hidden px-4 py-3 text-center sm:table-cell">Đã Thêm</th>
+                <th className="hidden px-4 py-3 text-center sm:table-cell">Sẵn Sàng</th>
+                <th className="px-4 py-3 text-center">Đã Bán</th>
                 <th className="px-4 py-3 text-right">Lợi Nhuận</th>
               </tr>
             </thead>
@@ -367,8 +367,8 @@ export default async function SuperRevenuePage({
                     <td className="px-4 py-3 font-medium text-slate-900 dark:text-slate-100">
                       {stat.dateStr.split("-").reverse().join("/")}
                     </td>
-                    <td className="px-4 py-3 text-center text-indigo-600 dark:text-indigo-400 font-semibold">{stat.added}</td>
-                    <td className="px-4 py-3 text-center text-amber-600 font-semibold">{stat.available}</td>
+                    <td className="hidden px-4 py-3 text-center text-indigo-600 dark:text-indigo-400 font-semibold sm:table-cell">{stat.added}</td>
+                    <td className="hidden px-4 py-3 text-center text-amber-600 font-semibold sm:table-cell">{stat.available}</td>
                     <td className="px-4 py-3 text-center text-emerald-600 font-semibold">{stat.sold}</td>
                     <td className="px-4 py-3 text-right font-semibold text-slate-900 dark:text-slate-100">
                       {formatCurrency(stat.profit)}

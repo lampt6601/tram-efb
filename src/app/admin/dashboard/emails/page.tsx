@@ -96,8 +96,8 @@ export default async function EmailsPage({
                 <TableRow key={email.id} className="hover:bg-slate-50 dark:hover:bg-slate-700">
                   <TableCell>
                     <div className="flex items-center gap-2">
-                      <Mail className="h-4 w-4 text-slate-400 dark:text-slate-500" />
-                      <span className="font-medium text-slate-900 dark:text-slate-100">
+                      <Mail className="h-4 w-4 shrink-0 text-slate-400 dark:text-slate-500" />
+                      <span className="max-w-[140px] truncate font-medium text-slate-900 dark:text-slate-100 sm:max-w-none">
                         {email.email_address}
                       </span>
                     </div>

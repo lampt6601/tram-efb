@@ -276,7 +276,7 @@ export default async function DashboardPage({
                 <tr>
                   <th className="px-4 py-3">Tài khoản</th>
                   <th className="px-4 py-3">Trạng thái</th>
-                  <th className="px-4 py-3">Ngày đăng</th>
+                  <th className="hidden px-4 py-3 sm:table-cell">Ngày đăng</th>
                   <th className="px-4 py-3 text-right">Số ngày</th>
                 </tr>
               </thead>
@@ -297,7 +297,7 @@ export default async function DashboardPage({
                         <Link
                           href={`/accounts/${account.id}`}
                           target="_blank"
-                          className="group inline-flex items-center gap-1.5 max-w-xs truncate font-medium text-slate-900 dark:text-slate-100 hover:text-indigo-600 dark:hover:text-indigo-400"
+                          className="group inline-flex items-center gap-1.5 max-w-[150px] sm:max-w-xs truncate font-medium text-slate-900 dark:text-slate-100 hover:text-indigo-600 dark:hover:text-indigo-400"
                         >
                           <span className="truncate group-hover:underline">{account.title}</span>
                           <ExternalLink className="h-3.5 w-3.5 shrink-0 opacity-0 group-hover:opacity-60 transition-opacity" />
@@ -306,7 +306,7 @@ export default async function DashboardPage({
                       <td className="px-4 py-3">
                         <StatusBadge status={account.status} />
                       </td>
-                      <td className="px-4 py-3 text-slate-500 dark:text-slate-400">
+                      <td className="hidden px-4 py-3 text-slate-500 dark:text-slate-400 sm:table-cell">
                         {created.toLocaleDateString("vi-VN")}
                       </td>
                       <td className="px-4 py-3 text-right text-slate-800 dark:text-slate-200">

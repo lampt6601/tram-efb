@@ -88,8 +88,8 @@ export default async function RequestsPage({
               <TableRow className="bg-slate-50 dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800">
                 <TableHead className="text-slate-500 dark:text-slate-400">Chi Tiết Yêu Cầu</TableHead>
                 <TableHead className="text-slate-500 dark:text-slate-400">Mức Giá</TableHead>
-                <TableHead className="text-slate-500 dark:text-slate-400">Người Yêu Cầu</TableHead>
-                <TableHead className="text-slate-500 dark:text-slate-400">Nền Tảng Liên Hệ</TableHead>
+                <TableHead className="hidden text-slate-500 dark:text-slate-400 sm:table-cell">Người Yêu Cầu</TableHead>
+                <TableHead className="hidden text-slate-500 dark:text-slate-400 md:table-cell">Nền Tảng Liên Hệ</TableHead>
                 <TableHead className="text-slate-500 dark:text-slate-400">Trạng Thái</TableHead>
                 <TableHead className="text-slate-500 dark:text-slate-400">Hành Động</TableHead>
               </TableRow>
@@ -101,8 +101,8 @@ export default async function RequestsPage({
                   className={req.completed ? "bg-slate-50/50 dark:bg-slate-800/50" : "hover:bg-slate-50 dark:hover:bg-slate-700"}
                 >
                   <TableCell>
-                    <div className="max-w-[280px]">
-                      <span className="text-slate-900 dark:text-slate-100">{req.detail}</span>
+                    <div className="max-w-[150px] sm:max-w-[280px]">
+                      <span className="line-clamp-2 text-slate-900 dark:text-slate-100">{req.detail}</span>
                     </div>
                   </TableCell>
                   <TableCell>
@@ -111,13 +111,13 @@ export default async function RequestsPage({
                       {req.price_level || "—"}
                     </div>
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="hidden sm:table-cell">
                     <div className="flex items-center gap-1.5 text-slate-700 dark:text-slate-200">
                       <User className="h-4 w-4 text-slate-400 dark:text-slate-500" />
-                      {req.requester_name}
+                      <span className="max-w-[120px] truncate">{req.requester_name}</span>
                     </div>
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="hidden md:table-cell">
                     <div className="flex items-center gap-1.5 text-slate-700 dark:text-slate-200">
                       <MessageCircle className="h-4 w-4 text-slate-400 dark:text-slate-500" />
                       {req.contact_platform}
