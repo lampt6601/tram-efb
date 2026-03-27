@@ -1,9 +1,12 @@
 import { createSupabaseServerClient } from "@/lib/supabase-server";
+import { createSupabaseServiceClient } from "@/lib/supabase-service";
 import { formatCurrency } from "@/lib/constants";
 import { StatCard } from "@/components/ui/StatCard";
 import { StatusBadge } from "@/components/ui/Badge";
 import { DashboardPeriodFilter } from "./DashboardPeriodFilter";
 import { SalesTrendChart } from "@/components/admin/SalesTrendChart";
+import { HotRequests } from "@/components/admin/HotRequests";
+import { CTVLeaderboard } from "@/components/admin/CTVLeaderboard";
 import {
   Package,
   CheckCircle,
@@ -15,7 +18,7 @@ import {
   Timer,
 } from "lucide-react";
 import Link from "next/link";
-import type { Account } from "@/types/database";
+import type { Account, AccountRequest } from "@/types/database";
 
 /** Start of current week (Monday 00:00 UTC) as ISO string */
 function getStartOfWeekISO(): string {
@@ -136,6 +139,49 @@ export default async function DashboardPage({
   })();
 
   const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+  // Pending account requests (visible to all admins via service client)
+  const service = createSupabaseServiceClient();
+  const { data: pendingRequests } = await service
+    .from("account_requests")
+    .select("*")
+    .eq("completed", false)
+    .order("created_at", { ascending: false })
+    .limit(5);
+  const hotRequests = (pendingRequests ?? []) as AccountRequest[];
+
+  // CTV Leaderboard: all sold accounts this month (cross-user, via service client)
+  const monthStart = getStartOfMonthISO();
+  const { data: allSoldThisMonth } = await service
+    .from("accounts")
+    .select("selling_price, user_id")
+    .eq("status", "Sold")
+    .gte("updated_at", monthStart);
+
+  // Get admin names from auth.users via service client
+  const { data: { users: allUsers } } = await service.auth.admin.listUsers();
+  const userMap = new Map(
+    (allUsers ?? []).map((u) => [
+      u.id,
+      u.user_metadata?.full_name || u.email || "CTV",
+    ]),
+  );
+
+  const leaderMap = new Map<string, { name: string; soldCount: number; revenue: number }>();
+  for (const acc of allSoldThisMonth ?? []) {
+    const uid = acc.user_id as string;
+    const existing = leaderMap.get(uid) ?? {
+      name: userMap.get(uid) ?? "CTV",
+      soldCount: 0,
+      revenue: 0,
+    };
+    existing.soldCount += 1;
+    existing.revenue += Number(acc.selling_price);
+    leaderMap.set(uid, existing);
+  }
+  const leaderboard = [...leaderMap.values()]
+    .sort((a, b) => b.soldCount - a.soldCount || b.revenue - a.revenue)
+    .slice(0, 5);
+
   const staleAccounts = items
     .filter((a) => a.status !== "Sold" && new Date(a.created_at) < weekAgo)
     .sort(
@@ -206,6 +252,12 @@ export default async function DashboardPage({
       {/* Sales trend chart */}
       <div className="mt-6">
         <SalesTrendChart data={salesTrendData} />
+      </div>
+
+      {/* CTV Leaderboard + Hot Requests */}
+      <div className="mt-6 grid gap-6 lg:grid-cols-2">
+        <CTVLeaderboard sellers={leaderboard} />
+        <HotRequests requests={hotRequests} />
       </div>
 
       {staleAccounts.length > 0 && (

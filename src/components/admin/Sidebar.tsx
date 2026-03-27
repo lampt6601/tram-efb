@@ -20,6 +20,7 @@ import {
   UserPlus,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { SidebarStats } from "./SidebarStats";
 
 const navItems = [
   { href: "/admin/dashboard", label: "Bảng Điều Khiển", icon: LayoutDashboard },
@@ -171,6 +172,10 @@ export function Sidebar({ open, onClose, isSuperAdmin = false, adminName = "", a
             </div>
           )}
         </nav>
+
+        <div className="border-t border-slate-200 py-2 dark:border-slate-700">
+          <SidebarStats />
+        </div>
 
         <div className="border-t border-slate-200 p-4 dark:border-slate-700">
           {(adminName || adminEmail) && (

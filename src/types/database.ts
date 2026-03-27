@@ -13,6 +13,7 @@ export interface Email {
 export interface Account {
   id: string;
   title: string;
+  description?: string | null;
   purchase_price: number;
   selling_price: number;
   original_price?: number | null;
@@ -37,6 +38,7 @@ export interface Account {
 export interface PublicAccount {
   id: string;
   title: string;
+  description?: string | null;
   selling_price: number;
   original_price?: number | null;
   images: string[];

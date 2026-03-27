@@ -17,6 +17,10 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#6366f1" },
+    { media: "(prefers-color-scheme: dark)", color: "#0f172a" },
+  ],
 };
 
 export const metadata: Metadata = {
@@ -99,6 +103,10 @@ export default function RootLayout({
           name="google-site-verification"
           content="trJhJ1lGcDKXthkx1ozmLiOXoxCM9nhp536tTfFd-dE"
         />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="apple-mobile-web-app-title" content="THC EFB" />
       </head>
       <body className={`${inter.variable} font-sans antialiased`}>
         <ThemeProvider>
@@ -198,6 +206,9 @@ export default function RootLayout({
         <Analytics />
         <FloatingConsultation />
         <Toaster position="top-right" richColors />
+        <Script id="sw-register" strategy="afterInteractive">
+          {`if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js')}`}
+        </Script>
       </body>
     </html>
   );

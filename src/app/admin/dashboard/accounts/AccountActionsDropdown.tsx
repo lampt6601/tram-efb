@@ -401,6 +401,18 @@ export function AccountActionsDropdown({
             {copied ? "Đã copy!" : "Copy link"}
           </DropdownMenuItem>
 
+          <DropdownMenuItem
+            render={
+              <Link
+                href={`/admin/dashboard/accounts/new?from=${id}`}
+                className="flex items-center gap-2"
+              />
+            }
+          >
+            <Copy className="h-4 w-4 text-slate-400" />
+            Tạo acc tương tự
+          </DropdownMenuItem>
+
           <DropdownMenuSeparator />
 
           <DropdownMenuItem

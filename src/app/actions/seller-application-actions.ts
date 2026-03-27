@@ -11,6 +11,7 @@ interface ApplySellerInput {
   phone?: string;
   zaloLink?: string;
   reason?: string;
+  referredBy?: string;
 }
 
 export async function submitSellerApplication(input: ApplySellerInput) {
@@ -36,6 +37,7 @@ export async function submitSellerApplication(input: ApplySellerInput) {
     phone: input.phone?.trim() || null,
     zalo_link: input.zaloLink?.trim() || null,
     reason: input.reason?.trim() || null,
+    referred_by: input.referredBy?.trim() || null,
   });
 
   if (error) {
