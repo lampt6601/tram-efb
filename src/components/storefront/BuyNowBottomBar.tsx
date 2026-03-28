@@ -154,14 +154,8 @@ function TransactionPopup({
               </div>
             </div>
 
-            {/* Trust stats */}
-            <div className="mt-2.5 flex items-center gap-3 rounded-lg bg-emerald-100/50 px-3 py-2 dark:bg-emerald-500/10">
-              <ShieldCheck className="h-4 w-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
-              <span className="text-xs font-semibold text-emerald-700 dark:text-emerald-400">{totalSoldCount}+ giao dịch thành công</span>
-            </div>
-
-            {/* Zalo links */}
-            <div className="mt-2 space-y-1.5">
+            {/* Zalo boxes — owned by shop owner */}
+            <div className="mt-2.5 space-y-1.5">
               <a
                 href={zaloBoxUrl}
                 target="_blank"
@@ -170,7 +164,7 @@ function TransactionPopup({
               >
                 <div className="flex items-center gap-2">
                   <MessageCircle className="h-3.5 w-3.5 shrink-0 text-blue-500" />
-                  <span className="text-xs font-medium text-slate-700 dark:text-slate-300">Box Zalo Shop · 200+ thành viên</span>
+                  <span className="text-xs font-medium text-slate-700 dark:text-slate-300">Box Zalo Shop · Chủ box · 200+ tv</span>
                 </div>
                 <ExternalLink className="h-3.5 w-3.5 text-slate-400" />
               </a>
@@ -182,7 +176,7 @@ function TransactionPopup({
               >
                 <div className="flex items-center gap-2">
                   <MessageCircle className="h-3.5 w-3.5 shrink-0 text-indigo-500" />
-                  <span className="text-xs font-medium text-slate-700 dark:text-slate-300">Group Tư Vấn</span>
+                  <span className="text-xs font-medium text-slate-700 dark:text-slate-300">Group Tư Vấn · Chủ group</span>
                 </div>
                 <ExternalLink className="h-3.5 w-3.5 text-slate-400" />
               </a>
