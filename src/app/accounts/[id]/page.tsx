@@ -283,9 +283,9 @@ export default async function AccountDetailPage({
     account.monthly_log_quota != null;
 
   return (
-    <div className="flex min-h-screen flex-col bg-slate-50 dark:bg-slate-900">
+    <div className="flex min-h-screen flex-col bg-slate-50 pb-20 dark:bg-slate-900">
       <Header />
-      <main className="flex-1 pb-24">
+      <main className="flex-1">
         <div className="mx-auto w-full max-w-5xl overflow-x-hidden px-4 py-4 sm:px-6 sm:py-8 lg:px-8">
           {/* Back link + Share */}
           <div className="mb-4 flex items-center justify-between">
