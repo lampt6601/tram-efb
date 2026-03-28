@@ -29,12 +29,12 @@ export async function setAdminAutoApprove(adminId: string, autoApprove: boolean)
   revalidatePath("/admin/dashboard/super/admins");
 }
 
-export async function setAdminCanViewAllAccounts(adminId: string, canView: boolean) {
+export async function setAdminDisabled(adminId: string, disabled: boolean) {
   await verifySuperAdmin();
   const service = createSupabaseServiceClient();
   const { error } = await service
     .from("admin_settings")
-    .upsert({ user_id: adminId, can_view_all_accounts: canView }, { onConflict: "user_id" });
+    .upsert({ user_id: adminId, is_disabled: disabled }, { onConflict: "user_id" });
   if (error) throw new Error(error.message);
   revalidatePath("/admin/dashboard/super/admins");
 }
@@ -193,6 +193,28 @@ export async function deleteAdmin(adminId: string) {
 
   revalidatePath("/admin/dashboard/super/admins");
   revalidatePath("/admin/dashboard/super/accounts");
+  revalidatePath("/");
+}
+
+export async function updateSellerProfile(
+  adminId: string,
+  profile: {
+    display_name?: string | null;
+    avatar_url?: string | null;
+    zalo_link?: string | null;
+    facebook_link?: string | null;
+  }
+) {
+  await verifySuperAdmin();
+  const service = createSupabaseServiceClient();
+  const { error } = await service
+    .from("admin_settings")
+    .upsert(
+      { user_id: adminId, ...profile },
+      { onConflict: "user_id" }
+    );
+  if (error) throw new Error(error.message);
+  revalidatePath("/admin/dashboard/super/admins");
   revalidatePath("/");
 }
 

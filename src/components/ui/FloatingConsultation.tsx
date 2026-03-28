@@ -1,11 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { ArrowUp } from "lucide-react";
-import { CONTACT_ZALO_GROUP_URL } from "@/lib/constants";
-import zaloIcon from "@/assets/icons/zalo.png";
 
 export function FloatingConsultation() {
   const pathname = usePathname();
@@ -24,7 +21,7 @@ export function FloatingConsultation() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  if (pathname?.startsWith("/admin")) {
+  if (pathname?.startsWith("/admin") || pathname?.startsWith("/accounts/")) {
     return null;
   }
 
@@ -47,36 +44,6 @@ export function FloatingConsultation() {
           >
             <ArrowUp className="h-6 w-6 transition-transform group-hover:-translate-y-1" />
           </button>
-        </div>
-      </div>
-
-      {/* Zalo — Bottom Right */}
-      <div className="floating-consultation fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3 sm:bottom-8 sm:right-8 transition-opacity duration-300">
-        {/* Zalo Section */}
-        <div className="flex flex-col items-end gap-1">
-          {/* Tooltip / Label */}
-          <div className="animate-bounce rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white shadow-lg sm:text-sm relative">
-            Tư vấn miễn phí
-            <div className="absolute -bottom-1 right-5 h-3 w-3 rotate-45 bg-blue-600"></div>
-          </div>
-
-          {/* Zalo Floating Button */}
-          <a
-            href={CONTACT_ZALO_GROUP_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group relative flex h-14 w-14 items-center justify-center rounded-full transition-all hover:scale-110 active:scale-95 sm:h-16 sm:w-16 self-end"
-            title="Tham gia Nhóm Zalo Tư Vấn"
-          >
-            <Image
-              src={zaloIcon}
-              alt="Zalo Group"
-              className="h-9 w-9 object-contain transition-transform group-hover:scale-110 sm:h-11 sm:w-11"
-            />
-
-            {/* Pulse effect on Zalo */}
-            <div className="absolute inset-2 -z-10 animate-ping rounded-full bg-blue-400 opacity-20 sm:inset-3"></div>
-          </a>
         </div>
       </div>
     </>

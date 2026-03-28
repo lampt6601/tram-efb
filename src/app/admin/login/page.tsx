@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 import { Gamepad2, Lock, Mail } from "lucide-react";
 import { useForm } from "react-hook-form";
@@ -15,7 +15,19 @@ type LoginFormValues = {
 };
 
 export default function AdminLoginPage() {
-  const [error, setError] = useState("");
+  return (
+    <Suspense>
+      <AdminLoginForm />
+    </Suspense>
+  );
+}
+
+function AdminLoginForm() {
+  const searchParams = useSearchParams();
+  const isDisabled = searchParams.get("error") === "disabled";
+  const [error, setError] = useState(
+    isDisabled ? "Tài khoản của bạn đã bị vô hiệu hóa. Vui lòng liên hệ chủ shop." : "",
+  );
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const supabase = createSupabaseBrowserClient();

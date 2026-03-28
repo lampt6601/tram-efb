@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { Users, ShieldCheck, Gamepad2, Mail, Calendar, Clock } from "lucide-react";
 import { CreateAdminModal } from "./CreateAdminModal";
 import { AutoApproveToggle } from "./AutoApproveToggle";
-import { ViewAllAccountsToggle } from "./ViewAllAccountsToggle";
+import { DisableAdminToggle } from "./DisableAdminToggle";
 import { AdminActionsDropdown } from "./AdminActionsDropdown";
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
@@ -38,7 +38,7 @@ export default async function SuperAdminsPage() {
   ] = await Promise.all([
     service.from("accounts").select("user_id"),
     service.from("emails").select("user_id"),
-    service.from("admin_settings").select("user_id, auto_approve"),
+    service.from("admin_settings").select("user_id, auto_approve, is_disabled"),
   ]);
 
   const acctCount = new Map<string, number>();
@@ -50,8 +50,8 @@ export default async function SuperAdminsPage() {
   const autoApproveMap = new Map<string, boolean>(
     (settingsRows as AdminSettings[] ?? []).map((s) => [s.user_id, s.auto_approve])
   );
-  const canViewAllAccountsMap = new Map<string, boolean>(
-    (settingsRows as AdminSettings[] ?? []).map((s) => [s.user_id, s.can_view_all_accounts ?? false])
+  const isDisabledMap = new Map<string, boolean>(
+    (settingsRows as AdminSettings[] ?? []).map((s) => [s.user_id, s.is_disabled ?? false])
   );
 
   const owner = allUsers.find((u) => u.email === SUPER_ADMIN_EMAIL);
@@ -114,7 +114,7 @@ export default async function SuperAdminsPage() {
                 <TableHead className="hidden text-slate-500 dark:text-slate-400 md:table-cell">Ngày Tạo</TableHead>
                 <TableHead className="hidden text-slate-500 dark:text-slate-400 lg:table-cell">Đăng Nhập Cuối</TableHead>
                 <TableHead className="hidden text-slate-500 dark:text-slate-400 md:table-cell">Duyệt TK</TableHead>
-                <TableHead className="hidden text-slate-500 dark:text-slate-400 md:table-cell">Xem Tất Cả</TableHead>
+                <TableHead className="hidden text-slate-500 dark:text-slate-400 md:table-cell">Trạng Thái</TableHead>
                 <TableHead className="text-slate-500 dark:text-slate-400">Hành Động</TableHead>
               </TableRow>
             </TableHeader>
@@ -123,17 +123,29 @@ export default async function SuperAdminsPage() {
                 <TableRow key={admin.id} className="hover:bg-slate-50 dark:hover:bg-slate-700">
                   <TableCell>
                     <div className="flex items-center gap-2.5">
-                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800 text-sm font-semibold text-slate-600 dark:text-slate-300">
+                      <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-sm font-semibold ${
+                        (isDisabledMap.get(admin.id) ?? false)
+                          ? "bg-red-100 text-red-600 dark:bg-red-500/20 dark:text-red-400"
+                          : "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300"
+                      }`}>
                         {(admin.user_metadata?.full_name ?? admin.email ?? "?")[0].toUpperCase()}
                       </div>
                       <div className="min-w-0">
                         {admin.user_metadata?.full_name ? (
                           <>
-                            <p className="truncate text-sm font-semibold text-slate-900 dark:text-slate-100">{admin.user_metadata.full_name}</p>
+                            <p className={`truncate text-sm font-semibold ${
+                              (isDisabledMap.get(admin.id) ?? false)
+                                ? "text-slate-400 line-through dark:text-slate-500"
+                                : "text-slate-900 dark:text-slate-100"
+                            }`}>{admin.user_metadata.full_name}</p>
                             <p className="max-w-[180px] truncate text-xs text-slate-400 dark:text-slate-500">{admin.email ?? "—"}</p>
                           </>
                         ) : (
-                          <p className="max-w-[180px] truncate text-sm font-medium text-slate-900 dark:text-slate-100">{admin.email ?? "—"}</p>
+                          <p className={`max-w-[180px] truncate text-sm font-medium ${
+                            (isDisabledMap.get(admin.id) ?? false)
+                              ? "text-slate-400 line-through dark:text-slate-500"
+                              : "text-slate-900 dark:text-slate-100"
+                          }`}>{admin.email ?? "—"}</p>
                         )}
                       </div>
                     </div>
@@ -162,10 +174,10 @@ export default async function SuperAdminsPage() {
                     />
                   </TableCell>
                   <TableCell className="hidden md:table-cell">
-                    <ViewAllAccountsToggle
+                    <DisableAdminToggle
                       adminId={admin.id}
                       adminEmail={admin.email ?? ""}
-                      enabled={canViewAllAccountsMap.get(admin.id) ?? false}
+                      disabled={isDisabledMap.get(admin.id) ?? false}
                     />
                   </TableCell>
                   <TableCell>
@@ -174,13 +186,15 @@ export default async function SuperAdminsPage() {
                       adminEmail={admin.email ?? ""}
                       currentName={admin.user_metadata?.full_name ?? ""}
                       accountCount={acctCount.get(admin.id) ?? 0}
+                      autoApprove={autoApproveMap.get(admin.id) ?? false}
+                      isDisabled={isDisabledMap.get(admin.id) ?? false}
                     />
                   </TableCell>
                 </TableRow>
               ))}
               {admins.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={8} className="py-12 text-center text-slate-400 dark:text-slate-500">
+                  <TableCell colSpan={9} className="py-12 text-center text-slate-400 dark:text-slate-500">
                     Chưa có admin nào. Nhấn &quot;Thêm Admin&quot; để tạo mới.
                   </TableCell>
                 </TableRow>

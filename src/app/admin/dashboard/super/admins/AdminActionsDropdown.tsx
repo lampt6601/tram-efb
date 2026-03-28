@@ -15,11 +15,15 @@ import {
   EyeOff,
   Mail,
   Check,
+  Zap,
+  Ban,
 } from "lucide-react";
 import {
   deleteAdmin,
   resetAdminPassword,
   updateAdminProfile,
+  setAdminAutoApprove,
+  setAdminDisabled,
 } from "@/app/actions/super-admin-actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -38,6 +42,8 @@ interface AdminActionsDropdownProps {
   adminEmail: string;
   currentName: string;
   accountCount: number;
+  autoApprove: boolean;
+  isDisabled: boolean;
 }
 
 type OpenDialog = "editName" | "resetPassword" | "delete" | null;
@@ -74,6 +80,8 @@ export function AdminActionsDropdown({
   adminEmail,
   currentName,
   accountCount,
+  autoApprove: initialAutoApprove,
+  isDisabled: initialIsDisabled,
 }: AdminActionsDropdownProps) {
   const router = useRouter();
   const [openDialog, setOpenDialog] = useState<OpenDialog>(null);
@@ -89,6 +97,11 @@ export function AdminActionsDropdown({
 
   // Copy email state
   const [copiedEmail, setCopiedEmail] = useState(false);
+
+  // Toggle states (for mobile dropdown)
+  const [autoApprove, setAutoApprove] = useState(initialAutoApprove);
+  const [isDisabled, setIsDisabled] = useState(initialIsDisabled);
+  const [toggling, setToggling] = useState<"autoApprove" | "disable" | null>(null);
 
   const closeDialog = useCallback(() => {
     if (!loading) {
@@ -148,6 +161,34 @@ export function AdminActionsDropdown({
     } finally { setLoading(false); }
   };
 
+  // ── Toggle auto approve (mobile dropdown) ────────────────────────────────
+  const handleToggleAutoApprove = async () => {
+    const next = !autoApprove;
+    setToggling("autoApprove");
+    try {
+      await setAdminAutoApprove(adminId, next);
+      setAutoApprove(next);
+      toast.success(next ? `Đã bật auto duyệt cho ${adminEmail}` : `Đã tắt auto duyệt cho ${adminEmail}`);
+      router.refresh();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Có lỗi xảy ra");
+    } finally { setToggling(null); }
+  };
+
+  // ── Toggle disable (mobile dropdown) ────────────────────────────────────
+  const handleToggleDisable = async () => {
+    const next = !isDisabled;
+    setToggling("disable");
+    try {
+      await setAdminDisabled(adminId, next);
+      setIsDisabled(next);
+      toast.success(next ? `Đã vô hiệu hóa ${adminEmail}` : `Đã kích hoạt lại ${adminEmail}`);
+      router.refresh();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Có lỗi xảy ra");
+    } finally { setToggling(null); }
+  };
+
   // ── Delete ────────────────────────────────────────────────────────────────
   const handleDelete = async () => {
     setLoading(true);
@@ -173,7 +214,36 @@ export function AdminActionsDropdown({
             </button>
           }
         />
-        <DropdownMenuContent align="end" className="w-44">
+        <DropdownMenuContent align="end" className="w-48">
+          {/* Toggle items — visible on mobile only (hidden columns on md+) */}
+          <div className="md:hidden">
+            <DropdownMenuItem
+              onClick={handleToggleAutoApprove}
+              disabled={toggling !== null}
+              className="gap-2"
+            >
+              {toggling === "autoApprove" ? (
+                <Loader2 className="h-4 w-4 animate-spin text-emerald-500" />
+              ) : (
+                <Zap className={`h-4 w-4 ${autoApprove ? "fill-emerald-500 text-emerald-500" : "text-slate-400"}`} />
+              )}
+              {autoApprove ? "Tắt auto duyệt" : "Bật auto duyệt"}
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={handleToggleDisable}
+              disabled={toggling !== null}
+              className="gap-2"
+            >
+              {toggling === "disable" ? (
+                <Loader2 className="h-4 w-4 animate-spin text-red-500" />
+              ) : (
+                <Ban className={`h-4 w-4 ${isDisabled ? "text-red-500" : "text-slate-400"}`} />
+              )}
+              {isDisabled ? "Kích hoạt lại" : "Vô hiệu hóa"}
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+          </div>
+
           <DropdownMenuItem onClick={() => openWith("editName")} className="gap-2">
             <Pencil className="h-4 w-4 text-slate-400" />
             Chỉnh sửa tên

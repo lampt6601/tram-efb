@@ -6,7 +6,7 @@ export async function StatsBar() {
   const supabase = createSupabaseAnonClient();
   const serviceClient = createSupabaseServiceClient();
 
-  const [{ count: soldCount }, { count: reviewCount }, { count: sellerCount }] =
+  const [{ count: soldCount }, { count: reviewCount }, usersData] =
     await Promise.all([
       supabase
         .from("public_sold_accounts")
@@ -14,10 +14,11 @@ export async function StatsBar() {
       supabase
         .from("public_reviews")
         .select("*", { count: "exact", head: true }),
-      serviceClient
-        .from("admin_settings")
-        .select("*", { count: "exact", head: true }),
+      serviceClient.auth.admin.listUsers({ perPage: 1000 }),
     ]);
+
+  // Count all auth users (admins/sellers), excluding super admin
+  const sellerCount = (usersData.data?.users ?? []).length - 1;
 
   const stats = [
     {
@@ -38,8 +39,8 @@ export async function StatsBar() {
       : []),
     {
       icon: Users,
-      value: `${sellerCount ?? 0}+`,
-      label: "Đối tác bán hàng",
+      value: `${sellerCount > 0 ? sellerCount : 0}+`,
+      label: "Người bán",
       color: "text-indigo-400",
     },
   ];

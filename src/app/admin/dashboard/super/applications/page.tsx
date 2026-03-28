@@ -3,8 +3,9 @@
 import { useEffect, useState, useTransition } from "react";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 import { updateApplicationStatus } from "@/app/actions/seller-application-actions";
-import { Check, X, Clock, Mail, Phone, MessageCircle } from "lucide-react";
+import { Check, X, Clock, Mail, Phone, MessageCircle, Facebook } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 import type { SellerApplication } from "@/types/database";
 
 const statusConfig = {
@@ -34,17 +35,26 @@ export default function ManageApplicationsPage() {
 
   const handleUpdate = (id: string, status: "approved" | "rejected") => {
     startTransition(async () => {
-      await updateApplicationStatus(id, status);
-      setApps((prev) =>
-        prev.map((a) => (a.id === id ? { ...a, status } : a))
-      );
+      const result = await updateApplicationStatus(id, status);
+      if (result.error) {
+        toast.error(result.error);
+      } else {
+        toast.success(
+          status === "approved"
+            ? "Đã duyệt và tạo tài khoản thành công"
+            : "Đã từ chối đơn đăng ký"
+        );
+        setApps((prev) =>
+          prev.map((a) => (a.id === id ? { ...a, status } : a))
+        );
+      }
     });
   };
 
   if (loading) {
     return (
       <div className="p-6">
-        <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">Đơn đăng ký CTV</h1>
+        <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">Đơn Đăng Ký Bán Hàng</h1>
         <p className="mt-4 text-sm text-slate-500 dark:text-slate-400">Đang tải...</p>
       </div>
     );
@@ -55,9 +65,9 @@ export default function ManageApplicationsPage() {
 
   return (
     <div className="p-6">
-      <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">Đơn đăng ký CTV</h1>
+      <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">Đơn Đăng Ký Bán Hàng</h1>
       <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-        Quản lý đơn đăng ký cộng tác viên bán hàng ({apps.length} đơn)
+        Quản lý đơn đăng ký người bán ({apps.length} đơn)
       </p>
 
       {pending.length > 0 && (
@@ -146,6 +156,16 @@ function ApplicationCard({
                 <MessageCircle className="h-3 w-3" /> Zalo
               </a>
             )}
+            {app.facebook_link && (
+              <a
+                href={app.facebook_link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1 text-indigo-600 dark:text-indigo-400 hover:underline"
+              >
+                <Facebook className="h-3 w-3" /> Facebook
+              </a>
+            )}
           </div>
 
           {app.reason && (
@@ -171,7 +191,7 @@ function ApplicationCard({
               onClick={onApprove}
               className="h-8 gap-1 bg-emerald-600 text-white hover:bg-emerald-700"
             >
-              <Check className="h-3.5 w-3.5" /> Duyệt
+              <Check className="h-3.5 w-3.5" /> Duyệt & Tạo TK
             </Button>
             <Button
               size="sm"

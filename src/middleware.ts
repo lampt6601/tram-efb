@@ -1,4 +1,5 @@
 import { createServerClient } from '@supabase/ssr';
+import { createClient } from '@supabase/supabase-js';
 import { NextResponse, type NextRequest } from 'next/server';
 import { checkIsSuperAdmin } from '@/lib/super-admin';
 
@@ -66,6 +67,35 @@ export async function middleware(request: NextRequest) {
     !checkIsSuperAdmin(user?.email)
   ) {
     return NextResponse.redirect(new URL('/admin/dashboard', request.url));
+  }
+
+  // Check if admin is disabled (skip for super admin)
+  if (
+    user &&
+    request.nextUrl.pathname.startsWith('/admin/dashboard') &&
+    !checkIsSuperAdmin(user.email)
+  ) {
+    const service = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    );
+    const { data: settings } = await service
+      .from('admin_settings')
+      .select('is_disabled')
+      .eq('user_id', user.id)
+      .single();
+
+    if (settings?.is_disabled) {
+      // Sign out the disabled admin and redirect to login
+      await supabase.auth.signOut();
+      const response = NextResponse.redirect(
+        new URL('/admin/login?error=disabled', request.url),
+      );
+      request.cookies.getAll().forEach(({ name }) => {
+        if (name.startsWith('sb-')) response.cookies.delete(name);
+      });
+      return response;
+    }
   }
 
   // Redirect logged-in users away from login page

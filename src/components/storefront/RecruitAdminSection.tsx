@@ -15,11 +15,11 @@ export function RecruitAdminSection() {
             </div>
             <div className="flex items-center gap-2.5">
               <span className="text-sm font-bold text-slate-800 dark:text-slate-100">
-                Trở Thành Cộng Tác Viên
+                Mở Gian Hàng Bán Acc
               </span>
               <span className="inline-flex items-center gap-1.5 rounded-full border border-indigo-200 bg-indigo-50 px-2.5 py-0.5 text-[11px] font-semibold text-indigo-600 dark:border-indigo-500/30 dark:bg-indigo-500/15 dark:text-indigo-400">
                 <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-indigo-500" />
-                Đang tuyển
+                Miễn phí
               </span>
             </div>
           </div>

@@ -22,7 +22,7 @@ export function CTVLeaderboard({ sellers }: CTVLeaderboardProps) {
       <div className="mb-4 flex items-center gap-2">
         <Trophy className="h-5 w-5 text-indigo-500" />
         <h2 className="text-base font-semibold text-slate-900 dark:text-slate-100">
-          Top CTV Tháng Này
+          Top Người Bán Tháng Này
         </h2>
       </div>
       <div className="space-y-2">

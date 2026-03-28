@@ -149,7 +149,7 @@ export default async function DashboardPage({
     .limit(5);
   const hotRequests = (pendingRequests ?? []) as AccountRequest[];
 
-  // CTV Leaderboard: all sold accounts this month (cross-user, via service client)
+  // Seller Leaderboard: all sold accounts this month (cross-user, via service client)
   const monthStart = getStartOfMonthISO();
   const { data: allSoldThisMonth } = await service
     .from("accounts")
@@ -162,7 +162,7 @@ export default async function DashboardPage({
   const userMap = new Map(
     (allUsers ?? []).map((u) => [
       u.id,
-      u.user_metadata?.full_name || u.email || "CTV",
+      u.user_metadata?.full_name || u.email || "Người bán",
     ]),
   );
 
@@ -170,7 +170,7 @@ export default async function DashboardPage({
   for (const acc of allSoldThisMonth ?? []) {
     const uid = acc.user_id as string;
     const existing = leaderMap.get(uid) ?? {
-      name: userMap.get(uid) ?? "CTV",
+      name: userMap.get(uid) ?? "Người bán",
       soldCount: 0,
       revenue: 0,
     };
@@ -254,7 +254,7 @@ export default async function DashboardPage({
         <SalesTrendChart data={salesTrendData} />
       </div>
 
-      {/* CTV Leaderboard + Hot Requests */}
+      {/* Seller Leaderboard + Hot Requests */}
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
         <CTVLeaderboard sellers={leaderboard} />
         <HotRequests requests={hotRequests} />

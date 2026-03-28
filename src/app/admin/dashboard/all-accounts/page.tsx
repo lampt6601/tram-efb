@@ -23,21 +23,7 @@ export default async function AllAccountsPage({
   const supabase = await createSupabaseServerClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/admin/login");
-
-  const isSuperAdmin = checkIsSuperAdmin(user.email);
-
-  if (!isSuperAdmin) {
-    const service = createSupabaseServiceClient();
-    const { data: settings } = await service
-      .from("admin_settings")
-      .select("can_view_all_accounts")
-      .eq("user_id", user.id)
-      .single();
-
-    if (!settings?.can_view_all_accounts) {
-      redirect("/admin/dashboard");
-    }
-  }
+  if (!checkIsSuperAdmin(user.email)) redirect("/admin/dashboard");
 
   const params = await searchParams;
   const sort = params.sort ?? "newest";

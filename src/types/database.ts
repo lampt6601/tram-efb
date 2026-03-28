@@ -53,6 +53,12 @@ export interface PublicAccount {
   server_region?: string | null;
   monthly_log_quota?: number | null;
   created_at: string;
+  // Seller profile (from admin_settings JOIN)
+  seller_display_name?: string | null;
+  seller_avatar_url?: string | null;
+  seller_zalo_link?: string | null;
+  seller_facebook_link?: string | null;
+  seller_sold_count?: number | null;
 }
 
 export interface AccountWithEmail extends Account {
@@ -97,9 +103,12 @@ export interface SellerApplication {
   email: string;
   phone: string | null;
   zalo_link: string | null;
+  facebook_link: string | null;
+  password: string | null;
   reason: string | null;
   status: ApplicationStatus;
   admin_note: string | null;
+  referred_by: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -107,7 +116,11 @@ export interface SellerApplication {
 export interface AdminSettings {
   user_id: string;
   auto_approve: boolean;
-  can_view_all_accounts: boolean;
+  is_disabled: boolean;
+  display_name?: string | null;
+  avatar_url?: string | null;
+  zalo_link?: string | null;
+  facebook_link?: string | null;
   created_at: string;
 }
 

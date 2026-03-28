@@ -10,6 +10,7 @@ import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { AutoScrollSlider } from "@/components/ui/AutoScrollSlider";
 import { Gamepad2, Search, BadgeCheck, Flame, Clock } from "lucide-react";
 import { RecruitHeroCTA } from "@/components/storefront/RecruitHeroCTA";
+import { RecruitAdminSection } from "@/components/storefront/RecruitAdminSection";
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import type { PublicAccount } from "@/types/database";
@@ -296,6 +297,7 @@ export default async function HomePage({
         </div>
       </section>
 
+      <RecruitAdminSection />
       <OwnerSection />
       <Footer />
     </div>
