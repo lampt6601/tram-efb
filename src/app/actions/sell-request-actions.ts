@@ -96,6 +96,20 @@ export async function submitSellRequest(formData: FormData) {
   return { success: true };
 }
 
+export async function getSellRequests() {
+  const supabase = await createSupabaseServerClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return [];
+
+  const service = createSupabaseServiceClient();
+  const { data } = await service
+    .from("sell_requests")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  return data ?? [];
+}
+
 export async function updateSellRequestStatus(
   id: string,
   status: "contacted" | "purchased" | "rejected",

@@ -2,8 +2,7 @@
 
 import { useEffect, useState, useTransition } from "react";
 import Image from "next/image";
-import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
-import { updateSellRequestStatus } from "@/app/actions/sell-request-actions";
+import { getSellRequests, updateSellRequestStatus } from "@/app/actions/sell-request-actions";
 import {
   Clock,
   Phone,
@@ -49,19 +48,12 @@ export default function SellRequestsPage() {
   const [items, setItems] = useState<SellRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [isPending, startTransition] = useTransition();
-  const supabase = createSupabaseBrowserClient();
 
   useEffect(() => {
-    const fetchData = async () => {
-      const { data } = await supabase
-        .from("sell_requests")
-        .select("*")
-        .order("created_at", { ascending: false });
-      setItems((data ?? []) as SellRequest[]);
+    getSellRequests().then((data) => {
+      setItems(data as SellRequest[]);
       setLoading(false);
-    };
-    fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    });
   }, []);
 
   const handleUpdate = (
