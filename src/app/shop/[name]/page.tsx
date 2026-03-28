@@ -2,6 +2,7 @@ import { createSupabaseAnonClient } from "@/lib/supabase-anon";
 import { Header } from "@/components/storefront/Header";
 import { Footer } from "@/components/storefront/Footer";
 import { AccountCard } from "@/components/storefront/AccountCard";
+import { AutoScrollSlider } from "@/components/ui/AutoScrollSlider";
 import {
   User,
   BadgeCheck,
@@ -192,7 +193,7 @@ export default async function SellerShopPage({
             </div>
           )}
 
-          {/* Sold accounts */}
+          {/* Sold accounts — auto-scroll slider */}
           {sold.length > 0 && (
             <section className="mt-10">
               <div className="mb-4 flex items-center gap-2">
@@ -201,11 +202,16 @@ export default async function SellerShopPage({
                   Đã Bán ({sold.length})
                 </h2>
               </div>
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <AutoScrollSlider>
                 {sold.map((account) => (
-                  <AccountCard key={account.id} account={account} />
+                  <div
+                    key={account.id}
+                    className="w-[85vw] max-w-[320px] shrink-0 snap-start sm:w-[340px]"
+                  >
+                    <AccountCard account={account} />
+                  </div>
                 ))}
-              </div>
+              </AutoScrollSlider>
             </section>
           )}
         </div>
