@@ -19,6 +19,8 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import type { PublicAccount } from "@/types/database";
 
+export const revalidate = 300; // 5 minutes
+
 export async function generateMetadata({
   params,
 }: {
@@ -42,16 +44,18 @@ export default async function SellerShopPage({
   const sellerName = decodeURIComponent(name);
   const supabase = createSupabaseAnonClient();
 
+  const cardFields = "id, title, selling_price, original_price, primary_image_url, images, status, total_gp, total_coins_android, total_coins_ios, team_strength, is_priority, is_clone, server_region, created_at, seller_display_name, seller_avatar_url, seller_zalo_link, seller_facebook_link, seller_sold_count";
+
   const [{ data: availableRaw }, { data: soldRaw }] = await Promise.all([
     supabase
       .from("public_accounts")
-      .select("*")
+      .select(cardFields)
       .eq("seller_display_name", sellerName)
       .order("is_priority", { ascending: false, nullsFirst: false })
       .order("created_at", { ascending: false }),
     supabase
       .from("public_sold_accounts")
-      .select("*")
+      .select(cardFields)
       .eq("seller_display_name", sellerName)
       .order("created_at", { ascending: false }),
   ]);

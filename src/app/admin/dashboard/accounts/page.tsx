@@ -47,7 +47,7 @@ export default async function AccountsPage({
   const { data: { user } } = await supabase.auth.getUser();
   const adminEmail = user?.user_metadata?.full_name ?? user?.email ?? user?.id ?? "";
 
-  let query = supabase.from("accounts").select("*, emails(*)");
+  let query = supabase.from("accounts").select("id, title, description, selling_price, purchase_price, original_price, images, primary_image_url, status, total_gp, total_coins_android, total_coins_ios, team_strength, is_priority, is_clone, is_approved, server_region, monthly_log_quota, email_id, user_id, created_at, updated_at, emails(*)");
 
   if (statusFilter && statusFilter !== "all") {
     query = query.eq("status", statusFilter);
@@ -84,7 +84,7 @@ export default async function AccountsPage({
   }
 
   const { data: accounts } = await query;
-  const items = (accounts ?? []) as AccountWithEmail[];
+  const items = (accounts ?? []) as unknown as AccountWithEmail[];
 
   return (
     <div>

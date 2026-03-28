@@ -24,7 +24,7 @@ export default function ManageApplicationsPage() {
     const fetch = async () => {
       const { data } = await supabase
         .from("seller_applications")
-        .select("*")
+        .select("id, full_name, email, phone, zalo_link, facebook_link, reason, status, created_at")
         .order("created_at", { ascending: false });
       setApps((data ?? []) as SellerApplication[]);
       setLoading(false);

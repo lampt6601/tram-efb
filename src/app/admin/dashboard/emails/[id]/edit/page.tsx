@@ -35,7 +35,7 @@ export default function EditEmailPage() {
     const fetchEmail = async () => {
       const { data } = await supabase
         .from("emails")
-        .select("*")
+        .select("id, email_address, password, recovery_info")
         .eq("id", id)
         .single();
       if (data) {

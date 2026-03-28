@@ -78,7 +78,7 @@ export default async function SuperRevenuePage({
   // Use service client to bypass RLS and get all shop data
   const service = createSupabaseServiceClient();
   const [{ data: accounts }, { data: usersData }] = await Promise.all([
-    service.from("accounts").select("*"),
+    service.from("accounts").select("id, status, selling_price, purchase_price, user_id, created_at, updated_at"),
     service.auth.admin.listUsers({ perPage: 1000 }),
   ]);
 

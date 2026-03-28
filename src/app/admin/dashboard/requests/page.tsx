@@ -33,7 +33,7 @@ export default async function RequestsPage({
 
   let query = supabase
     .from("account_requests")
-    .select("*")
+    .select("id, detail, price_level, requester_name, contact_platform, completed, created_at")
     .order("completed", { ascending: true })
     .order("created_at", { ascending: false });
 

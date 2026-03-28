@@ -22,7 +22,7 @@ export async function RelatedAccounts({
 
   const { data } = await supabase
     .from("public_accounts")
-    .select("*")
+    .select("id, title, selling_price, original_price, primary_image_url, images, status, total_gp, total_coins_android, total_coins_ios, team_strength, is_priority, is_clone, server_region, created_at")
     .neq("id", currentAccountId)
     .gte("selling_price", minPrice)
     .lte("selling_price", maxPrice)
@@ -37,7 +37,7 @@ export async function RelatedAccounts({
     const existingIds = [currentAccountId, ...accounts.map((a) => a.id)];
     const { data: fallback } = await supabase
       .from("public_accounts")
-      .select("*")
+      .select("id, title, selling_price, original_price, primary_image_url, images, status, total_gp, total_coins_android, total_coins_ios, team_strength, is_priority, is_clone, server_region, created_at")
       .not("id", "in", `(${existingIds.join(",")})`)
       .order("is_priority", { ascending: false })
       .order("created_at", { ascending: false })

@@ -15,7 +15,7 @@ import { Suspense } from "react";
 import type { Metadata } from "next";
 import type { PublicAccount } from "@/types/database";
 
-export const revalidate = 0; // dynamic because filters change per request
+export const revalidate = 60; // 1 minute — balances freshness with bandwidth
 
 export const metadata: Metadata = {
   title:
@@ -71,7 +71,9 @@ export default async function HomePage({
   const supabase = createSupabaseAnonClient();
 
   // Build the accounts query with all filters
-  let query = supabase.from("public_accounts").select("*");
+  let query = supabase.from("public_accounts").select(
+    "id, title, selling_price, original_price, primary_image_url, images, status, total_gp, total_coins_android, total_coins_ios, team_strength, is_priority, is_clone, server_region, monthly_log_quota, created_at, seller_display_name, seller_avatar_url, seller_sold_count",
+  );
 
   if (minPrice !== null) query = query.gte("selling_price", minPrice);
   if (maxPrice !== null) query = query.lte("selling_price", maxPrice);

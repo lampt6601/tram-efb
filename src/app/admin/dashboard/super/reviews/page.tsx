@@ -29,7 +29,7 @@ export default function ManageReviewsPage() {
   const fetchReviews = async () => {
     const { data } = await supabase
       .from("reviews")
-      .select("*")
+      .select("id, account_id, reviewer_name, rating, comment, is_approved, created_at")
       .order("created_at", { ascending: false });
     setReviews((data ?? []) as Review[]);
     setLoading(false);

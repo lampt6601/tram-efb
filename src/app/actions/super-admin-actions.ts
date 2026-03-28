@@ -49,6 +49,8 @@ export async function approveAccount(accountId: string) {
   if (error) throw new Error(error.message);
   revalidatePath("/admin/dashboard/super/pending");
   revalidatePath("/admin/dashboard/super/accounts");
+  revalidatePath(`/accounts/${accountId}`);
+  revalidatePath("/");
 }
 
 export async function unapproveAccount(accountId: string) {
@@ -62,6 +64,8 @@ export async function unapproveAccount(accountId: string) {
   revalidatePath("/admin/dashboard/super/pending");
   revalidatePath("/admin/dashboard/super/accounts");
   revalidatePath("/admin/dashboard/accounts");
+  revalidatePath(`/accounts/${accountId}`);
+  revalidatePath("/");
 }
 
 export async function superAdminDeleteAccount(accountId: string) {
@@ -70,6 +74,8 @@ export async function superAdminDeleteAccount(accountId: string) {
   const { error } = await service.from("accounts").delete().eq("id", accountId);
   if (error) throw new Error(error.message);
   revalidatePath("/admin/dashboard/super/accounts");
+  revalidatePath(`/accounts/${accountId}`);
+  revalidatePath("/");
 }
 
 export async function superAdminUpdateAccount(
@@ -100,6 +106,8 @@ export async function superAdminUpdateAccount(
   revalidatePath("/admin/dashboard/super/accounts");
   revalidatePath(`/admin/dashboard/super/accounts/${accountId}/edit`);
   revalidatePath("/admin/dashboard/accounts");
+  revalidatePath(`/accounts/${accountId}`);
+  revalidatePath("/");
 }
 
 export async function copyAccountToAdmin(accountId: string, targetAdminId: string) {

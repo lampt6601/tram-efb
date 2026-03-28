@@ -42,6 +42,8 @@ import {
   IosCoinIcon,
 } from "@/components/ui/PlatformCoinIcons";
 
+export const revalidate = 3600; // 1 hour — revalidated on account update via revalidatePath
+
 export async function generateMetadata({
   params,
 }: {
@@ -108,9 +110,11 @@ export default async function AccountDetailPage({
   const supabase = createSupabaseAnonClient();
 
   // Try public_accounts view first (Available/Pending)
+  const accountFields = "id, title, description, selling_price, original_price, images, primary_image_url, status, total_gp, total_coins_android, total_coins_ios, team_strength, is_priority, is_clone, server_region, monthly_log_quota, created_at, seller_display_name, seller_avatar_url, seller_zalo_link, seller_facebook_link, seller_sold_count";
+
   const { data: publicData } = await supabase
     .from("public_accounts")
-    .select("*")
+    .select(accountFields)
     .eq("id", id)
     .single();
 
@@ -118,7 +122,7 @@ export default async function AccountDetailPage({
   if (!publicData) {
     const { data: soldData } = await supabase
       .from("public_sold_accounts")
-      .select("*")
+      .select(accountFields)
       .eq("id", id)
       .single();
 
@@ -126,7 +130,7 @@ export default async function AccountDetailPage({
 
     const { data: reviewsData } = await supabase
       .from("public_reviews")
-      .select("*")
+      .select("id, account_id, reviewer_name, rating, comment, created_at")
       .eq("account_id", id)
       .order("created_at", { ascending: false })
       .limit(20);

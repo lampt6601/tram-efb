@@ -62,7 +62,7 @@ export default async function DashboardPage({
 
   const supabase = await createSupabaseServerClient();
 
-  const { data: accounts } = await supabase.from("accounts").select("*");
+  const { data: accounts } = await supabase.from("accounts").select("id, title, status, selling_price, purchase_price, is_priority, created_at, updated_at");
   const items = (accounts ?? []) as Account[];
 
   const totalAccounts = items.length;
@@ -143,7 +143,7 @@ export default async function DashboardPage({
   const service = createSupabaseServiceClient();
   const { data: pendingRequests } = await service
     .from("account_requests")
-    .select("*")
+    .select("id, detail, price_level, requester_name, contact_platform, completed, created_at")
     .eq("completed", false)
     .order("created_at", { ascending: false })
     .limit(5);
