@@ -9,8 +9,7 @@ interface ApplySellerInput {
   fullName: string;
   email: string;
   password: string;
-  phone?: string;
-  zaloLink?: string;
+  zaloLink: string;
   facebookLink?: string;
   reason?: string;
   referredBy?: string;
@@ -40,8 +39,7 @@ export async function submitSellerApplication(input: ApplySellerInput) {
     full_name: input.fullName.trim(),
     email: input.email.trim().toLowerCase(),
     password: input.password,
-    phone: input.phone?.trim() || null,
-    zalo_link: input.zaloLink?.trim() || null,
+    zalo_link: input.zaloLink.trim(),
     facebook_link: input.facebookLink?.trim() || null,
     reason: input.reason?.trim() || null,
     referred_by: input.referredBy?.trim() || null,

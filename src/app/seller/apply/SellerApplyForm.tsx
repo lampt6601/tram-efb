@@ -196,7 +196,6 @@ function SellerApplyFormInner({ leaderboard }: { leaderboard: SellerRank[] }) {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [phone, setPhone] = useState("");
   const [zaloPhone, setZaloPhone] = useState("");
   const [facebookLink, setFacebookLink] = useState("");
   const [reason, setReason] = useState("");
@@ -210,13 +209,17 @@ function SellerApplyFormInner({ leaderboard }: { leaderboard: SellerRank[] }) {
       return;
     }
 
+    if (!zaloPhone.trim()) {
+      setError("Vui lòng nhập số điện thoại Zalo.");
+      return;
+    }
+
     startTransition(async () => {
       const result = await submitSellerApplication({
         fullName,
         email,
         password,
-        phone: phone || undefined,
-        zaloLink: zaloPhone.trim() ? `https://zalo.me/${zaloPhone.trim()}` : undefined,
+        zaloLink: `https://zalo.me/${zaloPhone.trim()}`,
         facebookLink: facebookLink || undefined,
         reason: reason || undefined,
         referredBy: referrer || undefined,
@@ -454,39 +457,26 @@ function SellerApplyFormInner({ leaderboard }: { leaderboard: SellerRank[] }) {
 
                 <div>
                   <Label
-                    htmlFor="phone"
-                    className="text-slate-700 dark:text-slate-300"
-                  >
-                    Số điện thoại
-                  </Label>
-                  <Input
-                    id="phone"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    maxLength={20}
-                    placeholder="0969xxxxxx"
-                    className="mt-1.5 rounded-lg border-slate-200 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200"
-                  />
-                </div>
-
-                <div>
-                  <Label
                     htmlFor="zalo"
                     className="text-slate-700 dark:text-slate-300"
                   >
-                    Số điện thoại Zalo
+                    Số điện thoại Zalo <span className="text-rose-500">*</span>
                   </Label>
                   <Input
                     id="zalo"
                     type="tel"
                     value={zaloPhone}
                     onChange={(e) => setZaloPhone(e.target.value.replace(/[^0-9]/g, ""))}
+                    required
                     maxLength={15}
                     placeholder="0969347283"
                     className="mt-1.5 rounded-lg border-slate-200 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200"
                   />
+                  <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">
+                    Khách hàng sẽ liên hệ bạn qua số Zalo này để giao dịch
+                  </p>
                   {zaloPhone.trim() && (
-                    <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">
+                    <p className="mt-0.5 text-xs text-slate-400 dark:text-slate-500">
                       Link Zalo: <span className="font-medium text-indigo-500 dark:text-indigo-400">https://zalo.me/{zaloPhone.trim()}</span>
                     </p>
                   )}
