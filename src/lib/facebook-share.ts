@@ -26,5 +26,11 @@ export function openFacebookShare(
     "&quote=" +
     encodeURIComponent(caption);
 
-  window.open(shareUrl, "_blank", "width=620,height=520,noopener,noreferrer");
+  // On mobile / PWA, window.open with features string is often blocked.
+  // Use simple window.open without features, fallback to location.href.
+  const newWindow = window.open(shareUrl, "_blank");
+  if (!newWindow || newWindow.closed) {
+    // Popup was blocked — navigate directly
+    window.location.href = shareUrl;
+  }
 }
