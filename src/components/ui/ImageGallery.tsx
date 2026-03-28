@@ -189,7 +189,23 @@ export function ImageGallery({ images, title }: ImageGalleryProps) {
           </>
         )}
 
-        {/* Image counter + swipe hint on mobile */}
+        {/* Dot indicators on mobile (≤7 images) */}
+        {images.length > 1 && images.length <= 7 && (
+          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 sm:hidden">
+            {images.map((_, i) => (
+              <div
+                key={i}
+                className={`h-1.5 rounded-full transition-all ${
+                  i === selectedIndex
+                    ? "w-4 bg-white"
+                    : "w-1.5 bg-white/40"
+                }`}
+              />
+            ))}
+          </div>
+        )}
+
+        {/* Image counter */}
         {images.length > 1 && (
           <div className="absolute bottom-3 right-3 rounded-full bg-black/50 px-2.5 py-1 text-xs font-medium text-white backdrop-blur-md">
             {selectedIndex + 1} / {images.length}
