@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import { StatusBadge, Badge } from "@/components/ui/Badge";
 
-import { formatCurrency } from "@/lib/constants";
+import { formatCompactCurrency } from "@/lib/constants";
 import type { PublicAccount } from "@/types/database";
 import { thumbCard } from "@/lib/image-utils";
 
@@ -145,7 +145,7 @@ export function AccountCard({ account }: { account: PublicAccount }) {
             <div className="flex h-[18px] items-center">
               {!isSold && isSale && (
                 <span className="text-xs font-medium text-slate-400 line-through decoration-slate-400 block h-full">
-                  {formatCurrency(account.original_price!)}
+                  {formatCompactCurrency(account.original_price!)}
                 </span>
               )}
             </div>
@@ -156,7 +156,7 @@ export function AccountCard({ account }: { account: PublicAccount }) {
                   : `text-lg sm:text-xl font-bold transition-colors duration-200 ${isSale ? "text-rose-600 group-hover:text-rose-700" : "text-indigo-600 group-hover:text-indigo-700"}`
               }`}
             >
-              {formatCurrency(account.selling_price)}
+              {formatCompactCurrency(account.selling_price)}
             </span>
           </div>
           <div className="shrink-0 mb-1">

@@ -5,6 +5,7 @@ import { StatusBadge } from "@/components/ui/Badge";
 import { ImageGallery } from "@/components/ui/ImageGallery";
 import {
   formatCurrency,
+  formatCompactCurrency,
   formatNumber,
   CONTACT_ZALO_GROUP_URL,
 } from "@/lib/constants";
@@ -221,7 +222,7 @@ export default async function AccountDetailPage({
                         Giá Đã Bán
                       </p>
                       <p className="text-3xl font-extrabold text-slate-400 line-through decoration-slate-300 dark:text-slate-500 dark:decoration-slate-600">
-                        {formatCurrency(account.selling_price)}
+                        {formatCompactCurrency(account.selling_price)}
                       </p>
                     </div>
 
@@ -345,12 +346,12 @@ export default async function AccountDetailPage({
                   <p
                     className={`text-2xl font-extrabold sm:text-3xl ${isSale ? "text-rose-600 dark:text-rose-400" : "text-indigo-600 dark:text-indigo-400"}`}
                   >
-                    {formatCurrency(account.selling_price)}
+                    {formatCompactCurrency(account.selling_price)}
                   </p>
                   {isSale && (
                     <div className="mb-0.5 flex flex-col">
                       <span className="text-sm font-medium text-slate-400 line-through dark:text-slate-500">
-                        {formatCurrency(account.original_price!)}
+                        {formatCompactCurrency(account.original_price!)}
                       </span>
                       <span className="inline-flex w-fit items-center rounded-md bg-rose-100 px-1.5 py-0.5 text-xs font-bold text-rose-600 dark:bg-rose-500/15 dark:text-rose-400">
                         -{discount}% GIẢM
@@ -728,7 +729,7 @@ export default async function AccountDetailPage({
 
       {/* ── Sticky mobile CTA bar + popup ── */}
       <BuyNowBottomBar
-        formattedPrice={formatCurrency(account.selling_price)}
+        formattedPrice={formatCompactCurrency(account.selling_price)}
         isSale={isSale}
         contactMessage={contactMessage}
         ownerZaloUrl="/api/contact/owner"

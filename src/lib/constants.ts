@@ -26,6 +26,19 @@ export const formatCurrency = (amount: number): string => {
   }).format(amount);
 };
 
+/** Compact currency: 220.000 → 220K, 1.500.000 → 1.5M */
+export const formatCompactCurrency = (amount: number): string => {
+  if (amount >= 1_000_000) {
+    const m = amount / 1_000_000;
+    return `${m % 1 === 0 ? m.toFixed(0) : m.toFixed(1)}M đ`;
+  }
+  if (amount >= 1_000) {
+    const k = amount / 1_000;
+    return `${k % 1 === 0 ? k.toFixed(0) : k.toFixed(1)}K đ`;
+  }
+  return `${amount} đ`;
+};
+
 export const formatNumber = (num: number): string => {
   if (num >= 1_000_000) return `${(num / 1_000_000).toFixed(1)}M`;
   if (num >= 1_000) return `${(num / 1_000).toFixed(1)}K`;
