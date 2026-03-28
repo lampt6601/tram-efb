@@ -265,6 +265,10 @@ function TransactionPopup({
             </div>
             <ExternalLink className="h-4 w-4 text-slate-400" />
           </a>
+
+          <p className="mt-3 text-[11px] leading-relaxed text-amber-600 dark:text-amber-400">
+            * Shop không chịu trách nhiệm nếu bạn tự giao dịch trực tiếp với người bán mà không qua trung gian.
+          </p>
         </div>
       </div>
     </div>,
