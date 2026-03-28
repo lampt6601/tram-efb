@@ -41,7 +41,7 @@ export function OwnerSection() {
             </p>
             <div className="mt-3 flex items-center justify-center gap-3 sm:justify-start">
               <a
-                href="https://www.facebook.com/share/1B7kgySoVd/?mibextid=wwXIfr"
+                href="/api/contact/owner?type=facebook"
                 target="_blank"
                 rel="noopener noreferrer"
                 title="Facebook cá nhân — Trần Hữu Cảnh"
@@ -55,7 +55,7 @@ export function OwnerSection() {
                 <span className="sr-only">Facebook</span>
               </a>
               <a
-                href="https://zalo.me/0969347283"
+                href="/api/contact/owner?type=zalo"
                 target="_blank"
                 rel="noopener noreferrer"
                 title="Zalo cá nhân — Trần Hữu Cảnh"

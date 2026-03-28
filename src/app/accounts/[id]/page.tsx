@@ -6,9 +6,7 @@ import { ImageGallery } from "@/components/ui/ImageGallery";
 import {
   formatCurrency,
   formatNumber,
-  CONTACT_ZALO_URL,
   CONTACT_ZALO_GROUP_URL,
-  CONTACT_MESSENGER_URL as CONTACT_FACEBOOK_URL,
 } from "@/lib/constants";
 import {
   ArrowLeft,
@@ -550,7 +548,7 @@ export default async function AccountDetailPage({
                     </p>
                     <div className="mt-2 flex flex-wrap gap-2">
                       <a
-                        href={`${CONTACT_ZALO_URL}?text=${contactMessage}`}
+                        href={`/api/contact/owner?type=zalo&text=${contactMessage}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-1 rounded-full bg-white/80 px-2.5 py-1 text-xs font-medium text-blue-700 shadow-sm transition-colors hover:bg-white dark:bg-slate-800 dark:text-blue-400 dark:hover:bg-slate-700"
@@ -563,7 +561,7 @@ export default async function AccountDetailPage({
                         Zalo
                       </a>
                       <a
-                        href={CONTACT_FACEBOOK_URL}
+                        href="/api/contact/owner?type=facebook"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-1 rounded-full bg-white/80 px-2.5 py-1 text-xs font-medium text-indigo-700 shadow-sm transition-colors hover:bg-white dark:bg-slate-800 dark:text-indigo-400 dark:hover:bg-slate-700"
@@ -678,8 +676,8 @@ export default async function AccountDetailPage({
         formattedPrice={formatCurrency(account.selling_price)}
         isSale={isSale}
         contactMessage={contactMessage}
-        ownerZaloUrl={CONTACT_ZALO_URL}
-        ownerFacebookUrl={CONTACT_FACEBOOK_URL}
+        ownerZaloUrl="/api/contact/owner"
+        ownerFacebookUrl="/api/contact/owner?type=facebook"
         seller={
           account.seller_display_name
             ? {

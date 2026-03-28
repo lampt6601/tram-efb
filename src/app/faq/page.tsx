@@ -115,7 +115,7 @@ export default function FAQPage() {
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <a
-                  href="https://zalo.me/g/umniisdttnw5kcubv74y"
+                  href="/api/contact/owner?type=zalo"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center justify-center rounded-full bg-indigo-600 px-6 py-3 font-semibold text-white transition-all hover:bg-indigo-700 hover:scale-105 active:scale-95"
@@ -123,7 +123,7 @@ export default function FAQPage() {
                   Nhắn Zalo
                 </a>
                 <a
-                  href="https://www.facebook.com/share/1B7kgySoVd/?mibextid=wwXIfr"
+                  href="/api/contact/owner?type=facebook"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center justify-center rounded-full bg-blue-600 px-6 py-3 font-semibold text-white transition-all hover:bg-blue-700 hover:scale-105 active:scale-95"

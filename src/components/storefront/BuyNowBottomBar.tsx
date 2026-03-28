@@ -149,7 +149,7 @@ function TransactionPopup({
             </div>
             <div className="mt-2.5 flex gap-2">
               <a
-                href={`${ownerZaloUrl}?text=${contactMessage}`}
+                href={`${ownerZaloUrl}?type=zalo&text=${contactMessage}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-blue-600 px-3 py-2 text-xs font-semibold text-white transition-colors hover:bg-blue-700"

@@ -567,7 +567,7 @@ function SellerApplyFormInner({ leaderboard }: { leaderboard: SellerRank[] }) {
                 Group Tư Vấn Zalo
               </a>
               <a
-                href="https://zalo.me/0969347283"
+                href="/api/contact/owner?type=zalo"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="rounded-xl bg-white px-5 py-2.5 text-sm font-semibold text-indigo-700 hover:bg-white/90"
