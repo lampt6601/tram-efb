@@ -22,6 +22,7 @@ import {
   ShieldAlert,
   Award,
   Store,
+  ExternalLink,
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -545,39 +546,65 @@ export default async function AccountDetailPage({
                     <p className="mt-0.5 text-sm font-semibold text-slate-900 dark:text-slate-100">
                       Trần Hữu Cảnh
                     </p>
-                    <p className="mt-1 text-xs leading-relaxed text-slate-500 dark:text-slate-400">
-                      Liên hệ chủ shop làm trung gian để đảm bảo an toàn giao
-                      dịch.
-                    </p>
-                    <div className="mt-2 flex flex-wrap gap-2">
-                      <a
-                        href={`/api/contact/owner?type=zalo&text=${contactMessage}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 rounded-full bg-white/80 px-2.5 py-1 text-xs font-medium text-blue-700 shadow-sm transition-colors hover:bg-white dark:bg-slate-800 dark:text-blue-400 dark:hover:bg-slate-700"
-                      >
-                        <Image
-                          src={zaloIcon}
-                          alt="Zalo"
-                          className="h-3.5 w-3.5 object-contain"
-                        />
-                        Zalo
-                      </a>
-                      <a
-                        href="/api/contact/owner?type=facebook"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 rounded-full bg-white/80 px-2.5 py-1 text-xs font-medium text-indigo-700 shadow-sm transition-colors hover:bg-white dark:bg-slate-800 dark:text-indigo-400 dark:hover:bg-slate-700"
-                      >
-                        <Image
-                          src={facebookIcon}
-                          alt="Facebook"
-                          className="h-3.5 w-3.5 object-contain"
-                        />
-                        Facebook
-                      </a>
-                    </div>
                   </div>
+                </div>
+
+                {/* Zalo boxes — owned by shop owner */}
+                <div className="mt-3 space-y-1.5">
+                  <a
+                    href="https://zalo.me/g/umniisdttnw5kcubv74y"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-between gap-2 rounded-lg bg-white/80 px-3 py-2 transition-colors hover:bg-white dark:bg-slate-800 dark:hover:bg-slate-700"
+                  >
+                    <div className="flex items-center gap-2">
+                      <MessageCircle className="h-3.5 w-3.5 shrink-0 text-blue-500" />
+                      <span className="text-xs font-medium text-slate-700 dark:text-slate-300">Box Zalo Shop · Chủ box · 200+ tv</span>
+                    </div>
+                    <ExternalLink className="h-3.5 w-3.5 text-slate-400" />
+                  </a>
+                  <a
+                    href={CONTACT_ZALO_GROUP_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-between gap-2 rounded-lg bg-white/80 px-3 py-2 transition-colors hover:bg-white dark:bg-slate-800 dark:hover:bg-slate-700"
+                  >
+                    <div className="flex items-center gap-2">
+                      <MessageCircle className="h-3.5 w-3.5 shrink-0 text-indigo-500" />
+                      <span className="text-xs font-medium text-slate-700 dark:text-slate-300">Group Tư Vấn · Chủ group</span>
+                    </div>
+                    <ExternalLink className="h-3.5 w-3.5 text-slate-400" />
+                  </a>
+                </div>
+
+                {/* Owner contact */}
+                <div className="mt-2.5 flex flex-wrap gap-2">
+                  <a
+                    href={`/api/contact/owner?type=zalo&text=${contactMessage}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-blue-600 px-3 py-2 text-xs font-semibold text-white transition-colors hover:bg-blue-700"
+                  >
+                    <Image
+                      src={zaloIcon}
+                      alt="Zalo"
+                      className="h-3.5 w-3.5 object-contain"
+                    />
+                    Zalo Chủ Shop
+                  </a>
+                  <a
+                    href="/api/contact/owner?type=facebook"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 transition-colors hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600"
+                  >
+                    <Image
+                      src={facebookIcon}
+                      alt="Facebook"
+                      className="h-3.5 w-3.5 object-contain"
+                    />
+                    Facebook
+                  </a>
                 </div>
               </div>
             </div>
