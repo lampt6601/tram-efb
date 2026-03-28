@@ -196,21 +196,6 @@ export function ImageGallery({ images, title }: ImageGalleryProps) {
           </div>
         )}
 
-        {/* Dot indicators on mobile */}
-        {images.length > 1 && images.length <= 10 && (
-          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 sm:hidden">
-            {images.map((_, i) => (
-              <div
-                key={i}
-                className={`h-1.5 rounded-full transition-all ${
-                  i === selectedIndex
-                    ? "w-4 bg-white"
-                    : "w-1.5 bg-white/40"
-                }`}
-              />
-            ))}
-          </div>
-        )}
       </div>
 
       {/* Thumbnail Carousel — hidden on mobile to save space */}
