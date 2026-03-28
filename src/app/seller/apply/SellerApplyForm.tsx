@@ -197,7 +197,7 @@ function SellerApplyFormInner({ leaderboard }: { leaderboard: SellerRank[] }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [phone, setPhone] = useState("");
-  const [zaloLink, setZaloLink] = useState("");
+  const [zaloPhone, setZaloPhone] = useState("");
   const [facebookLink, setFacebookLink] = useState("");
   const [reason, setReason] = useState("");
 
@@ -216,7 +216,7 @@ function SellerApplyFormInner({ leaderboard }: { leaderboard: SellerRank[] }) {
         email,
         password,
         phone: phone || undefined,
-        zaloLink: zaloLink || undefined,
+        zaloLink: zaloPhone.trim() ? `https://zalo.me/${zaloPhone.trim()}` : undefined,
         facebookLink: facebookLink || undefined,
         reason: reason || undefined,
         referredBy: referrer || undefined,
@@ -474,16 +474,22 @@ function SellerApplyFormInner({ leaderboard }: { leaderboard: SellerRank[] }) {
                     htmlFor="zalo"
                     className="text-slate-700 dark:text-slate-300"
                   >
-                    Link Zalo
+                    Số điện thoại Zalo
                   </Label>
                   <Input
                     id="zalo"
-                    value={zaloLink}
-                    onChange={(e) => setZaloLink(e.target.value)}
-                    maxLength={200}
-                    placeholder="https://zalo.me/..."
+                    type="tel"
+                    value={zaloPhone}
+                    onChange={(e) => setZaloPhone(e.target.value.replace(/[^0-9]/g, ""))}
+                    maxLength={15}
+                    placeholder="0969347283"
                     className="mt-1.5 rounded-lg border-slate-200 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200"
                   />
+                  {zaloPhone.trim() && (
+                    <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">
+                      Link Zalo: <span className="font-medium text-indigo-500 dark:text-indigo-400">https://zalo.me/{zaloPhone.trim()}</span>
+                    </p>
+                  )}
                 </div>
 
                 <div>

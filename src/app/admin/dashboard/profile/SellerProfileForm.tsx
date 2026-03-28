@@ -30,7 +30,9 @@ export function SellerProfileForm({ current }: SellerProfileFormProps) {
 
   const [displayName, setDisplayName] = useState(current.display_name);
   const [avatarUrl, setAvatarUrl] = useState(current.avatar_url);
-  const [zaloLink, setZaloLink] = useState(current.zalo_link);
+  // Extract phone number from zalo link (https://zalo.me/0969347283 → 0969347283)
+  const initialPhone = current.zalo_link?.replace(/^https?:\/\/zalo\.me\//, "") ?? "";
+  const [zaloPhone, setZaloPhone] = useState(initialPhone);
   const [facebookLink, setFacebookLink] = useState(current.facebook_link);
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -39,10 +41,12 @@ export function SellerProfileForm({ current }: SellerProfileFormProps) {
   // Preview for newly selected file (before upload completes)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
+  const zaloLink = zaloPhone.trim() ? `https://zalo.me/${zaloPhone.trim()}` : "";
+
   const hasChanges =
     displayName !== current.display_name ||
     avatarUrl !== current.avatar_url ||
-    zaloLink !== current.zalo_link ||
+    zaloLink !== (current.zalo_link ?? "") ||
     facebookLink !== current.facebook_link;
 
   const handleAvatarSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -206,20 +210,26 @@ export function SellerProfileForm({ current }: SellerProfileFormProps) {
         </p>
       </div>
 
-      {/* Zalo */}
+      {/* Zalo — phone input, auto-generate link */}
       <div>
-        <Label className="text-slate-700 dark:text-slate-200">Link Zalo</Label>
+        <Label className="text-slate-700 dark:text-slate-200">Số điện thoại Zalo</Label>
         <Input
-          type="url"
-          value={zaloLink}
+          type="tel"
+          value={zaloPhone}
           onChange={(e) => {
-            setZaloLink(e.target.value);
+            setZaloPhone(e.target.value.replace(/[^0-9]/g, ""));
             setError("");
           }}
-          placeholder="https://zalo.me/0123456789"
+          placeholder="0969347283"
+          maxLength={15}
           disabled={loading}
           className="mt-1.5 rounded-xl border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100"
         />
+        {zaloPhone.trim() && (
+          <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">
+            Link Zalo: <span className="font-medium text-indigo-500 dark:text-indigo-400">https://zalo.me/{zaloPhone.trim()}</span>
+          </p>
+        )}
       </div>
 
       {/* Facebook */}
