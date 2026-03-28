@@ -66,10 +66,12 @@ export default async function SellerShopPage({
   const seller = {
     name: sample.seller_display_name ?? sellerName,
     avatar: sample.seller_avatar_url,
-    zalo: sample.seller_zalo_link,
-    facebook: sample.seller_facebook_link,
+    hasZalo: !!sample.seller_zalo_link,
+    hasFacebook: !!sample.seller_facebook_link,
     soldCount: sample.seller_sold_count ?? sold.length,
   };
+
+  const contactBase = `/api/contact/seller/${encodeURIComponent(seller.name)}`;
 
   return (
     <div className="flex min-h-screen flex-col bg-slate-50 dark:bg-slate-900">
@@ -126,11 +128,11 @@ export default async function SellerShopPage({
                 </div>
 
                 {/* Contact buttons */}
-                {(seller.zalo || seller.facebook) && (
+                {(seller.hasZalo || seller.hasFacebook) && (
                   <div className="mt-3 flex flex-wrap justify-center gap-2 sm:justify-start">
-                    {seller.zalo && (
+                    {seller.hasZalo && (
                       <a
-                        href={seller.zalo}
+                        href={`${contactBase}?type=zalo`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700 shadow-sm transition-colors hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600"
@@ -143,9 +145,9 @@ export default async function SellerShopPage({
                         Zalo
                       </a>
                     )}
-                    {seller.facebook && (
+                    {seller.hasFacebook && (
                       <a
-                        href={seller.facebook}
+                        href={`${contactBase}?type=facebook`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700 shadow-sm transition-colors hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600"

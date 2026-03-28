@@ -475,12 +475,12 @@ export default async function AccountDetailPage({
                     </div>
                   </div>
 
-                  {/* Contact links */}
+                  {/* Contact links — via API redirect to hide raw URLs */}
                   {(account.seller_zalo_link || account.seller_facebook_link) && (
                     <div className="mt-3 flex flex-wrap gap-2">
                       {account.seller_zalo_link && (
                         <a
-                          href={account.seller_zalo_link}
+                          href={`/api/contact/${id}?type=zalo`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-white/80 px-3 py-2 text-xs font-medium text-blue-700 shadow-sm transition-colors hover:bg-white dark:bg-slate-800 dark:text-blue-400 dark:hover:bg-slate-700"
@@ -495,7 +495,7 @@ export default async function AccountDetailPage({
                       )}
                       {account.seller_facebook_link && (
                         <a
-                          href={account.seller_facebook_link}
+                          href={`/api/contact/${id}?type=facebook`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-white/80 px-3 py-2 text-xs font-medium text-indigo-700 shadow-sm transition-colors hover:bg-white dark:bg-slate-800 dark:text-indigo-400 dark:hover:bg-slate-700"
@@ -685,8 +685,8 @@ export default async function AccountDetailPage({
             ? {
                 name: account.seller_display_name,
                 avatarUrl: account.seller_avatar_url ?? undefined,
-                zaloLink: account.seller_zalo_link ?? undefined,
-                facebookLink: account.seller_facebook_link ?? undefined,
+                zaloLink: account.seller_zalo_link ? `/api/contact/${id}?type=zalo` : undefined,
+                facebookLink: account.seller_facebook_link ? `/api/contact/${id}?type=facebook` : undefined,
                 soldCount: account.seller_sold_count ?? undefined,
               }
             : undefined
