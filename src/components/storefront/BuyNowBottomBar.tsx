@@ -288,7 +288,7 @@ function TransactionPopup({
           )}
 
           <p className="mt-3 text-[11px] leading-relaxed text-amber-600 dark:text-amber-400">
-            * Giao dịch chỉ được bảo đảm khi có chủ shop làm trung gian.
+            * Giao dịch qua chủ shop để được hỗ trợ. Chủ shop không chịu trách nhiệm với giao dịch không thông qua chủ shop.
           </p>
         </div>
       </div>
