@@ -80,15 +80,15 @@ export default async function SellerShopPage({
       <main className="flex-1">
         {/* Hero — Seller profile */}
         <section className="border-b border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-800/50">
-          <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
+          <div className="mx-auto max-w-5xl px-4 py-4 sm:px-6 sm:py-8 lg:px-8">
             <Link
               href="/"
-              className="mb-6 inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 transition-colors hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400"
+              className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 transition-colors hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400"
             >
               <ArrowLeft className="h-4 w-4" /> Về trang chủ
             </Link>
 
-            <div className="flex flex-col items-center gap-5 sm:flex-row sm:items-start">
+            <div className="flex items-start gap-4">
               {/* Avatar */}
               {seller.avatar ? (
                 <Image
@@ -96,33 +96,33 @@ export default async function SellerShopPage({
                   alt={seller.name}
                   width={80}
                   height={80}
-                  className="h-20 w-20 rounded-2xl object-cover shadow-md sm:h-24 sm:w-24"
+                  className="h-14 w-14 shrink-0 rounded-2xl object-cover shadow-md sm:h-20 sm:w-20"
                 />
               ) : (
-                <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-indigo-100 shadow-md sm:h-24 sm:w-24 dark:bg-indigo-500/20">
-                  <User className="h-10 w-10 text-indigo-500" />
+                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-indigo-100 shadow-md sm:h-20 sm:w-20 dark:bg-indigo-500/20">
+                  <User className="h-7 w-7 text-indigo-500 sm:h-9 sm:w-9" />
                 </div>
               )}
 
               {/* Info */}
-              <div className="flex-1 text-center sm:text-left">
-                <h1 className="text-2xl font-bold text-slate-900 sm:text-3xl dark:text-slate-100">
+              <div className="min-w-0 flex-1">
+                <h1 className="text-xl font-bold text-slate-900 sm:text-2xl dark:text-slate-100">
                   {seller.name}
                 </h1>
 
                 {/* Stats */}
-                <div className="mt-2 flex flex-wrap items-center justify-center gap-3 sm:justify-start">
-                  <span className="inline-flex items-center gap-1.5 rounded-full bg-indigo-100 px-3 py-1 text-xs font-semibold text-indigo-700 dark:bg-indigo-500/15 dark:text-indigo-400">
-                    <ShoppingBag className="h-3.5 w-3.5" />
+                <div className="mt-1.5 flex flex-wrap items-center gap-2">
+                  <span className="inline-flex items-center gap-1 rounded-full bg-indigo-100 px-2 py-0.5 text-[11px] font-semibold text-indigo-700 dark:bg-indigo-500/15 dark:text-indigo-400">
+                    <ShoppingBag className="h-3 w-3" />
                     {available.length} đang bán
                   </span>
-                  <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-400">
-                    <CheckCircle2 className="h-3.5 w-3.5" />
+                  <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-[11px] font-semibold text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-400">
+                    <CheckCircle2 className="h-3 w-3" />
                     {seller.soldCount} đã bán
                   </span>
                   {seller.soldCount > 0 && (
-                    <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-700 dark:bg-amber-500/15 dark:text-amber-400">
-                      <BadgeCheck className="h-3.5 w-3.5" />
+                    <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2 py-0.5 text-[11px] font-semibold text-amber-700 dark:bg-amber-500/15 dark:text-amber-400">
+                      <BadgeCheck className="h-3 w-3" />
                       Đã xác minh
                     </span>
                   )}
@@ -130,18 +130,18 @@ export default async function SellerShopPage({
 
                 {/* Contact buttons */}
                 {(seller.hasZalo || seller.hasFacebook) && (
-                  <div className="mt-3 flex flex-wrap justify-center gap-2 sm:justify-start">
+                  <div className="mt-2 flex flex-wrap gap-2">
                     {seller.hasZalo && (
                       <a
                         href={`${contactBase}?type=zalo`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700 shadow-sm transition-colors hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600"
+                        className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-sm transition-colors hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600"
                       >
                         <Image
                           src={zaloIcon}
                           alt="Zalo"
-                          className="h-4 w-4 object-contain"
+                          className="h-3.5 w-3.5 object-contain"
                         />
                         Zalo
                       </a>
@@ -151,12 +151,12 @@ export default async function SellerShopPage({
                         href={`${contactBase}?type=facebook`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700 shadow-sm transition-colors hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600"
+                        className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-sm transition-colors hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600"
                       >
                         <Image
                           src={facebookIcon}
                           alt="Facebook"
-                          className="h-4 w-4 object-contain"
+                          className="h-3.5 w-3.5 object-contain"
                         />
                         Facebook
                       </a>
@@ -169,7 +169,7 @@ export default async function SellerShopPage({
         </section>
 
         {/* Available accounts */}
-        <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-5xl px-4 py-5 sm:px-6 sm:py-8 lg:px-8">
           {available.length > 0 ? (
             <section>
               <div className="mb-4 flex items-center gap-2">

@@ -23,6 +23,7 @@ import {
   Award,
   Store,
   ExternalLink,
+  Search,
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -480,20 +481,20 @@ export default async function AccountDetailPage({
 
                   {/* Contact links — via API redirect to hide raw URLs */}
                   {(account.seller_zalo_link || account.seller_facebook_link) && (
-                    <div className="mt-3 flex flex-wrap gap-2">
+                    <div className="mt-2.5 flex gap-2">
                       {account.seller_zalo_link && (
                         <a
                           href={`/api/contact/${id}?type=zalo`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-white/80 px-3 py-2 text-xs font-medium text-blue-700 shadow-sm transition-colors hover:bg-white dark:bg-slate-800 dark:text-blue-400 dark:hover:bg-slate-700"
+                          className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-blue-600 px-3 py-2 text-xs font-semibold text-white transition-colors hover:bg-blue-700"
                         >
                           <Image
                             src={zaloIcon}
                             alt="Zalo"
-                            className="h-3.5 w-3.5 object-contain"
+                            className="h-4 w-4 object-contain"
                           />
-                          Zalo
+                          Zalo Người Bán
                         </a>
                       )}
                       {account.seller_facebook_link && (
@@ -501,12 +502,12 @@ export default async function AccountDetailPage({
                           href={`/api/contact/${id}?type=facebook`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-white/80 px-3 py-2 text-xs font-medium text-indigo-700 shadow-sm transition-colors hover:bg-white dark:bg-slate-800 dark:text-indigo-400 dark:hover:bg-slate-700"
+                          className="flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 transition-colors hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600"
                         >
                           <Image
                             src={facebookIcon}
                             alt="Facebook"
-                            className="h-3.5 w-3.5 object-contain"
+                            className="h-4 w-4 object-contain"
                           />
                           Facebook
                         </a>
@@ -616,6 +617,25 @@ export default async function AccountDetailPage({
             currentAccountId={id}
             currentPrice={account.selling_price}
           />
+
+          {/* Request CTA */}
+          <Link
+            href="/request"
+            className="mt-6 flex items-center gap-3 rounded-xl border border-indigo-200 bg-indigo-50/50 px-4 py-3 transition-colors hover:bg-indigo-100/50 sm:mt-8 dark:border-indigo-500/20 dark:bg-indigo-500/5 dark:hover:bg-indigo-500/10"
+          >
+            <Search className="h-5 w-5 shrink-0 text-indigo-500" />
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-semibold text-slate-800 dark:text-slate-200">
+                Chưa tìm được acc ưng ý?
+              </p>
+              <p className="text-xs text-slate-500 dark:text-slate-400">
+                Gửi yêu cầu để shop tìm giúp — miễn phí
+              </p>
+            </div>
+            <span className="shrink-0 rounded-lg bg-indigo-600 px-3 py-1.5 text-xs font-semibold text-white">
+              Gửi
+            </span>
+          </Link>
 
           <script
             type="application/ld+json"

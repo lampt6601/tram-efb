@@ -4,6 +4,7 @@ import { createSupabaseAnonClient } from "@/lib/supabase-anon";
 import { createSupabaseServerClient } from "@/lib/supabase-server";
 import { createSupabaseServiceClient } from "@/lib/supabase-service";
 import { revalidatePath } from "next/cache";
+import { sendZaloBotNotification } from "@/lib/zalo-bot";
 
 interface ApplySellerInput {
   fullName: string;
@@ -51,6 +52,22 @@ export async function submitSellerApplication(input: ApplySellerInput) {
     }
     console.error("Seller application error:", error);
     return { error: "Không thể gửi đơn đăng ký. Vui lòng thử lại." };
+  }
+
+  // Notify super admin via Zalo Bot (non-blocking)
+  try {
+    const zaloPhone = input.zaloLink.replace(/^https?:\/\/zalo\.me\//, "");
+    await sendZaloBotNotification(
+      `📋 Đơn đăng ký người bán mới\n\n` +
+      `👤 ${input.fullName.trim()}\n` +
+      `📧 ${input.email.trim()}\n` +
+      `📱 Zalo: ${zaloPhone}\n` +
+      (input.facebookLink ? `🔗 FB: ${input.facebookLink.trim()}\n` : "") +
+      (input.reason ? `💬 Lý do: ${input.reason.trim()}\n` : "") +
+      `\n👉 Duyệt tại: https://thc-efb.com/admin/dashboard/super/applications`,
+    );
+  } catch {
+    // ignore — notification is best-effort
   }
 
   return { success: true, message: "Đơn đăng ký đã được gửi! Chúng tôi sẽ liên hệ sớm nhất." };
