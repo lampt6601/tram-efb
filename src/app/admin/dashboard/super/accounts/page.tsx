@@ -43,7 +43,7 @@ export default async function SuperAccountsPage({
   // Build admin email map from all users
   const { data: usersData } = await service.auth.admin.listUsers({ perPage: 1000 });
   const adminOptions = (usersData?.users ?? [])
-    .filter((u) => !!u.email && u.email !== SUPER_ADMIN_EMAIL)
+    .filter((u) => !!u.email)
     .map((u) => ({
       id: u.id,
       label: u.user_metadata?.full_name
