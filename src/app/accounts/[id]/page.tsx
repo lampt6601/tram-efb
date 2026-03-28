@@ -37,7 +37,7 @@ import { ogImage } from "@/lib/image-utils";
 import { ReviewSection } from "@/components/storefront/ReviewSection";
 import { RelatedAccounts } from "@/components/storefront/RelatedAccounts";
 import { ShareButtons } from "@/components/storefront/ShareButtons";
-import { BuyNowBottomBar } from "@/components/storefront/BuyNowBottomBar";
+import { BuyNowButton } from "@/components/storefront/BuyNowButton";
 import {
   AndroidCoinIcon,
   IosCoinIcon,
@@ -253,11 +253,6 @@ export default async function AccountDetailPage({
   }
 
   // ── AVAILABLE ACCOUNT PAGE ─────────────────────────────────────────────
-  // Total sold count for trust badge
-  const { count: totalSoldCount } = await supabase
-    .from("public_sold_accounts")
-    .select("id", { count: "exact", head: true });
-
   const account = publicData as PublicAccount;
   const isSale = account.original_price
     ? account.original_price > account.selling_price
@@ -290,7 +285,7 @@ export default async function AccountDetailPage({
     account.monthly_log_quota != null;
 
   return (
-    <div className="flex min-h-screen flex-col bg-slate-50 pb-20 dark:bg-slate-900">
+    <div className="flex min-h-screen flex-col bg-slate-50 dark:bg-slate-900">
       <Header />
       <main className="flex-1">
         <div className="mx-auto w-full max-w-5xl overflow-x-hidden px-3 py-2 sm:px-6 sm:py-8 lg:px-8">
@@ -337,27 +332,47 @@ export default async function AccountDetailPage({
                 </div>
               )}
 
-              {/* Price — moved up */}
+              {/* Price + Buy now */}
               <div className="mt-2 sm:mt-4">
                 <p className="text-[10px] font-medium uppercase tracking-wide text-slate-400 sm:text-xs dark:text-slate-500">
                   Giá Bán
                 </p>
-                <div className="mt-0.5 flex items-end gap-3 sm:mt-1">
-                  <p
-                    className={`text-2xl font-extrabold sm:text-3xl ${isSale ? "text-rose-600 dark:text-rose-400" : "text-indigo-600 dark:text-indigo-400"}`}
-                  >
-                    {formatCompactCurrency(account.selling_price)}
-                  </p>
-                  {isSale && (
-                    <div className="mb-0.5 flex flex-col">
-                      <span className="text-sm font-medium text-slate-400 line-through dark:text-slate-500">
-                        {formatCompactCurrency(account.original_price!)}
-                      </span>
-                      <span className="inline-flex w-fit items-center rounded-md bg-rose-100 px-1.5 py-0.5 text-xs font-bold text-rose-600 dark:bg-rose-500/15 dark:text-rose-400">
-                        -{discount}% GIẢM
-                      </span>
-                    </div>
-                  )}
+                <div className="mt-0.5 flex items-center justify-between gap-3 sm:mt-1">
+                  <div className="flex items-end gap-3">
+                    <p
+                      className={`text-2xl font-extrabold sm:text-3xl ${isSale ? "text-rose-600 dark:text-rose-400" : "text-indigo-600 dark:text-indigo-400"}`}
+                    >
+                      {formatCompactCurrency(account.selling_price)}
+                    </p>
+                    {isSale && (
+                      <div className="mb-0.5 flex flex-col">
+                        <span className="text-sm font-medium text-slate-400 line-through dark:text-slate-500">
+                          {formatCompactCurrency(account.original_price!)}
+                        </span>
+                        <span className="inline-flex w-fit items-center rounded-md bg-rose-100 px-1.5 py-0.5 text-xs font-bold text-rose-600 dark:bg-rose-500/15 dark:text-rose-400">
+                          -{discount}% GIẢM
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                  <BuyNowButton
+                    contactMessage={contactMessage}
+                    ownerZaloUrl="/api/contact/owner"
+                    ownerFacebookUrl="/api/contact/owner?type=facebook"
+                    seller={
+                      account.seller_display_name
+                        ? {
+                            name: account.seller_display_name,
+                            avatarUrl: account.seller_avatar_url ?? undefined,
+                            zaloLink: account.seller_zalo_link ? `/api/contact/${id}?type=zalo` : undefined,
+                            facebookLink: account.seller_facebook_link ? `/api/contact/${id}?type=facebook` : undefined,
+                            soldCount: account.seller_sold_count ?? undefined,
+                          }
+                        : undefined
+                    }
+                    zaloGroupUrl={CONTACT_ZALO_GROUP_URL}
+                    zaloBoxUrl="https://zalo.me/g/umniisdttnw5kcubv74y"
+                  />
                 </div>
               </div>
               {/* Divider */}
@@ -726,29 +741,6 @@ export default async function AccountDetailPage({
           />
         </div>
       </main>
-
-      {/* ── Sticky mobile CTA bar + popup ── */}
-      <BuyNowBottomBar
-        formattedPrice={formatCompactCurrency(account.selling_price)}
-        isSale={isSale}
-        contactMessage={contactMessage}
-        ownerZaloUrl="/api/contact/owner"
-        ownerFacebookUrl="/api/contact/owner?type=facebook"
-        seller={
-          account.seller_display_name
-            ? {
-                name: account.seller_display_name,
-                avatarUrl: account.seller_avatar_url ?? undefined,
-                zaloLink: account.seller_zalo_link ? `/api/contact/${id}?type=zalo` : undefined,
-                facebookLink: account.seller_facebook_link ? `/api/contact/${id}?type=facebook` : undefined,
-                soldCount: account.seller_sold_count ?? undefined,
-              }
-            : undefined
-        }
-        zaloGroupUrl={CONTACT_ZALO_GROUP_URL}
-        zaloBoxUrl="https://zalo.me/g/umniisdttnw5kcubv74y"
-        totalSoldCount={totalSoldCount ?? 0}
-      />
 
       <Footer />
     </div>
