@@ -1,13 +1,14 @@
 import Link from "next/link";
-import { UserPlus, ArrowRight } from "lucide-react";
+import { UserPlus, ArrowRight, Upload } from "lucide-react";
 
 export function RecruitAdminSection() {
   return (
     <section className="border-t border-indigo-100 bg-gradient-to-r from-indigo-50 via-slate-50 to-purple-50 dark:border-indigo-500/20 dark:from-indigo-950/30 dark:via-slate-800 dark:to-purple-950/30">
-      <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl divide-y divide-slate-200 px-4 sm:px-6 lg:px-8 dark:divide-slate-700">
+        {/* Mở gian hàng */}
         <Link
           href="/seller/apply"
-          className="flex items-center justify-between gap-4 transition-opacity hover:opacity-80"
+          className="flex items-center justify-between gap-4 py-3.5 transition-opacity hover:opacity-80"
         >
           <div className="flex items-center gap-3">
             <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-indigo-100 dark:bg-indigo-500/20">
@@ -24,6 +25,22 @@ export function RecruitAdminSection() {
             </div>
           </div>
           <ArrowRight className="h-5 w-5 shrink-0 text-indigo-400" />
+        </Link>
+
+        {/* Bán acc cho shop */}
+        <Link
+          href="/sell"
+          className="flex items-center justify-between gap-4 py-3.5 transition-opacity hover:opacity-80"
+        >
+          <div className="flex items-center gap-3">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-emerald-100 dark:bg-emerald-500/20">
+              <Upload className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+            </div>
+            <span className="text-sm font-bold text-slate-800 dark:text-slate-100">
+              Bán Acc Cho Shop
+            </span>
+          </div>
+          <ArrowRight className="h-5 w-5 shrink-0 text-emerald-400" />
         </Link>
       </div>
     </section>

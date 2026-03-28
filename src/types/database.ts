@@ -76,6 +76,21 @@ export interface AccountRequest {
   updated_at: string;
 }
 
+export type SellRequestStatus = "pending" | "contacted" | "purchased" | "rejected";
+
+export interface SellRequest {
+  id: string;
+  images: string[];
+  description: string | null;
+  price_expectation: string;
+  seller_name: string;
+  zalo_phone: string;
+  status: SellRequestStatus;
+  admin_note: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface Review {
   id: string;
   account_id: string;

@@ -513,7 +513,7 @@ function SellerApplyFormInner({ leaderboard }: { leaderboard: SellerRank[] }) {
                     maxLength={1000}
                     rows={3}
                     placeholder="Bạn đã có kinh nghiệm bán acc chưa? Kể thêm về bạn..."
-                    className="mt-1.5 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/20 resize-none dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200 dark:placeholder:text-slate-500"
+                    className="mt-1.5 w-full rounded-lg border border-slate-200 px-3 py-2 text-base text-slate-700 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/20 resize-none md:text-sm dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200 dark:placeholder:text-slate-500"
                   />
                 </div>
               </div>

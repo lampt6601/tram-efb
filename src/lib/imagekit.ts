@@ -41,7 +41,7 @@ export async function uploadBufferToImageKit(
 /**
  * Uploads a File (from FormData) to ImageKit and returns the public URL.
  */
-export async function uploadFileToImageKit(file: File): Promise<string> {
+export async function uploadFileToImageKit(file: File, folder?: string): Promise<string> {
   const arrayBuffer = await file.arrayBuffer();
   const buffer = Buffer.from(arrayBuffer);
 
@@ -49,7 +49,7 @@ export async function uploadFileToImageKit(file: File): Promise<string> {
   const uniqueId = Math.random().toString(36).substring(2, 15);
   const fileName = `${uniqueId}-${Date.now()}.${ext}`;
 
-  return uploadBufferToImageKit(buffer, fileName);
+  return uploadBufferToImageKit(buffer, fileName, folder);
 }
 
 /**

@@ -98,16 +98,16 @@ export default function RequestPage() {
     <div className="flex min-h-screen flex-col bg-slate-50 dark:bg-slate-900">
       <Header />
       <main className="flex-1">
-        <div className="mx-auto max-w-lg px-4 py-8 sm:px-6 sm:py-12">
+        <div className="mx-auto max-w-lg px-4 py-6 sm:px-6 sm:py-12">
           {/* Header */}
           <div className="text-center">
-            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-100 dark:bg-indigo-500/20">
-              <Search className="h-7 w-7 text-indigo-600 dark:text-indigo-400" />
+            <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-100 sm:mb-4 sm:h-14 sm:w-14 dark:bg-indigo-500/20">
+              <Search className="h-6 w-6 text-indigo-600 sm:h-7 sm:w-7 dark:text-indigo-400" />
             </div>
-            <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+            <h1 className="text-xl font-bold text-slate-900 sm:text-2xl dark:text-slate-100">
               Yêu Cầu Tìm Acc
             </h1>
-            <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
+            <p className="mt-1.5 text-sm text-slate-600 dark:text-slate-400">
               Chưa tìm được acc ưng ý? Gửi yêu cầu để shop tìm giúp bạn.
             </p>
           </div>
@@ -115,7 +115,7 @@ export default function RequestPage() {
           {/* Form */}
           <form
             onSubmit={handleSubmit}
-            className="mt-8 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6 dark:border-slate-700 dark:bg-slate-800"
+            className="mt-6 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:mt-8 sm:p-6 dark:border-slate-700 dark:bg-slate-800"
           >
             {error && (
               <div className="mb-4 rounded-lg bg-rose-50 px-4 py-3 text-sm text-rose-700 dark:bg-rose-500/10 dark:text-rose-400">
@@ -141,7 +141,7 @@ export default function RequestPage() {
                   maxLength={1000}
                   rows={3}
                   placeholder="VD: Cần acc có Messi, Neymar, GP 3M+, server Japan..."
-                  className="mt-1.5 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/20 resize-none dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200 dark:placeholder:text-slate-500"
+                  className="mt-1.5 w-full rounded-lg border border-slate-200 px-3 py-2 text-base text-slate-700 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/20 resize-none md:text-sm dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200 dark:placeholder:text-slate-500"
                 />
               </div>
 
@@ -192,7 +192,7 @@ export default function RequestPage() {
                   id="contactPlatform"
                   value={contactPlatform}
                   onChange={(e) => setContactPlatform(e.target.value)}
-                  className="mt-1.5 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/20 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200"
+                  className="mt-1.5 w-full rounded-lg border border-slate-200 px-3 py-2 text-base text-slate-700 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/20 md:text-sm dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200"
                 >
                   {CONTACT_PLATFORMS.map((p) => (
                     <option key={p} value={p}>
