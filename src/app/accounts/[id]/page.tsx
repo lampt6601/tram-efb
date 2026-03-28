@@ -437,6 +437,10 @@ export default async function AccountDetailPage({
                 </div>
               )}
 
+              <p className="mb-3 text-[11px] leading-relaxed text-amber-600 dark:text-amber-400">
+                * Giao dịch qua chủ shop để được hỗ trợ. Chủ shop không chịu trách nhiệm với giao dịch không thông qua chủ shop.
+              </p>
+
               {/* Seller info */}
               {account.seller_display_name && (
                 <div className="mb-3 rounded-xl border border-indigo-100 bg-indigo-50/50 p-4 dark:border-indigo-500/20 dark:bg-indigo-500/5">
@@ -517,9 +521,6 @@ export default async function AccountDetailPage({
                     <Store className="h-3.5 w-3.5" />
                     Xem gian hàng ({account.seller_sold_count ?? 0} acc đã bán)
                   </Link>
-                  <p className="mt-2 text-[11px] leading-relaxed text-amber-600 dark:text-amber-400">
-                    * Giao dịch qua chủ shop để được hỗ trợ. Chủ shop không chịu trách nhiệm với giao dịch không thông qua chủ shop.
-                  </p>
                 </div>
               )}
 
