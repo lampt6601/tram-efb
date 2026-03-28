@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import Image from "next/image";
 import {
   ChevronLeft,
@@ -14,6 +14,34 @@ import { galleryMain, galleryThumb, galleryFull } from "@/lib/image-utils";
 interface ImageGalleryProps {
   images: string[];
   title: string;
+}
+
+function useSwipe(onSwipeLeft: () => void, onSwipeRight: () => void) {
+  const touchStart = useRef<{ x: number; y: number } | null>(null);
+
+  const onTouchStart = useCallback((e: React.TouchEvent) => {
+    touchStart.current = {
+      x: e.touches[0].clientX,
+      y: e.touches[0].clientY,
+    };
+  }, []);
+
+  const onTouchEnd = useCallback(
+    (e: React.TouchEvent) => {
+      if (!touchStart.current) return;
+      const dx = e.changedTouches[0].clientX - touchStart.current.x;
+      const dy = e.changedTouches[0].clientY - touchStart.current.y;
+      // Only trigger if horizontal swipe is dominant and > 50px
+      if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+        if (dx < 0) onSwipeLeft();
+        else onSwipeRight();
+      }
+      touchStart.current = null;
+    },
+    [onSwipeLeft, onSwipeRight],
+  );
+
+  return { onTouchStart, onTouchEnd };
 }
 
 export function ImageGallery({ images, title }: ImageGalleryProps) {
@@ -45,6 +73,18 @@ export function ImageGallery({ images, title }: ImageGalleryProps) {
     },
     [goTo, selectedIndex, images.length],
   );
+
+  // Swipe handlers
+  const swipeNext = useCallback(() => {
+    goTo(selectedIndex < images.length - 1 ? selectedIndex + 1 : 0);
+  }, [goTo, selectedIndex, images.length]);
+
+  const swipePrev = useCallback(() => {
+    goTo(selectedIndex > 0 ? selectedIndex - 1 : images.length - 1);
+  }, [goTo, selectedIndex, images.length]);
+
+  const mainSwipe = useSwipe(swipeNext, swipePrev);
+  const fullscreenSwipe = useSwipe(swipeNext, swipePrev);
 
   // Keyboard navigation
   const handleKeyDown = useCallback(
@@ -97,10 +137,12 @@ export function ImageGallery({ images, title }: ImageGalleryProps) {
         </div>
       )}
 
-      {/* Main Image */}
+      {/* Main Image — swipeable on mobile */}
       <div
         className="group relative aspect-16/7 cursor-pointer overflow-hidden rounded-xl bg-slate-100 shadow-sm transition-all hover:shadow-md"
         onClick={() => setIsFullscreen(true)}
+        onTouchStart={mainSwipe.onTouchStart}
+        onTouchEnd={mainSwipe.onTouchEnd}
       >
         {/* Blur-up reveal — blurry/faded while loading, sharpens on load */}
         <Image
@@ -127,19 +169,19 @@ export function ImageGallery({ images, title }: ImageGalleryProps) {
           </div>
         </div>
 
-        {/* Inline Navigation */}
+        {/* Inline Navigation — hidden on mobile (use swipe) */}
         {images.length > 1 && (
           <>
             <button
               onClick={prevImage}
-              className="absolute left-4 top-1/2 -translate-y-1/2 translate-x-4 rounded-full bg-black/40 p-2 text-white opacity-0 backdrop-blur-md transition-all duration-300 hover:bg-black/60 group-hover:translate-x-0 group-hover:opacity-100"
+              className="absolute left-4 top-1/2 -translate-y-1/2 translate-x-4 rounded-full bg-black/40 p-2 text-white opacity-0 backdrop-blur-md transition-all duration-300 hover:bg-black/60 group-hover:translate-x-0 group-hover:opacity-100 hidden sm:flex"
               aria-label="Previous image"
             >
               <ChevronLeft className="h-6 w-6" />
             </button>
             <button
               onClick={nextImage}
-              className="absolute right-4 top-1/2 -translate-y-1/2 -translate-x-4 rounded-full bg-black/40 p-2 text-white opacity-0 backdrop-blur-md transition-all duration-300 hover:bg-black/60 group-hover:translate-x-0 group-hover:opacity-100"
+              className="absolute right-4 top-1/2 -translate-y-1/2 -translate-x-4 rounded-full bg-black/40 p-2 text-white opacity-0 backdrop-blur-md transition-all duration-300 hover:bg-black/60 group-hover:translate-x-0 group-hover:opacity-100 hidden sm:flex"
               aria-label="Next image"
             >
               <ChevronRight className="h-6 w-6" />
@@ -147,10 +189,26 @@ export function ImageGallery({ images, title }: ImageGalleryProps) {
           </>
         )}
 
-        {/* Image counter */}
+        {/* Image counter + swipe hint on mobile */}
         {images.length > 1 && (
           <div className="absolute bottom-3 right-3 rounded-full bg-black/50 px-2.5 py-1 text-xs font-medium text-white backdrop-blur-md">
             {selectedIndex + 1} / {images.length}
+          </div>
+        )}
+
+        {/* Dot indicators on mobile */}
+        {images.length > 1 && images.length <= 10 && (
+          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 sm:hidden">
+            {images.map((_, i) => (
+              <div
+                key={i}
+                className={`h-1.5 rounded-full transition-all ${
+                  i === selectedIndex
+                    ? "w-4 bg-white"
+                    : "w-1.5 bg-white/40"
+                }`}
+              />
+            ))}
           </div>
         )}
       </div>
@@ -180,9 +238,13 @@ export function ImageGallery({ images, title }: ImageGalleryProps) {
         </div>
       )}
 
-      {/* Fullscreen Lightbox */}
+      {/* Fullscreen Lightbox — swipeable */}
       {isFullscreen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-xl">
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-xl"
+          onTouchStart={fullscreenSwipe.onTouchStart}
+          onTouchEnd={fullscreenSwipe.onTouchEnd}
+        >
           <button
             onClick={() => setIsFullscreen(false)}
             className="absolute right-4 top-4 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20 sm:right-8 sm:top-8"
