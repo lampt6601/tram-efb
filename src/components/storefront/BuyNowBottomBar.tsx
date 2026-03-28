@@ -83,7 +83,7 @@ function TransactionPopup({
         </div>
 
         {/* Body */}
-        <div className="max-h-[70vh] overflow-y-auto px-5 py-4">
+        <div className="max-h-[85vh] overflow-y-auto px-5 py-4">
           {/* Option 1: Via shop owner (free) */}
           <div className="rounded-xl border border-emerald-200 bg-emerald-50/50 p-4 dark:border-emerald-500/20 dark:bg-emerald-500/5">
             <div className="flex items-center gap-2 mb-2">
