@@ -11,7 +11,6 @@ import {
   ShoppingCart,
   X,
   Banknote,
-  ImageIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -230,12 +229,6 @@ function SellRequestCard({
             <span className="flex items-center gap-1">
               <Banknote className="h-3 w-3" /> {item.price_expectation}
             </span>
-            <button
-              onClick={() => setShowImages(!showImages)}
-              className="flex items-center gap-1 text-indigo-600 hover:underline dark:text-indigo-400"
-            >
-              <ImageIcon className="h-3 w-3" /> {item.images.length} ảnh
-            </button>
           </div>
 
           {item.description && (
@@ -244,26 +237,54 @@ function SellRequestCard({
             </p>
           )}
 
-          {/* Images */}
-          {showImages && item.images.length > 0 && (
-            <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
-              {item.images.map((url, i) => (
-                <a
-                  key={i}
-                  href={url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="relative aspect-video overflow-hidden rounded-lg bg-slate-100 dark:bg-slate-700"
-                >
+          {/* Images — thumbnail preview + collapsible full view */}
+          {item.images.length > 0 && (
+            <div className="mt-3">
+              <button
+                onClick={() => setShowImages(!showImages)}
+                className="flex items-center gap-2"
+              >
+                {/* Always show first thumbnail */}
+                <div className="relative h-16 w-28 shrink-0 overflow-hidden rounded-lg bg-slate-100 dark:bg-slate-700">
                   <Image
-                    src={url}
-                    alt={`Ảnh ${i + 1}`}
+                    src={item.images[0]}
+                    alt="Ảnh 1"
                     fill
                     className="object-cover"
-                    sizes="200px"
+                    sizes="112px"
                   />
-                </a>
-              ))}
+                  {item.images.length > 1 && !showImages && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/40 text-xs font-semibold text-white">
+                      +{item.images.length - 1} ảnh
+                    </div>
+                  )}
+                </div>
+                <span className="text-xs font-medium text-indigo-600 hover:underline dark:text-indigo-400">
+                  {showImages ? "Thu gọn" : `Xem ${item.images.length} ảnh`}
+                </span>
+              </button>
+
+              {showImages && (
+                <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
+                  {item.images.map((url, i) => (
+                    <a
+                      key={i}
+                      href={url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="relative aspect-video overflow-hidden rounded-lg bg-slate-100 dark:bg-slate-700"
+                    >
+                      <Image
+                        src={url}
+                        alt={`Ảnh ${i + 1}`}
+                        fill
+                        className="object-cover"
+                        sizes="200px"
+                      />
+                    </a>
+                  ))}
+                </div>
+              )}
             </div>
           )}
 
