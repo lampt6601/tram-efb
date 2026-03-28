@@ -517,7 +517,7 @@ export default async function AccountDetailPage({
                     Xem gian hàng ({account.seller_sold_count ?? 0} acc đã bán)
                   </Link>
                   <p className="mt-2 text-[11px] leading-relaxed text-amber-600 dark:text-amber-400">
-                    * Shop không chịu trách nhiệm nếu bạn tự giao dịch trực tiếp với người bán mà không qua trung gian.
+                    * Chủ shop không chịu trách nhiệm nếu giao dịch không có mặt của chủ shop.
                   </p>
                 </div>
               )}
