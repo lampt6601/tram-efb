@@ -693,6 +693,8 @@ export default async function AccountDetailPage({
             : undefined
         }
         zaloGroupUrl={CONTACT_ZALO_GROUP_URL}
+        zaloBoxUrl="https://zalo.me/g/umniisdttnw5kcubv74y"
+        totalSoldCount={totalSoldCount ?? 0}
       />
 
       <Footer />
