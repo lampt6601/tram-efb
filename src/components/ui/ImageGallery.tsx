@@ -86,7 +86,7 @@ export function ImageGallery({ images, title }: ImageGalleryProps) {
   const nextIndex = selectedIndex < images.length - 1 ? selectedIndex + 1 : 0;
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-2 sm:gap-4">
       {/* Hidden preload images for prev/next */}
       {images.length > 1 && (
         <div className="hidden" aria-hidden="true">
@@ -155,9 +155,9 @@ export function ImageGallery({ images, title }: ImageGalleryProps) {
         )}
       </div>
 
-      {/* Thumbnail Carousel */}
+      {/* Thumbnail Carousel — hidden on mobile to save space */}
       {images.length > 1 && (
-        <div className="hide-scrollbar flex gap-2 overflow-x-auto py-2 scroll-smooth px-2 w-full max-w-full">
+        <div className="hide-scrollbar hidden gap-2 overflow-x-auto py-2 scroll-smooth px-2 w-full max-w-full sm:flex">
           {images.map((img, i) => (
             <button
               key={i}

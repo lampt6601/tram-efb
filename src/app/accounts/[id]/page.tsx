@@ -287,9 +287,9 @@ export default async function AccountDetailPage({
     <div className="flex min-h-screen flex-col bg-slate-50 pb-20 dark:bg-slate-900">
       <Header />
       <main className="flex-1">
-        <div className="mx-auto w-full max-w-5xl overflow-x-hidden px-4 py-4 sm:px-6 sm:py-8 lg:px-8">
+        <div className="mx-auto w-full max-w-5xl overflow-x-hidden px-3 py-2 sm:px-6 sm:py-8 lg:px-8">
           {/* Back link + Share */}
-          <div className="mb-4 flex items-center justify-between">
+          <div className="mb-2 flex items-center justify-between sm:mb-4">
             <Link
               href="/"
               className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 transition-colors hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400"
@@ -300,7 +300,7 @@ export default async function AccountDetailPage({
           </div>
 
           {/* ── 2-column layout on desktop ── */}
-          <div className="grid min-w-0 max-w-full grid-cols-1 gap-6 lg:grid-cols-5">
+          <div className="grid min-w-0 max-w-full grid-cols-1 gap-3 sm:gap-6 lg:grid-cols-5">
             {/* Left — Images */}
             <div className="relative min-w-0 max-w-full overflow-hidden rounded-2xl bg-white shadow-sm lg:col-span-3 dark:bg-slate-800">
               {/* Sale ribbon */}
@@ -313,9 +313,9 @@ export default async function AccountDetailPage({
             </div>
 
             {/* Right — Info card (sticky on desktop) */}
-            <div className="min-w-0 overflow-hidden rounded-2xl bg-white p-5 shadow-sm sm:p-6 lg:col-span-2 lg:sticky lg:top-4 lg:self-start dark:bg-slate-800">
+            <div className="min-w-0 overflow-hidden rounded-2xl bg-white p-3.5 shadow-sm sm:p-6 lg:col-span-2 lg:sticky lg:top-4 lg:self-start dark:bg-slate-800">
               {/* Title */}
-              <h1 className="flex items-start gap-2 text-xl font-bold leading-snug text-slate-900 sm:text-2xl dark:text-slate-100">
+              <h1 className="flex items-start gap-2 text-lg font-bold leading-snug text-slate-900 sm:text-2xl dark:text-slate-100">
                 <span>{account.title}</span>
                 {account.is_priority && (
                   <Star className="mt-0.5 h-5 w-5 shrink-0 fill-amber-500 text-amber-500" />
@@ -324,21 +324,21 @@ export default async function AccountDetailPage({
 
               {/* Tags */}
               {account.server_region && (
-                <div className="mt-2 flex flex-wrap gap-2">
-                  <span className="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600 dark:bg-slate-700 dark:text-slate-300">
+                <div className="mt-1.5 flex flex-wrap gap-2">
+                  <span className="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-600 dark:bg-slate-700 dark:text-slate-300">
                     Server: {account.server_region}
                   </span>
                 </div>
               )}
 
               {/* Price — moved up */}
-              <div className="mt-4">
-                <p className="text-xs font-medium uppercase tracking-wide text-slate-400 dark:text-slate-500">
+              <div className="mt-2 sm:mt-4">
+                <p className="text-[10px] font-medium uppercase tracking-wide text-slate-400 sm:text-xs dark:text-slate-500">
                   Giá Bán
                 </p>
-                <div className="mt-1 flex items-end gap-3">
+                <div className="mt-0.5 flex items-end gap-3 sm:mt-1">
                   <p
-                    className={`text-3xl font-extrabold ${isSale ? "text-rose-600 dark:text-rose-400" : "text-indigo-600 dark:text-indigo-400"}`}
+                    className={`text-2xl font-extrabold sm:text-3xl ${isSale ? "text-rose-600 dark:text-rose-400" : "text-indigo-600 dark:text-indigo-400"}`}
                   >
                     {formatCurrency(account.selling_price)}
                   </p>
@@ -355,7 +355,7 @@ export default async function AccountDetailPage({
                 </div>
               </div>
               {/* Divider */}
-              <div className="my-4 border-t border-slate-100 dark:border-slate-700" />
+              <div className="my-3 border-t border-slate-100 sm:my-4 dark:border-slate-700" />
 
               {/* Description */}
               {account.description && (
@@ -368,9 +368,9 @@ export default async function AccountDetailPage({
 
               {/* Stats grid */}
               {hasStats && (
-                <div className="mb-4 grid grid-cols-2 gap-2">
+                <div className="mb-3 grid grid-cols-2 gap-1.5 sm:mb-4 sm:gap-2">
                   {(account.total_gp ?? 0) > 0 && (
-                    <div className="flex items-center gap-2.5 rounded-xl border border-amber-100 bg-amber-50 px-3 py-2.5 dark:border-amber-500/20 dark:bg-amber-500/10">
+                    <div className="flex items-center gap-2 rounded-xl border border-amber-100 bg-amber-50 px-2.5 py-2 sm:gap-2.5 sm:px-3 sm:py-2.5 dark:border-amber-500/20 dark:bg-amber-500/10">
                       <Zap className="h-4 w-4 shrink-0 text-amber-500" />
                       <div className="min-w-0">
                         <p className="text-[10px] font-medium uppercase tracking-wide text-amber-600/70 dark:text-amber-400/70">
@@ -383,7 +383,7 @@ export default async function AccountDetailPage({
                     </div>
                   )}
                   {(account.total_coins_android ?? 0) > 0 && (
-                    <div className="flex items-center gap-2.5 rounded-xl border border-emerald-100 bg-emerald-50 px-3 py-2.5 dark:border-emerald-500/20 dark:bg-emerald-500/10">
+                    <div className="flex items-center gap-2 rounded-xl border border-emerald-100 bg-emerald-50 px-2.5 py-2 sm:gap-2.5 sm:px-3 sm:py-2.5 dark:border-emerald-500/20 dark:bg-emerald-500/10">
                       <AndroidCoinIcon size={16} className="shrink-0" />
                       <div className="min-w-0">
                         <p className="text-[10px] font-medium uppercase tracking-wide text-emerald-600/70 dark:text-emerald-400/70">
@@ -396,7 +396,7 @@ export default async function AccountDetailPage({
                     </div>
                   )}
                   {(account.total_coins_ios ?? 0) > 0 && (
-                    <div className="flex items-center gap-2.5 rounded-xl border border-teal-100 bg-teal-50 px-3 py-2.5 dark:border-teal-500/20 dark:bg-teal-500/10">
+                    <div className="flex items-center gap-2 rounded-xl border border-teal-100 bg-teal-50 px-2.5 py-2 sm:gap-2.5 sm:px-3 sm:py-2.5 dark:border-teal-500/20 dark:bg-teal-500/10">
                       <IosCoinIcon size={16} className="shrink-0" />
                       <div className="min-w-0">
                         <p className="text-[10px] font-medium uppercase tracking-wide text-teal-600/70 dark:text-teal-400/70">
@@ -409,7 +409,7 @@ export default async function AccountDetailPage({
                     </div>
                   )}
                   {(account.team_strength ?? 0) > 0 && (
-                    <div className="flex items-center gap-2.5 rounded-xl border border-blue-100 bg-blue-50 px-3 py-2.5 dark:border-blue-500/20 dark:bg-blue-500/10">
+                    <div className="flex items-center gap-2 rounded-xl border border-blue-100 bg-blue-50 px-2.5 py-2 sm:gap-2.5 sm:px-3 sm:py-2.5 dark:border-blue-500/20 dark:bg-blue-500/10">
                       <Shield className="h-4 w-4 shrink-0 text-blue-500" />
                       <div className="min-w-0">
                         <p className="text-[10px] font-medium uppercase tracking-wide text-blue-600/70 dark:text-blue-400/70">
@@ -422,7 +422,7 @@ export default async function AccountDetailPage({
                     </div>
                   )}
                   {account.monthly_log_quota != null && (
-                    <div className="flex items-center gap-2.5 rounded-xl border border-indigo-100 bg-indigo-50 px-3 py-2.5 dark:border-indigo-500/20 dark:bg-indigo-500/10">
+                    <div className="flex items-center gap-2 rounded-xl border border-indigo-100 bg-indigo-50 px-2.5 py-2 sm:gap-2.5 sm:px-3 sm:py-2.5 dark:border-indigo-500/20 dark:bg-indigo-500/10">
                       <MessageCircle className="h-4 w-4 shrink-0 text-indigo-500" />
                       <div className="min-w-0">
                         <p className="text-[10px] font-medium uppercase tracking-wide text-indigo-600/70 dark:text-indigo-400/70">
