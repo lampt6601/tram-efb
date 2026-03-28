@@ -30,13 +30,13 @@ export const formatCurrency = (amount: number): string => {
 export const formatCompactCurrency = (amount: number): string => {
   if (amount >= 1_000_000) {
     const m = amount / 1_000_000;
-    return `${m % 1 === 0 ? m.toFixed(0) : m.toFixed(1)}M đ`;
+    return `${m % 1 === 0 ? m.toFixed(0) : m.toFixed(1)}M`;
   }
   if (amount >= 1_000) {
     const k = amount / 1_000;
-    return `${k % 1 === 0 ? k.toFixed(0) : k.toFixed(1)}K đ`;
+    return `${k % 1 === 0 ? k.toFixed(0) : k.toFixed(1)}K`;
   }
-  return `${amount} đ`;
+  return `${amount}`;
 };
 
 export const formatNumber = (num: number): string => {
