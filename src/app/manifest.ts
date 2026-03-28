@@ -7,6 +7,7 @@ export default function manifest(): MetadataRoute.Manifest {
     description:
       "Shop acc eFootball mobile uy tin. Mua ban tai khoan eFootball gia re, giao dich an toan.",
     start_url: "/",
+    scope: "/",
     display: "standalone",
     background_color: "#0f172a",
     theme_color: "#6366f1",
@@ -27,6 +28,20 @@ export default function manifest(): MetadataRoute.Manifest {
         sizes: "512x512",
         type: "image/png",
         purpose: "maskable",
+      },
+    ],
+    shortcuts: [
+      {
+        name: "Quản trị",
+        short_name: "Admin",
+        url: "/admin/dashboard",
+        icons: [
+          {
+            src: "/icon-192x192.png",
+            sizes: "192x192",
+            type: "image/png",
+          },
+        ],
       },
     ],
   };
