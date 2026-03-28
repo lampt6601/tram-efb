@@ -462,8 +462,8 @@ export default async function AccountDetailPage({
                 * Giao dịch qua chủ shop để được hỗ trợ. Chủ shop không chịu trách nhiệm với giao dịch không thông qua chủ shop.
               </p>
 
-              {/* Seller info */}
-              {account.seller_display_name && (
+              {/* Seller info — simplified if seller is the shop owner */}
+              {account.seller_display_name && account.seller_display_name !== "Trần Hữu Cảnh" && (
                 <div className="mb-3 rounded-xl border border-indigo-100 bg-indigo-50/50 p-4 dark:border-indigo-500/20 dark:bg-indigo-500/5">
                   <div className="flex items-center gap-3">
                     <div className="relative shrink-0">
@@ -499,7 +499,7 @@ export default async function AccountDetailPage({
                     </div>
                   </div>
 
-                  {/* Contact links — via API redirect to hide raw URLs */}
+                  {/* Contact links */}
                   {(account.seller_zalo_link || account.seller_facebook_link) && (
                     <div className="mt-2.5 flex gap-2">
                       {account.seller_zalo_link && (
@@ -563,7 +563,9 @@ export default async function AccountDetailPage({
                   </div>
                   <div className="min-w-0 flex-1">
                     <p className="text-[10px] font-semibold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">
-                      Chủ Shop · Trung Gian Uy Tín
+                      {account.seller_display_name === "Trần Hữu Cảnh"
+                        ? "Người Bán · Chủ Shop · Trung Gian"
+                        : "Chủ Shop · Trung Gian Uy Tín"}
                     </p>
                     <p className="mt-0.5 text-sm font-semibold text-slate-900 dark:text-slate-100">
                       Trần Hữu Cảnh
