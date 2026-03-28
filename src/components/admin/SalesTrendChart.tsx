@@ -80,7 +80,7 @@ export function SalesTrendChart({ data }: SalesTrendChartProps) {
       </div>
 
       {/* Chart */}
-      <div className="flex items-end gap-[3px] h-32">
+      <div className="flex items-end gap-[3px] h-32 overflow-x-auto">
         {bars.map((bar, i) => {
           const countHeight = (bar.count / maxCount) * 100;
           const revHeight = (bar.revenue / maxRevenue) * 100;
@@ -90,7 +90,7 @@ export function SalesTrendChart({ data }: SalesTrendChartProps) {
           return (
             <div
               key={bar.date}
-              className="group relative flex flex-col items-center flex-1 min-w-0"
+              className="group relative flex flex-col items-center flex-1 min-w-[8px]"
             >
               {/* Tooltip */}
               <div className="absolute -top-16 left-1/2 -translate-x-1/2 hidden group-hover:block z-10 whitespace-nowrap rounded-lg bg-slate-800 px-2.5 py-1.5 text-[10px] text-white shadow-lg dark:bg-slate-700">
