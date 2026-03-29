@@ -192,6 +192,7 @@ export default function GuidePage() {
             <p className="mb-2 text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Thông tin</p>
             <div className="rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 divide-y divide-slate-100 dark:divide-slate-800">
               <FieldRow label="Tiêu đề" desc='Tên hiển thị của acc. Ví dụ: "Acc Full Legend GP 5000 Server Nhật"' required />
+              <FieldRow label="Mô tả chi tiết" desc="Mô tả cầu thủ, pack, đội hình nổi bật. Giúp khách hiểu acc mà không cần hỏi." />
             </div>
           </div>
 
@@ -199,8 +200,8 @@ export default function GuidePage() {
           <div>
             <p className="mb-2 text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Giá (VNĐ)</p>
             <div className="rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 divide-y divide-slate-100 dark:divide-slate-800">
-              <FieldRow label="Giá nhập" desc="Giá bạn bỏ ra mua acc (dùng để tính lợi nhuận, khách không thấy)" required />
-              <FieldRow label="Giá bán" desc="Giá hiển thị trên web cho khách mua" required />
+              <FieldRow label="Giá nhập" desc="Giá bạn bỏ ra mua acc (dùng để tính lợi nhuận, khách không thấy). Tối thiểu 1.000đ" required />
+              <FieldRow label="Giá bán" desc="Giá hiển thị trên web cho khách mua. Tối thiểu 1.000đ, không được lớn hơn 2 lần giá nhập" required />
               <FieldRow label="Giá gốc (gạch)" desc="Điền nếu muốn hiển thị kiểu giảm giá. Phải lớn hơn giá bán. Ví dụ: gốc 500K → bán 350K" />
             </div>
           </div>
@@ -440,6 +441,65 @@ export default function GuidePage() {
           <FieldRow label="Tên hiển thị" desc="Tên này hiển thị trên giao diện quản trị và trong email thông báo gửi về chủ shop." />
           <FieldRow label="Email" desc="Email đăng nhập — không thể thay đổi. Liên hệ chủ shop nếu cần đổi." />
         </div>
+      </div>
+
+      {/* Transaction safety */}
+      <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 shadow-sm">
+        <SectionHeader
+          icon={MessageCircle}
+          title="Quy Trình Giao Dịch An Toàn"
+          subtitle="Hướng dẫn khách mua đúng quy trình"
+          color="emerald"
+        />
+        <p className="mb-4 text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+          Khi khách liên hệ mua acc, hãy hướng dẫn họ giao dịch qua <strong>Chủ Shop làm trung gian</strong> để đảm bảo an toàn cho cả hai bên.
+        </p>
+        <ol className="mb-4 space-y-3">
+          {[
+            "Khách thỏa thuận giá với bạn (người bán)",
+            "Bạn tạo Box giao dịch trên Zalo có Chủ Shop tham gia",
+            "Chủ Shop giữ tiền & xác nhận acc trước khi chuyển cho khách",
+          ].map((step, i) => (
+            <li key={i} className="flex items-start gap-3">
+              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-100 dark:bg-emerald-500/20 text-xs font-bold text-emerald-700 dark:text-emerald-400">
+                {i + 1}
+              </span>
+              <p className="text-sm text-slate-600 dark:text-slate-300 pt-0.5">{step}</p>
+            </li>
+          ))}
+        </ol>
+        <InfoBox type="warning">
+          Chủ shop <strong>không chịu trách nhiệm</strong> nếu giao dịch không thông qua chủ shop làm trung gian. Khi khách liên hệ trực tiếp với bạn, hệ thống sẽ hiển thị cảnh báo này cho khách.
+        </InfoBox>
+      </div>
+
+      {/* Buyback policy */}
+      <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 shadow-sm">
+        <SectionHeader
+          icon={RotateCcw}
+          title="Chính Sách Thu Lại Acc"
+          subtitle="Quy định thu lại acc đã bán của shop"
+          color="blue"
+        />
+        <p className="mb-4 text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+          Mức thu lại tính theo <strong>giá bán</strong> của acc, phụ thuộc vào thời gian kể từ ngày bán:
+        </p>
+        <div className="mb-4 grid gap-2 sm:grid-cols-2">
+          {[
+            { label: "Ngày đầu", rate: "80%", color: "emerald" },
+            { label: "Từ 1–10 ngày", rate: "70%", color: "blue" },
+            { label: "Từ 11–20 ngày", rate: "65%", color: "amber" },
+            { label: "Từ 21 ngày trở đi", rate: "60%", color: "slate" },
+          ].map(({ label, rate, color }) => (
+            <div key={label} className={`flex items-center justify-between rounded-xl border border-${color}-100 dark:border-${color}-500/30 bg-${color}-50 dark:bg-${color}-500/10 px-4 py-3`}>
+              <span className="text-sm text-slate-700 dark:text-slate-300">{label}</span>
+              <span className="text-lg font-bold text-slate-900 dark:text-slate-100">{rate}</span>
+            </div>
+          ))}
+        </div>
+        <InfoBox type="info">
+          Chính sách này được hiển thị cho khách hàng trên trang chi tiết acc (dạng collapse). Hãy nắm rõ để tư vấn khi khách hỏi.
+        </InfoBox>
       </div>
 
       {/* Important notes */}

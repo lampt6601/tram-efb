@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { Sidebar } from "./Sidebar";
 import { Menu } from "lucide-react";
 import { ThemeToggle } from "@/components/storefront/ThemeToggle";
@@ -15,15 +15,8 @@ interface AdminShellProps {
 export function AdminShell({ children, isSuperAdmin = false, adminName = "", adminEmail = "" }: AdminShellProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  useEffect(() => {
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, []);
-
   return (
-    <div className="flex h-dvh bg-slate-50 dark:bg-slate-950">
+    <div className="flex flex-col bg-slate-50 dark:bg-slate-950">
       <Sidebar
         open={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
@@ -31,7 +24,7 @@ export function AdminShell({ children, isSuperAdmin = false, adminName = "", adm
         adminName={adminName}
         adminEmail={adminEmail}
       />
-      <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+      <div className="flex flex-col">
         <header className="flex h-16 items-center gap-4 border-b border-slate-200 bg-white px-4 dark:border-slate-700 dark:bg-slate-900 lg:px-8">
           <button
             onClick={() => setSidebarOpen(true)}
