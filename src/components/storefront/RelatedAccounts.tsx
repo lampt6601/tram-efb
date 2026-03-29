@@ -56,7 +56,7 @@ export async function RelatedAccounts({
         Tài Khoản Tương Tự
       </h2>
       {/* Horizontal scroll on mobile, grid on sm+ */}
-      <div className="-mx-4 flex gap-3 overflow-x-auto px-4 pb-3 snap-x snap-mandatory scrollbar-hide sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-4 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-3">
+      <div className="-mx-4 flex gap-3 overflow-x-auto pl-4 pr-4 pb-3 snap-x snap-mandatory scroll-pl-4 scrollbar-hide sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-4 sm:overflow-visible sm:pl-0 sm:pr-0 sm:pb-0 lg:grid-cols-3">
         {accounts.map((account) => (
           <div key={account.id} className="w-[65vw] max-w-[280px] shrink-0 snap-start sm:w-auto sm:max-w-none sm:shrink">
             <AccountCard account={account} />
