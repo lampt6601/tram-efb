@@ -16,6 +16,36 @@ const DISTANCE_MAP = {
   lg: "translate-y-14",
 };
 
+// Shared IntersectionObserver — one observer for all ScrollReveal instances
+let sharedObserver: IntersectionObserver | null = null;
+const observedElements = new Map<Element, { delay: number }>();
+
+function getSharedObserver() {
+  if (sharedObserver) return sharedObserver;
+
+  if (typeof window === "undefined") return null;
+
+  sharedObserver = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) {
+          const el = entry.target as HTMLElement;
+          const meta = observedElements.get(el);
+          if (meta) {
+            el.style.transitionDelay = `${meta.delay}ms`;
+            el.dataset.visible = "true";
+          }
+          sharedObserver!.unobserve(el);
+          observedElements.delete(el);
+        }
+      }
+    },
+    { threshold: 0.08 },
+  );
+
+  return sharedObserver;
+}
+
 export function ScrollReveal({
   children,
   className = "",
@@ -29,19 +59,16 @@ export function ScrollReveal({
     const el = ref.current;
     if (!el) return;
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          el.style.transitionDelay = `${delay}ms`;
-          el.dataset.visible = "true";
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.08 },
-    );
+    const observer = getSharedObserver();
+    if (!observer) return;
 
+    observedElements.set(el, { delay });
     observer.observe(el);
-    return () => observer.disconnect();
+
+    return () => {
+      observer.unobserve(el);
+      observedElements.delete(el);
+    };
   }, [delay]);
 
   const translateClass =

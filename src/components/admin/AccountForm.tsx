@@ -508,10 +508,10 @@ export function AccountForm({ account, duplicating }: AccountFormProps) {
                 type="number"
                 {...register("purchasePrice", {
                   required: "Vui lòng nhập giá nhập",
-                  min: { value: 0, message: "Phải >= 0" },
+                  min: { value: 1000, message: "Tối thiểu 1.000đ" },
                 })}
                 aria-invalid={!!errors.purchasePrice}
-                min="0"
+                min="1000"
                 step="1"
                 className={cn(inputClass, "mt-1.5")}
                 placeholder="0"
@@ -528,7 +528,7 @@ export function AccountForm({ account, duplicating }: AccountFormProps) {
                 type="number"
                 {...register("sellingPrice", {
                   required: "Vui lòng nhập giá bán",
-                  min: { value: 0, message: "Phải >= 0" },
+                  min: { value: 1000, message: "Tối thiểu 1.000đ" },
                   validate: (val, formValues) => {
                     const sp = parseInt(val) || 0;
                     const pp = parseInt(formValues.purchasePrice as string) || 0;
@@ -537,7 +537,7 @@ export function AccountForm({ account, duplicating }: AccountFormProps) {
                   }
                 })}
                 aria-invalid={!!errors.sellingPrice}
-                min="0"
+                min="1000"
                 step="1"
                 className={cn(inputClass, "mt-1.5")}
                 placeholder="0"
@@ -554,7 +554,7 @@ export function AccountForm({ account, duplicating }: AccountFormProps) {
               <Input
                 type="number"
                 {...register("originalPrice", {
-                  min: { value: 0, message: "Phải >= 0" },
+                  min: { value: 1000, message: "Tối thiểu 1.000đ" },
                   validate: (value, formValues) => {
                     if (!value) return true;
                     if (parseInt(value) <= parseInt(formValues.sellingPrice))
@@ -563,7 +563,7 @@ export function AccountForm({ account, duplicating }: AccountFormProps) {
                   },
                 })}
                 aria-invalid={!!errors.originalPrice}
-                min="0"
+                min="1000"
                 step="1"
                 className={cn(inputClass, "mt-1.5")}
                 placeholder="Để trống nếu không sale"

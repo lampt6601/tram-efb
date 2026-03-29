@@ -14,7 +14,7 @@ import { formatCompactCurrency } from "@/lib/constants";
 import type { PublicAccount } from "@/types/database";
 import { thumbCard } from "@/lib/image-utils";
 
-export function AccountCard({ account }: { account: PublicAccount }) {
+export function AccountCard({ account, priority = false }: { account: PublicAccount; priority?: boolean }) {
   const thumbnail = account.primary_image_url || account.images?.[0];
   const optimizedThumb = thumbnail ? thumbCard(thumbnail) : undefined;
   const isSold = account.status === "Sold";
@@ -42,6 +42,8 @@ export function AccountCard({ account }: { account: PublicAccount }) {
             alt={account.title}
             fill
             sizes="(min-width: 1280px) 380px, (min-width: 768px) 50vw, 100vw"
+            priority={priority}
+            loading={priority ? "eager" : "lazy"}
             className={`h-full w-full object-cover ${
               isSold
                 ? "grayscale-[30%]"

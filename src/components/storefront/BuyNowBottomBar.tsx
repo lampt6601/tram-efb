@@ -161,13 +161,13 @@ export function BuyNowBottomBar({
                 {(seller.zaloLink || seller.facebookLink) && (
                   <div className="mt-2.5 flex gap-2">
                     {seller.zaloLink && (
-                      <button onClick={() => setConfirmLink(seller.zaloLink!)} className="flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 transition-colors hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600">
+                      <button onClick={() => { setOpen(false); setTimeout(() => setConfirmLink(seller.zaloLink!), 300); }} className="flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 transition-colors hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600">
                         <Image src={zaloIcon} alt="Zalo" className="h-4 w-4 object-contain" />
                         Zalo Người Bán
                       </button>
                     )}
                     {seller.facebookLink && (
-                      <button onClick={() => setConfirmLink(seller.facebookLink!)} className="flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 transition-colors hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600">
+                      <button onClick={() => { setOpen(false); setTimeout(() => setConfirmLink(seller.facebookLink!), 300); }} className="flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 transition-colors hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600">
                         <Image src={facebookIcon} alt="Facebook" className="h-4 w-4 object-contain" />
                         Facebook
                       </button>

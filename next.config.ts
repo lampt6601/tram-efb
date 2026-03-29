@@ -7,7 +7,7 @@ const nextConfig: NextConfig = {
     },
   },
   images: {
-    unoptimized: true,
+    unoptimized: true, // Use ImageKit CDN transformations instead of Vercel (saves bandwidth)
     remotePatterns: [
       {
         protocol: "https",

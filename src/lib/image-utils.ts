@@ -72,32 +72,32 @@ export function optimizeImage(
 
 // ─── Preset helpers for common sizes ────────────────────────────────────────
 
-/** Card thumbnail on homepage (~800px max width, aspect-video) */
+/** Card thumbnail on homepage (mobile ~400px, desktop grid ~500px) */
 export function thumbCard(url: string): string {
-  return optimizeImage(url, { w: 800, q: 90 });
+  return optimizeImage(url, { w: 600, q: 75 });
 }
 
-/** Gallery main image (detail page inline view ~800px) */
+/** Gallery main image (detail page inline view) */
 export function galleryMain(url: string): string {
-  return optimizeImage(url, { w: 900, q: 80 });
+  return optimizeImage(url, { w: 800, q: 75 });
 }
 
-/** Gallery thumbnail strip (~400px) */
+/** Gallery thumbnail strip */
 export function galleryThumb(url: string): string {
-  return optimizeImage(url, { w: 400, q: 80 });
+  return optimizeImage(url, { w: 200, q: 70 });
 }
 
 /** Fullscreen lightbox (full resolution, high quality) */
 export function galleryFull(url: string): string {
-  return optimizeImage(url, { w: 1920, q: 90 });
+  return optimizeImage(url, { w: 1600, q: 85 });
 }
 
 /** OG / Social sharing image (1200×630) */
 export function ogImage(url: string): string {
-  return optimizeImage(url, { w: 1200, h: 630, q: 80, c: "maintain_ratio" });
+  return optimizeImage(url, { w: 1200, h: 630, q: 75, c: "maintain_ratio" });
 }
 
-/** Admin form thumbnail preview (~300px) */
+/** Admin form thumbnail preview */
 export function adminThumb(url: string): string {
-  return optimizeImage(url, { w: 300, q: 70 });
+  return optimizeImage(url, { w: 250, q: 65 });
 }

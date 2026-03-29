@@ -9,6 +9,7 @@ import { ZaloNotify } from "@/components/storefront/ZaloNotify";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { AutoScrollSlider } from "@/components/ui/AutoScrollSlider";
 import { Gamepad2, Search, BadgeCheck, Flame, Clock } from "lucide-react";
+import Image from "next/image";
 import { RecruitHeroCTA } from "@/components/storefront/RecruitHeroCTA";
 import { RecruitAdminSection } from "@/components/storefront/RecruitAdminSection";
 import { Suspense } from "react";
@@ -106,21 +107,23 @@ export default async function HomePage({
       query = query.order("created_at", { ascending: false });
   }
 
-  const { data: accounts } = await query;
-
-  // Sold accounts (always newest first, no limit)
-  // Use a public view to avoid RLS differences across sessions/devices.
-  const { data: soldAccountsRaw } = await supabase
-    .from("public_sold_accounts")
-    .select(
-      "id, title, selling_price, images, primary_image_url, status, total_gp, total_coins_android, total_coins_ios, team_strength, created_at",
-    )
-    .order("created_at", { ascending: false });
-
-  // Fetch distinct server regions for dynamic filter dropdown
-  const { data: serverData } = await supabase
-    .from("public_accounts")
-    .select("server_region");
+  // Run all three queries in parallel to avoid waterfall
+  const [
+    { data: accounts },
+    { data: soldAccountsRaw },
+    { data: serverData },
+  ] = await Promise.all([
+    query,
+    supabase
+      .from("public_sold_accounts")
+      .select(
+        "id, title, selling_price, images, primary_image_url, status, total_gp, total_coins_android, total_coins_ios, team_strength, created_at",
+      )
+      .order("created_at", { ascending: false }),
+    supabase
+      .from("public_accounts")
+      .select("server_region"),
+  ]);
   const serverRegions = [
     ...new Set(
       (serverData ?? [])
@@ -146,10 +149,13 @@ export default async function HomePage({
             <div className="flex flex-col py-3 sm:py-6 md:py-10">
               <div className="text-center lg:text-left">
                 <div className="mx-auto mb-5 inline-flex items-center gap-2.5 rounded-full border border-indigo-500/30 bg-indigo-500/10 py-1.5 pl-1.5 pr-4 lg:mx-0">
-                  <img
+                  <Image
                     src="/avatar-owner.jpeg"
                     alt="Trần Hữu Cảnh"
+                    width={28}
+                    height={28}
                     className="h-7 w-7 rounded-full object-cover ring-2 ring-indigo-400/50"
+                    priority
                   />
                   <span className="text-xs font-semibold tracking-wide text-indigo-300">
                     Shop của <span className="text-white">Trần Hữu Cảnh</span>
@@ -216,7 +222,7 @@ export default async function HomePage({
                         distance="sm"
                         className="h-full min-h-0"
                       >
-                        <AccountCard account={account} />
+                        <AccountCard account={account} priority={i < 3} />
                       </ScrollReveal>
                     ))}
                   </div>
@@ -240,11 +246,11 @@ export default async function HomePage({
                     {regularItems.map((account, i) => (
                       <ScrollReveal
                         key={account.id}
-                        delay={i * 80}
+                        delay={i < 6 ? i * 60 : 0}
                         distance="sm"
                         className="h-full min-h-0"
                       >
-                        <AccountCard account={account} />
+                        <AccountCard account={account} priority={priorityItems.length === 0 && i < 3} />
                       </ScrollReveal>
                     ))}
                   </div>
