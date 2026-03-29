@@ -128,8 +128,8 @@ function ApplicationCard({
 
   return (
     <div className={`rounded-xl border p-4 ${app.status === "pending" ? "border-amber-200 dark:border-amber-500/20 bg-amber-50 dark:bg-amber-500/10" : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800"}`}>
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex-1 min-w-0">
+      <div>
+        <div className="min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
             <p className="text-sm font-semibold text-slate-800 dark:text-slate-200">{app.full_name}</p>
             <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${status.color}`}>
@@ -184,7 +184,7 @@ function ApplicationCard({
         </div>
 
         {app.status === "pending" && onApprove && onReject && (
-          <div className="flex gap-2 shrink-0">
+          <div className="mt-3 flex flex-wrap gap-2">
             <Button
               size="sm"
               disabled={isPending}
