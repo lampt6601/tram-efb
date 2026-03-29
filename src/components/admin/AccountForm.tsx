@@ -10,7 +10,6 @@ import type { Account, Email, AccountStatus } from "@/types/database";
 import { useForm, Controller } from "react-hook-form";
 import { notifyAdminAction } from "@/app/actions/notify-admin";
 import { checkAdminRestricted } from "@/app/actions/account-actions";
-import { Zap } from "lucide-react";
 import { useParallelUpload } from "@/hooks/use-parallel-upload";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -60,7 +59,7 @@ export function AccountForm({ account, duplicating }: AccountFormProps) {
   const [availableEmails, setAvailableEmails] = useState<Email[]>([]);
   const [loading, setLoading] = useState(false);
   const [imageError, setImageError] = useState("");
-  const [quickMode, setQuickMode] = useState(!isEditing);
+  const [quickMode] = useState(false);
   /** True if admin is restricted (non-super, no auto_approve) — updates need re-approval */
   const [isRestricted, setIsRestricted] = useState(false);
   const {
@@ -430,21 +429,6 @@ export function AccountForm({ account, duplicating }: AccountFormProps) {
           <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">
             {isEditing ? "Chỉnh Sửa Tài Khoản" : "Thêm Tài Khoản Mới"}
           </h1>
-          {!isEditing && (
-            <button
-              type="button"
-              onClick={() => setQuickMode((v) => !v)}
-              className={cn(
-                "inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors",
-                quickMode
-                  ? "bg-amber-100 text-amber-700 hover:bg-amber-200 dark:bg-amber-500/10 dark:text-amber-400"
-                  : "bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-slate-700 dark:text-slate-400",
-              )}
-            >
-              <Zap className="h-3.5 w-3.5" />
-              {quickMode ? "Nhanh" : "Đầy đủ"}
-            </button>
-          )}
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="mt-5 space-y-5">
