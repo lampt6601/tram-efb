@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useState, useEffect, type ReactNode } from "react";
 import { Sidebar } from "./Sidebar";
 import { Menu } from "lucide-react";
 import { ThemeToggle } from "@/components/storefront/ThemeToggle";
@@ -15,8 +15,15 @@ interface AdminShellProps {
 export function AdminShell({ children, isSuperAdmin = false, adminName = "", adminEmail = "" }: AdminShellProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, []);
+
   return (
-    <div className="flex h-screen bg-slate-50 dark:bg-slate-950">
+    <div className="flex h-dvh bg-slate-50 dark:bg-slate-950">
       <Sidebar
         open={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
@@ -24,7 +31,7 @@ export function AdminShell({ children, isSuperAdmin = false, adminName = "", adm
         adminName={adminName}
         adminEmail={adminEmail}
       />
-      <div className="flex flex-1 flex-col overflow-hidden">
+      <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
         <header className="flex h-16 items-center gap-4 border-b border-slate-200 bg-white px-4 dark:border-slate-700 dark:bg-slate-900 lg:px-8">
           <button
             onClick={() => setSidebarOpen(true)}
@@ -36,7 +43,7 @@ export function AdminShell({ children, isSuperAdmin = false, adminName = "", adm
             <ThemeToggle className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-slate-100 transition-colors hover:bg-slate-200 dark:border-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700" />
           </div>
         </header>
-        <main className="flex-1 overflow-y-auto p-4 lg:p-8">{children}</main>
+        <main className="flex-1 overflow-y-auto overscroll-contain p-4 lg:p-8">{children}</main>
       </div>
     </div>
   );
