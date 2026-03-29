@@ -18,11 +18,7 @@ import {
   CheckCircle2,
   Star,
   ShieldCheck,
-  User,
-  BadgeCheck,
-  ShieldAlert,
-  Award,
-  Store,
+  AlertTriangle,
   ExternalLink,
   Search,
 } from "lucide-react";
@@ -38,6 +34,7 @@ import { ReviewSection } from "@/components/storefront/ReviewSection";
 import { RelatedAccounts } from "@/components/storefront/RelatedAccounts";
 import { ShareButtons } from "@/components/storefront/ShareButtons";
 import { BuyNowButton } from "@/components/storefront/BuyNowButton";
+import { SellerContactCard } from "@/components/storefront/SellerContactCard";
 import {
   AndroidCoinIcon,
   IosCoinIcon,
@@ -472,91 +469,22 @@ export default async function AccountDetailPage({
                 </div>
               )}
 
-              <p className="mb-3 text-[11px] leading-relaxed text-amber-600 dark:text-amber-400">
-                * Giao dịch qua chủ shop để được hỗ trợ. Chủ shop không chịu trách nhiệm với giao dịch không thông qua chủ shop.
-              </p>
+              <div className="mb-3 flex items-start gap-2 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2.5 dark:border-amber-500/20 dark:bg-amber-500/10">
+                <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-600 dark:text-amber-400" />
+                <p className="text-[11px] leading-relaxed font-medium text-amber-700 dark:text-amber-300">
+                  Chủ shop <span className="font-bold">không chịu trách nhiệm</span> nếu giao dịch không thông qua chủ shop làm trung gian.
+                </p>
+              </div>
 
-              {/* Seller info — simplified if seller is the shop owner */}
+              {/* Seller info */}
               {account.seller_display_name && account.seller_display_name !== "Trần Hữu Cảnh" && (
-                <div className="mb-3 rounded-xl border border-indigo-100 bg-indigo-50/50 p-4 dark:border-indigo-500/20 dark:bg-indigo-500/5">
-                  <div className="flex items-center gap-3">
-                    <div className="relative shrink-0">
-                      {account.seller_avatar_url ? (
-                        <Image
-                          src={account.seller_avatar_url}
-                          alt={account.seller_display_name}
-                          width={44}
-                          height={44}
-                          className="h-11 w-11 rounded-2xl object-cover shadow-sm"
-                        />
-                      ) : (
-                        <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-indigo-100 shadow-sm dark:bg-indigo-500/20">
-                          <User className="h-5 w-5 text-indigo-500" />
-                        </div>
-                      )}
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <p className="text-[10px] font-semibold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">
-                        Người bán
-                      </p>
-                      <div className="mt-0.5 flex flex-wrap items-center gap-2">
-                        <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">
-                          {account.seller_display_name}
-                        </p>
-                        {(account.seller_sold_count ?? 0) > 0 && (
-                          <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-400">
-                            <BadgeCheck className="h-3 w-3" />
-                            Đã bán {account.seller_sold_count} acc
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Contact links */}
-                  {(account.seller_zalo_link || account.seller_facebook_link) && (
-                    <div className="mt-2.5 flex gap-2">
-                      {account.seller_zalo_link && (
-                        <a
-                          href={`/api/contact/${id}?type=zalo`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-blue-600 px-3 py-2 text-xs font-semibold text-white transition-colors hover:bg-blue-700"
-                        >
-                          <Image
-                            src={zaloIcon}
-                            alt="Zalo"
-                            className="h-4 w-4 object-contain"
-                          />
-                          Zalo Người Bán
-                        </a>
-                      )}
-                      {account.seller_facebook_link && (
-                        <a
-                          href={`/api/contact/${id}?type=facebook`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 transition-colors hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600"
-                        >
-                          <Image
-                            src={facebookIcon}
-                            alt="Facebook"
-                            className="h-4 w-4 object-contain"
-                          />
-                          Facebook
-                        </a>
-                      )}
-                    </div>
-                  )}
-
-                  <Link
-                    href={`/shop/${encodeURIComponent(account.seller_display_name)}`}
-                    className="mt-2 flex w-full items-center justify-center gap-1.5 rounded-lg border border-indigo-200 bg-white/60 px-3 py-2 text-xs font-medium text-indigo-700 transition-colors hover:bg-white dark:border-indigo-500/20 dark:bg-slate-800/50 dark:text-indigo-400 dark:hover:bg-slate-700"
-                  >
-                    <Store className="h-3.5 w-3.5" />
-                    Xem gian hàng ({account.seller_sold_count ?? 0} acc đã bán)
-                  </Link>
-                </div>
+                <SellerContactCard
+                  sellerName={account.seller_display_name}
+                  sellerAvatarUrl={account.seller_avatar_url}
+                  sellerSoldCount={account.seller_sold_count}
+                  zaloContactUrl={account.seller_zalo_link ? `/api/contact/${id}?type=zalo` : undefined}
+                  facebookContactUrl={account.seller_facebook_link ? `/api/contact/${id}?type=facebook` : undefined}
+                />
               )}
 
               {/* Shop owner — intermediary */}

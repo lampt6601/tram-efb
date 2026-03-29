@@ -13,8 +13,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import zaloIcon from "@/assets/icons/zalo.png";
-import facebookIcon from "@/assets/icons/facebook.webp";
+import { SellerShopContact } from "@/components/storefront/SellerShopContact";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import type { PublicAccount } from "@/types/database";
@@ -133,40 +132,10 @@ export default async function SellerShopPage({
                 </div>
 
                 {/* Contact buttons */}
-                {(seller.hasZalo || seller.hasFacebook) && (
-                  <div className="mt-2 flex flex-wrap gap-2">
-                    {seller.hasZalo && (
-                      <a
-                        href={`${contactBase}?type=zalo`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-sm transition-colors hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600"
-                      >
-                        <Image
-                          src={zaloIcon}
-                          alt="Zalo"
-                          className="h-3.5 w-3.5 object-contain"
-                        />
-                        Zalo
-                      </a>
-                    )}
-                    {seller.hasFacebook && (
-                      <a
-                        href={`${contactBase}?type=facebook`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-sm transition-colors hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600"
-                      >
-                        <Image
-                          src={facebookIcon}
-                          alt="Facebook"
-                          className="h-3.5 w-3.5 object-contain"
-                        />
-                        Facebook
-                      </a>
-                    )}
-                  </div>
-                )}
+                <SellerShopContact
+                  zaloUrl={seller.hasZalo ? `${contactBase}?type=zalo` : undefined}
+                  facebookUrl={seller.hasFacebook ? `${contactBase}?type=facebook` : undefined}
+                />
               </div>
             </div>
           </div>
