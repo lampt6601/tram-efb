@@ -20,6 +20,7 @@ import {
   RotateCcw,
   Eye,
   Star,
+  Banknote,
 } from "lucide-react";
 import type { AccountStatus, AccountWithEmail } from "@/types/database";
 import { notifyAdminAction } from "@/app/actions/notify-admin";
@@ -49,7 +50,7 @@ interface AccountActionsDropdownProps {
   adminEmail: string;
 }
 
-type OpenDialog = "sell" | "sale" | "delete" | "unmark-sold" | null;
+type OpenDialog = "sell" | "sale" | "delete" | "unmark-sold" | "deposit" | "undeposit" | null;
 
 // ─── Simple portal modal (no @base-ui focus lock) ──────────────────────────
 function Modal({
@@ -127,6 +128,13 @@ export function AccountActionsDropdown({
   );
   const [salePrice, setSalePrice] = useState(currentSellingPrice.toString());
 
+  // Deposit states
+  const [depositCustomerName, setDepositCustomerName] = useState(account.deposit_customer_name ?? "");
+  const [depositCustomerContact, setDepositCustomerContact] = useState(account.deposit_customer_contact ?? "");
+  const [depositAmount, setDepositAmount] = useState(account.deposit_amount?.toString() ?? "");
+  const [depositHoldUntil, setDepositHoldUntil] = useState(account.deposit_hold_until?.split("T")[0] ?? "");
+  const [depositNotes, setDepositNotes] = useState(account.deposit_notes ?? "");
+
   const closeDialog = useCallback(() => {
     if (!loading) setOpenDialog(null);
   }, [loading]);
@@ -135,6 +143,13 @@ export function AccountActionsDropdown({
     setError("");
     setLoading(false);
     if (dialog === "sell") setSellPrice(currentSellingPrice.toString());
+    if (dialog === "deposit") {
+      setDepositCustomerName(account.deposit_customer_name ?? "");
+      setDepositCustomerContact(account.deposit_customer_contact ?? "");
+      setDepositAmount(account.deposit_amount?.toString() ?? "");
+      setDepositHoldUntil(account.deposit_hold_until?.split("T")[0] ?? "");
+      setDepositNotes(account.deposit_notes ?? "");
+    }
     if (dialog === "sale") {
       setSaleOriginalPrice(
         currentOriginalPrice
@@ -344,7 +359,81 @@ export function AccountActionsDropdown({
     }
   };
 
+  // ── Deposit ──────────────────────────────────────────────────────────────
+  const handleDeposit = async () => {
+    if (!depositCustomerName.trim()) {
+      setError("Vui lòng nhập tên khách hàng.");
+      return;
+    }
+    const parsedAmount = parseFloat(depositAmount);
+    if (!depositAmount || isNaN(parsedAmount) || parsedAmount < 0) {
+      setError("Vui lòng nhập số tiền cọc hợp lệ.");
+      return;
+    }
+    if (!depositHoldUntil) {
+      setError("Vui lòng chọn ngày giữ acc.");
+      return;
+    }
+    setLoading(true);
+    setError("");
+    try {
+      const { error: err } = await supabase
+        .from("accounts")
+        .update({
+          status: "Deposited",
+          deposit_customer_name: depositCustomerName.trim(),
+          deposit_customer_contact: depositCustomerContact.trim() || null,
+          deposit_amount: parsedAmount,
+          deposit_hold_until: depositHoldUntil,
+          deposit_notes: depositNotes.trim() || null,
+        })
+        .eq("id", id);
+      if (err) throw err;
+      try {
+        await notifyAdminAction("UPDATE", title, undefined, id, account.primary_image_url);
+      } catch { /* ignore */ }
+      toast.success("Đã đánh dấu cọc thành công");
+      setOpenDialog(null);
+      router.refresh();
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Đã có lỗi xảy ra.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ── Undeposit ───────────────────────────────────────────────────────────
+  const handleUndeposit = async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const { error: err } = await supabase
+        .from("accounts")
+        .update({
+          status: "Available",
+          deposit_customer_name: null,
+          deposit_customer_contact: null,
+          deposit_amount: null,
+          deposit_hold_until: null,
+          deposit_notes: null,
+        })
+        .eq("id", id);
+      if (err) throw err;
+      try {
+        await notifyAdminAction("UPDATE", title, undefined, id, account.primary_image_url);
+      } catch { /* ignore */ }
+      toast.success("Đã hủy cọc thành công");
+      setOpenDialog(null);
+      router.refresh();
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Đã có lỗi xảy ra.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const isSold = status === "Sold";
+  const isDeposited = status === "Deposited";
   const isOnSale = !!(
     currentOriginalPrice && currentOriginalPrice > currentSellingPrice
   );
@@ -445,7 +534,7 @@ export function AccountActionsDropdown({
             </DropdownMenuItem>
           )}
 
-          {!isSold && (
+          {!isSold && !isDeposited && (
             <>
               <DropdownMenuSeparator />
               <DropdownMenuItem
@@ -454,6 +543,33 @@ export function AccountActionsDropdown({
               >
                 <Tag className="h-4 w-4 text-rose-400" />
                 {isOnSale ? "Chỉnh giá sale" : "Thiết lập sale"}
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => openWith("deposit")}
+                className="gap-2"
+              >
+                <Banknote className="h-4 w-4 text-blue-500" />
+                Cọc acc
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => openWith("sell")}
+                className="gap-2"
+              >
+                <ShoppingCart className="h-4 w-4 text-green-500" />
+                Đánh dấu đã bán
+              </DropdownMenuItem>
+            </>
+          )}
+
+          {isDeposited && (
+            <>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onClick={() => openWith("undeposit")}
+                className="gap-2"
+              >
+                <RotateCcw className="h-4 w-4 text-blue-500" />
+                Hủy cọc
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => openWith("sell")}
@@ -647,6 +763,139 @@ export function AccountActionsDropdown({
             className="min-w-[7rem] bg-red-600 text-white hover:bg-red-700"
           >
             Xóa
+          </Button>
+        </div>
+      </Modal>
+
+      {/* ── Deposit modal ──────────────────────────────────────────────── */}
+      <Modal open={openDialog === "deposit"} onClose={closeDialog}>
+        <div className="p-5">
+          <div className="mb-4 flex items-start justify-between">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-500/10">
+              <Banknote className="h-5 w-5 text-blue-600" />
+            </div>
+            <button
+              onClick={closeDialog}
+              disabled={loading}
+              className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600 dark:text-slate-500 dark:hover:bg-slate-700 dark:hover:text-slate-300"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+          <h2 className="mb-1 text-base font-semibold text-slate-900 dark:text-slate-100">
+            Cọc Tài Khoản
+          </h2>
+          <p className="mb-4 text-sm text-slate-500 dark:text-slate-400">
+            Nhập thông tin khách cọc để giữ acc đến ngày hẹn.
+          </p>
+          <div className="space-y-3">
+            <div>
+              <Label className="text-slate-700 dark:text-slate-200">Tên Khách Hàng *</Label>
+              <Input
+                value={depositCustomerName}
+                onChange={(e) => setDepositCustomerName(e.target.value)}
+                disabled={loading}
+                className="mt-1.5 rounded-xl border-slate-300 dark:border-slate-600"
+                placeholder="VD: Nguyễn Văn A"
+                autoFocus
+              />
+            </div>
+            <div>
+              <Label className="text-slate-700 dark:text-slate-200">Liên Hệ (SĐT / Zalo / FB)</Label>
+              <Input
+                value={depositCustomerContact}
+                onChange={(e) => setDepositCustomerContact(e.target.value)}
+                disabled={loading}
+                className="mt-1.5 rounded-xl border-slate-300 dark:border-slate-600"
+                placeholder="VD: 0901234567"
+              />
+            </div>
+            <div>
+              <Label className="text-slate-700 dark:text-slate-200">Số Tiền Cọc (VNĐ) *</Label>
+              <Input
+                type="number"
+                value={depositAmount}
+                onChange={(e) => setDepositAmount(e.target.value)}
+                min="0"
+                step="1"
+                disabled={loading}
+                className="mt-1.5 rounded-xl border-blue-300 bg-blue-50/30 dark:border-blue-500/30 dark:bg-blue-500/10"
+              />
+            </div>
+            <div>
+              <Label className="text-slate-700 dark:text-slate-200">Giữ Đến Ngày *</Label>
+              <Input
+                type="date"
+                value={depositHoldUntil}
+                onChange={(e) => setDepositHoldUntil(e.target.value)}
+                disabled={loading}
+                className="mt-1.5 rounded-xl border-slate-300 dark:border-slate-600"
+              />
+            </div>
+            <div>
+              <Label className="text-slate-700 dark:text-slate-200">Ghi Chú</Label>
+              <textarea
+                value={depositNotes}
+                onChange={(e) => setDepositNotes(e.target.value)}
+                disabled={loading}
+                rows={2}
+                className="mt-1.5 w-full rounded-xl border border-slate-300 bg-transparent px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-slate-600 dark:text-slate-200"
+                placeholder="Ghi chú thêm..."
+              />
+            </div>
+            {error && <p className="text-xs text-red-600 dark:text-red-400">{error}</p>}
+          </div>
+        </div>
+        <div className="flex justify-end gap-2 rounded-b-xl border-t bg-slate-50 px-5 py-3 dark:border-slate-700 dark:bg-slate-800">
+          <Button variant="outline" onClick={closeDialog} disabled={loading}>
+            Hủy
+          </Button>
+          <Button
+            onClick={handleDeposit}
+            loading={loading}
+            loadingLabel="Đang xử lý..."
+            className="min-w-[10rem] bg-blue-600 text-white hover:bg-blue-700"
+          >
+            Xác Nhận Cọc
+          </Button>
+        </div>
+      </Modal>
+
+      {/* ── Undeposit modal ──────────────────────────────────────────────── */}
+      <Modal open={openDialog === "undeposit"} onClose={closeDialog}>
+        <div className="p-5">
+          <div className="mb-4 flex items-start justify-between">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-500/10">
+              <RotateCcw className="h-5 w-5 text-blue-600" />
+            </div>
+            <button
+              onClick={closeDialog}
+              disabled={loading}
+              className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600 dark:text-slate-500 dark:hover:bg-slate-700 dark:hover:text-slate-300"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+          <h2 className="mb-1 text-base font-semibold text-slate-900 dark:text-slate-100">
+            Hủy Cọc Tài Khoản
+          </h2>
+          <p className="text-sm text-slate-500 dark:text-slate-400">
+            Tài khoản <span className="font-semibold text-slate-900 dark:text-slate-100">&quot;{title}&quot;</span> sẽ được chuyển về trạng thái{" "}
+            <span className="font-semibold text-slate-700 dark:text-slate-200">Đang bán</span> và xóa thông tin cọc.
+          </p>
+          {error && <p className="mt-2 text-xs text-red-600 dark:text-red-400">{error}</p>}
+        </div>
+        <div className="flex justify-end gap-2 rounded-b-xl border-t bg-slate-50 px-5 py-3 dark:border-slate-700 dark:bg-slate-800">
+          <Button variant="outline" onClick={closeDialog} disabled={loading}>
+            Hủy
+          </Button>
+          <Button
+            onClick={handleUndeposit}
+            loading={loading}
+            loadingLabel="Đang xử lý..."
+            className="min-w-[8rem] bg-blue-600 text-white hover:bg-blue-700"
+          >
+            Xác Nhận Hủy Cọc
           </Button>
         </div>
       </Modal>

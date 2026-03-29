@@ -3,29 +3,26 @@
 import { useMemo } from "react";
 import { TrendingUp, BarChart3 } from "lucide-react";
 
-interface SalesDataPoint {
+interface RevenueDataPoint {
   date: string; // YYYY-MM-DD
-  count: number;
-  revenue: number;
+  sold: number;
+  profit: number;
 }
 
-interface SalesTrendChartProps {
-  data: SalesDataPoint[];
+interface RevenueTrendChartProps {
+  data: RevenueDataPoint[];
+  periodLabel?: string;
 }
 
-export function SalesTrendChart({ data }: SalesTrendChartProps) {
-  const { maxCount, maxRevenue, bars } = useMemo(() => {
-    const mc = Math.max(...data.map((d) => d.count), 1);
-    const mr = Math.max(...data.map((d) => d.revenue), 1);
-    return {
-      maxCount: mc,
-      maxRevenue: mr,
-      bars: data,
-    };
+export function RevenueTrendChart({ data, periodLabel }: RevenueTrendChartProps) {
+  const { maxSold, maxProfit, bars } = useMemo(() => {
+    const ms = Math.max(...data.map((d) => d.sold), 1);
+    const mp = Math.max(...data.map((d) => Math.abs(d.profit)), 1);
+    return { maxSold: ms, maxProfit: mp, bars: data };
   }, [data]);
 
-  const totalSold = data.reduce((s, d) => s + d.count, 0);
-  const totalRev = data.reduce((s, d) => s + d.revenue, 0);
+  const totalSold = data.reduce((s, d) => s + d.sold, 0);
+  const totalProfit = data.reduce((s, d) => s + d.profit, 0);
 
   if (data.length === 0) {
     return (
@@ -33,10 +30,10 @@ export function SalesTrendChart({ data }: SalesTrendChartProps) {
         <div className="flex items-center gap-2 mb-4">
           <BarChart3 className="h-5 w-5 text-indigo-500" />
           <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">
-            Xu hướng bán hàng (30 ngày)
+            Xu hướng doanh thu{periodLabel ? ` ${periodLabel}` : ""}
           </h3>
         </div>
-        <p className="text-sm text-slate-400 dark:text-slate-500">Chưa có dữ liệu bán hàng.</p>
+        <p className="text-sm text-slate-400 dark:text-slate-500">Chưa có dữ liệu.</p>
       </div>
     );
   }
@@ -47,7 +44,7 @@ export function SalesTrendChart({ data }: SalesTrendChartProps) {
         <div className="flex items-center gap-2">
           <BarChart3 className="h-5 w-5 text-indigo-500" />
           <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">
-            Xu hướng bán hàng (30 ngày)
+            Xu hướng doanh thu{periodLabel ? ` ${periodLabel}` : ""}
           </h3>
         </div>
         <div className="flex items-center gap-4 text-xs text-slate-500 dark:text-slate-400">
@@ -55,7 +52,7 @@ export function SalesTrendChart({ data }: SalesTrendChartProps) {
             <span className="h-2.5 w-2.5 rounded-sm bg-indigo-500" /> Số acc bán
           </span>
           <span className="flex items-center gap-1">
-            <span className="h-2.5 w-2.5 rounded-sm bg-emerald-400" /> Doanh thu
+            <span className="h-2.5 w-2.5 rounded-sm bg-emerald-400" /> Lợi nhuận
           </span>
         </div>
       </div>
@@ -69,12 +66,12 @@ export function SalesTrendChart({ data }: SalesTrendChartProps) {
           </span>
         </div>
         <div className="flex items-center gap-2 rounded-lg bg-emerald-50 px-3 py-1.5 dark:bg-emerald-500/10">
-          <span className="text-xs font-semibold text-emerald-700 dark:text-emerald-400">
+          <span className={`text-xs font-semibold ${totalProfit >= 0 ? "text-emerald-700 dark:text-emerald-400" : "text-red-600 dark:text-red-400"}`}>
             {new Intl.NumberFormat("vi-VN", {
               style: "currency",
               currency: "VND",
               maximumFractionDigits: 0,
-            }).format(totalRev)}
+            }).format(totalProfit)}
           </span>
         </div>
       </div>
@@ -83,10 +80,9 @@ export function SalesTrendChart({ data }: SalesTrendChartProps) {
       <div className="overflow-x-auto">
         <div className="flex items-end gap-[3px] h-32">
           {bars.map((bar) => {
-            const countHeight = (bar.count / maxCount) * 100;
-            const revHeight = (bar.revenue / maxRevenue) * 100;
-            const dateObj = new Date(bar.date);
-            const label = `${dateObj.getDate()}/${dateObj.getMonth() + 1}`;
+            const soldHeight = (bar.sold / maxSold) * 100;
+            const profitHeight = (Math.abs(bar.profit) / maxProfit) * 100;
+            const label = bar.date.split("-").reverse().join("/").replace(/^0/, "").replace(/\/0/, "/");
 
             return (
               <div
@@ -94,25 +90,25 @@ export function SalesTrendChart({ data }: SalesTrendChartProps) {
                 className="group relative flex items-end gap-px flex-1 min-w-[8px] h-full"
               >
                 {/* Tooltip */}
-                <div className="absolute -top-16 left-1/2 -translate-x-1/2 hidden group-hover:block z-10 whitespace-nowrap rounded-lg bg-slate-800 px-2.5 py-1.5 text-[10px] text-white shadow-lg dark:bg-slate-700">
+                <div className="absolute -top-20 left-1/2 -translate-x-1/2 hidden group-hover:block z-10 whitespace-nowrap rounded-lg bg-slate-800 px-2.5 py-1.5 text-[10px] text-white shadow-lg dark:bg-slate-700">
                   <p className="font-medium">{label}</p>
-                  <p>Bán: {bar.count} acc</p>
+                  <p>Bán: {bar.sold} acc</p>
                   <p>
-                    DT:{" "}
+                    LN:{" "}
                     {new Intl.NumberFormat("vi-VN", {
                       maximumFractionDigits: 0,
-                    }).format(bar.revenue)}
+                    }).format(bar.profit)}
                     đ
                   </p>
                 </div>
 
                 <div
                   className="flex-1 rounded-t-sm bg-indigo-400 transition-all group-hover:bg-indigo-500"
-                  style={{ height: `${Math.max(countHeight, 2)}%` }}
+                  style={{ height: `${Math.max(soldHeight, 2)}%` }}
                 />
                 <div
-                  className="flex-1 rounded-t-sm bg-emerald-300 transition-all group-hover:bg-emerald-400"
-                  style={{ height: `${Math.max(revHeight, 2)}%` }}
+                  className={`flex-1 rounded-t-sm transition-all ${bar.profit >= 0 ? "bg-emerald-300 group-hover:bg-emerald-400" : "bg-red-300 group-hover:bg-red-400"}`}
+                  style={{ height: `${Math.max(profitHeight, 2)}%` }}
                 />
               </div>
             );

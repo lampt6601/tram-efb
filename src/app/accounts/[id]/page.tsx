@@ -71,10 +71,17 @@ export async function generateMetadata({
   if (!account) return {};
 
   const isSold = account.status === "Sold";
-  const title = isSold ? `[Đã Bán] ${account.title}` : account.title;
+  const isDepositedMeta = account.status === "Deposited";
+  const title = isSold
+    ? `[Đã Bán] ${account.title}`
+    : isDepositedMeta
+      ? `[Đang Cọc] ${account.title}`
+      : account.title;
   const description = isSold
     ? `Tài khoản ${account.title} đã được bán. Xem các tài khoản khác đang sẵn sàng tại THC eFootball Shop.`
-    : `Mua ngay tài khoản ${account.title} với giá ${formatCurrency(account.selling_price)}. Giao dịch nhanh, uy tín tại THC eFootball Shop.`;
+    : isDepositedMeta
+      ? `Tài khoản ${account.title} đang được cọc. Xem các tài khoản khác đang sẵn sàng tại THC eFootball Shop.`
+      : `Mua ngay tài khoản ${account.title} với giá ${formatCurrency(account.selling_price)}. Giao dịch nhanh, uy tín tại THC eFootball Shop.`;
   const image = account.primary_image_url
     ? ogImage(account.primary_image_url)
     : undefined;
@@ -252,8 +259,9 @@ export default async function AccountDetailPage({
     );
   }
 
-  // ── AVAILABLE ACCOUNT PAGE ─────────────────────────────────────────────
+  // ── AVAILABLE / DEPOSITED ACCOUNT PAGE ──────────────────────────────────
   const account = publicData as PublicAccount;
+  const isDeposited = account.status === "Deposited";
   const isSale = account.original_price
     ? account.original_price > account.selling_price
     : false;
@@ -355,24 +363,30 @@ export default async function AccountDetailPage({
                       </div>
                     )}
                   </div>
-                  <BuyNowButton
-                    contactMessage={contactMessage}
-                    ownerZaloUrl="/api/contact/owner"
-                    ownerFacebookUrl="/api/contact/owner?type=facebook"
-                    seller={
-                      account.seller_display_name
-                        ? {
-                            name: account.seller_display_name,
-                            avatarUrl: account.seller_avatar_url ?? undefined,
-                            zaloLink: account.seller_zalo_link ? `/api/contact/${id}?type=zalo` : undefined,
-                            facebookLink: account.seller_facebook_link ? `/api/contact/${id}?type=facebook` : undefined,
-                            soldCount: account.seller_sold_count ?? undefined,
-                          }
-                        : undefined
-                    }
-                    zaloGroupUrl={CONTACT_ZALO_GROUP_URL}
-                    zaloBoxUrl="https://zalo.me/g/umniisdttnw5kcubv74y"
-                  />
+                  {isDeposited ? (
+                    <span className="shrink-0 rounded-xl bg-blue-100 px-5 py-2.5 text-sm font-semibold text-blue-700 dark:bg-blue-500/15 dark:text-blue-400">
+                      Đang được cọc
+                    </span>
+                  ) : (
+                    <BuyNowButton
+                      contactMessage={contactMessage}
+                      ownerZaloUrl="/api/contact/owner"
+                      ownerFacebookUrl="/api/contact/owner?type=facebook"
+                      seller={
+                        account.seller_display_name
+                          ? {
+                              name: account.seller_display_name,
+                              avatarUrl: account.seller_avatar_url ?? undefined,
+                              zaloLink: account.seller_zalo_link ? `/api/contact/${id}?type=zalo` : undefined,
+                              facebookLink: account.seller_facebook_link ? `/api/contact/${id}?type=facebook` : undefined,
+                              soldCount: account.seller_sold_count ?? undefined,
+                            }
+                          : undefined
+                      }
+                      zaloGroupUrl={CONTACT_ZALO_GROUP_URL}
+                      zaloBoxUrl="https://zalo.me/g/umniisdttnw5kcubv74y"
+                    />
+                  )}
                 </div>
               </div>
               {/* Divider */}

@@ -25,6 +25,7 @@ const STATUS_OPTIONS = [
   { value: "all", label: "Tất cả" },
   { value: "Available", label: "Sẵn Sàng" },
   { value: "Pending", label: "Đang Chờ" },
+  { value: "Deposited", label: "Đang Cọc" },
   { value: "Sold", label: "Đã Bán" },
 ];
 

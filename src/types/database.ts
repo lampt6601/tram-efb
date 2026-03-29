@@ -1,4 +1,4 @@
-export type AccountStatus = "Available" | "Pending" | "Sold";
+export type AccountStatus = "Available" | "Pending" | "Deposited" | "Sold";
 
 export interface Email {
   id: string;
@@ -31,6 +31,11 @@ export interface Account {
   is_priority?: boolean;
   is_clone?: boolean;
   is_approved: boolean;
+  deposit_amount?: number | null;
+  deposit_customer_name?: string | null;
+  deposit_customer_contact?: string | null;
+  deposit_hold_until?: string | null;
+  deposit_notes?: string | null;
   created_at: string;
   updated_at: string;
 }

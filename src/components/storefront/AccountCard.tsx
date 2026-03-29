@@ -6,6 +6,7 @@ import {
   CheckCircle2,
   Star,
   Copy,
+  Banknote,
 } from "lucide-react";
 import { StatusBadge, Badge } from "@/components/ui/Badge";
 
@@ -17,6 +18,7 @@ export function AccountCard({ account }: { account: PublicAccount }) {
   const thumbnail = account.primary_image_url || account.images?.[0];
   const optimizedThumb = thumbnail ? thumbCard(thumbnail) : undefined;
   const isSold = account.status === "Sold";
+  const isDeposited = account.status === "Deposited";
   const isSale = account.original_price
     ? account.original_price > account.selling_price
     : false;
@@ -30,7 +32,7 @@ export function AccountCard({ account }: { account: PublicAccount }) {
 
   const cardContent = (
     <div
-      className={`flex h-full w-full flex-col overflow-hidden rounded-2xl ${!isSold ? "border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800 transition-colors duration-300 group-hover:border-indigo-300 dark:group-hover:border-indigo-500" : "border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800"}`}
+      className={`flex h-full w-full flex-col overflow-hidden rounded-2xl ${!isSold && !isDeposited ? "border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800 transition-colors duration-300 group-hover:border-indigo-300 dark:group-hover:border-indigo-500" : isDeposited ? "border border-blue-200 bg-white dark:border-blue-500/30 dark:bg-slate-800" : "border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800"}`}
     >
       {/* Image + overlay/ribbon */}
       <div className="relative overflow-hidden bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-800 aspect-video">
@@ -43,7 +45,9 @@ export function AccountCard({ account }: { account: PublicAccount }) {
             className={`h-full w-full object-cover ${
               isSold
                 ? "grayscale-[30%]"
-                : "transition-transform duration-500 group-hover:scale-110 group-hover:brightness-90"
+                : isDeposited
+                  ? "brightness-90"
+                  : "transition-transform duration-500 group-hover:scale-110 group-hover:brightness-90"
             }`}
           />
         ) : (
@@ -64,8 +68,18 @@ export function AccountCard({ account }: { account: PublicAccount }) {
           </div>
         )}
 
+        {/* Deposited ribbon */}
+        {isDeposited && (
+          <div className="absolute left-0 top-3 flex items-center gap-1.5 rounded-r-full bg-blue-500 py-1 pl-3 pr-4 shadow-md z-10">
+            <Banknote className="h-3.5 w-3.5 text-white" />
+            <span className="text-[11px] font-bold uppercase tracking-wider text-white">
+              Đang Cọc
+            </span>
+          </div>
+        )}
+
         {/* Sale ribbon */}
-        {!isSold && isSale && (
+        {!isSold && !isDeposited && isSale && (
           <div className="absolute left-0 top-3 flex items-center gap-1 rounded-r-full bg-rose-500 py-1 pl-3 pr-4 shadow-md z-10">
             <span className="text-[12px] font-bold uppercase tracking-wider text-white">
               -{discount}% GIẢM
@@ -74,7 +88,7 @@ export function AccountCard({ account }: { account: PublicAccount }) {
         )}
 
         {/* Priority ribbon */}
-        {!isSold && account.is_priority && (
+        {!isSold && !isDeposited && account.is_priority && (
           <div className="absolute right-0 top-3 flex items-center gap-1.5 rounded-l-full bg-amber-500 py-1 pl-4 pr-3 shadow-md z-10">
             <Star className="h-3.5 w-3.5 fill-white text-white" />
             <span className="text-[11px] font-bold uppercase tracking-wider text-white">
@@ -84,7 +98,7 @@ export function AccountCard({ account }: { account: PublicAccount }) {
         )}
 
         {/* Clone ribbon */}
-        {!isSold && account.is_clone && !account.is_priority && (
+        {!isSold && !isDeposited && account.is_clone && !account.is_priority && (
           <div className="absolute right-0 top-3 flex items-center gap-1.5 rounded-l-full bg-violet-500 py-1 pl-4 pr-3 shadow-md z-10">
             <Copy className="h-3.5 w-3.5 text-white" />
             <span className="text-[11px] font-bold uppercase tracking-wider text-white">
@@ -94,7 +108,7 @@ export function AccountCard({ account }: { account: PublicAccount }) {
         )}
 
         {/* Gradient overlay + CTA for available accounts */}
-        {!isSold && (
+        {!isSold && !isDeposited && (
           <div className="absolute inset-x-0 bottom-0 flex translate-y-full flex-col items-center justify-end bg-gradient-to-t from-indigo-950/85 via-indigo-900/50 to-transparent pb-4 pt-12 transition-transform duration-300 ease-out group-hover:translate-y-0">
             <span className="flex items-center gap-1.5 rounded-full bg-indigo-500 px-4 py-1.5 text-xs font-semibold text-white shadow-lg ring-1 ring-indigo-400/60 transition-colors duration-200 group-hover:bg-indigo-400">
               Xem Chi Tiết <ArrowRight className="h-3.5 w-3.5" />
@@ -109,7 +123,7 @@ export function AccountCard({ account }: { account: PublicAccount }) {
           <div className="min-h-[2.75rem] flex-1">
             <h3
             className={`text-base font-semibold line-clamp-2 ${
-              isSold
+              isSold || isDeposited
                 ? "text-slate-700 dark:text-slate-300"
                 : "text-slate-900 dark:text-slate-100 transition-colors duration-200 group-hover:text-indigo-600 dark:group-hover:text-indigo-400"
             }`}
@@ -164,6 +178,10 @@ export function AccountCard({ account }: { account: PublicAccount }) {
               <span className="rounded-lg bg-emerald-50 dark:bg-emerald-500/15 px-3 py-1 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
                 Đã giao dịch
               </span>
+            ) : isDeposited ? (
+              <span className="rounded-lg bg-blue-50 dark:bg-blue-500/15 px-3 py-1 text-xs font-semibold text-blue-600 dark:text-blue-400">
+                Đang cọc
+              </span>
             ) : (
               <StatusBadge status={account.status} />
             )}
@@ -173,7 +191,7 @@ export function AccountCard({ account }: { account: PublicAccount }) {
     </div>
   );
 
-  if (isSold) {
+  if (isSold || isDeposited) {
     return (
       <Link
         href={`/accounts/${account.id}`}

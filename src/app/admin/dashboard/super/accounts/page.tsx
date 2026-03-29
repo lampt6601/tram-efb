@@ -136,7 +136,19 @@ export default async function SuperAccountsPage({
                       </Link>
                     </div>
                   </TableCell>
-                  <TableCell><StatusBadge status={account.status} /></TableCell>
+                  <TableCell>
+                    <StatusBadge status={account.status} />
+                    {account.status === "Deposited" && account.deposit_customer_name && (
+                      <div className="mt-1 text-[10px] leading-tight text-blue-600 dark:text-blue-400">
+                        <span className="font-medium">{account.deposit_customer_name}</span>
+                        {account.deposit_hold_until && (
+                          <span className={new Date(account.deposit_hold_until) < new Date() ? " text-red-500" : ""}>
+                            {" "}· đến {new Date(account.deposit_hold_until).toLocaleDateString("vi-VN")}
+                          </span>
+                        )}
+                      </div>
+                    )}
+                  </TableCell>
                   <TableCell className="hidden sm:table-cell">
                     {account.is_approved ? (
                       <span className="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 dark:bg-emerald-500/10 px-2 py-0.5 text-xs font-medium text-emerald-700 dark:text-emerald-400">

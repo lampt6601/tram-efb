@@ -16,6 +16,7 @@ import {
   BarChart3,
   ExternalLink,
   Timer,
+  Banknote,
 } from "lucide-react";
 import Link from "next/link";
 import type { Account, AccountRequest } from "@/types/database";
@@ -68,6 +69,9 @@ export default async function DashboardPage({
   const totalAccounts = items.length;
   const availableAccounts = items.filter(
     (a) => a.status === "Available",
+  ).length;
+  const depositedAccounts = items.filter(
+    (a) => a.status === "Deposited",
   ).length;
 
   const soldItems = items.filter((a) => a.status === "Sold");
@@ -212,6 +216,11 @@ export default async function DashboardPage({
           label="Sẵn Sàng"
           value={availableAccounts.toString()}
           icon={<ShoppingCart className="h-6 w-6" />}
+        />
+        <StatCard
+          label="Đang Cọc"
+          value={depositedAccounts.toString()}
+          icon={<Banknote className="h-6 w-6" />}
         />
         <StatCard
           label={`Đã Bán${periodLabel}`}

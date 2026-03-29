@@ -6,7 +6,7 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- Enum for account status
-CREATE TYPE account_status AS ENUM ('Available', 'Pending', 'Sold');
+CREATE TYPE account_status AS ENUM ('Available', 'Pending', 'Deposited', 'Sold');
 
 -- ============================================
 -- Emails Table
@@ -41,6 +41,11 @@ CREATE TABLE accounts (
   monthly_log_quota INTEGER DEFAULT NULL,
   email_id UUID UNIQUE REFERENCES emails(id) ON DELETE SET NULL,
   is_priority BOOLEAN DEFAULT false,
+  deposit_amount NUMERIC(12, 2) DEFAULT NULL,
+  deposit_customer_name TEXT DEFAULT NULL,
+  deposit_customer_contact TEXT DEFAULT NULL,
+  deposit_hold_until DATE DEFAULT NULL,
+  deposit_notes TEXT DEFAULT NULL,
   user_id UUID NOT NULL DEFAULT auth.uid() REFERENCES auth.users(id) ON DELETE CASCADE,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()

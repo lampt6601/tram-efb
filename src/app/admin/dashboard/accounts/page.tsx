@@ -147,6 +147,16 @@ export default async function AccountsPage({
                   </TableCell>
                   <TableCell>
                     <StatusBadge status={account.status} />
+                    {account.status === "Deposited" && account.deposit_customer_name && (
+                      <div className="mt-1 text-[10px] leading-tight text-blue-600 dark:text-blue-400">
+                        <span className="font-medium">{account.deposit_customer_name}</span>
+                        {account.deposit_hold_until && (
+                          <span className={new Date(account.deposit_hold_until) < new Date() ? " text-red-500" : ""}>
+                            {" "}· đến {new Date(account.deposit_hold_until).toLocaleDateString("vi-VN")}
+                          </span>
+                        )}
+                      </div>
+                    )}
                   </TableCell>
                   <TableCell className="hidden sm:table-cell">
                     {account.is_approved ? (

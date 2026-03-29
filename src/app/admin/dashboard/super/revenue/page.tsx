@@ -14,6 +14,7 @@ import {
   ShoppingCart,
   BarChart3,
 } from "lucide-react";
+import { RevenueTrendChart } from "@/components/admin/RevenueTrendChart";
 import type { Account } from "@/types/database";
 
 /** Start of current day (00:00 UTC) as ISO string */
@@ -283,6 +284,18 @@ export default async function SuperRevenuePage({
           className={
             totalProfit >= 0 ? "ring-1 ring-emerald-200" : "ring-1 ring-red-200"
           }
+        />
+      </div>
+
+      {/* ── Revenue trend chart ── */}
+      <div className="mt-6">
+        <RevenueTrendChart
+          data={[...displayStats].reverse().map((s) => ({
+            date: s.dateStr,
+            sold: s.sold,
+            profit: s.profit,
+          }))}
+          periodLabel={periodLabel}
         />
       </div>
 

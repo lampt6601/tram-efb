@@ -40,6 +40,11 @@ type AccountFormValues = {
   originalPrice: string;
   serverRegion: string;
   monthlyLogQuota: string;
+  depositCustomerName: string;
+  depositCustomerContact: string;
+  depositAmount: string;
+  depositHoldUntil: string;
+  depositNotes: string;
 };
 
 const inputClass =
@@ -90,6 +95,11 @@ export function AccountForm({ account, duplicating }: AccountFormProps) {
       originalPrice: account?.original_price?.toString() ?? "",
       serverRegion: account?.server_region ?? "",
       monthlyLogQuota: account?.monthly_log_quota?.toString() ?? "",
+      depositCustomerName: account?.deposit_customer_name ?? "",
+      depositCustomerContact: account?.deposit_customer_contact ?? "",
+      depositAmount: account?.deposit_amount?.toString() ?? "",
+      depositHoldUntil: account?.deposit_hold_until?.split("T")[0] ?? "",
+      depositNotes: account?.deposit_notes ?? "",
     }),
     [account],
   );
@@ -315,6 +325,22 @@ export function AccountForm({ account, duplicating }: AccountFormProps) {
         images: finalImages,
         primary_image_url: finalPrimaryUrl,
         user_id: user.id,
+        // Deposit fields — clear when not Deposited
+        ...(values.status === "Deposited"
+          ? {
+              deposit_customer_name: values.depositCustomerName?.trim() || null,
+              deposit_customer_contact: values.depositCustomerContact?.trim() || null,
+              deposit_amount: values.depositAmount ? parseFloat(values.depositAmount) : null,
+              deposit_hold_until: values.depositHoldUntil || null,
+              deposit_notes: values.depositNotes?.trim() || null,
+            }
+          : {
+              deposit_customer_name: null,
+              deposit_customer_contact: null,
+              deposit_amount: null,
+              deposit_hold_until: null,
+              deposit_notes: null,
+            }),
       };
 
       let accountId = account?.id;
@@ -405,6 +431,7 @@ export function AccountForm({ account, duplicating }: AccountFormProps) {
   };
 
   const isCloneValue = watch("isClone");
+  const statusValue = watch("status");
 
   const SectionHeader = ({ label }: { label: string }) => (
     <div className="flex items-center gap-3 pt-1">
@@ -558,6 +585,7 @@ export function AccountForm({ account, duplicating }: AccountFormProps) {
               <select {...register("status")} className={cn(selectClass, "mt-1.5")}>
                 <option value="Available">Sẵn sàng</option>
                 <option value="Pending">Đang chờ</option>
+                <option value="Deposited">Đang cọc</option>
                 <option value="Sold">Đã bán</option>
               </select>
             </div>
@@ -599,6 +627,59 @@ export function AccountForm({ account, duplicating }: AccountFormProps) {
               </div>
             </div>
           </div>
+
+          {/* ── Thông tin cọc (chỉ hiện khi status = Deposited) ── */}
+          {statusValue === "Deposited" && (
+            <div className="rounded-xl border border-blue-200 bg-blue-50/50 p-4 space-y-3 dark:border-blue-500/30 dark:bg-blue-500/5">
+              <h3 className="text-sm font-semibold text-blue-700 dark:text-blue-400">Thông tin cọc</h3>
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div>
+                  <Label className="text-slate-700 dark:text-slate-300">Tên khách hàng *</Label>
+                  <Input
+                    {...register("depositCustomerName")}
+                    className={cn(inputClass, "mt-1.5")}
+                    placeholder="VD: Nguyễn Văn A"
+                  />
+                </div>
+                <div>
+                  <Label className="text-slate-700 dark:text-slate-300">Liên hệ (SĐT / Zalo / FB)</Label>
+                  <Input
+                    {...register("depositCustomerContact")}
+                    className={cn(inputClass, "mt-1.5")}
+                    placeholder="VD: 0901234567"
+                  />
+                </div>
+                <div>
+                  <Label className="text-slate-700 dark:text-slate-300">Số tiền cọc (VNĐ) *</Label>
+                  <Input
+                    type="number"
+                    {...register("depositAmount")}
+                    min="0"
+                    step="1"
+                    className={cn(inputClass, "mt-1.5")}
+                    placeholder="0"
+                  />
+                </div>
+                <div>
+                  <Label className="text-slate-700 dark:text-slate-300">Giữ đến ngày *</Label>
+                  <Input
+                    type="date"
+                    {...register("depositHoldUntil")}
+                    className={cn(inputClass, "mt-1.5")}
+                  />
+                </div>
+              </div>
+              <div>
+                <Label className="text-slate-700 dark:text-slate-300">Ghi chú</Label>
+                <textarea
+                  {...register("depositNotes")}
+                  rows={2}
+                  className={cn(inputClass, "mt-1.5 resize-none")}
+                  placeholder="Ghi chú thêm..."
+                />
+              </div>
+            </div>
+          )}
 
           {/* ── Chỉ số ── */}
           {!quickMode && (
