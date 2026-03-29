@@ -39,6 +39,7 @@ import {
   AndroidCoinIcon,
   IosCoinIcon,
 } from "@/components/ui/PlatformCoinIcons";
+import { BuybackPolicy } from "@/components/storefront/BuybackPolicy";
 
 export const revalidate = 3600; // 1 hour — revalidated on account update via revalidatePath
 
@@ -573,6 +574,9 @@ export default async function AccountDetailPage({
                   </a>
                 </div>
               </div>
+
+              {/* Buyback policy */}
+              <BuybackPolicy />
             </div>
           </div>
 
