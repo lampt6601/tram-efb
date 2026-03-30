@@ -17,6 +17,7 @@ import {
   Check,
   Zap,
   Ban,
+  Wallet,
 } from "lucide-react";
 import {
   deleteAdmin,
@@ -29,6 +30,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import { CollateralManageModal } from "./CollateralManageModal";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -44,9 +46,10 @@ interface AdminActionsDropdownProps {
   accountCount: number;
   autoApprove: boolean;
   isDisabled: boolean;
+  collateralAmount: number;
 }
 
-type OpenDialog = "editName" | "resetPassword" | "delete" | null;
+type OpenDialog = "editName" | "resetPassword" | "delete" | "collateral" | null;
 
 function Modal({
   open,
@@ -82,6 +85,7 @@ export function AdminActionsDropdown({
   accountCount,
   autoApprove: initialAutoApprove,
   isDisabled: initialIsDisabled,
+  collateralAmount,
 }: AdminActionsDropdownProps) {
   const router = useRouter();
   const [openDialog, setOpenDialog] = useState<OpenDialog>(null);
@@ -260,6 +264,10 @@ export function AdminActionsDropdown({
             <KeyRound className="h-4 w-4 text-slate-400" />
             Đổi mật khẩu
           </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => openWith("collateral")} className="gap-2">
+            <Wallet className="h-4 w-4 text-amber-500" />
+            Quản lý ký quỹ
+          </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem
             variant="destructive"
@@ -418,6 +426,15 @@ export function AdminActionsDropdown({
           </Button>
         </div>
       </Modal>
+
+      {/* ── Collateral modal ─────────────────────────────────────────────── */}
+      <CollateralManageModal
+        open={openDialog === "collateral"}
+        onClose={closeDialog}
+        adminId={adminId}
+        adminEmail={adminEmail}
+        currentAmount={collateralAmount}
+      />
     </>
   );
 }

@@ -2,7 +2,8 @@ import { createSupabaseServerClient } from "@/lib/supabase-server";
 import { createSupabaseServiceClient } from "@/lib/supabase-service";
 import { checkIsSuperAdmin, SUPER_ADMIN_EMAIL } from "@/lib/super-admin";
 import { redirect } from "next/navigation";
-import { Users, ShieldCheck, Gamepad2, Mail, Calendar, Clock } from "lucide-react";
+import { Users, ShieldCheck, Gamepad2, Mail, Calendar, Clock, Wallet } from "lucide-react";
+import { formatCurrency } from "@/lib/constants";
 import { CreateAdminModal } from "./CreateAdminModal";
 import { AutoApproveToggle } from "./AutoApproveToggle";
 import { DisableAdminToggle } from "./DisableAdminToggle";
@@ -38,7 +39,7 @@ export default async function SuperAdminsPage() {
   ] = await Promise.all([
     service.from("accounts").select("user_id"),
     service.from("emails").select("user_id"),
-    service.from("admin_settings").select("user_id, auto_approve, is_disabled"),
+    service.from("admin_settings").select("user_id, auto_approve, is_disabled, collateral_amount"),
   ]);
 
   const acctCount = new Map<string, number>();
@@ -52,6 +53,9 @@ export default async function SuperAdminsPage() {
   );
   const isDisabledMap = new Map<string, boolean>(
     (settingsRows as AdminSettings[] ?? []).map((s) => [s.user_id, s.is_disabled ?? false])
+  );
+  const collateralMap = new Map<string, number>(
+    (settingsRows as AdminSettings[] ?? []).map((s) => [s.user_id, Number(s.collateral_amount) || 0])
   );
 
   const owner = allUsers.find((u) => u.email === SUPER_ADMIN_EMAIL);
@@ -115,6 +119,7 @@ export default async function SuperAdminsPage() {
                 <TableHead className="hidden text-slate-500 dark:text-slate-400 lg:table-cell">Đăng Nhập Cuối</TableHead>
                 <TableHead className="hidden text-slate-500 dark:text-slate-400 md:table-cell">Duyệt TK</TableHead>
                 <TableHead className="hidden text-slate-500 dark:text-slate-400 md:table-cell">Trạng Thái</TableHead>
+                <TableHead className="hidden text-slate-500 dark:text-slate-400 lg:table-cell">Ký Quỹ</TableHead>
                 <TableHead className="text-slate-500 dark:text-slate-400">Hành Động</TableHead>
               </TableRow>
             </TableHeader>
@@ -180,6 +185,16 @@ export default async function SuperAdminsPage() {
                       disabled={isDisabledMap.get(admin.id) ?? false}
                     />
                   </TableCell>
+                  <TableCell className="hidden lg:table-cell">
+                    {(collateralMap.get(admin.id) ?? 0) > 0 ? (
+                      <div className="flex items-center gap-1 text-sm font-medium text-amber-700 dark:text-amber-400">
+                        <Wallet className="h-3.5 w-3.5" />
+                        {formatCurrency(collateralMap.get(admin.id) ?? 0)}
+                      </div>
+                    ) : (
+                      <span className="text-xs text-slate-400 dark:text-slate-500">Chưa ký quỹ</span>
+                    )}
+                  </TableCell>
                   <TableCell>
                     <AdminActionsDropdown
                       adminId={admin.id}
@@ -188,13 +203,14 @@ export default async function SuperAdminsPage() {
                       accountCount={acctCount.get(admin.id) ?? 0}
                       autoApprove={autoApproveMap.get(admin.id) ?? false}
                       isDisabled={isDisabledMap.get(admin.id) ?? false}
+                      collateralAmount={collateralMap.get(admin.id) ?? 0}
                     />
                   </TableCell>
                 </TableRow>
               ))}
               {admins.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={9} className="py-12 text-center text-slate-400 dark:text-slate-500">
+                  <TableCell colSpan={10} className="py-12 text-center text-slate-400 dark:text-slate-500">
                     Chưa có admin nào. Nhấn &quot;Thêm Admin&quot; để tạo mới.
                   </TableCell>
                 </TableRow>

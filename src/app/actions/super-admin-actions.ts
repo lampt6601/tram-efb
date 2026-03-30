@@ -234,3 +234,76 @@ export async function resetAdminPassword(adminId: string, newPassword: string) {
   });
   if (error) throw new Error(error.message);
 }
+
+// ── Seller Collateral (Ký quỹ) ─────────────────────────────────────────────
+
+export async function updateSellerCollateral(
+  adminId: string,
+  changeType: "increase" | "decrease" | "refund" | "initial",
+  amount: number,
+  notes?: string,
+) {
+  const superAdmin = await verifySuperAdmin();
+  if (amount <= 0) throw new Error("Số tiền phải lớn hơn 0");
+
+  const service = createSupabaseServiceClient();
+
+  // Get current collateral
+  const { data: settings } = await service
+    .from("admin_settings")
+    .select("collateral_amount")
+    .eq("user_id", adminId)
+    .single();
+
+  const currentAmount = Number(settings?.collateral_amount) || 0;
+  let newTotal: number;
+
+  if (changeType === "increase" || changeType === "initial") {
+    newTotal = currentAmount + amount;
+  } else {
+    newTotal = currentAmount - amount;
+    if (newTotal < 0) throw new Error("Số tiền ký quỹ không thể âm");
+  }
+
+  // Update admin_settings
+  const { error: updateErr } = await service
+    .from("admin_settings")
+    .upsert(
+      {
+        user_id: adminId,
+        collateral_amount: newTotal,
+        collateral_updated_at: new Date().toISOString(),
+      },
+      { onConflict: "user_id" },
+    );
+  if (updateErr) throw new Error(updateErr.message);
+
+  // Insert history record
+  const { error: histErr } = await service
+    .from("seller_collateral_history")
+    .insert({
+      user_id: adminId,
+      change_type: changeType,
+      amount,
+      new_total: newTotal,
+      notes: notes || null,
+      created_by: superAdmin.id,
+    });
+  if (histErr) throw new Error(histErr.message);
+
+  revalidatePath("/admin/dashboard/super/admins");
+  revalidatePath("/admin/dashboard");
+  revalidatePath("/");
+}
+
+export async function getSellerCollateralHistory(adminId: string) {
+  await verifySuperAdmin();
+  const service = createSupabaseServiceClient();
+  const { data, error } = await service
+    .from("seller_collateral_history")
+    .select("*")
+    .eq("user_id", adminId)
+    .order("created_at", { ascending: false });
+  if (error) throw new Error(error.message);
+  return data;
+}

@@ -141,6 +141,19 @@ export interface AdminSettings {
   avatar_url?: string | null;
   zalo_link?: string | null;
   facebook_link?: string | null;
+  collateral_amount: number;
+  collateral_updated_at?: string | null;
+  created_at: string;
+}
+
+export interface SellerCollateralHistory {
+  id: string;
+  user_id: string;
+  change_type: "increase" | "decrease" | "refund" | "initial";
+  amount: number;
+  new_total: number;
+  notes: string | null;
+  created_by: string;
   created_at: string;
 }
 
