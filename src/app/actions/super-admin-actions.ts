@@ -226,6 +226,23 @@ export async function updateSellerProfile(
   revalidatePath("/");
 }
 
+export async function updateTransactionBoxUrl(
+  adminId: string,
+  transactionBoxUrl: string | null,
+) {
+  await verifySuperAdmin();
+  const service = createSupabaseServiceClient();
+  const { error } = await service
+    .from("admin_settings")
+    .upsert(
+      { user_id: adminId, transaction_box_url: transactionBoxUrl },
+      { onConflict: "user_id" }
+    );
+  if (error) throw new Error(error.message);
+  revalidatePath("/admin/dashboard/super/admins");
+  revalidatePath("/");
+}
+
 export async function resetAdminPassword(adminId: string, newPassword: string) {
   await verifySuperAdmin();
   const service = createSupabaseServiceClient();

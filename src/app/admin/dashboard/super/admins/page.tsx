@@ -39,7 +39,7 @@ export default async function SuperAdminsPage() {
   ] = await Promise.all([
     service.from("accounts").select("user_id"),
     service.from("emails").select("user_id"),
-    service.from("admin_settings").select("user_id, auto_approve, is_disabled, collateral_amount"),
+    service.from("admin_settings").select("user_id, auto_approve, is_disabled, collateral_amount, transaction_box_url"),
   ]);
 
   const acctCount = new Map<string, number>();
@@ -56,6 +56,9 @@ export default async function SuperAdminsPage() {
   );
   const collateralMap = new Map<string, number>(
     (settingsRows as AdminSettings[] ?? []).map((s) => [s.user_id, Number(s.collateral_amount) || 0])
+  );
+  const txBoxMap = new Map<string, string>(
+    (settingsRows as AdminSettings[] ?? []).filter((s) => s.transaction_box_url).map((s) => [s.user_id, s.transaction_box_url!])
   );
 
   const owner = allUsers.find((u) => u.email === SUPER_ADMIN_EMAIL);
@@ -204,6 +207,7 @@ export default async function SuperAdminsPage() {
                       autoApprove={autoApproveMap.get(admin.id) ?? false}
                       isDisabled={isDisabledMap.get(admin.id) ?? false}
                       collateralAmount={collateralMap.get(admin.id) ?? 0}
+                      transactionBoxUrl={txBoxMap.get(admin.id) ?? ""}
                     />
                   </TableCell>
                 </TableRow>

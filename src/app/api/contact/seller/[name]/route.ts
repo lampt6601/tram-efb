@@ -9,7 +9,7 @@ export async function GET(
   const sellerName = decodeURIComponent(name);
   const type = request.nextUrl.searchParams.get("type");
 
-  if (!type || !["zalo", "facebook"].includes(type)) {
+  if (!type || !["zalo", "facebook", "transaction_box"].includes(type)) {
     return NextResponse.json({ error: "Invalid type" }, { status: 400 });
   }
 
@@ -17,12 +17,16 @@ export async function GET(
 
   const { data: settings } = await service
     .from("admin_settings")
-    .select("zalo_link, facebook_link")
+    .select("zalo_link, facebook_link, transaction_box_url")
     .eq("display_name", sellerName)
     .single();
 
   const link =
-    type === "zalo" ? settings?.zalo_link : settings?.facebook_link;
+    type === "zalo"
+      ? settings?.zalo_link
+      : type === "facebook"
+        ? settings?.facebook_link
+        : settings?.transaction_box_url;
 
   if (!link) {
     return NextResponse.json(

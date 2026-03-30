@@ -18,6 +18,7 @@ import {
   Zap,
   Ban,
   Wallet,
+  MessageCircle,
 } from "lucide-react";
 import {
   deleteAdmin,
@@ -25,6 +26,7 @@ import {
   updateAdminProfile,
   setAdminAutoApprove,
   setAdminDisabled,
+  updateTransactionBoxUrl,
 } from "@/app/actions/super-admin-actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -47,9 +49,10 @@ interface AdminActionsDropdownProps {
   autoApprove: boolean;
   isDisabled: boolean;
   collateralAmount: number;
+  transactionBoxUrl: string;
 }
 
-type OpenDialog = "editName" | "resetPassword" | "delete" | "collateral" | null;
+type OpenDialog = "editName" | "resetPassword" | "delete" | "collateral" | "transactionBox" | null;
 
 function Modal({
   open,
@@ -86,6 +89,7 @@ export function AdminActionsDropdown({
   autoApprove: initialAutoApprove,
   isDisabled: initialIsDisabled,
   collateralAmount,
+  transactionBoxUrl: initialTransactionBoxUrl,
 }: AdminActionsDropdownProps) {
   const router = useRouter();
   const [openDialog, setOpenDialog] = useState<OpenDialog>(null);
@@ -107,6 +111,9 @@ export function AdminActionsDropdown({
   const [isDisabled, setIsDisabled] = useState(initialIsDisabled);
   const [toggling, setToggling] = useState<"autoApprove" | "disable" | null>(null);
 
+  // Transaction box state
+  const [txBoxUrl, setTxBoxUrl] = useState(initialTransactionBoxUrl);
+
   const closeDialog = useCallback(() => {
     if (!loading) {
       setOpenDialog(null);
@@ -119,6 +126,7 @@ export function AdminActionsDropdown({
     setLoading(false);
     if (dialog === "editName") setName(currentName);
     if (dialog === "resetPassword") setPassword("");
+    if (dialog === "transactionBox") setTxBoxUrl(initialTransactionBoxUrl);
     setOpenDialog(dialog);
   };
 
@@ -206,6 +214,21 @@ export function AdminActionsDropdown({
     } finally { setLoading(false); }
   };
 
+  // ── Update transaction box URL ────────────────────────────────────────────
+  const handleUpdateTransactionBox = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+    try {
+      await updateTransactionBoxUrl(adminId, txBoxUrl.trim() || null);
+      toast.success("Đã cập nhật link Box Giao Dịch");
+      setOpenDialog(null);
+      router.refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Đã có lỗi xảy ra.");
+    } finally { setLoading(false); }
+  };
+
   return (
     <>
       {/* ── Dropdown ─────────────────────────────────────────────────────── */}
@@ -263,6 +286,10 @@ export function AdminActionsDropdown({
           <DropdownMenuItem onClick={() => openWith("resetPassword")} className="gap-2">
             <KeyRound className="h-4 w-4 text-slate-400" />
             Đổi mật khẩu
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => openWith("transactionBox")} className="gap-2">
+            <MessageCircle className="h-4 w-4 text-emerald-500" />
+            Box Giao Dịch
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => openWith("collateral")} className="gap-2">
             <Wallet className="h-4 w-4 text-amber-500" />
@@ -425,6 +452,58 @@ export function AdminActionsDropdown({
             Xóa Admin
           </Button>
         </div>
+      </Modal>
+
+      {/* ── Transaction Box modal ──────────────────────────────────────── */}
+      <Modal open={openDialog === "transactionBox"} onClose={closeDialog}>
+        <form onSubmit={handleUpdateTransactionBox}>
+          <div className="p-5">
+            <div className="mb-4 flex items-start justify-between">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 dark:bg-emerald-500/10">
+                  <MessageCircle className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+                </div>
+                <div>
+                  <h2 className="text-base font-semibold text-slate-900 dark:text-slate-100">Box Giao Dịch</h2>
+                  <p className="max-w-[200px] truncate text-xs text-slate-500 dark:text-slate-400">{adminEmail}</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={closeDialog}
+                disabled={loading}
+                className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 dark:text-slate-500 dark:hover:bg-slate-700"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+            <Label className="text-slate-700 dark:text-slate-200">Link Box Giao Dịch</Label>
+            <Input
+              type="url"
+              value={txBoxUrl}
+              onChange={(e) => setTxBoxUrl(e.target.value)}
+              placeholder="https://zalo.me/g/..."
+              disabled={loading}
+              className="mt-1.5 rounded-xl border-slate-300 dark:border-slate-600"
+              autoFocus
+            />
+            <p className="mt-1.5 text-xs text-slate-400 dark:text-slate-500">
+              Zalo group giữa Chủ Shop và người bán. Khách mua sẽ join vào box này.
+            </p>
+            {error && <p className="mt-2 text-xs text-red-600 dark:text-red-400">{error}</p>}
+          </div>
+          <div className="flex justify-end gap-2 rounded-b-xl border-t bg-slate-50 px-5 py-3 dark:border-slate-700 dark:bg-slate-800">
+            <Button type="button" variant="outline" onClick={closeDialog} disabled={loading}>Hủy</Button>
+            <Button
+              type="submit"
+              loading={loading}
+              loadingLabel="Đang lưu..."
+              className="min-w-[6rem] bg-emerald-600 text-white hover:bg-emerald-700"
+            >
+              Lưu
+            </Button>
+          </div>
+        </form>
       </Modal>
 
       {/* ── Collateral modal ─────────────────────────────────────────────── */}

@@ -63,6 +63,7 @@ export interface PublicAccount {
   seller_avatar_url?: string | null;
   seller_zalo_link?: string | null;
   seller_facebook_link?: string | null;
+  seller_transaction_box_url?: string | null;
   seller_sold_count?: number | null;
 }
 
@@ -141,6 +142,7 @@ export interface AdminSettings {
   avatar_url?: string | null;
   zalo_link?: string | null;
   facebook_link?: string | null;
+  transaction_box_url?: string | null;
   collateral_amount: number;
   collateral_updated_at?: string | null;
   created_at: string;

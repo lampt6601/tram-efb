@@ -6,9 +6,9 @@ export async function GET(
   { params }: { params: Promise<{ accountId: string }> },
 ) {
   const { accountId } = await params;
-  const type = request.nextUrl.searchParams.get("type"); // "zalo" | "facebook"
+  const type = request.nextUrl.searchParams.get("type"); // "zalo" | "facebook" | "transaction_box"
 
-  if (!type || !["zalo", "facebook"].includes(type)) {
+  if (!type || !["zalo", "facebook", "transaction_box"].includes(type)) {
     return NextResponse.json({ error: "Invalid type" }, { status: 400 });
   }
 
@@ -27,12 +27,16 @@ export async function GET(
 
   const { data: settings } = await service
     .from("admin_settings")
-    .select("zalo_link, facebook_link")
+    .select("zalo_link, facebook_link, transaction_box_url")
     .eq("user_id", account.user_id)
     .single();
 
   const link =
-    type === "zalo" ? settings?.zalo_link : settings?.facebook_link;
+    type === "zalo"
+      ? settings?.zalo_link
+      : type === "facebook"
+        ? settings?.facebook_link
+        : settings?.transaction_box_url;
 
   if (!link) {
     return NextResponse.json(
