@@ -21,6 +21,7 @@ import {
   Tag,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/storefront/ThemeToggle";
 import { SidebarStats } from "./SidebarStats";
 
 const navItems = [
@@ -66,6 +67,7 @@ export function Sidebar({ open, onClose, isSuperAdmin = false, adminName = "", a
 
   return (
     <>
+      {/* Mobile overlay */}
       {open && (
         <div
           className="fixed inset-0 z-40 bg-black/50 lg:hidden"
@@ -73,12 +75,14 @@ export function Sidebar({ open, onClose, isSuperAdmin = false, adminName = "", a
         />
       )}
 
+      {/* Sidebar */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 flex w-64 flex-col border-r border-slate-200 bg-white transition-transform dark:border-slate-700 dark:bg-slate-900 lg:static lg:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-50 flex w-64 flex-col overflow-y-auto border-r border-slate-200 bg-white transition-transform duration-200 ease-in-out dark:border-slate-700 dark:bg-slate-900 ${
           open ? "translate-x-0" : "-translate-x-full"
-        }`}
+        } lg:translate-x-0`}
       >
-        <div className="flex h-16 items-center justify-between border-b border-slate-200 px-6 dark:border-slate-700">
+        {/* Logo + close button */}
+        <div className="flex h-14 shrink-0 items-center justify-between border-b border-slate-200 px-6 dark:border-slate-700">
           <Link href="/admin/dashboard" className="flex items-center gap-2.5">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-600">
               <Gamepad2 className="h-4 w-4 text-white" />
@@ -97,7 +101,8 @@ export function Sidebar({ open, onClose, isSuperAdmin = false, adminName = "", a
           </Button>
         </div>
 
-        <nav className="flex-1 space-y-1 overflow-y-auto p-4">
+        {/* Navigation */}
+        <nav className="flex-1 space-y-1 p-4">
           {navItems.map((item) => (
             <Link
               key={item.href}
@@ -147,17 +152,19 @@ export function Sidebar({ open, onClose, isSuperAdmin = false, adminName = "", a
           )}
         </nav>
 
+        {/* Stats */}
         <div className="border-t border-slate-200 py-2 dark:border-slate-700">
           <SidebarStats />
         </div>
 
+        {/* Footer: user info + theme toggle + logout */}
         <div className="border-t border-slate-200 p-4 dark:border-slate-700">
           {(adminName || adminEmail) && (
             <div className={`mb-3 flex items-center gap-2.5 rounded-lg px-3 py-2 ${isSuperAdmin ? "bg-amber-50 dark:bg-amber-500/10" : "bg-slate-50 dark:bg-slate-800"}`}>
               <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-xs font-bold ${isSuperAdmin ? "bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400" : "bg-indigo-100 text-indigo-700 dark:bg-indigo-500/20 dark:text-indigo-400"}`}>
                 {(adminName || adminEmail || "?")[0].toUpperCase()}
               </div>
-              <div className="min-w-0">
+              <div className="min-w-0 flex-1">
                 {adminName && (
                   <p className={`truncate text-xs font-semibold ${isSuperAdmin ? "text-amber-800 dark:text-amber-200" : "text-slate-800 dark:text-slate-200"}`}>{adminName}</p>
                 )}
@@ -169,6 +176,7 @@ export function Sidebar({ open, onClose, isSuperAdmin = false, adminName = "", a
                   </div>
                 )}
               </div>
+              <ThemeToggle className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-slate-200 bg-slate-100 text-slate-500 transition-colors hover:bg-slate-200 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-400 dark:hover:bg-slate-600" />
             </div>
           )}
           <Button
