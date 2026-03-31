@@ -40,7 +40,7 @@ export default async function SuperAdminsPage() {
   ] = await Promise.all([
     service.from("accounts").select("user_id"),
     service.from("emails").select("user_id"),
-    service.from("admin_settings").select("user_id, auto_approve, is_disabled, collateral_amount, transaction_box_url, avatar_url"),
+    service.from("admin_settings").select("user_id, auto_approve, is_disabled, collateral_amount, transaction_box_url, avatar_url, zalo_name, zalo_link, facebook_link"),
   ]);
 
   const acctCount = new Map<string, number>();
@@ -63,6 +63,15 @@ export default async function SuperAdminsPage() {
   );
   const avatarMap = new Map<string, string>(
     (settingsRows as AdminSettings[] ?? []).filter((s) => s.avatar_url).map((s) => [s.user_id, s.avatar_url!])
+  );
+  const zaloNameMap = new Map<string, string>(
+    (settingsRows as AdminSettings[] ?? []).filter((s) => s.zalo_name).map((s) => [s.user_id, s.zalo_name!])
+  );
+  const zaloLinkMap = new Map<string, string>(
+    (settingsRows as AdminSettings[] ?? []).filter((s) => s.zalo_link).map((s) => [s.user_id, s.zalo_link!])
+  );
+  const facebookLinkMap = new Map<string, string>(
+    (settingsRows as AdminSettings[] ?? []).filter((s) => s.facebook_link).map((s) => [s.user_id, s.facebook_link!])
   );
 
   const owner = allUsers.find((u) => u.email === SUPER_ADMIN_EMAIL);
@@ -217,6 +226,9 @@ export default async function SuperAdminsPage() {
                       adminId={admin.id}
                       adminEmail={admin.email ?? ""}
                       currentName={admin.user_metadata?.full_name ?? ""}
+                      currentZaloName={zaloNameMap.get(admin.id) ?? ""}
+                      currentZaloLink={zaloLinkMap.get(admin.id) ?? ""}
+                      currentFacebookLink={facebookLinkMap.get(admin.id) ?? ""}
                       accountCount={acctCount.get(admin.id) ?? 0}
                       autoApprove={autoApproveMap.get(admin.id) ?? false}
                       isDisabled={isDisabledMap.get(admin.id) ?? false}

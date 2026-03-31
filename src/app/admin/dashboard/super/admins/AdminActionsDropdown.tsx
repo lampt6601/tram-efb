@@ -45,6 +45,9 @@ interface AdminActionsDropdownProps {
   adminId: string;
   adminEmail: string;
   currentName: string;
+  currentZaloName: string;
+  currentZaloLink: string;
+  currentFacebookLink: string;
   accountCount: number;
   autoApprove: boolean;
   isDisabled: boolean;
@@ -52,7 +55,7 @@ interface AdminActionsDropdownProps {
   transactionBoxUrl: string;
 }
 
-type OpenDialog = "editName" | "resetPassword" | "delete" | "collateral" | "transactionBox" | null;
+type OpenDialog = "editProfile" | "resetPassword" | "delete" | "collateral" | "transactionBox" | null;
 
 function Modal({
   open,
@@ -85,6 +88,9 @@ export function AdminActionsDropdown({
   adminId,
   adminEmail,
   currentName,
+  currentZaloName,
+  currentZaloLink,
+  currentFacebookLink,
   accountCount,
   autoApprove: initialAutoApprove,
   isDisabled: initialIsDisabled,
@@ -96,8 +102,11 @@ export function AdminActionsDropdown({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // Edit name state
+  // Edit profile state
   const [name, setName] = useState(currentName);
+  const [zaloName, setZaloName] = useState(currentZaloName);
+  const [zaloPhone, setZaloPhone] = useState(currentZaloLink.replace(/^https?:\/\/zalo\.me\//, ""));
+  const [facebookLink, setFacebookLink] = useState(currentFacebookLink);
 
   // Reset password state
   const [password, setPassword] = useState("");
@@ -124,7 +133,12 @@ export function AdminActionsDropdown({
   const openWith = (dialog: OpenDialog) => {
     setError("");
     setLoading(false);
-    if (dialog === "editName") setName(currentName);
+    if (dialog === "editProfile") {
+      setName(currentName);
+      setZaloName(currentZaloName);
+      setZaloPhone(currentZaloLink.replace(/^https?:\/\/zalo\.me\//, ""));
+      setFacebookLink(currentFacebookLink);
+    }
     if (dialog === "resetPassword") setPassword("");
     if (dialog === "transactionBox") setTxBoxUrl(initialTransactionBoxUrl);
     setOpenDialog(dialog);
@@ -141,15 +155,21 @@ export function AdminActionsDropdown({
     }
   };
 
-  // ── Edit name ─────────────────────────────────────────────────────────────
-  const handleEditName = async (e: React.FormEvent) => {
+  // ── Edit profile ───────────────────────────────────────────────────────────
+  const handleEditProfile = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) { setError("Vui lòng nhập tên."); return; }
     setLoading(true);
     setError("");
     try {
-      await updateAdminProfile(adminId, name.trim());
-      toast.success("Đã cập nhật tên admin thành công");
+      const zaloLink = zaloPhone.trim() ? `https://zalo.me/${zaloPhone.trim()}` : null;
+      await updateAdminProfile(adminId, {
+        name: name.trim(),
+        zalo_name: zaloName.trim() || null,
+        zalo_link: zaloLink,
+        facebook_link: facebookLink.trim() || null,
+      });
+      toast.success("Đã cập nhật thông tin admin thành công");
       setOpenDialog(null);
       router.refresh();
     } catch (err) {
@@ -271,9 +291,9 @@ export function AdminActionsDropdown({
             <DropdownMenuSeparator />
           </div>
 
-          <DropdownMenuItem onClick={() => openWith("editName")} className="gap-2">
+          <DropdownMenuItem onClick={() => openWith("editProfile")} className="gap-2">
             <Pencil className="h-4 w-4 text-slate-400" />
-            Chỉnh sửa tên
+            Chỉnh sửa thông tin
           </DropdownMenuItem>
           <DropdownMenuItem onClick={handleCopyEmail} className="gap-2">
             {copiedEmail ? (
@@ -307,9 +327,9 @@ export function AdminActionsDropdown({
         </DropdownMenuContent>
       </DropdownMenu>
 
-      {/* ── Edit name modal ───────────────────────────────────────────────── */}
-      <Modal open={openDialog === "editName"} onClose={closeDialog}>
-        <form onSubmit={handleEditName}>
+      {/* ── Edit profile modal ─────────────────────────────────────────── */}
+      <Modal open={openDialog === "editProfile"} onClose={closeDialog}>
+        <form onSubmit={handleEditProfile}>
           <div className="p-5">
             <div className="mb-4 flex items-start justify-between">
               <div className="flex items-center gap-3">
@@ -317,7 +337,7 @@ export function AdminActionsDropdown({
                   <Pencil className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
                 </div>
                 <div>
-                  <h2 className="text-base font-semibold text-slate-900 dark:text-slate-100">Chỉnh Sửa Tên</h2>
+                  <h2 className="text-base font-semibold text-slate-900 dark:text-slate-100">Chỉnh Sửa Thông Tin</h2>
                   <p className="max-w-[200px] truncate text-xs text-slate-500 dark:text-slate-400">{adminEmail}</p>
                 </div>
               </div>
@@ -330,17 +350,61 @@ export function AdminActionsDropdown({
                 <X className="h-4 w-4" />
               </button>
             </div>
-            <Label className="text-slate-700 dark:text-slate-200">Tên Admin</Label>
-            <Input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Nguyễn Văn A"
-              disabled={loading}
-              className="mt-1.5 rounded-xl border-slate-300 dark:border-slate-600"
-              autoFocus
-            />
-            {error && <p className="mt-2 text-xs text-red-600 dark:text-red-400">{error}</p>}
+            <div className="space-y-4">
+              <div>
+                <Label className="text-slate-700 dark:text-slate-200">Tên Admin</Label>
+                <Input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Nguyễn Văn A"
+                  disabled={loading}
+                  className="mt-1.5 rounded-xl border-slate-300 dark:border-slate-600"
+                  autoFocus
+                />
+              </div>
+              <div>
+                <Label className="text-slate-700 dark:text-slate-200">Tên Zalo</Label>
+                <Input
+                  type="text"
+                  value={zaloName}
+                  onChange={(e) => setZaloName(e.target.value)}
+                  placeholder="Tên hiển thị trên Zalo"
+                  disabled={loading}
+                  className="mt-1.5 rounded-xl border-slate-300 dark:border-slate-600"
+                />
+                <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">Để trống sẽ dùng tên admin.</p>
+              </div>
+              <div>
+                <Label className="text-slate-700 dark:text-slate-200">Số điện thoại Zalo</Label>
+                <Input
+                  type="tel"
+                  value={zaloPhone}
+                  onChange={(e) => setZaloPhone(e.target.value.replace(/[^0-9]/g, ""))}
+                  placeholder="0969347283"
+                  maxLength={15}
+                  disabled={loading}
+                  className="mt-1.5 rounded-xl border-slate-300 dark:border-slate-600"
+                />
+                {zaloPhone.trim() && (
+                  <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">
+                    Link: <span className="font-medium text-indigo-500 dark:text-indigo-400">https://zalo.me/{zaloPhone.trim()}</span>
+                  </p>
+                )}
+              </div>
+              <div>
+                <Label className="text-slate-700 dark:text-slate-200">Link Facebook</Label>
+                <Input
+                  type="url"
+                  value={facebookLink}
+                  onChange={(e) => setFacebookLink(e.target.value)}
+                  placeholder="https://facebook.com/username"
+                  disabled={loading}
+                  className="mt-1.5 rounded-xl border-slate-300 dark:border-slate-600"
+                />
+              </div>
+            </div>
+            {error && <p className="mt-3 text-xs text-red-600 dark:text-red-400">{error}</p>}
           </div>
           <div className="flex justify-end gap-2 rounded-b-xl border-t bg-slate-50 px-5 py-3 dark:border-slate-700 dark:bg-slate-800">
             <Button type="button" variant="outline" onClick={closeDialog} disabled={loading}>Hủy</Button>
