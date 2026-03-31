@@ -2,7 +2,7 @@ import { createSupabaseServerClient } from "@/lib/supabase-server";
 import { createSupabaseServiceClient } from "@/lib/supabase-service";
 import { checkIsSuperAdmin, SUPER_ADMIN_EMAIL } from "@/lib/super-admin";
 import { redirect } from "next/navigation";
-import { Users, ShieldCheck, Gamepad2, Mail, Calendar, Clock, Wallet } from "lucide-react";
+import { Users, ShieldCheck, Gamepad2, Mail, Calendar, Clock, Wallet, User } from "lucide-react";
 import { formatCurrency } from "@/lib/constants";
 import { CreateAdminModal } from "./CreateAdminModal";
 import { AutoApproveToggle } from "./AutoApproveToggle";
@@ -11,6 +11,7 @@ import { AdminActionsDropdown } from "./AdminActionsDropdown";
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
+import Image from "next/image";
 import type { AdminSettings } from "@/types/database";
 
 function fmtDate(d: string | null) {
@@ -39,7 +40,7 @@ export default async function SuperAdminsPage() {
   ] = await Promise.all([
     service.from("accounts").select("user_id"),
     service.from("emails").select("user_id"),
-    service.from("admin_settings").select("user_id, auto_approve, is_disabled, collateral_amount, transaction_box_url"),
+    service.from("admin_settings").select("user_id, auto_approve, is_disabled, collateral_amount, transaction_box_url, avatar_url"),
   ]);
 
   const acctCount = new Map<string, number>();
@@ -59,6 +60,9 @@ export default async function SuperAdminsPage() {
   );
   const txBoxMap = new Map<string, string>(
     (settingsRows as AdminSettings[] ?? []).filter((s) => s.transaction_box_url).map((s) => [s.user_id, s.transaction_box_url!])
+  );
+  const avatarMap = new Map<string, string>(
+    (settingsRows as AdminSettings[] ?? []).filter((s) => s.avatar_url).map((s) => [s.user_id, s.avatar_url!])
   );
 
   const owner = allUsers.find((u) => u.email === SUPER_ADMIN_EMAIL);
@@ -131,13 +135,23 @@ export default async function SuperAdminsPage() {
                 <TableRow key={admin.id} className="hover:bg-slate-50 dark:hover:bg-slate-700">
                   <TableCell>
                     <div className="flex items-center gap-2.5">
-                      <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-sm font-semibold ${
-                        (isDisabledMap.get(admin.id) ?? false)
-                          ? "bg-red-100 text-red-600 dark:bg-red-500/20 dark:text-red-400"
-                          : "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300"
-                      }`}>
-                        {(admin.user_metadata?.full_name ?? admin.email ?? "?")[0].toUpperCase()}
-                      </div>
+                      {avatarMap.get(admin.id) ? (
+                        <Image
+                          src={avatarMap.get(admin.id)!}
+                          alt={admin.user_metadata?.full_name ?? admin.email ?? ""}
+                          width={32}
+                          height={32}
+                          className={`h-8 w-8 shrink-0 rounded-lg object-cover ${(isDisabledMap.get(admin.id) ?? false) ? "opacity-50 grayscale" : ""}`}
+                        />
+                      ) : (
+                        <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-sm font-semibold ${
+                          (isDisabledMap.get(admin.id) ?? false)
+                            ? "bg-red-100 text-red-600 dark:bg-red-500/20 dark:text-red-400"
+                            : "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300"
+                        }`}>
+                          {(admin.user_metadata?.full_name ?? admin.email ?? "?")[0].toUpperCase()}
+                        </div>
+                      )}
                       <div className="min-w-0">
                         {admin.user_metadata?.full_name ? (
                           <>

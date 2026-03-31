@@ -9,9 +9,10 @@ interface AdminShellProps {
   isSuperAdmin?: boolean;
   adminName?: string;
   adminEmail?: string;
+  adminAvatarUrl?: string;
 }
 
-export function AdminShell({ children, isSuperAdmin = false, adminName = "", adminEmail = "" }: AdminShellProps) {
+export function AdminShell({ children, isSuperAdmin = false, adminName = "", adminEmail = "", adminAvatarUrl = "" }: AdminShellProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
@@ -22,6 +23,7 @@ export function AdminShell({ children, isSuperAdmin = false, adminName = "", adm
         isSuperAdmin={isSuperAdmin}
         adminName={adminName}
         adminEmail={adminEmail}
+        adminAvatarUrl={adminAvatarUrl}
       />
 
       {/* Mobile hamburger button */}

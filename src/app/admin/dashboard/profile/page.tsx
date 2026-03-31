@@ -1,8 +1,11 @@
 import { createSupabaseServerClient } from "@/lib/supabase-server";
+import { createSupabaseServiceClient } from "@/lib/supabase-service";
 import { checkIsSuperAdmin } from "@/lib/super-admin";
 import { redirect } from "next/navigation";
+import Image from "next/image";
 import { UserCircle, ShieldCheck } from "lucide-react";
 import { ProfileForm } from "./ProfileForm";
+import { AvatarUpload } from "./AvatarUpload";
 import { ChangePasswordSection } from "./ChangePasswordSection";
 
 export default async function ProfilePage() {
@@ -15,6 +18,15 @@ export default async function ProfilePage() {
 
   const isSuperAdmin = checkIsSuperAdmin(user.email);
   const currentName = (user.user_metadata?.full_name as string) ?? "";
+
+  // Fetch current avatar
+  const service = createSupabaseServiceClient();
+  const { data: settings } = await service
+    .from("admin_settings")
+    .select("avatar_url")
+    .eq("user_id", user.id)
+    .single();
+  const avatarUrl = (settings?.avatar_url as string) ?? "";
 
   return (
     <div className="mx-auto max-w-lg">
@@ -31,9 +43,19 @@ export default async function ProfilePage() {
       <div className="overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm">
         <div className="border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 px-6 py-4">
           <div className="flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-100 dark:bg-indigo-500/20 text-xl font-bold text-indigo-600 dark:text-indigo-400">
-              {(currentName || user.email || "?")[0].toUpperCase()}
-            </div>
+            {avatarUrl ? (
+              <Image
+                src={avatarUrl}
+                alt={currentName || user.email || ""}
+                width={48}
+                height={48}
+                className="h-12 w-12 rounded-xl object-cover shadow-sm"
+              />
+            ) : (
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-100 dark:bg-indigo-500/20 text-xl font-bold text-indigo-600 dark:text-indigo-400">
+                {(currentName || user.email || "?")[0].toUpperCase()}
+              </div>
+            )}
             <div>
               {currentName ? (
                 <>
@@ -52,7 +74,8 @@ export default async function ProfilePage() {
             </div>
           </div>
         </div>
-        <div className="p-6">
+        <div className="p-6 space-y-6">
+          <AvatarUpload currentAvatarUrl={avatarUrl} />
           <ProfileForm currentName={currentName} email={user.email ?? ""} />
         </div>
       </div>

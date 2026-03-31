@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 import {
@@ -48,9 +49,10 @@ interface SidebarProps {
   isSuperAdmin?: boolean;
   adminName?: string;
   adminEmail?: string;
+  adminAvatarUrl?: string;
 }
 
-export function Sidebar({ open, onClose, isSuperAdmin = false, adminName = "", adminEmail = "" }: SidebarProps) {
+export function Sidebar({ open, onClose, isSuperAdmin = false, adminName = "", adminEmail = "", adminAvatarUrl = "" }: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
   const supabase = createSupabaseBrowserClient();
@@ -161,9 +163,19 @@ export function Sidebar({ open, onClose, isSuperAdmin = false, adminName = "", a
         <div className="border-t border-slate-200 p-4 dark:border-slate-700">
           {(adminName || adminEmail) && (
             <div className={`mb-3 flex items-center gap-2.5 rounded-lg px-3 py-2 ${isSuperAdmin ? "bg-amber-50 dark:bg-amber-500/10" : "bg-slate-50 dark:bg-slate-800"}`}>
-              <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-xs font-bold ${isSuperAdmin ? "bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400" : "bg-indigo-100 text-indigo-700 dark:bg-indigo-500/20 dark:text-indigo-400"}`}>
-                {(adminName || adminEmail || "?")[0].toUpperCase()}
-              </div>
+              {adminAvatarUrl ? (
+                <Image
+                  src={adminAvatarUrl}
+                  alt={adminName || adminEmail}
+                  width={28}
+                  height={28}
+                  className="h-7 w-7 shrink-0 rounded-md object-cover"
+                />
+              ) : (
+                <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-xs font-bold ${isSuperAdmin ? "bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400" : "bg-indigo-100 text-indigo-700 dark:bg-indigo-500/20 dark:text-indigo-400"}`}>
+                  {(adminName || adminEmail || "?")[0].toUpperCase()}
+                </div>
+              )}
               <div className="min-w-0 flex-1">
                 {adminName && (
                   <p className={`truncate text-xs font-semibold ${isSuperAdmin ? "text-amber-800 dark:text-amber-200" : "text-slate-800 dark:text-slate-200"}`}>{adminName}</p>

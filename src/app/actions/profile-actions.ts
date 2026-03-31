@@ -4,6 +4,7 @@ import { createSupabaseServerClient } from "@/lib/supabase-server";
 import { createSupabaseAnonClient } from "@/lib/supabase-anon";
 import { createSupabaseServiceClient } from "@/lib/supabase-service";
 import { revalidatePath } from "next/cache";
+import { uploadFileToImageKit } from "@/lib/imagekit";
 
 export async function updateMyProfile(name: string) {
   const supabase = await createSupabaseServerClient();
@@ -59,4 +60,40 @@ export async function changeMyPassword(
   });
 
   if (error) throw new Error(error.message);
+}
+
+export async function uploadAdminAvatar(formData: FormData): Promise<string> {
+  const supabase = await createSupabaseServerClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) throw new Error("Unauthorized");
+
+  const file = formData.get("file") as File | null;
+  if (!file || !(file instanceof File)) throw new Error("No file provided");
+  if (file.size > 4 * 1024 * 1024) throw new Error("Ảnh quá lớn. Tối đa 4MB.");
+
+  return await uploadFileToImageKit(file);
+}
+
+export async function updateMyAvatar(avatarUrl: string | null) {
+  const supabase = await createSupabaseServerClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) throw new Error("Unauthorized");
+
+  const service = createSupabaseServiceClient();
+  const { error } = await service
+    .from("admin_settings")
+    .upsert(
+      { user_id: user.id, avatar_url: avatarUrl },
+      { onConflict: "user_id" }
+    );
+
+  if (error) throw new Error(error.message);
+  revalidatePath("/admin/dashboard");
+  revalidatePath("/");
 }
