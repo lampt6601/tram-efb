@@ -20,15 +20,6 @@ export async function updateMyProfile(name: string) {
 
   if (error) throw new Error(error.message);
 
-  // Sync display_name in admin_settings so public views use the same name
-  const service = createSupabaseServiceClient();
-  await service
-    .from("admin_settings")
-    .upsert(
-      { user_id: user.id, display_name: name },
-      { onConflict: "user_id" }
-    );
-
   revalidatePath("/admin/dashboard/profile");
   revalidatePath("/");
 }

@@ -26,7 +26,7 @@ export const metadata: Metadata = {
 
 interface SellerWithCollateral {
   user_id: string;
-  display_name: string;
+  full_name: string;
   zalo_name: string | null;
   avatar_url: string | null;
   collateral_amount: number;
@@ -42,13 +42,21 @@ async function getGuaranteedSellers(): Promise<SellerWithCollateral[]> {
   const { data: sellers } = await supabase
     .from("admin_settings")
     .select(
-      "user_id, display_name, zalo_name, avatar_url, collateral_amount, transaction_box_url"
+      "user_id, zalo_name, avatar_url, collateral_amount, transaction_box_url"
     )
     .gt("collateral_amount", 0)
-    .not("display_name", "is", null)
     .order("collateral_amount", { ascending: false });
 
   if (!sellers || sellers.length === 0) return [];
+
+  // Get full_name from auth.users metadata
+  const { data: { users: allUsers } } = await supabase.auth.admin.listUsers();
+  const userNameMap = new Map(
+    (allUsers ?? []).map((u) => [
+      u.id,
+      u.user_metadata?.full_name || u.email || "Người bán",
+    ]),
+  );
 
   // Get sold & available counts per seller
   const userIds = sellers.map((s) => s.user_id);
@@ -78,7 +86,7 @@ async function getGuaranteedSellers(): Promise<SellerWithCollateral[]> {
 
   return sellers.map((s) => ({
     user_id: s.user_id,
-    display_name: s.display_name!,
+    full_name: (userNameMap.get(s.user_id) as string) ?? "Người bán",
     zalo_name: s.zalo_name,
     avatar_url: s.avatar_url,
     collateral_amount: Number(s.collateral_amount),
@@ -161,7 +169,7 @@ export default async function BaoKePage() {
                     {seller.avatar_url ? (
                       <Image
                         src={seller.avatar_url}
-                        alt={seller.display_name}
+                        alt={seller.full_name}
                         width={56}
                         height={56}
                         className="h-12 w-12 shrink-0 rounded-2xl object-cover shadow-sm sm:h-14 sm:w-14"
@@ -176,7 +184,7 @@ export default async function BaoKePage() {
                     <div className="min-w-0 flex-1">
                       <div className="flex flex-wrap items-center gap-2">
                         <h2 className="text-base font-bold text-slate-900 sm:text-lg dark:text-slate-100">
-                          {seller.display_name}
+                          {seller.full_name}
                           {seller.zalo_name && (
                             <span className="ml-1.5 text-sm font-medium text-slate-500 dark:text-slate-400">
                               (Zalo: {seller.zalo_name})
@@ -213,7 +221,7 @@ export default async function BaoKePage() {
                       {/* Action buttons */}
                       <div className="mt-3 flex flex-wrap gap-2">
                         <Link
-                          href={`/shop/${encodeURIComponent(seller.display_name)}`}
+                          href={`/shop/${encodeURIComponent(seller.full_name)}`}
                           className="inline-flex items-center gap-1.5 rounded-lg border border-indigo-200 bg-white/60 px-3 py-2 text-xs font-medium text-indigo-700 transition-colors hover:bg-indigo-50 dark:border-indigo-500/20 dark:bg-slate-800/50 dark:text-indigo-400 dark:hover:bg-slate-700"
                         >
                           <Store className="h-3.5 w-3.5" />
@@ -221,7 +229,7 @@ export default async function BaoKePage() {
                         </Link>
                         {seller.transaction_box_url && (
                           <a
-                            href={`/api/contact/seller/${encodeURIComponent(seller.display_name)}?type=transaction_box`}
+                            href={`/api/contact/seller/${encodeURIComponent(seller.full_name)}?type=transaction_box`}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-600 px-3 py-2 text-xs font-semibold text-white transition-colors hover:bg-emerald-700"

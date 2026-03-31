@@ -15,10 +15,23 @@ export async function GET(
 
   const service = createSupabaseServiceClient();
 
+  // Find user by full_name in auth.users metadata
+  const { data: { users } } = await service.auth.admin.listUsers();
+  const user = (users ?? []).find(
+    (u) => (u.user_metadata?.full_name || u.email?.split("@")[0]) === sellerName,
+  );
+
+  if (!user) {
+    return NextResponse.json(
+      { error: "Contact not available" },
+      { status: 404 },
+    );
+  }
+
   const { data: settings } = await service
     .from("admin_settings")
     .select("transaction_box_url")
-    .eq("display_name", sellerName)
+    .eq("user_id", user.id)
     .single();
 
   const link = settings?.transaction_box_url;

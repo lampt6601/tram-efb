@@ -44,19 +44,19 @@ export default async function SellerShopPage({
   const sellerName = decodeURIComponent(name);
   const supabase = createSupabaseAnonClient();
 
-  const cardFields = "id, title, selling_price, original_price, primary_image_url, images, status, total_gp, total_coins_android, total_coins_ios, team_strength, is_priority, is_clone, server_region, created_at, seller_display_name, seller_avatar_url, seller_transaction_box_url, seller_collateral_amount, seller_sold_count";
+  const cardFields = "id, title, selling_price, original_price, primary_image_url, images, status, total_gp, total_coins_android, total_coins_ios, team_strength, is_priority, is_clone, server_region, created_at, seller_full_name, seller_avatar_url, seller_transaction_box_url, seller_collateral_amount, seller_sold_count";
 
   const [{ data: availableRaw }, { data: soldRaw }] = await Promise.all([
     supabase
       .from("public_accounts")
       .select(cardFields)
-      .eq("seller_display_name", sellerName)
+      .eq("seller_full_name", sellerName)
       .order("is_priority", { ascending: false, nullsFirst: false })
       .order("created_at", { ascending: false }),
     supabase
       .from("public_sold_accounts")
       .select(cardFields)
-      .eq("seller_display_name", sellerName)
+      .eq("seller_full_name", sellerName)
       .order("created_at", { ascending: false }),
   ]);
 
@@ -69,7 +69,7 @@ export default async function SellerShopPage({
   // Get seller info from the first available account, or first sold
   const sample = available[0] ?? sold[0];
   const seller = {
-    name: sample.seller_display_name ?? sellerName,
+    name: sample.seller_full_name ?? sellerName,
     avatar: sample.seller_avatar_url,
     transactionBoxUrl: sample.seller_transaction_box_url,
     collateralAmount: Number(sample.seller_collateral_amount) || 0,

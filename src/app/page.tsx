@@ -73,7 +73,7 @@ export default async function HomePage({
 
   // Build the accounts query with all filters
   let query = supabase.from("public_accounts").select(
-    "id, title, selling_price, original_price, primary_image_url, images, status, total_gp, total_coins_android, total_coins_ios, team_strength, is_priority, is_clone, server_region, monthly_log_quota, created_at, seller_display_name, seller_avatar_url, seller_sold_count, seller_collateral_amount",
+    "id, title, selling_price, original_price, primary_image_url, images, status, total_gp, total_coins_android, total_coins_ios, team_strength, is_priority, is_clone, server_region, monthly_log_quota, created_at, seller_full_name, seller_avatar_url, seller_sold_count, seller_collateral_amount",
   );
 
   if (minPrice !== null) query = query.gte("selling_price", minPrice);

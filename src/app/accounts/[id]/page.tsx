@@ -115,7 +115,7 @@ export default async function AccountDetailPage({
   const supabase = createSupabaseAnonClient();
 
   // Try public_accounts view first (Available/Pending)
-  const accountFields = "id, title, description, selling_price, original_price, images, primary_image_url, status, total_gp, total_coins_android, total_coins_ios, team_strength, is_priority, is_clone, server_region, monthly_log_quota, created_at, seller_display_name, seller_avatar_url, seller_transaction_box_url, seller_collateral_amount, seller_sold_count";
+  const accountFields = "id, title, description, selling_price, original_price, images, primary_image_url, status, total_gp, total_coins_android, total_coins_ios, team_strength, is_priority, is_clone, server_region, monthly_log_quota, created_at, seller_full_name, seller_avatar_url, seller_transaction_box_url, seller_collateral_amount, seller_sold_count";
 
   const { data: publicData } = await supabase
     .from("public_accounts")
@@ -367,9 +367,9 @@ export default async function AccountDetailPage({
                   ) : (
                     <BuyNowButton
                       seller={
-                        account.seller_display_name
+                        account.seller_full_name
                           ? {
-                              name: account.seller_display_name,
+                              name: account.seller_full_name,
                               avatarUrl: account.seller_avatar_url ?? undefined,
                               transactionBoxUrl: account.seller_transaction_box_url ? `/api/contact/${id}?type=transaction_box` : undefined,
                               soldCount: account.seller_sold_count ?? undefined,
@@ -471,9 +471,9 @@ export default async function AccountDetailPage({
               </div>
 
               {/* Seller info */}
-              {account.seller_display_name && account.seller_display_name !== "Trần Hữu Cảnh" && (
+              {account.seller_full_name && account.seller_full_name !== "Trần Hữu Cảnh" && (
                 <SellerContactCard
-                  sellerName={account.seller_display_name}
+                  sellerName={account.seller_full_name}
                   sellerAvatarUrl={account.seller_avatar_url}
                   sellerSoldCount={account.seller_sold_count}
                   sellerCollateralAmount={account.seller_collateral_amount}
@@ -499,7 +499,7 @@ export default async function AccountDetailPage({
                   </div>
                   <div className="min-w-0 flex-1">
                     <p className="text-[10px] font-semibold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">
-                      {account.seller_display_name === "Trần Hữu Cảnh"
+                      {account.seller_full_name === "Trần Hữu Cảnh"
                         ? "Người Bán · Chủ Shop · Trung Gian"
                         : "Chủ Shop · Trung Gian Uy Tín"}
                     </p>

@@ -108,13 +108,10 @@ export async function updateApplicationStatus(
       return { error: `Không thể tạo tài khoản: ${createError.message}` };
     }
 
-    // Set up seller profile in admin_settings
+    // Ensure admin_settings row exists for the new seller
     if (newUser.user) {
       await service.from("admin_settings").upsert(
-        {
-          user_id: newUser.user.id,
-          display_name: app.full_name,
-        },
+        { user_id: newUser.user.id },
         { onConflict: "user_id" },
       );
     }

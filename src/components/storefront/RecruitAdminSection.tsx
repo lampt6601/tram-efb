@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { UserPlus, ArrowRight, Upload } from "lucide-react";
 
+const ZALO_GROUP_THU_ACC = "https://zalo.me/g/fjeogxfhlpwwz1n9wksx";
+
 export function RecruitAdminSection() {
   return (
     <section className="border-t border-indigo-100 bg-gradient-to-r from-indigo-50 via-slate-50 to-purple-50 dark:border-indigo-500/20 dark:from-indigo-950/30 dark:via-slate-800 dark:to-purple-950/30">
@@ -28,8 +30,10 @@ export function RecruitAdminSection() {
         </Link>
 
         {/* Bán acc cho shop */}
-        <Link
-          href="/sell"
+        <a
+          href={ZALO_GROUP_THU_ACC}
+          target="_blank"
+          rel="noopener noreferrer"
           className="flex items-center justify-between gap-4 py-3.5 transition-opacity hover:opacity-80"
         >
           <div className="flex items-center gap-3">
@@ -41,7 +45,7 @@ export function RecruitAdminSection() {
             </span>
           </div>
           <ArrowRight className="h-5 w-5 shrink-0 text-emerald-400" />
-        </Link>
+        </a>
       </div>
     </section>
   );

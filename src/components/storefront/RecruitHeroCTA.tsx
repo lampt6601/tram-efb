@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { UserPlus, Upload } from "lucide-react";
 
+const ZALO_GROUP_THU_ACC = "https://zalo.me/g/fjeogxfhlpwwz1n9wksx";
+
 export function RecruitHeroCTA() {
   return (
     <div className="mx-auto mt-6 flex flex-wrap items-center justify-center gap-3 sm:mt-8 lg:mx-0 lg:justify-start">
@@ -15,13 +17,15 @@ export function RecruitHeroCTA() {
           Miễn phí
         </span>
       </Link>
-      <Link
-        href="/sell"
+      <a
+        href={ZALO_GROUP_THU_ACC}
+        target="_blank"
+        rel="noopener noreferrer"
         className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-5 py-2.5 text-sm font-semibold text-emerald-300 backdrop-blur-sm transition-all hover:bg-white/10 hover:text-white active:scale-95"
       >
         <Upload className="h-4 w-4" />
         Bán acc cho shop
-      </Link>
+      </a>
     </div>
   );
 }

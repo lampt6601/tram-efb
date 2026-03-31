@@ -58,8 +58,8 @@ export interface PublicAccount {
   server_region?: string | null;
   monthly_log_quota?: number | null;
   created_at: string;
-  // Seller profile (from admin_settings JOIN)
-  seller_display_name?: string | null;
+  // Seller profile (from view JOIN)
+  seller_full_name?: string | null;
   seller_avatar_url?: string | null;
 
   seller_transaction_box_url?: string | null;
@@ -138,7 +138,6 @@ export interface AdminSettings {
   user_id: string;
   auto_approve: boolean;
   is_disabled: boolean;
-  display_name?: string | null;
   avatar_url?: string | null;
   zalo_name?: string | null;
   transaction_box_url?: string | null;

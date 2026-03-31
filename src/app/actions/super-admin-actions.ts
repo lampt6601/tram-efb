@@ -163,6 +163,7 @@ export async function createAdmin(email: string, password: string, name?: string
     user_metadata: name ? { full_name: name } : undefined,
   });
   if (error) throw new Error(error.message);
+
   revalidatePath("/admin/dashboard/super/admins");
   return data.user;
 }
@@ -181,13 +182,12 @@ export async function updateAdminProfile(
   });
   if (error) throw new Error(error.message);
 
-  // Sync display_name + other fields in admin_settings
+  // Sync other fields in admin_settings
   await service
     .from("admin_settings")
     .upsert(
       {
         user_id: adminId,
-        display_name: profile.name,
         zalo_name: profile.zalo_name ?? null,
       },
       { onConflict: "user_id" }
@@ -309,6 +309,7 @@ export async function updateSellerCollateral(
   revalidatePath("/admin/dashboard/super/admins");
   revalidatePath("/admin/dashboard");
   revalidatePath("/");
+  revalidatePath("/bao-ke");
 }
 
 export async function getSellerCollateralHistory(adminId: string) {
