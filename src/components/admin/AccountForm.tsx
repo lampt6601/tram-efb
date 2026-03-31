@@ -3,8 +3,20 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
-import { ArrowLeft, X, UploadCloud, Star, Copy, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
-import { AndroidCoinIcon, IosCoinIcon } from "@/components/ui/PlatformCoinIcons";
+import {
+  ArrowLeft,
+  X,
+  UploadCloud,
+  Star,
+  Copy,
+  CheckCircle2,
+  AlertCircle,
+  Loader2,
+} from "lucide-react";
+import {
+  AndroidCoinIcon,
+  IosCoinIcon,
+} from "@/components/ui/PlatformCoinIcons";
 import Link from "next/link";
 import type { Account, Email, AccountStatus } from "@/types/database";
 import { useForm, Controller } from "react-hook-form";
@@ -110,6 +122,7 @@ export function AccountForm({ account, duplicating }: AccountFormProps) {
     reset,
     control,
     watch,
+    setValue,
     formState: { errors },
   } = useForm<AccountFormValues>({
     defaultValues,
@@ -146,12 +159,15 @@ export function AccountForm({ account, duplicating }: AccountFormProps) {
         if (currentEmail && !available.find((e) => e.id === currentEmail.id)) {
           available.unshift(currentEmail);
         }
+        if (currentEmail) {
+          setValue("emailId", currentEmail.id);
+        }
       }
 
       setAvailableEmails(available);
     };
     fetchEmails();
-  }, [supabase, isEditing, account]);
+  }, [supabase, isEditing, account, setValue]);
 
   // Determine if current admin is restricted (needs re-approval on edits)
   // Uses server action to bypass RLS on admin_settings table
@@ -163,7 +179,9 @@ export function AccountForm({ account, duplicating }: AccountFormProps) {
     if (e.target.files) {
       const filesArray = Array.from(e.target.files);
       const valid = filesArray.filter((f) => f.size <= MAX_IMAGE_UPLOAD_BYTES);
-      const rejected = filesArray.filter((f) => f.size > MAX_IMAGE_UPLOAD_BYTES);
+      const rejected = filesArray.filter(
+        (f) => f.size > MAX_IMAGE_UPLOAD_BYTES,
+      );
       if (rejected.length > 0) {
         toast.error(
           `${rejected.length} ảnh vượt 4MB đã bỏ qua. Vui lòng chọn ảnh nhỏ hơn 4MB.`,
@@ -171,7 +189,10 @@ export function AccountForm({ account, duplicating }: AccountFormProps) {
       }
       if (valid.length > 0) {
         setSelectedFiles((prev) => [...prev, ...valid]);
-        setPreviews((prev) => [...prev, ...valid.map((f) => URL.createObjectURL(f))]);
+        setPreviews((prev) => [
+          ...prev,
+          ...valid.map((f) => URL.createObjectURL(f)),
+        ]);
       }
     }
   };
@@ -200,7 +221,9 @@ export function AccountForm({ account, duplicating }: AccountFormProps) {
         file.type.startsWith("image/"),
       );
       const valid = filesArray.filter((f) => f.size <= MAX_IMAGE_UPLOAD_BYTES);
-      const rejected = filesArray.filter((f) => f.size > MAX_IMAGE_UPLOAD_BYTES);
+      const rejected = filesArray.filter(
+        (f) => f.size > MAX_IMAGE_UPLOAD_BYTES,
+      );
       if (rejected.length > 0) {
         toast.error(
           `${rejected.length} ảnh vượt 4MB đã bỏ qua. Vui lòng chọn ảnh nhỏ hơn 4MB.`,
@@ -208,7 +231,10 @@ export function AccountForm({ account, duplicating }: AccountFormProps) {
       }
       if (valid.length > 0) {
         setSelectedFiles((prev) => [...prev, ...valid]);
-        setPreviews((prev) => [...prev, ...valid.map((f) => URL.createObjectURL(f))]);
+        setPreviews((prev) => [
+          ...prev,
+          ...valid.map((f) => URL.createObjectURL(f)),
+        ]);
       }
     }
   };
@@ -225,7 +251,10 @@ export function AccountForm({ account, duplicating }: AccountFormProps) {
     }
     if (valid.length > 0) {
       setSelectedFiles((prev) => [...prev, ...valid]);
-      setPreviews((prev) => [...prev, ...valid.map((f) => URL.createObjectURL(f))]);
+      setPreviews((prev) => [
+        ...prev,
+        ...valid.map((f) => URL.createObjectURL(f)),
+      ]);
     }
   };
 
@@ -257,9 +286,13 @@ export function AccountForm({ account, duplicating }: AccountFormProps) {
     setLoading(true);
 
     try {
-      const oversized = selectedFiles.filter((f) => f.size > MAX_IMAGE_UPLOAD_BYTES);
+      const oversized = selectedFiles.filter(
+        (f) => f.size > MAX_IMAGE_UPLOAD_BYTES,
+      );
       if (oversized.length > 0) {
-        setImageError("Một hoặc nhiều ảnh vượt 4MB. Vui lòng chọn ảnh nhỏ hơn 4MB.");
+        setImageError(
+          "Một hoặc nhiều ảnh vượt 4MB. Vui lòng chọn ảnh nhỏ hơn 4MB.",
+        );
         setLoading(false);
         return;
       }
@@ -300,7 +333,8 @@ export function AccountForm({ account, duplicating }: AccountFormProps) {
         data: { user },
       } = await supabase.auth.getUser();
 
-      if (!user) throw new Error("Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.");
+      if (!user)
+        throw new Error("Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.");
 
       const payload = {
         title: values.title,
@@ -313,9 +347,10 @@ export function AccountForm({ account, duplicating }: AccountFormProps) {
         total_coins_ios: parseInt(values.totalCoinsIos as string) || 0,
         team_strength: 0,
         server_region: values.serverRegion || null,
-        monthly_log_quota: values.monthlyLogQuota !== ""
-          ? parseInt(values.monthlyLogQuota as string)
-          : null,
+        monthly_log_quota:
+          values.monthlyLogQuota !== ""
+            ? parseInt(values.monthlyLogQuota as string)
+            : null,
         email_id: values.emailId || null,
         ...(isEditing ? {} : { is_priority: false }),
         is_clone: values.isClone,
@@ -329,8 +364,11 @@ export function AccountForm({ account, duplicating }: AccountFormProps) {
         ...(values.status === "Deposited"
           ? {
               deposit_customer_name: values.depositCustomerName?.trim() || null,
-              deposit_customer_contact: values.depositCustomerContact?.trim() || null,
-              deposit_amount: values.depositAmount ? parseFloat(values.depositAmount) : null,
+              deposit_customer_contact:
+                values.depositCustomerContact?.trim() || null,
+              deposit_amount: values.depositAmount
+                ? parseFloat(values.depositAmount)
+                : null,
               deposit_hold_until: values.depositHoldUntil || null,
               deposit_notes: values.depositNotes?.trim() || null,
             }
@@ -348,7 +386,8 @@ export function AccountForm({ account, duplicating }: AccountFormProps) {
 
       // Re-approval check for restricted admins editing approved accounts
       if (isEditing && isRestricted && account.is_approved) {
-        const priceDecreased = payload.selling_price < (account.selling_price ?? 0);
+        const priceDecreased =
+          payload.selling_price < (account.selling_price ?? 0);
         const onlyPriceChanged =
           payload.title === (account.title ?? "") &&
           payload.purchase_price === (account.purchase_price ?? 0) &&
@@ -357,12 +396,16 @@ export function AccountForm({ account, duplicating }: AccountFormProps) {
           payload.total_coins_android === (account.total_coins_android ?? 0) &&
           payload.total_coins_ios === (account.total_coins_ios ?? 0) &&
           (payload.server_region ?? null) === (account.server_region ?? null) &&
-          (payload.monthly_log_quota ?? null) === (account.monthly_log_quota ?? null) &&
+          (payload.monthly_log_quota ?? null) ===
+            (account.monthly_log_quota ?? null) &&
           (payload.email_id ?? null) === (account.email_id ?? null) &&
           payload.is_clone === (account.is_clone ?? false) &&
-          (payload.original_price ?? null) === (account.original_price ?? null) &&
-          JSON.stringify(payload.images) === JSON.stringify(account.images ?? []) &&
-          (payload.primary_image_url ?? null) === (account.primary_image_url ?? null);
+          (payload.original_price ?? null) ===
+            (account.original_price ?? null) &&
+          JSON.stringify(payload.images) ===
+            JSON.stringify(account.images ?? []) &&
+          (payload.primary_image_url ?? null) ===
+            (account.primary_image_url ?? null);
 
         const skipReApproval = priceDecreased && onlyPriceChanged;
 
@@ -391,7 +434,9 @@ export function AccountForm({ account, duplicating }: AccountFormProps) {
 
       try {
         const actionType = isEditing
-          ? needsApproval ? "RE_APPROVAL" : "UPDATE"
+          ? needsApproval
+            ? "RE_APPROVAL"
+            : "UPDATE"
           : "CREATE";
         await notifyAdminAction(
           actionType,
@@ -420,12 +465,16 @@ export function AccountForm({ account, duplicating }: AccountFormProps) {
       if (isEditing && needsApproval) {
         toast.info("Tài khoản đã chuyển về chờ duyệt do có thay đổi nội dung.");
       } else {
-        toast.success(isEditing ? "Đã cập nhật tài khoản" : "Đã tạo tài khoản mới");
+        toast.success(
+          isEditing ? "Đã cập nhật tài khoản" : "Đã tạo tài khoản mới",
+        );
       }
       router.refresh();
       router.push("/admin/dashboard/accounts");
     } catch (err: unknown) {
-      toast.error(err instanceof Error ? err.message : "Đã xảy ra lỗi khi lưu tài khoản.");
+      toast.error(
+        err instanceof Error ? err.message : "Đã xảy ra lỗi khi lưu tài khoản.",
+      );
       setLoading(false);
     }
   };
@@ -459,7 +508,6 @@ export function AccountForm({ account, duplicating }: AccountFormProps) {
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="mt-5 space-y-5">
-
           {/* ── Thông tin cơ bản ── */}
           <SectionHeader label="Thông tin" />
 
@@ -475,7 +523,9 @@ export function AccountForm({ account, duplicating }: AccountFormProps) {
               placeholder="ví dụ: Android Cực VIP — Lực Chiến 5000+"
             />
             {errors.title && (
-              <p className="mt-1 text-xs text-red-600">{errors.title.message}</p>
+              <p className="mt-1 text-xs text-red-600">
+                {errors.title.message}
+              </p>
             )}
           </div>
 
@@ -491,7 +541,8 @@ export function AccountForm({ account, duplicating }: AccountFormProps) {
                 placeholder="Kẹp Messi + Pele, ruột dày, có pack Arsenal, bảo kê 30 ngày..."
               />
               <p className="mt-1 text-[11px] text-slate-400 dark:text-slate-500">
-                Mô tả cầu thủ, pack, đội hình nổi bật. Giúp khách hiểu acc mà không cần hỏi.
+                Mô tả cầu thủ, pack, đội hình nổi bật. Giúp khách hiểu acc mà
+                không cần hỏi.
               </p>
             </div>
           )}
@@ -517,7 +568,9 @@ export function AccountForm({ account, duplicating }: AccountFormProps) {
                 placeholder="0"
               />
               {errors.purchasePrice && (
-                <p className="mt-1 text-xs text-red-600">{errors.purchasePrice.message}</p>
+                <p className="mt-1 text-xs text-red-600">
+                  {errors.purchasePrice.message}
+                </p>
               )}
             </div>
             <div>
@@ -531,10 +584,11 @@ export function AccountForm({ account, duplicating }: AccountFormProps) {
                   min: { value: 1000, message: "Tối thiểu 1.000đ" },
                   validate: (val, formValues) => {
                     const sp = parseInt(val) || 0;
-                    const pp = parseInt(formValues.purchasePrice as string) || 0;
+                    const pp =
+                      parseInt(formValues.purchasePrice as string) || 0;
                     if (sp > pp * 2) return "Không được lớn hơn 2 lần Giá nhập";
                     return true;
-                  }
+                  },
                 })}
                 aria-invalid={!!errors.sellingPrice}
                 min="1000"
@@ -543,13 +597,17 @@ export function AccountForm({ account, duplicating }: AccountFormProps) {
                 placeholder="0"
               />
               {errors.sellingPrice && (
-                <p className="mt-1 text-xs text-red-600">{errors.sellingPrice.message}</p>
+                <p className="mt-1 text-xs text-red-600">
+                  {errors.sellingPrice.message}
+                </p>
               )}
             </div>
             <div>
               <Label className="text-slate-700 dark:text-slate-300">
                 Giá gốc{" "}
-                <span className="font-normal text-slate-400 dark:text-slate-500">(gạch ngang)</span>
+                <span className="font-normal text-slate-400 dark:text-slate-500">
+                  (gạch ngang)
+                </span>
               </Label>
               <Input
                 type="number"
@@ -569,7 +627,9 @@ export function AccountForm({ account, duplicating }: AccountFormProps) {
                 placeholder="Để trống nếu không sale"
               />
               {errors.originalPrice && (
-                <p className="mt-1 text-xs text-red-600">{errors.originalPrice.message}</p>
+                <p className="mt-1 text-xs text-red-600">
+                  {errors.originalPrice.message}
+                </p>
               )}
             </div>
           </div>
@@ -582,7 +642,10 @@ export function AccountForm({ account, duplicating }: AccountFormProps) {
               <Label className="text-slate-700 dark:text-slate-300">
                 Trạng thái <span className="text-red-500">*</span>
               </Label>
-              <select {...register("status")} className={cn(selectClass, "mt-1.5")}>
+              <select
+                {...register("status")}
+                className={cn(selectClass, "mt-1.5")}
+              >
                 <option value="Available">Sẵn sàng</option>
                 <option value="Pending">Đang chờ</option>
                 <option value="Deposited">Đang cọc</option>
@@ -591,7 +654,9 @@ export function AccountForm({ account, duplicating }: AccountFormProps) {
             </div>
 
             <div>
-              <Label className="text-slate-700 dark:text-slate-300">Phân loại</Label>
+              <Label className="text-slate-700 dark:text-slate-300">
+                Phân loại
+              </Label>
               <div className="mt-1.5 grid grid-cols-2 gap-2">
                 <div
                   className={cn(
@@ -621,7 +686,9 @@ export function AccountForm({ account, duplicating }: AccountFormProps) {
                     className="flex flex-1 cursor-pointer items-center justify-between text-sm font-medium text-slate-700 dark:text-slate-300 select-none"
                   >
                     Clone
-                    <Copy className={`h-4 w-4 ${isCloneValue ? "text-violet-500" : "text-slate-300"}`} />
+                    <Copy
+                      className={`h-4 w-4 ${isCloneValue ? "text-violet-500" : "text-slate-300"}`}
+                    />
                   </label>
                 </div>
               </div>
@@ -631,10 +698,14 @@ export function AccountForm({ account, duplicating }: AccountFormProps) {
           {/* ── Thông tin cọc (chỉ hiện khi status = Deposited) ── */}
           {statusValue === "Deposited" && (
             <div className="rounded-xl border border-blue-200 bg-blue-50/50 p-4 space-y-3 dark:border-blue-500/30 dark:bg-blue-500/5">
-              <h3 className="text-sm font-semibold text-blue-700 dark:text-blue-400">Thông tin cọc</h3>
+              <h3 className="text-sm font-semibold text-blue-700 dark:text-blue-400">
+                Thông tin cọc
+              </h3>
               <div className="grid gap-3 sm:grid-cols-2">
                 <div>
-                  <Label className="text-slate-700 dark:text-slate-300">Tên khách hàng *</Label>
+                  <Label className="text-slate-700 dark:text-slate-300">
+                    Tên khách hàng *
+                  </Label>
                   <Input
                     {...register("depositCustomerName")}
                     className={cn(inputClass, "mt-1.5")}
@@ -642,7 +713,9 @@ export function AccountForm({ account, duplicating }: AccountFormProps) {
                   />
                 </div>
                 <div>
-                  <Label className="text-slate-700 dark:text-slate-300">Liên hệ (SĐT / Zalo / FB)</Label>
+                  <Label className="text-slate-700 dark:text-slate-300">
+                    Liên hệ (SĐT / Zalo / FB)
+                  </Label>
                   <Input
                     {...register("depositCustomerContact")}
                     className={cn(inputClass, "mt-1.5")}
@@ -650,7 +723,9 @@ export function AccountForm({ account, duplicating }: AccountFormProps) {
                   />
                 </div>
                 <div>
-                  <Label className="text-slate-700 dark:text-slate-300">Số tiền cọc (VNĐ) *</Label>
+                  <Label className="text-slate-700 dark:text-slate-300">
+                    Số tiền cọc (VNĐ) *
+                  </Label>
                   <Input
                     type="number"
                     {...register("depositAmount")}
@@ -661,7 +736,9 @@ export function AccountForm({ account, duplicating }: AccountFormProps) {
                   />
                 </div>
                 <div>
-                  <Label className="text-slate-700 dark:text-slate-300">Giữ đến ngày *</Label>
+                  <Label className="text-slate-700 dark:text-slate-300">
+                    Giữ đến ngày *
+                  </Label>
                   <Input
                     type="date"
                     {...register("depositHoldUntil")}
@@ -670,7 +747,9 @@ export function AccountForm({ account, duplicating }: AccountFormProps) {
                 </div>
               </div>
               <div>
-                <Label className="text-slate-700 dark:text-slate-300">Ghi chú</Label>
+                <Label className="text-slate-700 dark:text-slate-300">
+                  Ghi chú
+                </Label>
                 <textarea
                   {...register("depositNotes")}
                   rows={2}
@@ -683,114 +762,142 @@ export function AccountForm({ account, duplicating }: AccountFormProps) {
 
           {/* ── Chỉ số ── */}
           {!quickMode && (
-          <>
-          <SectionHeader label="Chỉ số" />
+            <>
+              <SectionHeader label="Chỉ số" />
 
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 items-end">
-            <div>
-              <div className="flex h-[22px] items-center">
-                <Label className="text-slate-700 dark:text-slate-300">GP</Label>
+              <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 items-end">
+                <div>
+                  <div className="flex h-[22px] items-center">
+                    <Label className="text-slate-700 dark:text-slate-300">
+                      GP
+                    </Label>
+                  </div>
+                  <Input
+                    type="number"
+                    {...register("totalGp", {
+                      min: { value: 0, message: "Phải >= 0" },
+                    })}
+                    aria-invalid={!!errors.totalGp}
+                    min="0"
+                    className={cn(inputClass, "mt-1.5")}
+                    placeholder="0"
+                  />
+                  {errors.totalGp && (
+                    <p className="mt-1 text-xs text-red-600">
+                      {errors.totalGp.message}
+                    </p>
+                  )}
+                </div>
+                <div>
+                  <div className="flex h-[22px] items-center">
+                    <Label className="text-slate-700 inline-flex items-center gap-1">
+                      Coins <AndroidCoinIcon size={18} />
+                    </Label>
+                  </div>
+                  <Input
+                    type="number"
+                    {...register("totalCoinsAndroid", {
+                      min: { value: 0, message: "Phải >= 0" },
+                    })}
+                    aria-invalid={!!errors.totalCoinsAndroid}
+                    min="0"
+                    className={cn(inputClass, "mt-1.5")}
+                    placeholder="0"
+                  />
+                  {errors.totalCoinsAndroid && (
+                    <p className="mt-1 text-xs text-red-600">
+                      {errors.totalCoinsAndroid.message}
+                    </p>
+                  )}
+                </div>
+                <div>
+                  <div className="flex h-[22px] items-center">
+                    <Label className="text-slate-700 inline-flex items-center gap-1">
+                      Coins <IosCoinIcon size={18} />
+                    </Label>
+                  </div>
+                  <Input
+                    type="number"
+                    {...register("totalCoinsIos", {
+                      min: { value: 0, message: "Phải >= 0" },
+                    })}
+                    aria-invalid={!!errors.totalCoinsIos}
+                    min="0"
+                    className={cn(inputClass, "mt-1.5")}
+                    placeholder="0"
+                  />
+                  {errors.totalCoinsIos && (
+                    <p className="mt-1 text-xs text-red-600">
+                      {errors.totalCoinsIos.message}
+                    </p>
+                  )}
+                </div>
+                <div>
+                  <div className="flex h-[22px] items-center">
+                    <Label className="text-slate-700 dark:text-slate-300">
+                      Log / tháng
+                    </Label>
+                  </div>
+                  <Input
+                    type="number"
+                    {...register("monthlyLogQuota", {
+                      min: { value: 0, message: "Phải >= 0" },
+                    })}
+                    aria-invalid={!!errors.monthlyLogQuota}
+                    min="0"
+                    step="1"
+                    className={cn(inputClass, "mt-1.5")}
+                    placeholder="—"
+                  />
+                  {errors.monthlyLogQuota && (
+                    <p className="mt-1 text-xs text-red-600">
+                      {errors.monthlyLogQuota.message}
+                    </p>
+                  )}
+                </div>
               </div>
-              <Input
-                type="number"
-                {...register("totalGp", { min: { value: 0, message: "Phải >= 0" } })}
-                aria-invalid={!!errors.totalGp}
-                min="0"
-                className={cn(inputClass, "mt-1.5")}
-                placeholder="0"
-              />
-              {errors.totalGp && (
-                <p className="mt-1 text-xs text-red-600">{errors.totalGp.message}</p>
-              )}
-            </div>
-            <div>
-              <div className="flex h-[22px] items-center">
-                <Label className="text-slate-700 inline-flex items-center gap-1">
-                  Coins <AndroidCoinIcon size={18} />
-                </Label>
-              </div>
-              <Input
-                type="number"
-                {...register("totalCoinsAndroid", { min: { value: 0, message: "Phải >= 0" } })}
-                aria-invalid={!!errors.totalCoinsAndroid}
-                min="0"
-                className={cn(inputClass, "mt-1.5")}
-                placeholder="0"
-              />
-              {errors.totalCoinsAndroid && (
-                <p className="mt-1 text-xs text-red-600">{errors.totalCoinsAndroid.message}</p>
-              )}
-            </div>
-            <div>
-              <div className="flex h-[22px] items-center">
-                <Label className="text-slate-700 inline-flex items-center gap-1">
-                  Coins <IosCoinIcon size={18} />
-                </Label>
-              </div>
-              <Input
-                type="number"
-                {...register("totalCoinsIos", { min: { value: 0, message: "Phải >= 0" } })}
-                aria-invalid={!!errors.totalCoinsIos}
-                min="0"
-                className={cn(inputClass, "mt-1.5")}
-                placeholder="0"
-              />
-              {errors.totalCoinsIos && (
-                <p className="mt-1 text-xs text-red-600">{errors.totalCoinsIos.message}</p>
-              )}
-            </div>
-            <div>
-              <div className="flex h-[22px] items-center">
-                <Label className="text-slate-700 dark:text-slate-300">Log / tháng</Label>
-              </div>
-              <Input
-                type="number"
-                {...register("monthlyLogQuota", { min: { value: 0, message: "Phải >= 0" } })}
-                aria-invalid={!!errors.monthlyLogQuota}
-                min="0"
-                step="1"
-                className={cn(inputClass, "mt-1.5")}
-                placeholder="—"
-              />
-              {errors.monthlyLogQuota && (
-                <p className="mt-1 text-xs text-red-600">{errors.monthlyLogQuota.message}</p>
-              )}
-            </div>
-          </div>
-
-          </>
+            </>
           )}
 
           {/* ── Liên kết ── */}
           {!quickMode && (
-          <>
-          <SectionHeader label="Liên kết" />
+            <>
+              <SectionHeader label="Liên kết" />
 
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div>
-              <Label className="text-slate-700 dark:text-slate-300">Email</Label>
-              <select {...register("emailId")} className={cn(selectClass, "mt-1.5")}>
-                <option value="">Không có</option>
-                {availableEmails.map((e) => (
-                  <option key={e.id} value={e.id}>
-                    {e.email_address}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <Label className="text-slate-700 dark:text-slate-300">Server / Vùng</Label>
-              <select {...register("serverRegion")} className={cn(selectClass, "mt-1.5")}>
-                <option value="">Chưa chọn</option>
-                <option value="Japan">Nhật (Japan)</option>
-                <option value="Morocco">Maroc (Morocco)</option>
-                <option value="Hong Kong">Hong Kong</option>
-                <option value="Other">Khác</option>
-              </select>
-            </div>
-          </div>
-
-          </>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <Label className="text-slate-700 dark:text-slate-300">
+                    Email
+                  </Label>
+                  <select
+                    {...register("emailId")}
+                    className={cn(selectClass, "mt-1.5")}
+                  >
+                    <option value="">Không có</option>
+                    {availableEmails.map((e) => (
+                      <option key={e.id} value={e.id}>
+                        {e.email_address}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <Label className="text-slate-700 dark:text-slate-300">
+                    Server / Vùng
+                  </Label>
+                  <select
+                    {...register("serverRegion")}
+                    className={cn(selectClass, "mt-1.5")}
+                  >
+                    <option value="">Chưa chọn</option>
+                    <option value="Japan">Nhật (Japan)</option>
+                    <option value="Morocco">Maroc (Morocco)</option>
+                    <option value="Hong Kong">Hong Kong</option>
+                    <option value="Other">Khác</option>
+                  </select>
+                </div>
+              </div>
+            </>
           )}
 
           {/* ── Hình ảnh ── */}
@@ -803,7 +910,10 @@ export function AccountForm({ account, duplicating }: AccountFormProps) {
               tabIndex={0}
               className="flex items-center justify-center gap-4 rounded-xl border-2 border-dashed border-slate-300 bg-slate-50/50 px-6 py-5 transition-colors hover:border-indigo-400 hover:bg-slate-50 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 dark:border-slate-600 dark:bg-slate-800/50 dark:hover:border-indigo-500 dark:hover:bg-slate-800"
             >
-              <UploadCloud className="h-8 w-8 shrink-0 text-slate-400 dark:text-slate-500" aria-hidden="true" />
+              <UploadCloud
+                className="h-8 w-8 shrink-0 text-slate-400 dark:text-slate-500"
+                aria-hidden="true"
+              />
               <div className="flex flex-col gap-0.5">
                 <div className="flex items-center gap-1 text-sm text-slate-600 dark:text-slate-300">
                   <label
@@ -825,8 +935,10 @@ export function AccountForm({ account, duplicating }: AccountFormProps) {
                 </div>
                 <p className="text-xs text-slate-400 dark:text-slate-500">
                   PNG, JPG, GIF · tối đa 5MB ·{" "}
-                  <kbd className="rounded border border-slate-200 bg-white px-1 py-0.5 font-mono text-[10px] text-slate-500 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-400">Ctrl+V</kbd>
-                  {" "}để dán
+                  <kbd className="rounded border border-slate-200 bg-white px-1 py-0.5 font-mono text-[10px] text-slate-500 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-400">
+                    Ctrl+V
+                  </kbd>{" "}
+                  để dán
                 </p>
               </div>
             </div>
@@ -844,7 +956,9 @@ export function AccountForm({ account, duplicating }: AccountFormProps) {
                       ? `Đang tải ${doneCount}/${totalCount} ảnh...`
                       : `Đã tải ${doneCount}/${totalCount} ảnh`}
                   </span>
-                  <span className="font-semibold text-indigo-600">{overallProgress}%</span>
+                  <span className="font-semibold text-indigo-600">
+                    {overallProgress}%
+                  </span>
                 </div>
                 <div className="h-2 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-700">
                   <div
@@ -859,15 +973,25 @@ export function AccountForm({ account, duplicating }: AccountFormProps) {
                       key={i}
                       className={cn(
                         "flex items-center gap-1 rounded-md px-2 py-0.5 text-[10px] font-medium",
-                        f.status === "done" && "bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400",
-                        f.status === "uploading" && "bg-indigo-50 text-indigo-700 dark:bg-indigo-500/10 dark:text-indigo-400",
-                        f.status === "pending" && "bg-slate-100 text-slate-500 dark:bg-slate-700 dark:text-slate-400",
-                        f.status === "error" && "bg-red-50 text-red-600 dark:bg-red-500/10 dark:text-red-400",
+                        f.status === "done" &&
+                          "bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400",
+                        f.status === "uploading" &&
+                          "bg-indigo-50 text-indigo-700 dark:bg-indigo-500/10 dark:text-indigo-400",
+                        f.status === "pending" &&
+                          "bg-slate-100 text-slate-500 dark:bg-slate-700 dark:text-slate-400",
+                        f.status === "error" &&
+                          "bg-red-50 text-red-600 dark:bg-red-500/10 dark:text-red-400",
                       )}
                     >
-                      {f.status === "done" && <CheckCircle2 className="h-3 w-3" />}
-                      {f.status === "uploading" && <Loader2 className="h-3 w-3 animate-spin" />}
-                      {f.status === "error" && <AlertCircle className="h-3 w-3" />}
+                      {f.status === "done" && (
+                        <CheckCircle2 className="h-3 w-3" />
+                      )}
+                      {f.status === "uploading" && (
+                        <Loader2 className="h-3 w-3 animate-spin" />
+                      )}
+                      {f.status === "error" && (
+                        <AlertCircle className="h-3 w-3" />
+                      )}
                       Ảnh {i + 1}
                       {f.status === "uploading" && ` ${f.progress}%`}
                     </div>
@@ -883,7 +1007,9 @@ export function AccountForm({ account, duplicating }: AccountFormProps) {
                     key={`existing-${i}`}
                     className={cn(
                       "relative aspect-video overflow-hidden rounded-xl border-2 bg-slate-50 shadow-sm dark:bg-slate-800",
-                      primaryImage === img ? "border-indigo-500" : "border-slate-200 dark:border-slate-600",
+                      primaryImage === img
+                        ? "border-indigo-500"
+                        : "border-slate-200 dark:border-slate-600",
                     )}
                   >
                     {primaryImage === img && (
@@ -892,18 +1018,28 @@ export function AccountForm({ account, duplicating }: AccountFormProps) {
                       </div>
                     )}
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={adminThumb(img)} alt={`Ảnh ${i + 1}`} className="h-full w-full object-cover" />
+                    <img
+                      src={adminThumb(img)}
+                      alt={`Ảnh ${i + 1}`}
+                      className="h-full w-full object-cover"
+                    />
                     <div className="absolute bottom-2 right-2 z-10 flex gap-1.5">
                       {primaryImage !== img && (
-                        <button type="button" onClick={() => setPrimaryImage(img)}
+                        <button
+                          type="button"
+                          onClick={() => setPrimaryImage(img)}
                           className="rounded-full bg-white/90 p-1.5 text-indigo-600 shadow-md backdrop-blur-sm hover:bg-white"
-                          title="Đặt làm ảnh đại diện">
+                          title="Đặt làm ảnh đại diện"
+                        >
                           <Star className="h-3.5 w-3.5" />
                         </button>
                       )}
-                      <button type="button" onClick={() => removeExistingImage(i)}
+                      <button
+                        type="button"
+                        onClick={() => removeExistingImage(i)}
                         className="rounded-full bg-red-500/90 p-1.5 text-white shadow-md backdrop-blur-sm hover:bg-red-600"
-                        title="Xóa ảnh">
+                        title="Xóa ảnh"
+                      >
                         <X className="h-3.5 w-3.5" />
                       </button>
                     </div>
@@ -915,28 +1051,46 @@ export function AccountForm({ account, duplicating }: AccountFormProps) {
                     key={`new-${i}`}
                     className={cn(
                       "relative aspect-video overflow-hidden rounded-xl border-2 bg-slate-50 shadow-sm dark:bg-slate-800",
-                      primaryImage === preview ? "border-indigo-500" : "border-slate-200 dark:border-slate-600",
+                      primaryImage === preview
+                        ? "border-indigo-500"
+                        : "border-slate-200 dark:border-slate-600",
                     )}
                   >
-                    <div className="absolute left-2 top-2 z-10 flex items-center gap-1 rounded-md px-2 py-0.5 text-[10px] font-medium tracking-wide text-white shadow-sm backdrop-blur-sm
-                      bg-indigo-600/90">
+                    <div
+                      className="absolute left-2 top-2 z-10 flex items-center gap-1 rounded-md px-2 py-0.5 text-[10px] font-medium tracking-wide text-white shadow-sm backdrop-blur-sm
+                      bg-indigo-600/90"
+                    >
                       {primaryImage === preview ? (
-                        <><Star className="h-3 w-3 fill-current" /> Đại diện</>
-                      ) : "MỚI"}
+                        <>
+                          <Star className="h-3 w-3 fill-current" /> Đại diện
+                        </>
+                      ) : (
+                        "MỚI"
+                      )}
                     </div>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={preview} alt={`Ảnh mới ${i + 1}`} className="h-full w-full object-cover" />
+                    <img
+                      src={preview}
+                      alt={`Ảnh mới ${i + 1}`}
+                      className="h-full w-full object-cover"
+                    />
                     <div className="absolute bottom-2 right-2 z-20 flex gap-1.5">
                       {primaryImage !== preview && (
-                        <button type="button" onClick={() => setPrimaryImage(preview)}
+                        <button
+                          type="button"
+                          onClick={() => setPrimaryImage(preview)}
                           className="rounded-full bg-white/90 p-1.5 text-indigo-600 shadow-md backdrop-blur-sm hover:bg-white"
-                          title="Đặt làm ảnh đại diện">
+                          title="Đặt làm ảnh đại diện"
+                        >
                           <Star className="h-3.5 w-3.5" />
                         </button>
                       )}
-                      <button type="button" onClick={() => removeNewImage(i)}
+                      <button
+                        type="button"
+                        onClick={() => removeNewImage(i)}
                         className="rounded-full bg-red-500/90 p-1.5 text-white shadow-md backdrop-blur-sm hover:bg-red-600"
-                        title="Xóa ảnh">
+                        title="Xóa ảnh"
+                      >
                         <X className="h-3.5 w-3.5" />
                       </button>
                     </div>
@@ -951,7 +1105,13 @@ export function AccountForm({ account, duplicating }: AccountFormProps) {
             <Button
               type="submit"
               loading={loading}
-              loadingLabel={isUploading ? `Đang tải ảnh ${doneCount}/${totalCount}...` : isEditing ? "Đang lưu..." : "Đang tạo..."}
+              loadingLabel={
+                isUploading
+                  ? `Đang tải ảnh ${doneCount}/${totalCount}...`
+                  : isEditing
+                    ? "Đang lưu..."
+                    : "Đang tạo..."
+              }
               className="h-10 min-w-[10rem] bg-indigo-600 px-6 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-50"
             >
               {isEditing ? "Cập nhật" : "Tạo tài khoản"}
