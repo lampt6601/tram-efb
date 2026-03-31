@@ -36,6 +36,7 @@ interface AccountFormProps {
   account?: Account | null;
   /** True when creating a new account pre-filled from an existing one */
   duplicating?: boolean;
+  availableEmails: Email[];
 }
 
 type AccountFormValues = {
@@ -65,7 +66,7 @@ const inputClass =
 const selectClass =
   "w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm outline-none transition-colors focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 bg-white dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100";
 
-export function AccountForm({ account, duplicating }: AccountFormProps) {
+export function AccountForm({ account, duplicating, availableEmails }: AccountFormProps) {
   const isEditing = !!account && !duplicating;
   const [images, setImages] = useState<string[]>(account?.images ?? []);
   const [primaryImage, setPrimaryImage] = useState<string | null>(
@@ -73,7 +74,6 @@ export function AccountForm({ account, duplicating }: AccountFormProps) {
   );
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [previews, setPreviews] = useState<string[]>([]);
-  const [availableEmails, setAvailableEmails] = useState<Email[]>([]);
   const [loading, setLoading] = useState(false);
   const [imageError, setImageError] = useState("");
   const [quickMode] = useState(false);
@@ -133,41 +133,10 @@ export function AccountForm({ account, duplicating }: AccountFormProps) {
   }, [defaultValues, reset]);
 
   useEffect(() => {
-    const fetchEmails = async () => {
-      const { data: allEmails } = await supabase
-        .from("emails")
-        .select("*")
-        .order("email_address");
-      if (!allEmails) return;
-
-      let query = supabase
-        .from("accounts")
-        .select("email_id")
-        .not("email_id", "is", null);
-      if (isEditing) {
-        query = query.neq("id", account.id);
-      }
-      const { data: linkedAccounts } = await query;
-
-      const linkedEmailIds = new Set(
-        (linkedAccounts ?? []).map((a) => a.email_id),
-      );
-      const available = allEmails.filter((e) => !linkedEmailIds.has(e.id));
-
-      if (isEditing && account.email_id) {
-        const currentEmail = allEmails.find((e) => e.id === account.email_id);
-        if (currentEmail && !available.find((e) => e.id === currentEmail.id)) {
-          available.unshift(currentEmail);
-        }
-        if (currentEmail) {
-          setValue("emailId", currentEmail.id);
-        }
-      }
-
-      setAvailableEmails(available);
-    };
-    fetchEmails();
-  }, [supabase, isEditing, account, setValue]);
+    if (isEditing && account.email_id) {
+      setValue("emailId", account.email_id);
+    }
+  }, [isEditing, account, setValue]);
 
   // Determine if current admin is restricted (needs re-approval on edits)
   // Uses server action to bypass RLS on admin_settings table
