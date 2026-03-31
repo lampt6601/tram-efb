@@ -46,8 +46,6 @@ interface AdminActionsDropdownProps {
   adminEmail: string;
   currentName: string;
   currentZaloName: string;
-  currentZaloLink: string;
-  currentFacebookLink: string;
   accountCount: number;
   autoApprove: boolean;
   isDisabled: boolean;
@@ -89,8 +87,6 @@ export function AdminActionsDropdown({
   adminEmail,
   currentName,
   currentZaloName,
-  currentZaloLink,
-  currentFacebookLink,
   accountCount,
   autoApprove: initialAutoApprove,
   isDisabled: initialIsDisabled,
@@ -105,8 +101,6 @@ export function AdminActionsDropdown({
   // Edit profile state
   const [name, setName] = useState(currentName);
   const [zaloName, setZaloName] = useState(currentZaloName);
-  const [zaloPhone, setZaloPhone] = useState(currentZaloLink.replace(/^https?:\/\/zalo\.me\//, ""));
-  const [facebookLink, setFacebookLink] = useState(currentFacebookLink);
 
   // Reset password state
   const [password, setPassword] = useState("");
@@ -136,8 +130,6 @@ export function AdminActionsDropdown({
     if (dialog === "editProfile") {
       setName(currentName);
       setZaloName(currentZaloName);
-      setZaloPhone(currentZaloLink.replace(/^https?:\/\/zalo\.me\//, ""));
-      setFacebookLink(currentFacebookLink);
     }
     if (dialog === "resetPassword") setPassword("");
     if (dialog === "transactionBox") setTxBoxUrl(initialTransactionBoxUrl);
@@ -162,12 +154,9 @@ export function AdminActionsDropdown({
     setLoading(true);
     setError("");
     try {
-      const zaloLink = zaloPhone.trim() ? `https://zalo.me/${zaloPhone.trim()}` : null;
       await updateAdminProfile(adminId, {
         name: name.trim(),
         zalo_name: zaloName.trim() || null,
-        zalo_link: zaloLink,
-        facebook_link: facebookLink.trim() || null,
       });
       toast.success("Đã cập nhật thông tin admin thành công");
       setOpenDialog(null);
@@ -374,34 +363,6 @@ export function AdminActionsDropdown({
                   className="mt-1.5 rounded-xl border-slate-300 dark:border-slate-600"
                 />
                 <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">Để trống sẽ dùng tên admin.</p>
-              </div>
-              <div>
-                <Label className="text-slate-700 dark:text-slate-200">Số điện thoại Zalo</Label>
-                <Input
-                  type="tel"
-                  value={zaloPhone}
-                  onChange={(e) => setZaloPhone(e.target.value.replace(/[^0-9]/g, ""))}
-                  placeholder="0969347283"
-                  maxLength={15}
-                  disabled={loading}
-                  className="mt-1.5 rounded-xl border-slate-300 dark:border-slate-600"
-                />
-                {zaloPhone.trim() && (
-                  <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">
-                    Link: <span className="font-medium text-indigo-500 dark:text-indigo-400">https://zalo.me/{zaloPhone.trim()}</span>
-                  </p>
-                )}
-              </div>
-              <div>
-                <Label className="text-slate-700 dark:text-slate-200">Link Facebook</Label>
-                <Input
-                  type="url"
-                  value={facebookLink}
-                  onChange={(e) => setFacebookLink(e.target.value)}
-                  placeholder="https://facebook.com/username"
-                  disabled={loading}
-                  className="mt-1.5 rounded-xl border-slate-300 dark:border-slate-600"
-                />
               </div>
             </div>
             {error && <p className="mt-3 text-xs text-red-600 dark:text-red-400">{error}</p>}

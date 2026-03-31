@@ -3,7 +3,7 @@
 import { useEffect, useState, useTransition } from "react";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 import { updateApplicationStatus } from "@/app/actions/seller-application-actions";
-import { Check, X, Clock, Mail, Phone, MessageCircle, Facebook } from "lucide-react";
+import { Check, X, Clock, Mail, Phone, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import type { SellerApplication } from "@/types/database";
@@ -24,7 +24,7 @@ export default function ManageApplicationsPage() {
     const fetch = async () => {
       const { data } = await supabase
         .from("seller_applications")
-        .select("id, full_name, email, phone, zalo_link, facebook_link, reason, status, created_at")
+        .select("id, full_name, email, phone, zalo_link, reason, status, created_at")
         .order("created_at", { ascending: false });
       setApps((data ?? []) as SellerApplication[]);
       setLoading(false);
@@ -154,16 +154,6 @@ function ApplicationCard({
                 className="flex items-center gap-1 text-indigo-600 dark:text-indigo-400 hover:underline"
               >
                 <MessageCircle className="h-3 w-3" /> Zalo
-              </a>
-            )}
-            {app.facebook_link && (
-              <a
-                href={app.facebook_link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-1 text-indigo-600 dark:text-indigo-400 hover:underline"
-              >
-                <Facebook className="h-3 w-3" /> Facebook
               </a>
             )}
           </div>

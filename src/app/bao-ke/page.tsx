@@ -31,7 +31,6 @@ interface SellerWithCollateral {
   avatar_url: string | null;
   collateral_amount: number;
   transaction_box_url: string | null;
-  zalo_link: string | null;
   sold_count: number;
   available_count: number;
 }
@@ -43,7 +42,7 @@ async function getGuaranteedSellers(): Promise<SellerWithCollateral[]> {
   const { data: sellers } = await supabase
     .from("admin_settings")
     .select(
-      "user_id, display_name, zalo_name, avatar_url, collateral_amount, transaction_box_url, zalo_link"
+      "user_id, display_name, zalo_name, avatar_url, collateral_amount, transaction_box_url"
     )
     .gt("collateral_amount", 0)
     .not("display_name", "is", null)
@@ -84,7 +83,6 @@ async function getGuaranteedSellers(): Promise<SellerWithCollateral[]> {
     avatar_url: s.avatar_url,
     collateral_amount: Number(s.collateral_amount),
     transaction_box_url: s.transaction_box_url,
-    zalo_link: s.zalo_link,
     sold_count: soldMap.get(s.user_id) ?? 0,
     available_count: availableMap.get(s.user_id) ?? 0,
   }));

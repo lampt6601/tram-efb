@@ -11,7 +11,6 @@ interface ApplySellerInput {
   email: string;
   password: string;
   zaloLink: string;
-  facebookLink?: string;
   reason?: string;
   referredBy?: string;
 }
@@ -41,7 +40,6 @@ export async function submitSellerApplication(input: ApplySellerInput) {
     email: input.email.trim().toLowerCase(),
     password: input.password,
     zalo_link: input.zaloLink.trim(),
-    facebook_link: input.facebookLink?.trim() || null,
     reason: input.reason?.trim() || null,
     referred_by: input.referredBy?.trim() || null,
   });
@@ -62,7 +60,6 @@ export async function submitSellerApplication(input: ApplySellerInput) {
       `👤 ${input.fullName.trim()}\n` +
       `📧 ${input.email.trim()}\n` +
       `📱 Zalo: ${zaloPhone}\n` +
-      (input.facebookLink ? `🔗 FB: ${input.facebookLink.trim()}\n` : "") +
       (input.reason ? `💬 Lý do: ${input.reason.trim()}\n` : "") +
       `\n👉 Duyệt tại: https://thc-efb.com/admin/dashboard/super/applications`,
     );
@@ -117,8 +114,6 @@ export async function updateApplicationStatus(
         {
           user_id: newUser.user.id,
           display_name: app.full_name,
-          zalo_link: app.zalo_link || null,
-          facebook_link: app.facebook_link || null,
         },
         { onConflict: "user_id" },
       );

@@ -172,8 +172,6 @@ export async function updateAdminProfile(
   profile: {
     name: string;
     zalo_name?: string | null;
-    zalo_link?: string | null;
-    facebook_link?: string | null;
   }
 ) {
   await verifySuperAdmin();
@@ -191,8 +189,6 @@ export async function updateAdminProfile(
         user_id: adminId,
         display_name: profile.name,
         zalo_name: profile.zalo_name ?? null,
-        zalo_link: profile.zalo_link ?? null,
-        facebook_link: profile.facebook_link ?? null,
       },
       { onConflict: "user_id" }
     );

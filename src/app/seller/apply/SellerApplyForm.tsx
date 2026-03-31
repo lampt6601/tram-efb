@@ -197,7 +197,6 @@ function SellerApplyFormInner({ leaderboard }: { leaderboard: SellerRank[] }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [zaloPhone, setZaloPhone] = useState("");
-  const [facebookLink, setFacebookLink] = useState("");
   const [reason, setReason] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -220,7 +219,6 @@ function SellerApplyFormInner({ leaderboard }: { leaderboard: SellerRank[] }) {
         email,
         password,
         zaloLink: `https://zalo.me/${zaloPhone.trim()}`,
-        facebookLink: facebookLink || undefined,
         reason: reason || undefined,
         referredBy: referrer || undefined,
       });
@@ -480,23 +478,6 @@ function SellerApplyFormInner({ leaderboard }: { leaderboard: SellerRank[] }) {
                       Link Zalo: <span className="font-medium text-indigo-500 dark:text-indigo-400">https://zalo.me/{zaloPhone.trim()}</span>
                     </p>
                   )}
-                </div>
-
-                <div>
-                  <Label
-                    htmlFor="facebook"
-                    className="text-slate-700 dark:text-slate-300"
-                  >
-                    Link Facebook
-                  </Label>
-                  <Input
-                    id="facebook"
-                    value={facebookLink}
-                    onChange={(e) => setFacebookLink(e.target.value)}
-                    maxLength={200}
-                    placeholder="https://facebook.com/..."
-                    className="mt-1.5 rounded-lg border-slate-200 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200"
-                  />
                 </div>
 
                 <div>
