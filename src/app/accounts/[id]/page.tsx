@@ -115,7 +115,7 @@ export default async function AccountDetailPage({
   const supabase = createSupabaseAnonClient();
 
   // Try public_accounts view first (Available/Pending)
-  const accountFields = "id, title, description, selling_price, original_price, images, primary_image_url, status, total_gp, total_coins_android, total_coins_ios, team_strength, is_priority, is_clone, server_region, monthly_log_quota, created_at, seller_display_name, seller_avatar_url, seller_transaction_box_url, seller_sold_count";
+  const accountFields = "id, title, description, selling_price, original_price, images, primary_image_url, status, total_gp, total_coins_android, total_coins_ios, team_strength, is_priority, is_clone, server_region, monthly_log_quota, created_at, seller_display_name, seller_avatar_url, seller_transaction_box_url, seller_collateral_amount, seller_sold_count";
 
   const { data: publicData } = await supabase
     .from("public_accounts")
@@ -476,6 +476,7 @@ export default async function AccountDetailPage({
                   sellerName={account.seller_display_name}
                   sellerAvatarUrl={account.seller_avatar_url}
                   sellerSoldCount={account.seller_sold_count}
+                  sellerCollateralAmount={account.seller_collateral_amount}
                   transactionBoxUrl={account.seller_transaction_box_url ? `/api/contact/${id}?type=transaction_box` : undefined}
                 />
               )}

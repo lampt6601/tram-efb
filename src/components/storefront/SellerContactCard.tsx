@@ -3,11 +3,13 @@
 import Image from "next/image";
 import Link from "next/link";
 import { User, BadgeCheck, Store, MessageCircle, ExternalLink } from "lucide-react";
+import { CollateralBadge } from "./CollateralBadge";
 
 interface SellerContactCardProps {
   sellerName: string;
   sellerAvatarUrl?: string | null;
   sellerSoldCount?: number | null;
+  sellerCollateralAmount?: number | null;
   transactionBoxUrl?: string;
 }
 
@@ -15,6 +17,7 @@ export function SellerContactCard({
   sellerName,
   sellerAvatarUrl,
   sellerSoldCount,
+  sellerCollateralAmount,
   transactionBoxUrl,
 }: SellerContactCardProps) {
   return (
@@ -48,6 +51,9 @@ export function SellerContactCard({
                 <BadgeCheck className="h-3 w-3" />
                 Đã bán {sellerSoldCount} acc
               </span>
+            )}
+            {(sellerCollateralAmount ?? 0) > 0 && (
+              <CollateralBadge amount={sellerCollateralAmount!} />
             )}
           </div>
         </div>

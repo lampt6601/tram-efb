@@ -63,6 +63,7 @@ export interface PublicAccount {
   seller_avatar_url?: string | null;
 
   seller_transaction_box_url?: string | null;
+  seller_collateral_amount?: number | null;
   seller_sold_count?: number | null;
 }
 
