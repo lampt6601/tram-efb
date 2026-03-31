@@ -151,6 +151,51 @@ export async function copyAccountToAdmin(accountId: string, targetAdminId: strin
   revalidatePath("/admin/dashboard/accounts");
 }
 
+export async function buybackAccount(
+  accountId: string,
+  buybackPrice: number,
+  emailId: string | null,
+) {
+  const superAdmin = await verifySuperAdmin();
+  const service = createSupabaseServiceClient();
+
+  const { data: source, error: sourceErr } = await service
+    .from("accounts")
+    .select("*")
+    .eq("id", accountId)
+    .single();
+
+  if (sourceErr || !source) throw new Error(sourceErr?.message ?? "Không tìm thấy tài khoản");
+  if (source.status !== "Sold") throw new Error("Chỉ có thể thu lại tài khoản đã bán");
+
+  const { error: insertErr } = await service.from("accounts").insert({
+    title: source.title,
+    description: source.description,
+    purchase_price: buybackPrice,
+    selling_price: source.selling_price,
+    original_price: null,
+    images: source.images,
+    primary_image_url: source.primary_image_url,
+    status: "Available",
+    total_gp: source.total_gp,
+    total_coins_android: source.total_coins_android,
+    total_coins_ios: source.total_coins_ios,
+    team_strength: source.team_strength,
+    server_region: source.server_region,
+    monthly_log_quota: source.monthly_log_quota,
+    email_id: emailId,
+    user_id: superAdmin.id,
+    is_priority: false,
+    is_clone: source.is_clone ?? false,
+    is_approved: true,
+  });
+  if (insertErr) throw new Error(insertErr.message);
+
+  revalidatePath("/admin/dashboard/super/accounts");
+  revalidatePath("/admin/dashboard/accounts");
+  revalidatePath("/");
+}
+
 export async function createAdmin(email: string, password: string, name?: string) {
   await verifySuperAdmin();
   if (!email || !email.includes("@")) throw new Error("Email không hợp lệ.");

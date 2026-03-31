@@ -13,7 +13,6 @@ import {
   X,
   ExternalLink,
   Eye,
-  UserPlus,
   Link as LinkIcon,
   Check,
   CheckCircle,
@@ -29,7 +28,7 @@ import {
   superAdminDeleteAccount,
   approveAccount,
   superAdminUpdateAccount,
-  copyAccountToAdmin,
+  buybackAccount,
 } from "@/app/actions/super-admin-actions";
 import { openFacebookShare } from "@/lib/facebook-share";
 import { Button } from "@/components/ui/button";
@@ -44,17 +43,19 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { PendingAccountDrawer } from "@/app/admin/dashboard/super/pending/PendingAccountDrawer";
-import type { AccountWithEmail } from "@/types/database";
+import type { AccountWithEmail, Email } from "@/types/database";
+import { getBuybackInfo, calculateBuybackPrice } from "@/lib/buyback";
+import { formatCurrency } from "@/lib/constants";
 
 interface SuperAccountActionsDropdownProps {
   account: AccountWithEmail;
   adminEmail: string;
-  adminOptions: Array<{ id: string; label: string }>;
   isApproved: boolean;
   isSold: boolean;
+  availableEmails: Email[];
 }
 
-type OpenDialog = "sell" | "sale" | "copy" | "unapprove" | "delete" | "unmark-sold" | "deposit" | "undeposit" | null;
+type OpenDialog = "sell" | "sale" | "unapprove" | "delete" | "unmark-sold" | "deposit" | "undeposit" | "buyback" | null;
 
 function Modal({
   open,
@@ -86,9 +87,9 @@ function Modal({
 export function SuperAccountActionsDropdown({
   account,
   adminEmail,
-  adminOptions,
   isApproved,
   isSold,
+  availableEmails,
 }: SuperAccountActionsDropdownProps) {
   const id = account.id;
   const title = account.title;
@@ -115,7 +116,6 @@ export function SuperAccountActionsDropdown({
     account.original_price ? account.original_price.toString() : account.selling_price.toString()
   );
   const [salePrice, setSalePrice] = useState(account.selling_price.toString());
-  const [targetAdminId, setTargetAdminId] = useState("");
   const isOnSale = !!(account.original_price && account.original_price > account.selling_price);
   const isDeposited = account.status === "Deposited";
 
@@ -125,6 +125,12 @@ export function SuperAccountActionsDropdown({
   const [depositAmount, setDepositAmount] = useState(account.deposit_amount?.toString() ?? "");
   const [depositHoldUntil, setDepositHoldUntil] = useState(account.deposit_hold_until?.split("T")[0] ?? "");
   const [depositNotes, setDepositNotes] = useState(account.deposit_notes ?? "");
+
+  // Buyback states
+  const buybackInfo = isSold ? getBuybackInfo(account.updated_at) : null;
+  const suggestedBuybackPrice = isSold ? calculateBuybackPrice(account.selling_price, account.updated_at) : 0;
+  const [buybackPrice, setBuybackPrice] = useState(suggestedBuybackPrice.toString());
+  const [buybackEmailId, setBuybackEmailId] = useState("");
 
   const closeDialog = useCallback(() => {
     if (!loading) setOpenDialog(null);
@@ -147,34 +153,11 @@ export function SuperAccountActionsDropdown({
       setDepositHoldUntil(account.deposit_hold_until?.split("T")[0] ?? "");
       setDepositNotes(account.deposit_notes ?? "");
     }
-    if (dialog === "copy") {
-      const firstAdminId = adminOptions[0]?.id ?? "";
-      setTargetAdminId(firstAdminId);
+    if (dialog === "buyback") {
+      setBuybackPrice(suggestedBuybackPrice.toString());
+      setBuybackEmailId(availableEmails[0]?.id ?? "");
     }
     setOpenDialog(dialog);
-  };
-
-  const handleCopyToAdmin = async () => {
-    if (!targetAdminId) {
-      setError("Vui lòng chọn admin nhận tài khoản.");
-      return;
-    }
-    if (targetAdminId === account.user_id) {
-      setError("Vui lòng chọn admin khác với admin hiện tại.");
-      return;
-    }
-    setLoading(true);
-    setError("");
-    try {
-      await copyAccountToAdmin(id, targetAdminId);
-      setOpenDialog(null);
-      toast.success("Đã copy tài khoản cho admin khác (ở trạng thái chờ duyệt).");
-      router.refresh();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Đã có lỗi xảy ra");
-    } finally {
-      setLoading(false);
-    }
   };
 
   // ── Copy link ─────────────────────────────────────────────────────────────
@@ -394,6 +377,25 @@ export function SuperAccountActionsDropdown({
     } finally { setLoading(false); }
   };
 
+  // ── Buyback ──────────────────────────────────────────────────────────────
+  const handleBuyback = async () => {
+    const parsed = parseFloat(buybackPrice);
+    if (isNaN(parsed) || parsed < 0) {
+      setError("Vui lòng nhập giá thu lại hợp lệ.");
+      return;
+    }
+    setLoading(true);
+    setError("");
+    try {
+      await buybackAccount(id, parsed, buybackEmailId || null);
+      setOpenDialog(null);
+      toast.success("Đã thu lại tài khoản thành công");
+      router.refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Đã có lỗi xảy ra");
+    } finally { setLoading(false); }
+  };
+
   return (
     <>
       {/* ── Dropdown ─────────────────────────────────────────────────────── */}
@@ -439,10 +441,6 @@ export function SuperAccountActionsDropdown({
             Xem chi tiết
           </DropdownMenuItem>
 
-          <DropdownMenuItem onClick={() => openWith("copy")} className="gap-2">
-            <UserPlus className="h-4 w-4 text-cyan-500" />
-            Copy cho admin khác
-          </DropdownMenuItem>
 
           <DropdownMenuItem onClick={handleCopyLink} className="gap-2">
             {copied ? (
@@ -518,6 +516,10 @@ export function SuperAccountActionsDropdown({
           {isSold && (
             <>
               <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => openWith("buyback")} className="gap-2">
+                <RotateCcw className="h-4 w-4 text-emerald-500" />
+                Thu lại acc
+              </DropdownMenuItem>
               <DropdownMenuItem onClick={() => openWith("unmark-sold")} className="gap-2">
                 <RotateCcw className="h-4 w-4 text-blue-500" />
                 Gỡ đánh dấu đã bán
@@ -564,57 +566,6 @@ export function SuperAccountActionsDropdown({
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-
-      {/* ── Unapprove modal ───────────────────────────────────────────────── */}
-      <Modal open={openDialog === "copy"} onClose={closeDialog}>
-        <div className="p-5">
-          <div className="mb-4 flex items-start justify-between">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-cyan-50 dark:bg-cyan-500/10">
-              <UserPlus className="h-5 w-5 text-cyan-600" />
-            </div>
-            <button onClick={closeDialog} disabled={loading} className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 dark:text-slate-500 dark:hover:bg-slate-700">
-              <X className="h-4 w-4" />
-            </button>
-          </div>
-          <h2 className="mb-1 text-base font-semibold text-slate-900 dark:text-slate-100">Copy cho admin khác</h2>
-          <p className="mb-4 text-sm text-slate-500 dark:text-slate-400">
-            Tạo một bản sao của tài khoản <span className="font-semibold text-slate-900 dark:text-slate-100">&quot;{title}&quot;</span> cho admin khác.
-          </p>
-          <Label className="mb-1.5 text-slate-700 dark:text-slate-200">Chọn admin nhận tài khoản</Label>
-          <select
-            value={targetAdminId}
-            onChange={(e) => setTargetAdminId(e.target.value)}
-            disabled={loading || adminOptions.length === 0}
-            className="mt-1.5 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm outline-none transition-colors focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100"
-          >
-            {adminOptions.length === 0 ? (
-              <option value="">Không có admin khả dụng</option>
-            ) : (
-              adminOptions.map((a) => (
-                <option key={a.id} value={a.id}>
-                  {a.label}
-                </option>
-              ))
-            )}
-          </select>
-          {error && <p className="mt-2 text-xs text-red-600 dark:text-red-400">{error}</p>}
-          <p className="mt-2 text-xs text-slate-400 dark:text-slate-500">
-            Bản copy mới sẽ ở trạng thái <span className="font-semibold">Chờ duyệt</span> và không giữ email liên kết cũ.
-          </p>
-        </div>
-        <div className="flex justify-end gap-2 rounded-b-xl border-t bg-slate-50 px-5 py-3 dark:border-slate-700 dark:bg-slate-800">
-          <Button variant="outline" onClick={closeDialog} disabled={loading}>Hủy</Button>
-          <Button
-            onClick={handleCopyToAdmin}
-            loading={loading}
-            loadingLabel="Đang copy..."
-            disabled={adminOptions.length === 0}
-            className="min-w-[10rem] bg-cyan-600 text-white hover:bg-cyan-700"
-          >
-            Xác nhận copy
-          </Button>
-        </div>
-      </Modal>
 
       {/* ── Unapprove modal ───────────────────────────────────────────────── */}
       <Modal open={openDialog === "unapprove"} onClose={closeDialog}>
@@ -927,6 +878,92 @@ export function SuperAccountActionsDropdown({
             className="min-w-[8rem] bg-blue-600 text-white hover:bg-blue-700"
           >
             Xác nhận
+          </Button>
+        </div>
+      </Modal>
+
+      {/* ── Buyback modal ──────────────────────────────────────────────── */}
+      <Modal open={openDialog === "buyback"} onClose={closeDialog}>
+        <div className="p-5">
+          <div className="mb-4 flex items-start justify-between">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 dark:bg-emerald-500/10">
+              <RotateCcw className="h-5 w-5 text-emerald-600" />
+            </div>
+            <button onClick={closeDialog} disabled={loading} className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 dark:text-slate-500 dark:hover:bg-slate-700">
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+          <h2 className="mb-1 text-base font-semibold text-slate-900 dark:text-slate-100">Thu Lại Tài Khoản</h2>
+          <p className="mb-4 text-sm text-slate-500 dark:text-slate-400">
+            Thu lại <span className="font-semibold text-slate-900 dark:text-slate-100">&quot;{title}&quot;</span> theo chính sách giá thu.
+          </p>
+
+          {/* Buyback info */}
+          {buybackInfo && (
+            <div className="mb-4 space-y-1.5 rounded-xl border border-emerald-200 bg-emerald-50/50 p-3 dark:border-emerald-500/20 dark:bg-emerald-500/5">
+              <div className="flex justify-between text-xs">
+                <span className="text-slate-500 dark:text-slate-400">Giá lúc bán</span>
+                <span className="font-semibold text-slate-900 dark:text-slate-100">{formatCurrency(account.selling_price)}</span>
+              </div>
+              <div className="flex justify-between text-xs">
+                <span className="text-slate-500 dark:text-slate-400">Đã bán</span>
+                <span className="font-medium text-slate-700 dark:text-slate-300">{buybackInfo.days} ngày trước</span>
+              </div>
+              <div className="flex justify-between text-xs">
+                <span className="text-slate-500 dark:text-slate-400">Mức thu ({buybackInfo.label})</span>
+                <span className="font-bold text-emerald-700 dark:text-emerald-400">{buybackInfo.percent}%</span>
+              </div>
+              <div className="border-t border-emerald-200 pt-1.5 dark:border-emerald-500/20">
+                <div className="flex justify-between text-xs">
+                  <span className="font-medium text-slate-700 dark:text-slate-300">Giá thu gợi ý</span>
+                  <span className="font-bold text-emerald-700 dark:text-emerald-300">{formatCurrency(suggestedBuybackPrice)}</span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <div className="space-y-3">
+            <div>
+              <Label className="text-slate-700 dark:text-slate-200">Giá Thu Thực Tế (VNĐ)</Label>
+              <Input
+                type="number"
+                value={buybackPrice}
+                onChange={(e) => setBuybackPrice(e.target.value)}
+                min={0}
+                step={1}
+                disabled={loading}
+                className="mt-1.5 rounded-xl border-emerald-300 bg-emerald-50/30 dark:border-emerald-500/30 dark:bg-emerald-500/10"
+                autoFocus
+              />
+            </div>
+            <div>
+              <Label className="text-slate-700 dark:text-slate-200">Email Liên Kết</Label>
+              <select
+                value={buybackEmailId}
+                onChange={(e) => setBuybackEmailId(e.target.value)}
+                disabled={loading}
+                className="mt-1.5 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm outline-none transition-colors focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100"
+              >
+                <option value="">Không liên kết email</option>
+                {availableEmails.map((e) => (
+                  <option key={e.id} value={e.id}>
+                    {e.email_address}
+                  </option>
+                ))}
+              </select>
+            </div>
+            {error && <p className="text-xs text-red-600 dark:text-red-400">{error}</p>}
+          </div>
+        </div>
+        <div className="flex justify-end gap-2 rounded-b-xl border-t bg-slate-50 px-5 py-3 dark:border-slate-700 dark:bg-slate-800">
+          <Button variant="outline" onClick={closeDialog} disabled={loading}>Hủy</Button>
+          <Button
+            onClick={handleBuyback}
+            loading={loading}
+            loadingLabel="Đang xử lý..."
+            className="min-w-[10rem] bg-emerald-600 text-white hover:bg-emerald-700"
+          >
+            Xác Nhận Thu Lại
           </Button>
         </div>
       </Modal>

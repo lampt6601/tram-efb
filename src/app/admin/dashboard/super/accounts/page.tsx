@@ -12,7 +12,7 @@ import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
 import Link from "next/link";
-import type { AccountWithEmail } from "@/types/database";
+import type { AccountWithEmail, Email } from "@/types/database";
 import { SUPER_ADMIN_EMAIL } from "@/lib/super-admin";
 
 type SearchParams = { sort?: string; status?: string; approval?: string; q?: string };
@@ -42,17 +42,21 @@ export default async function SuperAccountsPage({
 
   // Build admin email map from all users
   const { data: usersData } = await service.auth.admin.listUsers({ perPage: 1000 });
-  const adminOptions = (usersData?.users ?? [])
-    .filter((u) => !!u.email)
-    .map((u) => ({
-      id: u.id,
-      label: u.user_metadata?.full_name
-        ? `${u.user_metadata.full_name} (${u.email})`
-        : (u.email as string),
-    }));
   const adminEmailMap = new Map<string, string>(
     (usersData?.users ?? []).map((u) => [u.id, u.user_metadata?.full_name ?? u.email ?? u.id])
   );
+
+  // Fetch available emails for buyback (not linked to any account)
+  const [{ data: allEmails }, { data: linkedAccounts }] = await Promise.all([
+    service.from("emails").select("id, email_address, password, recovery_info, user_id, created_at, updated_at").order("email_address"),
+    service.from("accounts").select("email_id").not("email_id", "is", null),
+  ]);
+  const linkedEmailIds = new Set(
+    (linkedAccounts ?? []).map((a: { email_id: string }) => a.email_id)
+  );
+  const availableEmails = (allEmails ?? []).filter(
+    (e: Email) => !linkedEmailIds.has(e.id)
+  ) as Email[];
 
   let query = service.from("accounts").select("id, title, description, selling_price, purchase_price, original_price, images, primary_image_url, status, total_gp, total_coins_android, total_coins_ios, team_strength, is_priority, is_clone, is_approved, server_region, monthly_log_quota, email_id, user_id, created_at, updated_at, emails(*)");
   if (statusFilter && statusFilter !== "all") query = query.eq("status", statusFilter);
@@ -189,9 +193,9 @@ export default async function SuperAccountsPage({
                     <SuperAccountActionsDropdown
                       account={account}
                       adminEmail={adminEmailMap.get(account.user_id) ?? account.user_id}
-                      adminOptions={adminOptions}
                       isApproved={account.is_approved}
                       isSold={account.status === "Sold"}
+                      availableEmails={availableEmails}
                     />
                   </TableCell>
                 </TableRow>
