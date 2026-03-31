@@ -4,7 +4,6 @@ import { createSupabaseServerClient } from "@/lib/supabase-server";
 import { createSupabaseAnonClient } from "@/lib/supabase-anon";
 import { createSupabaseServiceClient } from "@/lib/supabase-service";
 import { revalidatePath } from "next/cache";
-import { uploadFileToImageKit } from "@/lib/imagekit";
 
 export async function updateMyProfile(name: string) {
   const supabase = await createSupabaseServerClient();
@@ -19,7 +18,18 @@ export async function updateMyProfile(name: string) {
   });
 
   if (error) throw new Error(error.message);
+
+  // Sync display_name in admin_settings so public views use the same name
+  const service = createSupabaseServiceClient();
+  await service
+    .from("admin_settings")
+    .upsert(
+      { user_id: user.id, display_name: name },
+      { onConflict: "user_id" }
+    );
+
   revalidatePath("/admin/dashboard/profile");
+  revalidatePath("/");
 }
 
 export async function changeMyPassword(
@@ -49,56 +59,4 @@ export async function changeMyPassword(
   });
 
   if (error) throw new Error(error.message);
-}
-
-export async function updateMySellerProfile(profile: {
-  display_name?: string | null;
-  avatar_url?: string | null;
-  zalo_link?: string | null;
-  facebook_link?: string | null;
-}) {
-  const supabase = await createSupabaseServerClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) throw new Error("Unauthorized");
-
-  // Use service client to bypass RLS (admin_settings only allows super admin writes)
-  const service = createSupabaseServiceClient();
-  const { error } = await service
-    .from("admin_settings")
-    .upsert(
-      { user_id: user.id, ...profile },
-      { onConflict: "user_id" }
-    );
-
-  if (error) throw new Error(error.message);
-  revalidatePath("/admin/dashboard/profile");
-  revalidatePath("/");
-}
-
-/**
- * Upload seller avatar to ImageKit and return the public URL.
- */
-export async function uploadSellerAvatar(formData: FormData): Promise<string> {
-  const supabase = await createSupabaseServerClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) throw new Error("Unauthorized");
-
-  const file = formData.get("file") as File | null;
-  if (!file || !(file instanceof File)) {
-    throw new Error("No file provided");
-  }
-
-  // Validate file size (max 4MB)
-  if (file.size > 4 * 1024 * 1024) {
-    throw new Error("Ảnh quá lớn. Tối đa 4MB.");
-  }
-
-  const url = await uploadFileToImageKit(file);
-  return url;
 }

@@ -1,11 +1,9 @@
 import { createSupabaseServerClient } from "@/lib/supabase-server";
-import { createSupabaseServiceClient } from "@/lib/supabase-service";
 import { checkIsSuperAdmin } from "@/lib/super-admin";
 import { redirect } from "next/navigation";
-import { UserCircle, ShieldCheck, Store } from "lucide-react";
+import { UserCircle, ShieldCheck } from "lucide-react";
 import { ProfileForm } from "./ProfileForm";
 import { ChangePasswordSection } from "./ChangePasswordSection";
-import { SellerProfileForm } from "./SellerProfileForm";
 
 export default async function ProfilePage() {
   const supabase = await createSupabaseServerClient();
@@ -17,21 +15,6 @@ export default async function ProfilePage() {
 
   const isSuperAdmin = checkIsSuperAdmin(user.email);
   const currentName = (user.user_metadata?.full_name as string) ?? "";
-
-  // Fetch current seller profile
-  const service = createSupabaseServiceClient();
-  const { data: settings } = await service
-    .from("admin_settings")
-    .select("display_name, avatar_url, zalo_link, facebook_link")
-    .eq("user_id", user.id)
-    .single();
-
-  const sellerProfile = {
-    display_name: (settings?.display_name as string) ?? "",
-    avatar_url: (settings?.avatar_url as string) ?? "",
-    zalo_link: (settings?.zalo_link as string) ?? "",
-    facebook_link: (settings?.facebook_link as string) ?? "",
-  };
 
   return (
     <div className="mx-auto max-w-lg">
@@ -71,26 +54,6 @@ export default async function ProfilePage() {
         </div>
         <div className="p-6">
           <ProfileForm currentName={currentName} email={user.email ?? ""} />
-        </div>
-      </div>
-
-      {/* Seller Profile */}
-      <div className="mt-6 overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm">
-        <div className="border-b border-slate-100 dark:border-slate-800 bg-emerald-50 dark:bg-emerald-500/5 px-6 py-4">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-100 dark:bg-emerald-500/20">
-              <Store className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
-            </div>
-            <div>
-              <h2 className="font-semibold text-slate-900 dark:text-slate-100">Hồ Sơ Người Bán</h2>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
-                Thông tin này sẽ hiển thị cho người mua trên trang chi tiết tài khoản bạn đăng bán.
-              </p>
-            </div>
-          </div>
-        </div>
-        <div className="p-6">
-          <SellerProfileForm current={sellerProfile} />
         </div>
       </div>
 

@@ -174,7 +174,17 @@ export async function updateAdminProfile(adminId: string, name: string) {
     user_metadata: { full_name: name },
   });
   if (error) throw new Error(error.message);
+
+  // Sync display_name in admin_settings so public views use the same name
+  await service
+    .from("admin_settings")
+    .upsert(
+      { user_id: adminId, display_name: name },
+      { onConflict: "user_id" }
+    );
+
   revalidatePath("/admin/dashboard/super/admins");
+  revalidatePath("/");
 }
 
 export async function deleteAdmin(adminId: string) {
