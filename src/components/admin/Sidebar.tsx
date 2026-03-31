@@ -86,9 +86,13 @@ export function Sidebar({ open, onClose, isSuperAdmin = false, adminName = "", a
         {/* Logo + close button */}
         <div className="flex h-14 shrink-0 items-center justify-between border-b border-slate-200 px-6 dark:border-slate-700">
           <Link href="/admin/dashboard" className="flex items-center gap-2.5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-600">
-              <Gamepad2 className="h-4 w-4 text-white" />
-            </div>
+            <Image
+              src="/avatar-owner.jpeg"
+              alt="THC eFootball Shop"
+              width={32}
+              height={32}
+              className="h-8 w-8 rounded-lg object-cover"
+            />
             <span className="text-sm font-bold text-slate-900 dark:text-slate-100">
               Quản Trị <span className="text-indigo-600 dark:text-indigo-400">eFootball</span>
             </span>

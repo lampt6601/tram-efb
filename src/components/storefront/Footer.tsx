@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { Gamepad2 } from "lucide-react";
 import Image from "next/image";
 import zaloIcon from "@/assets/icons/zalo.png";
 export function Footer() {
@@ -9,7 +8,13 @@ export function Footer() {
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
           <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
             <div className="flex items-center gap-2 text-slate-500">
-              <Gamepad2 className="h-6 w-6 text-indigo-600" />
+              <Image
+                src="/avatar-owner.jpeg"
+                alt="THC eFootball Shop"
+                width={24}
+                height={24}
+                className="h-6 w-6 rounded-md object-cover"
+              />
               <span className="text-base font-bold text-slate-900 dark:text-slate-100">
                 THC eFootball Shop
               </span>

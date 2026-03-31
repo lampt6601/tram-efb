@@ -3,7 +3,8 @@
 import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
-import { Gamepad2, Lock, Mail } from "lucide-react";
+import Image from "next/image";
+import { Lock, Mail } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -63,9 +64,13 @@ function AdminLoginForm() {
     <div className="flex min-h-screen items-center justify-center bg-linear-to-br from-slate-900 via-indigo-950 to-slate-900 px-4">
       <div className="w-full max-w-md">
         <div className="mb-8 text-center">
-          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-600 shadow-lg shadow-indigo-600/30">
-            <Gamepad2 className="h-7 w-7 text-white" />
-          </div>
+          <Image
+            src="/avatar-owner.jpeg"
+            alt="THC eFootball Shop"
+            width={56}
+            height={56}
+            className="mx-auto mb-4 h-14 w-14 rounded-2xl object-cover shadow-lg shadow-indigo-600/30"
+          />
           <h1 className="text-2xl font-bold text-white">Đăng Nhập Quản Trị</h1>
           <p className="mt-1 text-sm text-slate-400">
             Đăng nhập để quản lý cửa hàng của bạn

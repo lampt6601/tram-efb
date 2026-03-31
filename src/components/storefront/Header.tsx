@@ -1,6 +1,5 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Gamepad2 } from "lucide-react";
 import zaloIcon from "@/assets/icons/zalo.png";
 import { ThemeToggle } from "./ThemeToggle";
 
@@ -9,9 +8,13 @@ export function Header() {
     <header className="sticky top-0 z-50 border-b border-white/10 bg-slate-900/80 backdrop-blur-xl">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link href="/" className="flex items-center gap-2.5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-600">
-            <Gamepad2 className="h-5 w-5 text-white" />
-          </div>
+          <Image
+            src="/avatar-owner.jpeg"
+            alt="THC eFootball Shop"
+            width={36}
+            height={36}
+            className="h-9 w-9 rounded-lg object-cover"
+          />
           <h1 className="text-lg font-bold text-white">
             <span className="text-indigo-400">THC</span> eFootball Shop
           </h1>
