@@ -15,6 +15,7 @@ import { RecruitAdminSection } from "@/components/storefront/RecruitAdminSection
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import type { PublicAccount } from "@/types/database";
+import { FiltersSkeleton } from "@/components/storefront/AccountCardSkeleton";
 
 export const revalidate = 60; // 1 minute — balances freshness with bandwidth
 
@@ -184,7 +185,7 @@ export default async function HomePage({
           </ScrollReveal>
 
           <ScrollReveal delay={120} className="mb-5 sm:mb-8">
-            <Suspense fallback={null}>
+            <Suspense fallback={<FiltersSkeleton />}>
               <AccountFilters totalCount={allItems.length} serverRegions={serverRegions} />
             </Suspense>
           </ScrollReveal>

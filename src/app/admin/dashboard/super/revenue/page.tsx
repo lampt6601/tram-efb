@@ -16,6 +16,14 @@ import {
 } from "lucide-react";
 import { RevenueTrendChart } from "@/components/admin/RevenueTrendChart";
 import type { Account } from "@/types/database";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 /** Start of current day (00:00 UTC) as ISO string */
 function getStartOfDayISO(): string {
@@ -302,30 +310,30 @@ export default async function SuperRevenuePage({
       {/* ── Per-admin section ── */}
       <AdminRevenueFilter admins={adminOptions} />
 
-      <div className="mt-4 overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm">
-        <table className="min-w-full text-left text-sm">
-          <thead className="border-b bg-slate-50 dark:bg-slate-800 text-xs font-semibold uppercase text-slate-500 dark:text-slate-400">
-            <tr>
-              <th className="px-4 py-3">Admin</th>
-              <th className="hidden px-4 py-3 text-center sm:table-cell">Đã Thêm</th>
-              <th className="hidden px-4 py-3 text-center sm:table-cell">Sẵn Sàng</th>
-              <th className="hidden px-4 py-3 text-center md:table-cell">Đã Bán{periodLabel}</th>
-              <th className="hidden px-4 py-3 text-right lg:table-cell">Doanh Thu{periodLabel}</th>
-              <th className="hidden px-4 py-3 text-right lg:table-cell">Chi Phí{periodLabel}</th>
-              <th className="px-4 py-3 text-right">Lợi Nhuận{periodLabel}</th>
-            </tr>
-          </thead>
-          <tbody>
+      <div className="mt-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm">
+        <Table>
+          <TableHeader className="bg-slate-50 dark:bg-slate-800 text-xs font-semibold uppercase text-slate-500 dark:text-slate-400">
+            <TableRow>
+              <TableHead className="px-4 py-3">Admin</TableHead>
+              <TableHead className="hidden px-4 py-3 text-center sm:table-cell">Đã Thêm</TableHead>
+              <TableHead className="hidden px-4 py-3 text-center sm:table-cell">Sẵn Sàng</TableHead>
+              <TableHead className="hidden px-4 py-3 text-center md:table-cell">Đã Bán{periodLabel}</TableHead>
+              <TableHead className="hidden px-4 py-3 text-right lg:table-cell">Doanh Thu{periodLabel}</TableHead>
+              <TableHead className="hidden px-4 py-3 text-right lg:table-cell">Chi Phí{periodLabel}</TableHead>
+              <TableHead className="px-4 py-3 text-right">Lợi Nhuận{periodLabel}</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
             {filteredAdminStats.length === 0 ? (
-              <tr>
-                <td colSpan={7} className="px-4 py-8 text-center text-slate-500 dark:text-slate-400">
+              <TableRow>
+                <TableCell colSpan={7} className="px-4 py-8 text-center text-slate-500 dark:text-slate-400">
                   Không có dữ liệu
-                </td>
-              </tr>
+                </TableCell>
+              </TableRow>
             ) : (
               filteredAdminStats.map((s) => (
-                <tr key={s.id} className="border-t last:border-b text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700">
-                  <td className="px-4 py-3">
+                <TableRow key={s.id} className="text-slate-700 dark:text-slate-200">
+                  <TableCell className="px-4 py-3">
                     <div className="flex items-center gap-2">
                       <div className="hidden h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-indigo-100 dark:bg-indigo-500/10 text-xs font-bold text-indigo-700 dark:text-indigo-400 sm:flex">
                         {(s.name || s.email)[0].toUpperCase()}
@@ -335,20 +343,20 @@ export default async function SuperRevenuePage({
                         <p className="truncate text-xs text-slate-400 dark:text-slate-500">{s.email}</p>
                       </div>
                     </div>
-                  </td>
-                  <td className="hidden px-4 py-3 text-center font-semibold text-indigo-600 dark:text-indigo-400 sm:table-cell">{s.added}</td>
-                  <td className="hidden px-4 py-3 text-center font-semibold text-amber-600 sm:table-cell">{s.available}</td>
-                  <td className="hidden px-4 py-3 text-center font-semibold text-emerald-600 md:table-cell">{s.sold}</td>
-                  <td className="hidden px-4 py-3 text-right text-slate-700 dark:text-slate-200 lg:table-cell">{formatCurrency(s.revenue)}</td>
-                  <td className="hidden px-4 py-3 text-right text-slate-700 dark:text-slate-200 lg:table-cell">{formatCurrency(s.cost)}</td>
-                  <td className={`px-4 py-3 text-right font-semibold ${s.profit >= 0 ? "text-emerald-600" : "text-red-500"}`}>
+                  </TableCell>
+                  <TableCell className="hidden px-4 py-3 text-center font-semibold text-indigo-600 dark:text-indigo-400 sm:table-cell">{s.added}</TableCell>
+                  <TableCell className="hidden px-4 py-3 text-center font-semibold text-amber-600 sm:table-cell">{s.available}</TableCell>
+                  <TableCell className="hidden px-4 py-3 text-center font-semibold text-emerald-600 md:table-cell">{s.sold}</TableCell>
+                  <TableCell className="hidden px-4 py-3 text-right text-slate-700 dark:text-slate-200 lg:table-cell">{formatCurrency(s.revenue)}</TableCell>
+                  <TableCell className="hidden px-4 py-3 text-right text-slate-700 dark:text-slate-200 lg:table-cell">{formatCurrency(s.cost)}</TableCell>
+                  <TableCell className={`px-4 py-3 text-right font-semibold ${s.profit >= 0 ? "text-emerald-600" : "text-red-500"}`}>
                     {formatCurrency(s.profit)}
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               ))
             )}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       </div>
 
       {/* ── Daily breakdown ── */}
@@ -356,41 +364,41 @@ export default async function SuperRevenuePage({
         <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
           Chi tiết doanh thu theo ngày{periodLabel}
         </h2>
-        <div className="mt-4 overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm">
-          <table className="min-w-full text-left text-sm">
-            <thead className="border-b bg-slate-50 dark:bg-slate-800 text-xs font-semibold uppercase text-slate-500 dark:text-slate-400">
-              <tr>
-                <th className="px-4 py-3">Ngày</th>
-                <th className="hidden px-4 py-3 text-center sm:table-cell">Đã Thêm</th>
-                <th className="hidden px-4 py-3 text-center sm:table-cell">Sẵn Sàng</th>
-                <th className="px-4 py-3 text-center">Đã Bán</th>
-                <th className="px-4 py-3 text-right">Lợi Nhuận</th>
-              </tr>
-            </thead>
-            <tbody>
+        <div className="mt-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm">
+          <Table>
+            <TableHeader className="bg-slate-50 dark:bg-slate-800 text-xs font-semibold uppercase text-slate-500 dark:text-slate-400">
+              <TableRow>
+                <TableHead className="px-4 py-3">Ngày</TableHead>
+                <TableHead className="hidden px-4 py-3 text-center sm:table-cell">Đã Thêm</TableHead>
+                <TableHead className="hidden px-4 py-3 text-center sm:table-cell">Sẵn Sàng</TableHead>
+                <TableHead className="px-4 py-3 text-center">Đã Bán</TableHead>
+                <TableHead className="px-4 py-3 text-right">Lợi Nhuận</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {displayStats.length === 0 ? (
-                <tr>
-                  <td colSpan={5} className="px-4 py-8 text-center text-slate-500 dark:text-slate-400">
+                <TableRow>
+                  <TableCell colSpan={5} className="px-4 py-8 text-center text-slate-500 dark:text-slate-400">
                     Không có dữ liệu trong khoảng thời gian này
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               ) : (
                 displayStats.map((stat) => (
-                  <tr key={stat.dateStr} className="border-t last:border-b text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700">
-                    <td className="px-4 py-3 font-medium text-slate-900 dark:text-slate-100">
+                  <TableRow key={stat.dateStr} className="text-slate-700 dark:text-slate-200">
+                    <TableCell className="px-4 py-3 font-medium text-slate-900 dark:text-slate-100">
                       {stat.dateStr.split("-").reverse().join("/")}
-                    </td>
-                    <td className="hidden px-4 py-3 text-center text-indigo-600 dark:text-indigo-400 font-semibold sm:table-cell">{stat.added}</td>
-                    <td className="hidden px-4 py-3 text-center text-amber-600 font-semibold sm:table-cell">{stat.available}</td>
-                    <td className="px-4 py-3 text-center text-emerald-600 font-semibold">{stat.sold}</td>
-                    <td className="px-4 py-3 text-right font-semibold text-slate-900 dark:text-slate-100">
+                    </TableCell>
+                    <TableCell className="hidden px-4 py-3 text-center text-indigo-600 dark:text-indigo-400 font-semibold sm:table-cell">{stat.added}</TableCell>
+                    <TableCell className="hidden px-4 py-3 text-center text-amber-600 font-semibold sm:table-cell">{stat.available}</TableCell>
+                    <TableCell className="px-4 py-3 text-center text-emerald-600 font-semibold">{stat.sold}</TableCell>
+                    <TableCell className="px-4 py-3 text-right font-semibold text-slate-900 dark:text-slate-100">
                       {formatCurrency(stat.profit)}
-                    </td>
-                  </tr>
+                    </TableCell>
+                  </TableRow>
                 ))
               )}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
         </div>
       </div>
     </div>

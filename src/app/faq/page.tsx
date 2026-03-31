@@ -1,6 +1,7 @@
 import { Header } from "@/components/storefront/Header";
 import { Footer } from "@/components/storefront/Footer";
 import { FAQAccordion } from "./FAQAccordion";
+import { Accordion } from "@/components/ui/accordion";
 
 const faqData = [
   {
@@ -87,16 +88,17 @@ export default function FAQPage() {
                 <h2 className="text-lg font-bold text-slate-900 mb-6 dark:text-slate-100">
                   {section.category}
                 </h2>
-                <div className="space-y-0 border border-slate-200 rounded-lg overflow-hidden dark:border-slate-700">
+                <Accordion multiple className="border border-slate-200 rounded-lg overflow-hidden dark:border-slate-700">
                   {section.questions.map((item, qIdx) => (
                     <FAQAccordion
                       key={`${idx}-${qIdx}`}
+                      value={`${idx}-${qIdx}`}
                       question={item.q}
                       answer={item.a}
                       isLast={qIdx === section.questions.length - 1}
                     />
                   ))}
-                </div>
+                </Accordion>
               </div>
             ))}
           </div>

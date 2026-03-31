@@ -1,13 +1,17 @@
 "use client";
 
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import { useCallback, useTransition, useState, useEffect, useRef } from "react";
-import { useDebounce } from "@/hooks/use-debounce";
+import { useCallback, useTransition, useState, useEffect } from "react";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-
-const SEARCH_DEBOUNCE_MS = 600;
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
 
 const STATUS_OPTIONS = [
   { value: "all", label: "Tất cả" },
@@ -20,42 +24,37 @@ export function RequestFilters({ totalCount }: { totalCount: number }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
-  const [isSearchFocused, setIsSearchFocused] = useState(false);
 
-  const search = searchParams.get("q") ?? "";
-  const status = searchParams.get("status") ?? "all";
+  const currentSearch = searchParams.get("q") ?? "";
+  const currentStatus = searchParams.get("status") ?? "all";
 
-  const [localSearch, setLocalSearch] = useState(search);
-  const debouncedSearch = useDebounce(localSearch, SEARCH_DEBOUNCE_MS);
+  const [localSearch, setLocalSearch] = useState(currentSearch);
+  const [localStatus, setLocalStatus] = useState(currentStatus);
 
-  const update = useCallback(
-    (key: string, value: string) => {
-      const params = new URLSearchParams(searchParams.toString());
-      if (value && value !== "all") params.set(key, value);
-      else params.delete(key);
-      startTransition(() => {
-        router.replace(`${pathname}?${params.toString()}`, { scroll: false });
-      });
-    },
-    [router, pathname, searchParams],
-  );
+  useEffect(() => { setLocalSearch(currentSearch); }, [currentSearch]);
+  useEffect(() => { setLocalStatus(currentStatus); }, [currentStatus]);
 
-  const lastDebounced = useRef(debouncedSearch);
-  useEffect(() => {
-    if (debouncedSearch !== lastDebounced.current) {
-      lastDebounced.current = debouncedSearch;
-      if (debouncedSearch !== search) update("q", debouncedSearch);
-    }
-  }, [debouncedSearch, search, update]);
+  const applyFilters = useCallback(() => {
+    const params = new URLSearchParams();
+    if (localSearch) params.set("q", localSearch);
+    if (localStatus !== "all") params.set("status", localStatus);
 
-  useEffect(() => {
-    if (!isSearchFocused) setLocalSearch(search);
-  }, [search, isSearchFocused]);
+    const qs = params.toString();
+    startTransition(() => {
+      router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
+    });
+  }, [router, pathname, localSearch, localStatus]);
 
-  const hasActiveFilters = search !== "" || status !== "all";
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") applyFilters();
+  };
+
+  const hasActiveFilters = currentSearch !== "" || currentStatus !== "all";
+  const hasUnsavedChanges = localSearch !== currentSearch || localStatus !== currentStatus;
 
   const clearAll = () => {
     setLocalSearch("");
+    setLocalStatus("all");
     startTransition(() => {
       router.replace(pathname, { scroll: false });
     });
@@ -74,27 +73,38 @@ export function RequestFilters({ totalCount }: { totalCount: number }) {
             placeholder="Tìm theo chi tiết, người yêu cầu..."
             value={localSearch}
             onChange={(e) => setLocalSearch(e.target.value)}
-            onFocus={() => setIsSearchFocused(true)}
-            onBlur={() => setIsSearchFocused(false)}
+            onKeyDown={handleKeyDown}
             className="h-10 w-full rounded-xl border-slate-200 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 pl-10 pr-4 text-sm text-slate-700 shadow-sm transition-all focus-visible:border-indigo-400 focus-visible:ring-4 focus-visible:ring-indigo-400/20"
           />
         </div>
 
-        {/* Status + Clear + Count */}
+        {/* Status + Apply + Clear + Count */}
         <div className="flex items-center gap-2 w-full md:w-auto">
           <div className="flex flex-1 md:flex-none items-center gap-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-2.5 shadow-sm">
-            <select
-              value={status}
-              onChange={(e) => update("status", e.target.value)}
-              className="h-9 w-full bg-transparent text-sm text-slate-700 dark:text-slate-200 outline-none cursor-pointer"
-            >
-              {STATUS_OPTIONS.map((o) => (
-                <option key={o.value} value={o.value}>
-                  {o.label}
-                </option>
-              ))}
-            </select>
+            <Select value={localStatus} onValueChange={(val) => { if (val !== null) setLocalStatus(val) }}>
+              <SelectTrigger className="h-9 w-full border-0 bg-transparent text-sm text-slate-700 dark:text-slate-200 px-0 shadow-none">
+                <SelectValue>{STATUS_OPTIONS.find((o) => o.value === localStatus)?.label}</SelectValue>
+              </SelectTrigger>
+              <SelectContent>
+                {STATUS_OPTIONS.map((o) => (
+                  <SelectItem key={o.value} value={o.value}>
+                    {o.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
+
+          {/* Apply */}
+          <Button
+            size="sm"
+            onClick={applyFilters}
+            disabled={!hasUnsavedChanges}
+            className="h-9 shrink-0 rounded-xl bg-indigo-600 px-4 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-40 shadow-sm"
+          >
+            <Search className="mr-1 h-3.5 w-3.5" />
+            Lọc
+          </Button>
 
           {hasActiveFilters && (
             <Button

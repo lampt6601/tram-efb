@@ -1,8 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import { useCallback, useTransition, useState, useEffect, useRef } from "react";
-import { useDebounce } from "@/hooks/use-debounce";
+import { useCallback, useTransition, useState, useEffect } from "react";
 import {
   SlidersHorizontal,
   Search,
@@ -17,8 +16,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { PriceInput } from "@/components/ui/price-input";
-
-const SEARCH_DEBOUNCE_MS = 600;
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
 
 const SORT_OPTIONS = [
   { value: "newest", label: "Mới nhất" },
@@ -58,153 +62,97 @@ export function AccountFilters({
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
-  const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [showAdvanced, setShowAdvanced] = useState(false);
 
-  const minPrice = searchParams.get("minPrice") ?? "";
-  const maxPrice = searchParams.get("maxPrice") ?? "";
-  const search = searchParams.get("q") ?? "";
-  const cloneOnly = searchParams.get("clone") === "1";
-  const sort = searchParams.get("sort") ?? "newest";
-  const server = searchParams.get("server") ?? "";
-  const minStrength = searchParams.get("minStrength") ?? "";
-  const minGp = searchParams.get("minGp") ?? "";
+  // Read current URL params
+  const currentSearch = searchParams.get("q") ?? "";
+  const currentMinPrice = searchParams.get("minPrice") ?? "";
+  const currentMaxPrice = searchParams.get("maxPrice") ?? "";
+  const currentSort = searchParams.get("sort") ?? "newest";
+  const currentClone = searchParams.get("clone") === "1";
+  const currentServer = searchParams.get("server") ?? "";
+  const currentMinStrength = searchParams.get("minStrength") ?? "";
+  const currentMinGp = searchParams.get("minGp") ?? "";
 
-  const [localSearch, setLocalSearch] = useState(search);
-  const [localMinPrice, setLocalMinPrice] = useState(minPrice);
-  const [localMaxPrice, setLocalMaxPrice] = useState(maxPrice);
+  // Local state for all inputs
+  const [localSearch, setLocalSearch] = useState(currentSearch);
+  const [localMinPrice, setLocalMinPrice] = useState(currentMinPrice);
+  const [localMaxPrice, setLocalMaxPrice] = useState(currentMaxPrice);
+  const [localSort, setLocalSort] = useState(currentSort);
+  const [localClone, setLocalClone] = useState(currentClone);
+  const [localServer, setLocalServer] = useState(currentServer);
+  const [localMinStrength, setLocalMinStrength] = useState(currentMinStrength);
+  const [localMinGp, setLocalMinGp] = useState(currentMinGp);
 
-  const debouncedSearch = useDebounce(localSearch, SEARCH_DEBOUNCE_MS);
-  const debouncedMinPrice = useDebounce(localMinPrice, 2500);
-  const debouncedMaxPrice = useDebounce(localMaxPrice, 2500);
-
-  // Derive dynamic server list from props (fallback to static list)
+  // Derive dynamic server list
   const dynamicServers = serverRegions && serverRegions.length > 0
     ? [{ value: "", label: "Tất cả server" }, ...serverRegions.map((s) => ({ value: s, label: s }))]
     : SERVER_REGIONS;
 
   // Auto-expand advanced filters if any advanced param is active
   useEffect(() => {
-    if (server || minStrength || minGp) setShowAdvanced(true);
-  }, [server, minStrength, minGp]);
+    if (currentServer || currentMinStrength || currentMinGp) setShowAdvanced(true);
+  }, [currentServer, currentMinStrength, currentMinGp]);
 
-  const update = useCallback(
-    (key: string, value: string) => {
-      const params = new URLSearchParams(searchParams.toString());
-      if (value) {
-        params.set(key, value);
-      } else {
-        params.delete(key);
-      }
-      startTransition(() => {
-        router.replace(`${pathname}?${params.toString()}`, { scroll: false });
-      });
-    },
-    [router, pathname, searchParams],
-  );
+  // Sync local state when URL params change (e.g. back/forward navigation)
+  useEffect(() => { setLocalSearch(currentSearch); }, [currentSearch]);
+  useEffect(() => { setLocalMinPrice(currentMinPrice); }, [currentMinPrice]);
+  useEffect(() => { setLocalMaxPrice(currentMaxPrice); }, [currentMaxPrice]);
+  useEffect(() => { setLocalSort(currentSort); }, [currentSort]);
+  useEffect(() => { setLocalClone(currentClone); }, [currentClone]);
+  useEffect(() => { setLocalServer(currentServer); }, [currentServer]);
+  useEffect(() => { setLocalMinStrength(currentMinStrength); }, [currentMinStrength]);
+  useEffect(() => { setLocalMinGp(currentMinGp); }, [currentMinGp]);
 
-  const updateMultiple = useCallback(
-    (updates: Record<string, string>) => {
-      const params = new URLSearchParams(searchParams.toString());
-      for (const [key, value] of Object.entries(updates)) {
-        if (value) params.set(key, value);
-        else params.delete(key);
-      }
-      startTransition(() => {
-        router.replace(`${pathname}?${params.toString()}`, { scroll: false });
-      });
-    },
-    [router, pathname, searchParams],
-  );
+  // Apply all filters at once
+  const applyFilters = useCallback(() => {
+    const params = new URLSearchParams();
+    if (localSearch) params.set("q", localSearch);
+    if (localMinPrice) params.set("minPrice", localMinPrice);
+    if (localMaxPrice) params.set("maxPrice", localMaxPrice);
+    if (localSort !== "newest") params.set("sort", localSort);
+    if (localClone) params.set("clone", "1");
+    if (localServer) params.set("server", localServer);
+    if (localMinStrength) params.set("minStrength", localMinStrength);
+    if (localMinGp) params.set("minGp", localMinGp);
 
-  const updatePrices = useCallback(
-    (min: string, max: string) => {
-      const params = new URLSearchParams(searchParams.toString());
-      if (min) params.set("minPrice", min);
-      else params.delete("minPrice");
-
-      if (max) params.set("maxPrice", max);
-      else params.delete("maxPrice");
-
-      startTransition(() => {
-        router.replace(`${pathname}?${params.toString()}`, { scroll: false });
-      });
-    },
-    [router, pathname, searchParams],
-  );
-
-  const toggleClone = () => {
-    const params = new URLSearchParams(searchParams.toString());
-    if (cloneOnly) {
-      params.delete("clone");
-    } else {
-      params.set("clone", "1");
-    }
+    const qs = params.toString();
     startTransition(() => {
-      router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+      router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
     });
+  }, [router, pathname, localSearch, localMinPrice, localMaxPrice, localSort, localClone, localServer, localMinStrength, localMinGp]);
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") applyFilters();
   };
-
-  const lastDebouncedSearch = useRef(debouncedSearch);
-  const lastDebouncedPrices = useRef({
-    min: debouncedMinPrice,
-    max: debouncedMaxPrice,
-  });
-
-  useEffect(() => {
-    if (debouncedSearch !== lastDebouncedSearch.current) {
-      lastDebouncedSearch.current = debouncedSearch;
-      if (debouncedSearch !== search) update("q", debouncedSearch);
-    }
-  }, [debouncedSearch, search, update]);
-
-  useEffect(() => {
-    const hasChanged =
-      debouncedMinPrice !== lastDebouncedPrices.current.min ||
-      debouncedMaxPrice !== lastDebouncedPrices.current.max;
-
-    if (hasChanged) {
-      lastDebouncedPrices.current = {
-        min: debouncedMinPrice,
-        max: debouncedMaxPrice,
-      };
-      if (debouncedMinPrice !== minPrice || debouncedMaxPrice !== maxPrice) {
-        updatePrices(debouncedMinPrice, debouncedMaxPrice);
-      }
-    }
-  }, [debouncedMinPrice, debouncedMaxPrice, minPrice, maxPrice, updatePrices]);
-
-  useEffect(() => {
-    if (!isSearchFocused) setLocalSearch(search);
-  }, [search, isSearchFocused]);
-
-  useEffect(() => {
-    setLocalMinPrice(minPrice);
-  }, [minPrice]);
-  useEffect(() => {
-    setLocalMaxPrice(maxPrice);
-  }, [maxPrice]);
-
-  const hasActiveFilters =
-    minPrice !== "" ||
-    maxPrice !== "" ||
-    search !== "" ||
-    cloneOnly ||
-    sort !== "newest" ||
-    server !== "" ||
-    minStrength !== "" ||
-    minGp !== "";
-
-  const advancedFilterCount = [server, minStrength, minGp].filter(Boolean).length;
 
   const clearAll = () => {
     setLocalSearch("");
     setLocalMinPrice("");
     setLocalMaxPrice("");
+    setLocalSort("newest");
+    setLocalClone(false);
+    setLocalServer("");
+    setLocalMinStrength("");
+    setLocalMinGp("");
     startTransition(() => {
       router.replace(pathname, { scroll: false });
     });
   };
+
+  const hasActiveFilters =
+    currentSearch !== "" || currentMinPrice !== "" || currentMaxPrice !== "" ||
+    currentSort !== "newest" || currentClone || currentServer !== "" ||
+    currentMinStrength !== "" || currentMinGp !== "";
+
+  const advancedFilterCount = [currentServer, currentMinStrength, currentMinGp].filter(Boolean).length;
+
+  // Check if local state differs from URL (unsaved changes)
+  const hasUnsavedChanges =
+    localSearch !== currentSearch || localMinPrice !== currentMinPrice ||
+    localMaxPrice !== currentMaxPrice || localSort !== currentSort ||
+    localClone !== currentClone || localServer !== currentServer ||
+    localMinStrength !== currentMinStrength || localMinGp !== currentMinGp;
 
   return (
     <div
@@ -219,37 +167,37 @@ export function AccountFilters({
             placeholder="Tìm kiếm tài khoản..."
             value={localSearch}
             onChange={(e) => setLocalSearch(e.target.value)}
-            onFocus={() => setIsSearchFocused(true)}
-            onBlur={() => setIsSearchFocused(false)}
+            onKeyDown={handleKeyDown}
             className="h-10 w-full rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-800 pl-10 pr-4 text-sm text-slate-700 dark:text-slate-200 shadow-sm transition-all focus-visible:border-indigo-400 focus-visible:ring-4 focus-visible:ring-indigo-400/20"
           />
         </div>
 
-        {/* Mobile: Sort + Clone + Advanced + Clear in one row */}
+        {/* Sort + Clone + Advanced + Apply + Clear */}
         <div className="flex items-center gap-2 w-full md:w-auto">
           {/* Sort */}
-          <div className="flex flex-1 md:flex-none items-center gap-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-2.5 shadow-sm">
-            <ArrowUpDown className="h-3.5 w-3.5 text-slate-400" />
-            <select
-              value={sort}
-              onChange={(e) => update("sort", e.target.value)}
-              className="h-9 w-full bg-transparent text-sm text-slate-700 dark:text-slate-200 outline-none cursor-pointer"
-            >
-              {SORT_OPTIONS.map((o) => (
-                <option key={o.value} value={o.value}>
-                  {o.label}
-                </option>
-              ))}
-            </select>
+          <div className="flex flex-1 md:flex-none items-center">
+            <ArrowUpDown className="absolute ml-2.5 h-3.5 w-3.5 text-slate-400 pointer-events-none z-10" />
+            <Select value={localSort} onValueChange={(val) => { if (val !== null) setLocalSort(val) }}>
+              <SelectTrigger className="h-9 rounded-xl border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm text-slate-700 dark:text-slate-200 pl-10 pr-2.5 shadow-sm">
+                <SelectValue>{SORT_OPTIONS.find((o) => o.value === localSort)?.label}</SelectValue>
+              </SelectTrigger>
+              <SelectContent>
+                {SORT_OPTIONS.map((o) => (
+                  <SelectItem key={o.value} value={o.value}>
+                    {o.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           {/* Clone */}
           <Button
             variant="outline"
             size="sm"
-            onClick={toggleClone}
+            onClick={() => setLocalClone(!localClone)}
             className={`h-9 shrink-0 rounded-xl px-3 text-sm font-medium transition-all shadow-sm ${
-              cloneOnly
+              localClone
                 ? "border-violet-400 bg-violet-500 text-white hover:bg-violet-600 hover:border-violet-500"
                 : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-slate-100"
             }`}
@@ -292,7 +240,7 @@ export function AccountFilters({
           )}
         </div>
 
-        {/* Mobile: Price range + count in one row */}
+        {/* Price range + Apply + count */}
         <div className="flex items-center gap-2 w-full md:w-auto">
           <div className="flex items-center gap-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-1 pl-2.5 shadow-sm">
             <SlidersHorizontal className="h-3.5 w-3.5 shrink-0 text-slate-400" />
@@ -300,16 +248,27 @@ export function AccountFilters({
               placeholder="Giá từ"
               value={localMinPrice}
               onChange={setLocalMinPrice}
-              className="h-7 w-[4.5rem] md:w-24 border-0 bg-transparent px-1.5 text-sm text-slate-700 placeholder:text-slate-400 focus-visible:ring-0 shadow-none"
+              className="h-7 w-[4.5rem] md:w-24 border-0 bg-transparent px-1.5 text-sm text-slate-700 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus-visible:ring-0 shadow-none"
             />
-            <span className="text-xs text-slate-300">—</span>
+            <span className="text-xs text-slate-300 dark:text-slate-600">—</span>
             <PriceInput
               placeholder="đến"
               value={localMaxPrice}
               onChange={setLocalMaxPrice}
-              className="h-7 w-[4.5rem] md:w-24 border-0 bg-transparent px-1.5 text-sm text-slate-700 placeholder:text-slate-400 focus-visible:ring-0 shadow-none"
+              className="h-7 w-[4.5rem] md:w-24 border-0 bg-transparent px-1.5 text-sm text-slate-700 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus-visible:ring-0 shadow-none"
             />
           </div>
+
+          {/* Apply button */}
+          <Button
+            size="sm"
+            onClick={applyFilters}
+            disabled={!hasUnsavedChanges}
+            className="h-9 shrink-0 rounded-xl bg-indigo-600 px-4 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-40 shadow-sm"
+          >
+            <Search className="mr-1 h-3.5 w-3.5" />
+            Tìm
+          </Button>
 
           <span className="ml-auto shrink-0 text-sm font-medium text-slate-500 dark:text-slate-400">
             {isPending ? "Đang lọc..." : `${totalCount} tài khoản`}
@@ -326,19 +285,21 @@ export function AccountFilters({
               <label className="flex items-center gap-1.5 text-xs font-medium text-slate-500 dark:text-slate-400">
                 <Globe className="h-3 w-3" /> Server
               </label>
-              <div className="flex items-center rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-2.5">
-                <select
-                  value={server}
-                  onChange={(e) => update("server", e.target.value)}
-                  className="h-8 w-full bg-transparent text-sm text-slate-700 dark:text-slate-200 outline-none cursor-pointer"
-                >
+              <Select
+                value={localServer || "__all__"}
+                onValueChange={(val) => { if (val !== null) setLocalServer(val === "__all__" ? "" : val) }}
+              >
+                <SelectTrigger className="h-8 rounded-lg border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm text-slate-700 dark:text-slate-200 px-2.5">
+                  <SelectValue>{dynamicServers.find((s) => (s.value || "__all__") === (localServer || "__all__"))?.label}</SelectValue>
+                </SelectTrigger>
+                <SelectContent>
                   {dynamicServers.map((s) => (
-                    <option key={s.value} value={s.value}>
+                    <SelectItem key={s.value || "__all__"} value={s.value || "__all__"}>
                       {s.label}
-                    </option>
+                    </SelectItem>
                   ))}
-                </select>
-              </div>
+                </SelectContent>
+              </Select>
             </div>
 
             {/* Team Strength */}
@@ -346,19 +307,21 @@ export function AccountFilters({
               <label className="flex items-center gap-1.5 text-xs font-medium text-slate-500 dark:text-slate-400">
                 <Shield className="h-3 w-3" /> Lực chiến tối thiểu
               </label>
-              <div className="flex items-center rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-2.5">
-                <select
-                  value={minStrength}
-                  onChange={(e) => update("minStrength", e.target.value)}
-                  className="h-8 w-full bg-transparent text-sm text-slate-700 dark:text-slate-200 outline-none cursor-pointer"
-                >
+              <Select
+                value={localMinStrength || "__all__"}
+                onValueChange={(val) => { if (val !== null) setLocalMinStrength(val === "__all__" ? "" : val) }}
+              >
+                <SelectTrigger className="h-8 rounded-lg border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm text-slate-700 dark:text-slate-200 px-2.5">
+                  <SelectValue>{TEAM_STRENGTH_PRESETS.find((s) => (s.value || "__all__") === (localMinStrength || "__all__"))?.label}</SelectValue>
+                </SelectTrigger>
+                <SelectContent>
                   {TEAM_STRENGTH_PRESETS.map((s) => (
-                    <option key={s.value} value={s.value}>
+                    <SelectItem key={s.value || "__all__"} value={s.value || "__all__"}>
                       {s.label}
-                    </option>
+                    </SelectItem>
                   ))}
-                </select>
-              </div>
+                </SelectContent>
+              </Select>
             </div>
 
             {/* Min GP */}
@@ -369,9 +332,10 @@ export function AccountFilters({
               <Input
                 type="number"
                 placeholder="VD: 50000"
-                value={minGp}
+                value={localMinGp}
                 min={0}
-                onChange={(e) => update("minGp", e.target.value)}
+                onChange={(e) => setLocalMinGp(e.target.value)}
+                onKeyDown={handleKeyDown}
                 className="h-8 rounded-lg border-slate-200 dark:border-slate-700 dark:bg-slate-800 text-sm text-slate-700 dark:text-slate-200"
               />
             </div>
@@ -381,9 +345,11 @@ export function AccountFilters({
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() =>
-                  updateMultiple({ server: "", minStrength: "", minGp: "" })
-                }
+                onClick={() => {
+                  setLocalServer("");
+                  setLocalMinStrength("");
+                  setLocalMinGp("");
+                }}
                 className="h-8 shrink-0 gap-1 px-2.5 text-xs text-slate-500 hover:text-slate-700"
               >
                 <X className="h-3 w-3" />

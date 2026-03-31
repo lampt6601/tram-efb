@@ -1,14 +1,18 @@
 "use client";
 
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import { useCallback, useTransition, useState, useEffect, useRef } from "react";
-import { useDebounce } from "@/hooks/use-debounce";
+import { useCallback, useTransition, useState, useEffect } from "react";
 import { ArrowUpDown, Search, SlidersHorizontal } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { PriceInput } from "@/components/ui/price-input";
-
-const SEARCH_DEBOUNCE_MS = 600;
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
 
 const SORT_OPTIONS = [
   { value: "newest", label: "Mới nhất" },
@@ -38,77 +42,58 @@ export function AdminAccountFilters({ totalCount }: AdminAccountFiltersProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
-  const [isSearchFocused, setIsSearchFocused] = useState(false);
 
-  const sort = searchParams.get("sort") ?? "newest";
-  const status = searchParams.get("status") ?? "Available";
-  const search = searchParams.get("q") ?? "";
-  const minPrice = searchParams.get("minPrice") ?? "";
-  const maxPrice = searchParams.get("maxPrice") ?? "";
+  const currentSort = searchParams.get("sort") ?? "newest";
+  const currentStatus = searchParams.get("status") ?? "Available";
+  const currentSearch = searchParams.get("q") ?? "";
+  const currentMinPrice = searchParams.get("minPrice") ?? "";
+  const currentMaxPrice = searchParams.get("maxPrice") ?? "";
 
-  const [localSearch, setLocalSearch] = useState(search);
-  const [localMinPrice, setLocalMinPrice] = useState(minPrice);
-  const [localMaxPrice, setLocalMaxPrice] = useState(maxPrice);
+  const [localSearch, setLocalSearch] = useState(currentSearch);
+  const [localMinPrice, setLocalMinPrice] = useState(currentMinPrice);
+  const [localMaxPrice, setLocalMaxPrice] = useState(currentMaxPrice);
+  const [localSort, setLocalSort] = useState(currentSort);
+  const [localStatus, setLocalStatus] = useState(currentStatus);
 
-  const debouncedSearch = useDebounce(localSearch, SEARCH_DEBOUNCE_MS);
-  const debouncedMinPrice = useDebounce(localMinPrice, 600);
-  const debouncedMaxPrice = useDebounce(localMaxPrice, 600);
+  // Sync local state when URL params change
+  useEffect(() => { setLocalSearch(currentSearch); }, [currentSearch]);
+  useEffect(() => { setLocalMinPrice(currentMinPrice); }, [currentMinPrice]);
+  useEffect(() => { setLocalMaxPrice(currentMaxPrice); }, [currentMaxPrice]);
+  useEffect(() => { setLocalSort(currentSort); }, [currentSort]);
+  useEffect(() => { setLocalStatus(currentStatus); }, [currentStatus]);
 
-  const update = useCallback(
-    (key: string, value: string) => {
-      const params = new URLSearchParams(searchParams.toString());
-      if (value) {
-        params.set(key, value);
-      } else {
-        params.delete(key);
-      }
-      startTransition(() => {
-        router.replace(`${pathname}?${params.toString()}`, { scroll: false });
-      });
-    },
-    [router, pathname, searchParams],
-  );
+  const applyFilters = useCallback(() => {
+    const params = new URLSearchParams();
+    if (localSearch) params.set("q", localSearch);
+    if (localMinPrice) params.set("minPrice", localMinPrice);
+    if (localMaxPrice) params.set("maxPrice", localMaxPrice);
+    if (localSort !== "newest") params.set("sort", localSort);
+    if (localStatus !== "Available") params.set("status", localStatus);
 
-  const lastDebouncedSearch = useRef(debouncedSearch);
-  const lastDebouncedMin = useRef(debouncedMinPrice);
-  const lastDebouncedMax = useRef(debouncedMaxPrice);
+    const qs = params.toString();
+    startTransition(() => {
+      router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
+    });
+  }, [router, pathname, localSearch, localMinPrice, localMaxPrice, localSort, localStatus]);
 
-  useEffect(() => {
-    if (debouncedSearch !== lastDebouncedSearch.current) {
-      lastDebouncedSearch.current = debouncedSearch;
-      if (debouncedSearch !== search) {
-        update("q", debouncedSearch);
-      }
-    }
-  }, [debouncedSearch, search, update]);
-
-  useEffect(() => {
-    if (debouncedMinPrice !== lastDebouncedMin.current) {
-      lastDebouncedMin.current = debouncedMinPrice;
-      if (debouncedMinPrice !== minPrice) update("minPrice", debouncedMinPrice);
-    }
-  }, [debouncedMinPrice, minPrice, update]);
-
-  useEffect(() => {
-    if (debouncedMaxPrice !== lastDebouncedMax.current) {
-      lastDebouncedMax.current = debouncedMaxPrice;
-      if (debouncedMaxPrice !== maxPrice) update("maxPrice", debouncedMaxPrice);
-    }
-  }, [debouncedMaxPrice, maxPrice, update]);
-
-  useEffect(() => {
-    if (!isSearchFocused) setLocalSearch(search);
-  }, [search, isSearchFocused]);
-  useEffect(() => { setLocalMinPrice(minPrice); }, [minPrice]);
-  useEffect(() => { setLocalMaxPrice(maxPrice); }, [maxPrice]);
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") applyFilters();
+  };
 
   const hasActiveFilters =
-    sort !== "newest" || status !== "Available" || search !== "" || minPrice !== "" || maxPrice !== "";
+    currentSort !== "newest" || currentStatus !== "Available" || currentSearch !== "" || currentMinPrice !== "" || currentMaxPrice !== "";
+
+  const hasUnsavedChanges =
+    localSearch !== currentSearch || localMinPrice !== currentMinPrice ||
+    localMaxPrice !== currentMaxPrice || localSort !== currentSort ||
+    localStatus !== currentStatus;
 
   const clearAll = () => {
     setLocalSearch("");
     setLocalMinPrice("");
     setLocalMaxPrice("");
+    setLocalSort("newest");
+    setLocalStatus("Available");
     startTransition(() => {
       router.replace(pathname, { scroll: false });
     });
@@ -127,43 +112,44 @@ export function AdminAccountFilters({ totalCount }: AdminAccountFiltersProps) {
             placeholder="Tìm theo tiêu đề..."
             value={localSearch}
             onChange={(e) => setLocalSearch(e.target.value)}
-            onFocus={() => setIsSearchFocused(true)}
-            onBlur={() => setIsSearchFocused(false)}
+            onKeyDown={handleKeyDown}
             className="h-10 w-full rounded-xl border-slate-200 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 pl-10 pr-4 text-sm text-slate-700 shadow-sm transition-all focus-visible:border-indigo-400 focus-visible:ring-4 focus-visible:ring-indigo-400/20"
           />
         </div>
 
-        {/* Status + Sort + Clear */}
+        {/* Status + Sort + Apply + Clear */}
         <div className="flex items-center gap-2 w-full md:w-auto">
           {/* Status */}
           <div className="flex flex-1 md:flex-none items-center gap-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-2.5 shadow-sm">
-            <select
-              value={status}
-              onChange={(e) => update("status", e.target.value)}
-              className="h-9 w-full bg-transparent text-sm text-slate-700 dark:text-slate-200 outline-none cursor-pointer"
-            >
-              {STATUS_OPTIONS.map((o) => (
-                <option key={o.value} value={o.value}>
-                  {o.label}
-                </option>
-              ))}
-            </select>
+            <Select value={localStatus} onValueChange={(val) => { if (val !== null) setLocalStatus(val) }}>
+              <SelectTrigger className="h-9 w-full border-0 bg-transparent text-sm text-slate-700 dark:text-slate-200 px-0 shadow-none">
+                <SelectValue>{STATUS_OPTIONS.find((o) => o.value === localStatus)?.label}</SelectValue>
+              </SelectTrigger>
+              <SelectContent>
+                {STATUS_OPTIONS.map((o) => (
+                  <SelectItem key={o.value} value={o.value}>
+                    {o.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           {/* Sort */}
           <div className="flex flex-1 md:flex-none items-center gap-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-2.5 shadow-sm">
             <ArrowUpDown className="h-3.5 w-3.5 text-slate-400 dark:text-slate-500" />
-            <select
-              value={sort}
-              onChange={(e) => update("sort", e.target.value)}
-              className="h-9 w-full bg-transparent text-sm text-slate-700 dark:text-slate-200 outline-none cursor-pointer"
-            >
-              {SORT_OPTIONS.map((o) => (
-                <option key={o.value} value={o.value}>
-                  {o.label}
-                </option>
-              ))}
-            </select>
+            <Select value={localSort} onValueChange={(val) => { if (val !== null) setLocalSort(val) }}>
+              <SelectTrigger className="h-9 w-full border-0 bg-transparent text-sm text-slate-700 dark:text-slate-200 px-0 shadow-none">
+                <SelectValue>{SORT_OPTIONS.find((o) => o.value === localSort)?.label}</SelectValue>
+              </SelectTrigger>
+              <SelectContent>
+                {SORT_OPTIONS.map((o) => (
+                  <SelectItem key={o.value} value={o.value}>
+                    {o.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           {/* Clear */}
@@ -179,7 +165,7 @@ export function AdminAccountFilters({ totalCount }: AdminAccountFiltersProps) {
           )}
         </div>
 
-        {/* Price range + count */}
+        {/* Price range + Apply + count */}
         <div className="flex items-center gap-2 w-full md:w-auto">
           <div className="flex items-center gap-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-1 pl-2.5 shadow-sm">
             <SlidersHorizontal className="h-3.5 w-3.5 shrink-0 text-slate-400 dark:text-slate-500" />
@@ -197,6 +183,17 @@ export function AdminAccountFilters({ totalCount }: AdminAccountFiltersProps) {
               className="h-7 w-[4.5rem] md:w-24 border-0 bg-transparent px-1.5 text-sm text-slate-700 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus-visible:ring-0 shadow-none"
             />
           </div>
+
+          {/* Apply button */}
+          <Button
+            size="sm"
+            onClick={applyFilters}
+            disabled={!hasUnsavedChanges}
+            className="h-9 shrink-0 rounded-xl bg-indigo-600 px-4 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-40 shadow-sm"
+          >
+            <Search className="mr-1 h-3.5 w-3.5" />
+            Lọc
+          </Button>
 
           <span className="ml-auto shrink-0 text-sm font-medium text-slate-500 dark:text-slate-400">
             {isPending ? "Đang lọc..." : `${totalCount} tài khoản`}

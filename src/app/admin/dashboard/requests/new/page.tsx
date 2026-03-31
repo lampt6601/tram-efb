@@ -5,8 +5,15 @@ import { useRouter } from "next/navigation";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
 
 const CONTACT_PLATFORMS = ["Zalo", "Facebook", "Zalo + Facebook", "Khác"];
 
@@ -27,6 +34,7 @@ export default function NewRequestPage() {
     register,
     handleSubmit,
     formState: { errors },
+    control,
   } = useForm<RequestFormValues>({
     defaultValues: {
       detail: "",
@@ -131,24 +139,37 @@ export default function NewRequestPage() {
             <label className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-200">
               Nền tảng liên hệ <span className="text-red-500">*</span>
             </label>
-            <select
-              {...register("contactPlatform", {
+            <Controller
+              name="contactPlatform"
+              control={control}
+              rules={{
                 required: "Vui lòng chọn nền tảng",
-              })}
-              aria-invalid={!!errors.contactPlatform}
-              className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm outline-none transition-colors focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 dark:bg-slate-800 dark:border-slate-600 dark:text-slate-100"
-            >
-              {CONTACT_PLATFORMS.map((p) => (
-                <option key={p} value={p}>
-                  {p}
-                </option>
-              ))}
-            </select>
-            {errors.contactPlatform && (
-              <p className="mt-1 text-xs text-red-600">
-                {errors.contactPlatform.message}
-              </p>
-            )}
+              }}
+              render={({ field }) => (
+                <>
+                  <Select value={field.value} onValueChange={(val) => { if (val !== null) field.onChange(val) }}>
+                    <SelectTrigger
+                      aria-invalid={!!errors.contactPlatform}
+                      className="mt-1.5"
+                    >
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {CONTACT_PLATFORMS.map((p) => (
+                        <SelectItem key={p} value={p}>
+                          {p}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {errors.contactPlatform && (
+                    <p className="mt-1 text-xs text-red-600">
+                      {errors.contactPlatform.message}
+                    </p>
+                  )}
+                </>
+              )}
+            />
           </div>
           <div className="flex gap-3 pt-2">
             <Button

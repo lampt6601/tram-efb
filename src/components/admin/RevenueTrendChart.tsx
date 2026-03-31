@@ -2,6 +2,12 @@
 
 import { useMemo } from "react";
 import { TrendingUp, BarChart3 } from "lucide-react";
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+  TooltipProvider,
+} from "@/components/ui/tooltip";
 
 interface RevenueDataPoint {
   date: string; // YYYY-MM-DD
@@ -78,42 +84,44 @@ export function RevenueTrendChart({ data, periodLabel }: RevenueTrendChartProps)
 
       {/* Chart */}
       <div className="overflow-x-auto">
-        <div className="flex items-end gap-[3px] h-32">
-          {bars.map((bar) => {
-            const soldHeight = (bar.sold / maxSold) * 100;
-            const profitHeight = (Math.abs(bar.profit) / maxProfit) * 100;
-            const label = bar.date.split("-").reverse().join("/").replace(/^0/, "").replace(/\/0/, "/");
+        <TooltipProvider>
+          <div className="flex items-end gap-[3px] h-32">
+            {bars.map((bar) => {
+              const soldHeight = (bar.sold / maxSold) * 100;
+              const profitHeight = (Math.abs(bar.profit) / maxProfit) * 100;
+              const label = bar.date.split("-").reverse().join("/").replace(/^0/, "").replace(/\/0/, "/");
 
-            return (
-              <div
-                key={bar.date}
-                className="group relative flex items-end gap-px flex-1 min-w-[8px] h-full"
-              >
-                {/* Tooltip */}
-                <div className="absolute -top-20 left-1/2 -translate-x-1/2 hidden group-hover:block z-10 whitespace-nowrap rounded-lg bg-slate-800 px-2.5 py-1.5 text-[10px] text-white shadow-lg dark:bg-slate-700">
-                  <p className="font-medium">{label}</p>
-                  <p>Bán: {bar.sold} acc</p>
-                  <p>
-                    LN:{" "}
-                    {new Intl.NumberFormat("vi-VN", {
-                      maximumFractionDigits: 0,
-                    }).format(bar.profit)}
-                    đ
-                  </p>
-                </div>
-
-                <div
-                  className="flex-1 rounded-t-sm bg-indigo-400 transition-all group-hover:bg-indigo-500"
-                  style={{ height: `${Math.max(soldHeight, 2)}%` }}
-                />
-                <div
-                  className={`flex-1 rounded-t-sm transition-all ${bar.profit >= 0 ? "bg-emerald-300 group-hover:bg-emerald-400" : "bg-red-300 group-hover:bg-red-400"}`}
-                  style={{ height: `${Math.max(profitHeight, 2)}%` }}
-                />
-              </div>
-            );
-          })}
-        </div>
+              return (
+                <Tooltip key={bar.date}>
+                  <TooltipTrigger
+                    render={<div />}
+                    className="group flex items-end gap-px flex-1 min-w-[8px] h-full cursor-default"
+                  >
+                    <div
+                      className="flex-1 rounded-t-sm bg-indigo-400 transition-all group-hover:bg-indigo-500"
+                      style={{ height: `${Math.max(soldHeight, 2)}%` }}
+                    />
+                    <div
+                      className={`flex-1 rounded-t-sm transition-all ${bar.profit >= 0 ? "bg-emerald-300 group-hover:bg-emerald-400" : "bg-red-300 group-hover:bg-red-400"}`}
+                      style={{ height: `${Math.max(profitHeight, 2)}%` }}
+                    />
+                  </TooltipTrigger>
+                  <TooltipContent className="text-[10px]">
+                    <p className="font-medium">{label}</p>
+                    <p>Bán: {bar.sold} acc</p>
+                    <p>
+                      LN:{" "}
+                      {new Intl.NumberFormat("vi-VN", {
+                        maximumFractionDigits: 0,
+                      }).format(bar.profit)}
+                      đ
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              );
+            })}
+          </div>
+        </TooltipProvider>
         {/* Date labels */}
         <div className="flex gap-[3px] mt-1">
           {bars.map((bar, i) => {

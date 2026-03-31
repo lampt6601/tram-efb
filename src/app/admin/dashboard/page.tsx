@@ -20,6 +20,14 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import type { Account, AccountRequest } from "@/types/database";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 /** Start of current week (Monday 00:00 UTC) as ISO string */
 function getStartOfWeekISO(): string {
@@ -279,17 +287,17 @@ export default async function DashboardPage({
             thể xem lại giá, mô tả hoặc bật ưu tiên để tăng khả năng bán.
           </p>
 
-          <div className="mt-4 overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
-            <table className="min-w-full text-left text-sm">
-              <thead className="border-b bg-slate-50 dark:bg-slate-800 text-xs font-semibold uppercase text-slate-500 dark:text-slate-400">
-                <tr>
-                  <th className="px-4 py-3">Tài khoản</th>
-                  <th className="px-4 py-3">Trạng thái</th>
-                  <th className="hidden px-4 py-3 sm:table-cell">Ngày đăng</th>
-                  <th className="px-4 py-3 text-right">Số ngày</th>
-                </tr>
-              </thead>
-              <tbody>
+          <div className="mt-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
+            <Table>
+              <TableHeader className="bg-slate-50 dark:bg-slate-800 text-xs font-semibold uppercase text-slate-500 dark:text-slate-400">
+                <TableRow>
+                  <TableHead className="px-4 py-3">Tài khoản</TableHead>
+                  <TableHead className="px-4 py-3">Trạng thái</TableHead>
+                  <TableHead className="hidden px-4 py-3 sm:table-cell">Ngày đăng</TableHead>
+                  <TableHead className="px-4 py-3 text-right">Số ngày</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
                 {staleAccounts.map((account) => {
                   const created = new Date(account.created_at);
                   const days =
@@ -298,11 +306,11 @@ export default async function DashboardPage({
                         (1000 * 60 * 60 * 24),
                     ) || 0;
                   return (
-                    <tr
+                    <TableRow
                       key={account.id}
-                      className="border-t last:border-b text-slate-700 dark:text-slate-200"
+                      className="text-slate-700 dark:text-slate-200"
                     >
-                      <td className="px-4 py-3">
+                      <TableCell className="px-4 py-3">
                         <Link
                           href={`/accounts/${account.id}`}
                           target="_blank"
@@ -311,21 +319,21 @@ export default async function DashboardPage({
                           <span className="truncate group-hover:underline">{account.title}</span>
                           <ExternalLink className="h-3.5 w-3.5 shrink-0 opacity-0 group-hover:opacity-60 transition-opacity" />
                         </Link>
-                      </td>
-                      <td className="px-4 py-3">
+                      </TableCell>
+                      <TableCell className="px-4 py-3">
                         <StatusBadge status={account.status} />
-                      </td>
-                      <td className="hidden px-4 py-3 text-slate-500 dark:text-slate-400 sm:table-cell">
+                      </TableCell>
+                      <TableCell className="hidden px-4 py-3 text-slate-500 dark:text-slate-400 sm:table-cell">
                         {created.toLocaleDateString("vi-VN")}
-                      </td>
-                      <td className="px-4 py-3 text-right text-slate-800 dark:text-slate-200">
+                      </TableCell>
+                      <TableCell className="px-4 py-3 text-right text-slate-800 dark:text-slate-200">
                         {days} ngày
-                      </td>
-                    </tr>
+                      </TableCell>
+                    </TableRow>
                   );
                 })}
-              </tbody>
-            </table>
+              </TableBody>
+            </Table>
           </div>
         </div>
       )}

@@ -27,6 +27,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { adminThumb } from "@/lib/image-utils";
@@ -611,15 +618,23 @@ export function AccountForm({ account, duplicating, availableEmails }: AccountFo
               <Label className="text-slate-700 dark:text-slate-300">
                 Trạng thái <span className="text-red-500">*</span>
               </Label>
-              <select
-                {...register("status")}
-                className={cn(selectClass, "mt-1.5")}
-              >
-                <option value="Available">Sẵn sàng</option>
-                <option value="Pending">Đang chờ</option>
-                <option value="Deposited">Đang cọc</option>
-                <option value="Sold">Đã bán</option>
-              </select>
+              <Controller
+                name="status"
+                control={control}
+                render={({ field }) => (
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger className="mt-1.5">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Available">Sẵn sàng</SelectItem>
+                      <SelectItem value="Pending">Đang chờ</SelectItem>
+                      <SelectItem value="Deposited">Đang cọc</SelectItem>
+                      <SelectItem value="Sold">Đã bán</SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
+              />
             </div>
 
             <div>
@@ -838,32 +853,58 @@ export function AccountForm({ account, duplicating, availableEmails }: AccountFo
                   <Label className="text-slate-700 dark:text-slate-300">
                     Email
                   </Label>
-                  <select
-                    {...register("emailId")}
-                    className={cn(selectClass, "mt-1.5")}
-                  >
-                    <option value="">Không có</option>
-                    {availableEmails.map((e) => (
-                      <option key={e.id} value={e.id}>
-                        {e.email_address}
-                      </option>
-                    ))}
-                  </select>
+                  <Controller
+                    name="emailId"
+                    control={control}
+                    render={({ field }) => (
+                      <Select
+                        value={field.value || "__all__"}
+                        onValueChange={(val) =>
+                          field.onChange(val === "__all__" ? "" : val)
+                        }
+                      >
+                        <SelectTrigger className="mt-1.5">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="__all__">Không có</SelectItem>
+                          {availableEmails.map((e) => (
+                            <SelectItem key={e.id} value={e.id}>
+                              {e.email_address}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
                 </div>
                 <div>
                   <Label className="text-slate-700 dark:text-slate-300">
                     Server / Vùng
                   </Label>
-                  <select
-                    {...register("serverRegion")}
-                    className={cn(selectClass, "mt-1.5")}
-                  >
-                    <option value="">Chưa chọn</option>
-                    <option value="Japan">Nhật (Japan)</option>
-                    <option value="Morocco">Maroc (Morocco)</option>
-                    <option value="Hong Kong">Hong Kong</option>
-                    <option value="Other">Khác</option>
-                  </select>
+                  <Controller
+                    name="serverRegion"
+                    control={control}
+                    render={({ field }) => (
+                      <Select
+                        value={field.value || "__all__"}
+                        onValueChange={(val) =>
+                          field.onChange(val === "__all__" ? "" : val)
+                        }
+                      >
+                        <SelectTrigger className="mt-1.5">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="__all__">Chưa chọn</SelectItem>
+                          <SelectItem value="Japan">Nhật (Japan)</SelectItem>
+                          <SelectItem value="Morocco">Maroc (Morocco)</SelectItem>
+                          <SelectItem value="Hong Kong">Hong Kong</SelectItem>
+                          <SelectItem value="Other">Khác</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
                 </div>
               </div>
             </>

@@ -1,11 +1,9 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import {
   Wallet,
-  X,
   Loader2,
   ArrowUpCircle,
   ArrowDownCircle,
@@ -20,6 +18,14 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { formatCurrency } from "@/lib/constants";
 import type { SellerCollateralHistory } from "@/types/database";
@@ -91,13 +97,6 @@ export function CollateralManageModal({
 
   useEffect(() => {
     if (!open) return;
-    const fn = (e: KeyboardEvent) => e.key === "Escape" && stableOnClose();
-    document.addEventListener("keydown", fn);
-    return () => document.removeEventListener("keydown", fn);
-  }, [open, stableOnClose]);
-
-  useEffect(() => {
-    if (!open) return;
     setError("");
     setAmount("");
     setNotes("");
@@ -132,37 +131,22 @@ export function CollateralManageModal({
     }
   };
 
-  if (!open || typeof document === "undefined") return null;
-
-  return createPortal(
-    <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/30 backdrop-blur-[2px]" onClick={stableOnClose} />
-      <div className="relative z-10 flex w-full max-w-md flex-col rounded-xl bg-white shadow-xl ring-1 ring-black/10 dark:bg-slate-800 dark:ring-white/10" style={{ maxHeight: "90vh" }}>
+  return (
+    <Dialog open={open} onOpenChange={(v) => !loading && !v && stableOnClose()}>
+      <DialogContent showCloseButton={false} className="sm:max-w-md p-0 gap-0 flex flex-col" style={{ maxHeight: "90vh" }}>
         {/* Header */}
         <div className="shrink-0 p-5 pb-0">
-          <div className="mb-4 flex items-start justify-between">
+          <DialogHeader className="mb-4">
             <div className="flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 dark:bg-amber-500/10">
                 <Wallet className="h-5 w-5 text-amber-600 dark:text-amber-400" />
               </div>
               <div>
-                <h2 className="text-base font-semibold text-slate-900 dark:text-slate-100">
-                  Quản Lý Ký Quỹ
-                </h2>
-                <p className="max-w-[220px] truncate text-xs text-slate-500 dark:text-slate-400">
-                  {adminEmail}
-                </p>
+                <DialogTitle className="text-base font-semibold">Quản Lý Ký Quỹ</DialogTitle>
+                <DialogDescription className="max-w-[220px] truncate text-xs">{adminEmail}</DialogDescription>
               </div>
             </div>
-            <button
-              type="button"
-              onClick={stableOnClose}
-              disabled={loading}
-              className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 dark:text-slate-500 dark:hover:bg-slate-700"
-            >
-              <X className="h-4 w-4" />
-            </button>
-          </div>
+          </DialogHeader>
 
           {/* Current amount */}
           <div className="mb-4 rounded-lg bg-amber-50 p-3 dark:bg-amber-500/10">
@@ -282,7 +266,7 @@ export function CollateralManageModal({
         </div>
 
         {/* Footer */}
-        <div className="shrink-0 flex justify-end gap-2 rounded-b-xl border-t bg-slate-50 px-5 py-3 dark:border-slate-700 dark:bg-slate-800">
+        <DialogFooter>
           <Button type="button" variant="outline" onClick={stableOnClose} disabled={loading}>
             Hủy
           </Button>
@@ -295,9 +279,8 @@ export function CollateralManageModal({
           >
             Cập nhật
           </Button>
-        </div>
-      </div>
-    </div>,
-    document.body,
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

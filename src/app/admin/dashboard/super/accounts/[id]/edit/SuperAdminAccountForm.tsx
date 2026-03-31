@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { adminThumb } from "@/lib/image-utils";
@@ -342,15 +343,23 @@ export function SuperAdminAccountForm({ account, availableEmails }: Props) {
               <Label className="mb-1.5 text-slate-700 dark:text-slate-200">
                 Trạng Thái <span className="text-red-500">*</span>
               </Label>
-              <select
-                {...register("status")}
-                className={cn(selectClass, "mt-1.5")}
-              >
-                <option value="Available">Sẵn Sàng</option>
-                <option value="Pending">Đang Chờ</option>
-                <option value="Deposited">Đang Cọc</option>
-                <option value="Sold">Đã Bán</option>
-              </select>
+              <Controller
+                name="status"
+                control={control}
+                render={({ field }) => (
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger className={cn("mt-1.5 w-full", "rounded-xl border border-slate-300 px-4 py-2.5 text-sm bg-white dark:bg-slate-800 dark:border-slate-600 dark:text-slate-100 outline-none transition-colors focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500")}>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Available">Sẵn Sàng</SelectItem>
+                      <SelectItem value="Pending">Đang Chờ</SelectItem>
+                      <SelectItem value="Deposited">Đang Cọc</SelectItem>
+                      <SelectItem value="Sold">Đã Bán</SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
+              />
             </div>
             <div className="flex flex-col justify-center gap-2">
               <Label className="mb-1.5 hidden text-slate-700 dark:text-slate-200 sm:flex">
@@ -502,30 +511,46 @@ export function SuperAdminAccountForm({ account, availableEmails }: Props) {
                   (chỉ email chưa liên kết)
                 </span>
               </Label>
-              <select
-                {...register("emailId")}
-                className={cn(selectClass, "mt-1.5")}
-              >
-                <option value="">Không có email liên kết</option>
-                {availableEmails.map((e) => (
-                  <option key={e.id} value={e.id}>
-                    {e.email_address}
-                  </option>
-                ))}
-              </select>
+              <Controller
+                name="emailId"
+                control={control}
+                render={({ field }) => (
+                  <Select value={field.value || "__none__"} onValueChange={(val) => field.onChange(val === "__none__" ? "" : val)}>
+                    <SelectTrigger className={cn("mt-1.5", "w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm outline-none transition-colors focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 bg-white dark:bg-slate-800 dark:border-slate-600 dark:text-slate-100")}>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="__none__">Không có email liên kết</SelectItem>
+                      {availableEmails.map((e) => (
+                        <SelectItem key={e.id} value={e.id}>
+                          {e.email_address}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
             </div>
             <div>
               <Label className="mb-1.5 text-slate-700 dark:text-slate-200">Server / Vùng</Label>
-              <select
-                {...register("serverRegion")}
-                className={cn(selectClass, "mt-1.5")}
-              >
-                <option value="">Chưa chọn</option>
-                <option value="Japan">Nhật (Japan)</option>
-                <option value="Morocco">Maroc (Morocco)</option>
-                <option value="Hong Kong">Hong Kong</option>
-                <option value="Other">Khác</option>
-              </select>
+              <Controller
+                name="serverRegion"
+                control={control}
+                render={({ field }) => (
+                  <Select value={field.value || "__none__"} onValueChange={(val) => field.onChange(val === "__none__" ? "" : val)}>
+                    <SelectTrigger className={cn("mt-1.5", "w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm outline-none transition-colors focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 bg-white dark:bg-slate-800 dark:border-slate-600 dark:text-slate-100")}>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="__none__">Chưa chọn</SelectItem>
+                      <SelectItem value="Japan">Nhật (Japan)</SelectItem>
+                      <SelectItem value="Morocco">Maroc (Morocco)</SelectItem>
+                      <SelectItem value="Hong Kong">Hong Kong</SelectItem>
+                      <SelectItem value="Other">Khác</SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
+              />
             </div>
           </div>
 

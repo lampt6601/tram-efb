@@ -1,7 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import { createPortal } from "react-dom";
+import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import {
   ChevronDown,
@@ -9,7 +8,6 @@ import {
   KeyRound,
   Trash2,
   Loader2,
-  X,
   AlertTriangle,
   Eye,
   EyeOff,
@@ -31,6 +29,22 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+} from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 import { CollateralManageModal } from "./CollateralManageModal";
 import {
@@ -54,33 +68,6 @@ interface AdminActionsDropdownProps {
 }
 
 type OpenDialog = "editProfile" | "resetPassword" | "delete" | "collateral" | "transactionBox" | null;
-
-function Modal({
-  open,
-  onClose,
-  children,
-}: {
-  open: boolean;
-  onClose: () => void;
-  children: React.ReactNode;
-}) {
-  useEffect(() => {
-    if (!open) return;
-    const fn = (e: KeyboardEvent) => e.key === "Escape" && onClose();
-    document.addEventListener("keydown", fn);
-    return () => document.removeEventListener("keydown", fn);
-  }, [open, onClose]);
-  if (!open || typeof document === "undefined") return null;
-  return createPortal(
-    <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/30 backdrop-blur-[2px]" onClick={onClose} />
-      <div className="relative z-10 w-full max-w-sm rounded-xl bg-white shadow-xl ring-1 ring-black/10 dark:bg-slate-800 dark:ring-white/10">
-        {children}
-      </div>
-    </div>,
-    document.body
-  );
-}
 
 export function AdminActionsDropdown({
   adminId,
@@ -316,220 +303,198 @@ export function AdminActionsDropdown({
         </DropdownMenuContent>
       </DropdownMenu>
 
-      {/* ── Edit profile modal ─────────────────────────────────────────── */}
-      <Modal open={openDialog === "editProfile"} onClose={closeDialog}>
-        <form onSubmit={handleEditProfile}>
-          <div className="p-5">
-            <div className="mb-4 flex items-start justify-between">
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 dark:bg-indigo-500/10">
-                  <Pencil className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
+      {/* ── Edit profile dialog ─────────────────────────────────────────── */}
+      <Dialog open={openDialog === "editProfile"} onOpenChange={(v) => !loading && !v && closeDialog()}>
+        <DialogContent showCloseButton={false} className="sm:max-w-sm p-0 gap-0">
+          <form onSubmit={handleEditProfile}>
+            <div className="p-5">
+              <DialogHeader className="mb-4">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 dark:bg-indigo-500/10">
+                    <Pencil className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
+                  </div>
+                  <div>
+                    <DialogTitle className="text-base font-semibold">Chỉnh Sửa Thông Tin</DialogTitle>
+                    <DialogDescription className="max-w-[200px] truncate text-xs">{adminEmail}</DialogDescription>
+                  </div>
+                </div>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div>
+                  <Label className="text-slate-700 dark:text-slate-200">Tên Admin</Label>
+                  <Input
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="Nguyễn Văn A"
+                    disabled={loading}
+                    className="mt-1.5 rounded-xl border-slate-300 dark:border-slate-600"
+                    autoFocus
+                  />
                 </div>
                 <div>
-                  <h2 className="text-base font-semibold text-slate-900 dark:text-slate-100">Chỉnh Sửa Thông Tin</h2>
-                  <p className="max-w-[200px] truncate text-xs text-slate-500 dark:text-slate-400">{adminEmail}</p>
+                  <Label className="text-slate-700 dark:text-slate-200">Tên Zalo</Label>
+                  <Input
+                    type="text"
+                    value={zaloName}
+                    onChange={(e) => setZaloName(e.target.value)}
+                    placeholder="Tên hiển thị trên Zalo"
+                    disabled={loading}
+                    className="mt-1.5 rounded-xl border-slate-300 dark:border-slate-600"
+                  />
+                  <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">Để trống sẽ dùng tên admin.</p>
                 </div>
               </div>
-              <button
-                type="button"
-                onClick={closeDialog}
-                disabled={loading}
-                className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 dark:text-slate-500 dark:hover:bg-slate-700"
-              >
-                <X className="h-4 w-4" />
-              </button>
+              {error && <p className="mt-3 text-xs text-red-600 dark:text-red-400">{error}</p>}
             </div>
-            <div className="space-y-4">
-              <div>
-                <Label className="text-slate-700 dark:text-slate-200">Tên Admin</Label>
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={closeDialog} disabled={loading}>Hủy</Button>
+              <Button
+                type="submit"
+                loading={loading}
+                loadingLabel="Đang lưu..."
+                className="min-w-[6rem] bg-indigo-600 text-white hover:bg-indigo-700"
+              >
+                Lưu
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* ── Reset password dialog ──────────────────────────────────────────── */}
+      <Dialog open={openDialog === "resetPassword"} onOpenChange={(v) => !loading && !v && closeDialog()}>
+        <DialogContent showCloseButton={false} className="sm:max-w-sm p-0 gap-0">
+          <form onSubmit={handleResetPassword}>
+            <div className="p-5">
+              <DialogHeader className="mb-4">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-700">
+                    <KeyRound className="h-5 w-5 text-slate-600 dark:text-slate-300" />
+                  </div>
+                  <div>
+                    <DialogTitle className="text-base font-semibold">Đổi Mật Khẩu</DialogTitle>
+                    <DialogDescription className="max-w-[200px] truncate text-xs">{adminEmail}</DialogDescription>
+                  </div>
+                </div>
+              </DialogHeader>
+              <Label className="text-slate-700 dark:text-slate-200">Mật Khẩu Mới</Label>
+              <div className="relative mt-1.5">
                 <Input
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="Nguyễn Văn A"
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Tối thiểu 6 ký tự"
                   disabled={loading}
-                  className="mt-1.5 rounded-xl border-slate-300 dark:border-slate-600"
+                  className="rounded-xl border-slate-300 pr-10 dark:border-slate-600"
                   autoFocus
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  tabIndex={-1}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300"
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
               </div>
-              <div>
-                <Label className="text-slate-700 dark:text-slate-200">Tên Zalo</Label>
-                <Input
-                  type="text"
-                  value={zaloName}
-                  onChange={(e) => setZaloName(e.target.value)}
-                  placeholder="Tên hiển thị trên Zalo"
-                  disabled={loading}
-                  className="mt-1.5 rounded-xl border-slate-300 dark:border-slate-600"
-                />
-                <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">Để trống sẽ dùng tên admin.</p>
-              </div>
+              {error && <p className="mt-1.5 text-xs text-red-600 dark:text-red-400">{error}</p>}
             </div>
-            {error && <p className="mt-3 text-xs text-red-600 dark:text-red-400">{error}</p>}
-          </div>
-          <div className="flex justify-end gap-2 rounded-b-xl border-t bg-slate-50 px-5 py-3 dark:border-slate-700 dark:bg-slate-800">
-            <Button type="button" variant="outline" onClick={closeDialog} disabled={loading}>Hủy</Button>
-            <Button
-              type="submit"
-              loading={loading}
-              loadingLabel="Đang lưu..."
-              className="min-w-[6rem] bg-indigo-600 text-white hover:bg-indigo-700"
-            >
-              Lưu
-            </Button>
-          </div>
-        </form>
-      </Modal>
-
-      {/* ── Reset password modal ──────────────────────────────────────────── */}
-      <Modal open={openDialog === "resetPassword"} onClose={closeDialog}>
-        <form onSubmit={handleResetPassword}>
-          <div className="p-5">
-            <div className="mb-4 flex items-start justify-between">
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-700">
-                  <KeyRound className="h-5 w-5 text-slate-600 dark:text-slate-300" />
-                </div>
-                <div>
-                  <h2 className="text-base font-semibold text-slate-900 dark:text-slate-100">Đổi Mật Khẩu</h2>
-                  <p className="max-w-[200px] truncate text-xs text-slate-500 dark:text-slate-400">{adminEmail}</p>
-                </div>
-              </div>
-              <button
-                type="button"
-                onClick={closeDialog}
-                disabled={loading}
-                className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 dark:text-slate-500 dark:hover:bg-slate-700"
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={closeDialog} disabled={loading}>Hủy</Button>
+              <Button
+                type="submit"
+                loading={loading}
+                loadingLabel="Đang lưu..."
+                className="min-w-[6rem] bg-slate-800 text-white hover:bg-slate-900"
               >
-                <X className="h-4 w-4" />
-              </button>
-            </div>
-            <Label className="text-slate-700 dark:text-slate-200">Mật Khẩu Mới</Label>
-            <div className="relative mt-1.5">
-              <Input
-                type={showPassword ? "text" : "password"}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Tối thiểu 6 ký tự"
-                disabled={loading}
-                className="rounded-xl border-slate-300 pr-10 dark:border-slate-600"
-                autoFocus
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                tabIndex={-1}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300"
-              >
-                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-              </button>
-            </div>
-            {error && <p className="mt-1.5 text-xs text-red-600 dark:text-red-400">{error}</p>}
-          </div>
-          <div className="flex justify-end gap-2 rounded-b-xl border-t bg-slate-50 px-5 py-3 dark:border-slate-700 dark:bg-slate-800">
-            <Button type="button" variant="outline" onClick={closeDialog} disabled={loading}>Hủy</Button>
-            <Button
-              type="submit"
-              loading={loading}
-              loadingLabel="Đang lưu..."
-              className="min-w-[6rem] bg-slate-800 text-white hover:bg-slate-900"
-            >
-              Lưu
-            </Button>
-          </div>
-        </form>
-      </Modal>
+                Lưu
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
 
-      {/* ── Delete modal ──────────────────────────────────────────────────── */}
-      <Modal open={openDialog === "delete"} onClose={closeDialog}>
-        <div className="p-5">
-          <div className="mb-4 flex items-start justify-between">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-50 dark:bg-red-500/10">
+      {/* ── Delete dialog ──────────────────────────────────────────────────── */}
+      <AlertDialog open={openDialog === "delete"} onOpenChange={(v) => !loading && !v && closeDialog()}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-red-50 dark:bg-red-500/10">
               <Trash2 className="h-5 w-5 text-red-600 dark:text-red-400" />
             </div>
-            <button onClick={closeDialog} disabled={loading} className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 dark:text-slate-500 dark:hover:bg-slate-700">
-              <X className="h-4 w-4" />
-            </button>
-          </div>
-          <h2 className="mb-1 text-base font-semibold text-slate-900 dark:text-slate-100">Xóa tài khoản admin</h2>
-          <p className="text-sm text-slate-500 dark:text-slate-400">
-            Bạn có chắc muốn xóa admin{" "}
-            <span className="font-semibold text-slate-900 dark:text-slate-100">{adminEmail}</span>?
-          </p>
+            <AlertDialogTitle>Xóa tài khoản admin</AlertDialogTitle>
+            <AlertDialogDescription>
+              Bạn có chắc muốn xóa admin{" "}
+              <span className="font-semibold text-slate-900 dark:text-slate-100">{adminEmail}</span>?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
           {accountCount > 0 && (
-            <div className="mt-3 flex items-start gap-2 rounded-lg bg-amber-50 p-3 dark:bg-amber-500/10">
+            <div className="flex items-start gap-2 rounded-lg bg-amber-50 p-3 dark:bg-amber-500/10">
               <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-500" />
               <p className="text-xs text-amber-700 dark:text-amber-400">
                 Admin này có <span className="font-semibold">{accountCount} tài khoản</span> và các email liên kết. Tất cả sẽ được chuyển về cho Owner trước khi xóa.
               </p>
             </div>
           )}
-          {error && <p className="mt-2 text-xs text-red-600 dark:text-red-400">{error}</p>}
-        </div>
-        <div className="flex justify-end gap-2 rounded-b-xl border-t bg-slate-50 px-5 py-3 dark:border-slate-700 dark:bg-slate-800">
-          <Button variant="outline" onClick={closeDialog} disabled={loading}>Hủy</Button>
-          <Button
-            onClick={handleDelete}
-            loading={loading}
-            loadingLabel="Đang xóa..."
-            className="min-w-[8rem] bg-red-600 text-white hover:bg-red-700"
-          >
-            Xóa Admin
-          </Button>
-        </div>
-      </Modal>
-
-      {/* ── Transaction Box modal ──────────────────────────────────────── */}
-      <Modal open={openDialog === "transactionBox"} onClose={closeDialog}>
-        <form onSubmit={handleUpdateTransactionBox}>
-          <div className="p-5">
-            <div className="mb-4 flex items-start justify-between">
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 dark:bg-emerald-500/10">
-                  <MessageCircle className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
-                </div>
-                <div>
-                  <h2 className="text-base font-semibold text-slate-900 dark:text-slate-100">Box Giao Dịch</h2>
-                  <p className="max-w-[200px] truncate text-xs text-slate-500 dark:text-slate-400">{adminEmail}</p>
-                </div>
-              </div>
-              <button
-                type="button"
-                onClick={closeDialog}
-                disabled={loading}
-                className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 dark:text-slate-500 dark:hover:bg-slate-700"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            </div>
-            <Label className="text-slate-700 dark:text-slate-200">Link Box Giao Dịch</Label>
-            <Input
-              type="url"
-              value={txBoxUrl}
-              onChange={(e) => setTxBoxUrl(e.target.value)}
-              placeholder="https://zalo.me/g/..."
-              disabled={loading}
-              className="mt-1.5 rounded-xl border-slate-300 dark:border-slate-600"
-              autoFocus
-            />
-            <p className="mt-1.5 text-xs text-slate-400 dark:text-slate-500">
-              Zalo group giữa Chủ Shop và người bán. Khách mua sẽ join vào box này.
-            </p>
-            {error && <p className="mt-2 text-xs text-red-600 dark:text-red-400">{error}</p>}
-          </div>
-          <div className="flex justify-end gap-2 rounded-b-xl border-t bg-slate-50 px-5 py-3 dark:border-slate-700 dark:bg-slate-800">
-            <Button type="button" variant="outline" onClick={closeDialog} disabled={loading}>Hủy</Button>
+          <AlertDialogFooter>
+            <Button variant="outline" onClick={closeDialog} disabled={loading}>Hủy</Button>
             <Button
-              type="submit"
+              onClick={handleDelete}
               loading={loading}
-              loadingLabel="Đang lưu..."
-              className="min-w-[6rem] bg-emerald-600 text-white hover:bg-emerald-700"
+              loadingLabel="Đang xóa..."
+              className="min-w-[8rem] bg-red-600 text-white hover:bg-red-700"
             >
-              Lưu
+              Xóa Admin
             </Button>
-          </div>
-        </form>
-      </Modal>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* ── Transaction Box dialog ──────────────────────────────────────── */}
+      <Dialog open={openDialog === "transactionBox"} onOpenChange={(v) => !loading && !v && closeDialog()}>
+        <DialogContent showCloseButton={false} className="sm:max-w-sm p-0 gap-0">
+          <form onSubmit={handleUpdateTransactionBox}>
+            <div className="p-5">
+              <DialogHeader className="mb-4">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 dark:bg-emerald-500/10">
+                    <MessageCircle className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+                  </div>
+                  <div>
+                    <DialogTitle className="text-base font-semibold">Box Giao Dịch</DialogTitle>
+                    <DialogDescription className="max-w-[200px] truncate text-xs">{adminEmail}</DialogDescription>
+                  </div>
+                </div>
+              </DialogHeader>
+              <Label className="text-slate-700 dark:text-slate-200">Link Box Giao Dịch</Label>
+              <Input
+                type="url"
+                value={txBoxUrl}
+                onChange={(e) => setTxBoxUrl(e.target.value)}
+                placeholder="https://zalo.me/g/..."
+                disabled={loading}
+                className="mt-1.5 rounded-xl border-slate-300 dark:border-slate-600"
+                autoFocus
+              />
+              <p className="mt-1.5 text-xs text-slate-400 dark:text-slate-500">
+                Zalo group giữa Chủ Shop và người bán. Khách mua sẽ join vào box này.
+              </p>
+              {error && <p className="mt-2 text-xs text-red-600 dark:text-red-400">{error}</p>}
+            </div>
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={closeDialog} disabled={loading}>Hủy</Button>
+              <Button
+                type="submit"
+                loading={loading}
+                loadingLabel="Đang lưu..."
+                className="min-w-[6rem] bg-emerald-600 text-white hover:bg-emerald-700"
+              >
+                Lưu
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
 
       {/* ── Collateral modal ─────────────────────────────────────────────── */}
       <CollateralManageModal

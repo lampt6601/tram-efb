@@ -6,6 +6,13 @@ import { Footer } from "@/components/storefront/Footer";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
 import { submitAccountRequest } from "@/app/actions/request-actions";
 import {
   Search,
@@ -188,18 +195,18 @@ export default function RequestPage() {
                 >
                   Liên hệ qua <span className="text-rose-500">*</span>
                 </Label>
-                <select
-                  id="contactPlatform"
-                  value={contactPlatform}
-                  onChange={(e) => setContactPlatform(e.target.value)}
-                  className="mt-1.5 w-full rounded-lg border border-slate-200 px-3 py-2 text-base text-slate-700 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/20 md:text-sm dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200"
-                >
-                  {CONTACT_PLATFORMS.map((p) => (
-                    <option key={p} value={p}>
-                      {p}
-                    </option>
-                  ))}
-                </select>
+                <Select value={contactPlatform} onValueChange={(val) => { if (val !== null) setContactPlatform(val) }}>
+                  <SelectTrigger className="mt-1.5">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {CONTACT_PLATFORMS.map((p) => (
+                      <SelectItem key={p} value={p}>
+                        {p}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
 

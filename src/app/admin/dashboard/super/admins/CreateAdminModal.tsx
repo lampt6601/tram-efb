@@ -2,11 +2,19 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { UserPlus, X, Eye, EyeOff } from "lucide-react";
+import { UserPlus, Eye, EyeOff } from "lucide-react";
 import { createAdmin } from "@/app/actions/super-admin-actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { toast } from "sonner";
 
 export function CreateAdminModal() {
@@ -19,7 +27,15 @@ export function CreateAdminModal() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
 
-  const handleClose = () => { if (!loading) { setOpen(false); setName(""); setEmail(""); setPassword(""); setError(""); } };
+  const handleClose = () => {
+    if (!loading) {
+      setOpen(false);
+      setName("");
+      setEmail("");
+      setPassword("");
+      setError("");
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,71 +58,64 @@ export function CreateAdminModal() {
         <UserPlus className="h-4 w-4" /> Thêm Admin
       </Button>
 
-      {open && (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/30 backdrop-blur-[2px]" onClick={handleClose} />
-          <div className="relative z-10 w-full max-w-md rounded-xl bg-white shadow-xl ring-1 ring-black/10 dark:bg-slate-800 dark:ring-white/10">
-            <form onSubmit={handleSubmit}>
-              <div className="p-6">
-                <div className="mb-5 flex items-start justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 dark:bg-amber-500/10">
-                      <UserPlus className="h-5 w-5 text-amber-600" />
-                    </div>
-                    <div>
-                      <h2 className="text-base font-semibold text-slate-900 dark:text-slate-100">Tạo Tài Khoản Admin</h2>
-                      <p className="text-xs text-slate-500 dark:text-slate-400">Admin mới có thể đăng nhập ngay sau khi tạo</p>
-                    </div>
+      <Dialog open={open} onOpenChange={(v) => !loading && (v ? setOpen(true) : handleClose())}>
+        <DialogContent showCloseButton={false} className="sm:max-w-md p-0 gap-0">
+          <form onSubmit={handleSubmit}>
+            <div className="p-6">
+              <DialogHeader className="mb-5">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 dark:bg-amber-500/10">
+                    <UserPlus className="h-5 w-5 text-amber-600" />
                   </div>
-                  <button type="button" onClick={handleClose} disabled={loading}
-                    className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 dark:text-slate-500 dark:hover:bg-slate-700">
-                    <X className="h-4 w-4" />
-                  </button>
+                  <div>
+                    <DialogTitle className="text-base font-semibold">Tạo Tài Khoản Admin</DialogTitle>
+                    <DialogDescription className="text-xs">Admin mới có thể đăng nhập ngay sau khi tạo</DialogDescription>
+                  </div>
                 </div>
-                <div className="space-y-4">
-                  <div>
-                    <Label className="text-slate-700 dark:text-slate-200">Tên</Label>
-                    <Input type="text" value={name} onChange={(e) => setName(e.target.value)}
-                      placeholder="Nguyễn Văn A" disabled={loading}
-                      className="mt-1.5 rounded-xl border-slate-300 dark:bg-slate-800 dark:border-slate-600 dark:text-slate-100" autoFocus />
-                  </div>
-                  <div>
-                    <Label className="text-slate-700 dark:text-slate-200">Email</Label>
-                    <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)}
-                      placeholder="admin@example.com" disabled={loading}
-                      className="mt-1.5 rounded-xl border-slate-300 dark:bg-slate-800 dark:border-slate-600 dark:text-slate-100" />
-                  </div>
-                  <div>
-                    <Label className="text-slate-700 dark:text-slate-200">Mật Khẩu</Label>
-                    <div className="relative mt-1.5">
-                      <Input type={showPassword ? "text" : "password"} value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        placeholder="Tối thiểu 6 ký tự" disabled={loading}
-                        className="rounded-xl border-slate-300 pr-10 dark:bg-slate-800 dark:border-slate-600 dark:text-slate-100" />
-                      <button type="button" onClick={() => setShowPassword(!showPassword)} tabIndex={-1}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300">
-                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                      </button>
-                    </div>
-                  </div>
-                  {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
+              </DialogHeader>
+              <div className="space-y-4">
+                <div>
+                  <Label className="text-slate-700 dark:text-slate-200">Tên</Label>
+                  <Input type="text" value={name} onChange={(e) => setName(e.target.value)}
+                    placeholder="Nguyễn Văn A" disabled={loading}
+                    className="mt-1.5 rounded-xl border-slate-300 dark:bg-slate-800 dark:border-slate-600 dark:text-slate-100" autoFocus />
                 </div>
+                <div>
+                  <Label className="text-slate-700 dark:text-slate-200">Email</Label>
+                  <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)}
+                    placeholder="admin@example.com" disabled={loading}
+                    className="mt-1.5 rounded-xl border-slate-300 dark:bg-slate-800 dark:border-slate-600 dark:text-slate-100" />
+                </div>
+                <div>
+                  <Label className="text-slate-700 dark:text-slate-200">Mật Khẩu</Label>
+                  <div className="relative mt-1.5">
+                    <Input type={showPassword ? "text" : "password"} value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="Tối thiểu 6 ký tự" disabled={loading}
+                      className="rounded-xl border-slate-300 pr-10 dark:bg-slate-800 dark:border-slate-600 dark:text-slate-100" />
+                    <button type="button" onClick={() => setShowPassword(!showPassword)} tabIndex={-1}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300">
+                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
+                  </div>
+                </div>
+                {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
               </div>
-              <div className="flex justify-end gap-2 rounded-b-xl border-t bg-slate-50 px-6 py-4 dark:border-slate-700 dark:bg-slate-800">
-                <Button type="button" variant="outline" onClick={handleClose} disabled={loading}>Hủy</Button>
-                <Button
-                  type="submit"
-                  loading={loading}
-                  loadingLabel="Đang tạo..."
-                  className="min-w-[8rem] bg-amber-500 text-white hover:bg-amber-600"
-                >
-                  Tạo Admin
-                </Button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+            </div>
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={handleClose} disabled={loading}>Hủy</Button>
+              <Button
+                type="submit"
+                loading={loading}
+                loadingLabel="Đang tạo..."
+                className="min-w-[8rem] bg-amber-500 text-white hover:bg-amber-600"
+              >
+                Tạo Admin
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

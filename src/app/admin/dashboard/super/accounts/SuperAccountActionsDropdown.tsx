@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
@@ -10,7 +9,6 @@ import {
   RotateCcw,
   Trash2,
   Loader2,
-  X,
   ExternalLink,
   Eye,
   Link as LinkIcon,
@@ -42,6 +40,23 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+} from "@/components/ui/alert-dialog";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { PendingAccountDrawer } from "@/app/admin/dashboard/super/pending/PendingAccountDrawer";
 import type { AccountWithEmail, Email } from "@/types/database";
 import { getBuybackInfo, calculateBuybackPrice } from "@/lib/buyback";
@@ -56,33 +71,6 @@ interface SuperAccountActionsDropdownProps {
 }
 
 type OpenDialog = "sell" | "sale" | "unapprove" | "delete" | "unmark-sold" | "deposit" | "undeposit" | "buyback" | null;
-
-function Modal({
-  open,
-  onClose,
-  children,
-}: {
-  open: boolean;
-  onClose: () => void;
-  children: React.ReactNode;
-}) {
-  useEffect(() => {
-    if (!open) return;
-    const fn = (e: KeyboardEvent) => e.key === "Escape" && onClose();
-    document.addEventListener("keydown", fn);
-    return () => document.removeEventListener("keydown", fn);
-  }, [open, onClose]);
-  if (!open || typeof document === "undefined") return null;
-  return createPortal(
-    <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/30 backdrop-blur-[2px]" onClick={onClose} />
-      <div className="relative z-10 w-full max-w-sm rounded-xl bg-white shadow-xl ring-1 ring-black/10 dark:bg-slate-800 dark:ring-white/10">
-        {children}
-      </div>
-    </div>,
-    document.body
-  );
-}
 
 export function SuperAccountActionsDropdown({
   account,
@@ -441,7 +429,6 @@ export function SuperAccountActionsDropdown({
             Xem chi tiết
           </DropdownMenuItem>
 
-
           <DropdownMenuItem onClick={handleCopyLink} className="gap-2">
             {copied ? (
               <Check className="h-4 w-4 text-emerald-500" />
@@ -567,406 +554,390 @@ export function SuperAccountActionsDropdown({
         </DropdownMenuContent>
       </DropdownMenu>
 
-      {/* ── Unapprove modal ───────────────────────────────────────────────── */}
-      <Modal open={openDialog === "unapprove"} onClose={closeDialog}>
-        <div className="p-5">
-          <div className="mb-4 flex items-start justify-between">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 dark:bg-amber-500/10">
+      {/* ── Unapprove dialog ───────────────────────────────────────────────── */}
+      <AlertDialog open={openDialog === "unapprove"} onOpenChange={(v) => !loading && !v && closeDialog()}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 dark:bg-amber-500/10">
               <RotateCcw className="h-5 w-5 text-amber-600" />
             </div>
-            <button onClick={closeDialog} disabled={loading} className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 dark:text-slate-500 dark:hover:bg-slate-700">
-              <X className="h-4 w-4" />
-            </button>
-          </div>
-          <h2 className="mb-1 text-base font-semibold text-slate-900 dark:text-slate-100">Chuyển về chờ duyệt</h2>
-          <p className="text-sm text-slate-500 dark:text-slate-400">
-            Tài khoản <span className="font-semibold text-slate-900 dark:text-slate-100">&quot;{title}&quot;</span> sẽ không còn hiển thị công khai và cần được duyệt lại.
-          </p>
-        </div>
-        <div className="flex justify-end gap-2 rounded-b-xl border-t bg-slate-50 px-5 py-3 dark:border-slate-700 dark:bg-slate-800">
-          <Button variant="outline" onClick={closeDialog} disabled={loading}>Hủy</Button>
-          <Button
-            onClick={handleUnapprove}
-            loading={loading}
-            loadingLabel="Đang xử lý..."
-            className="min-w-[8rem] bg-amber-600 text-white hover:bg-amber-700"
-          >
-            Xác nhận
-          </Button>
-        </div>
-      </Modal>
-
-      {/* ── Delete modal ──────────────────────────────────────────────────── */}
-      <Modal open={openDialog === "delete"} onClose={closeDialog}>
-        <div className="p-5">
-          <div className="mb-4 flex items-start justify-between">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-50 dark:bg-red-500/10">
-              <Trash2 className="h-5 w-5 text-red-600" />
-            </div>
-            <button onClick={closeDialog} disabled={loading} className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 dark:text-slate-500 dark:hover:bg-slate-700">
-              <X className="h-4 w-4" />
-            </button>
-          </div>
-          <h2 className="mb-1 text-base font-semibold text-slate-900 dark:text-slate-100">Xóa tài khoản</h2>
-          <p className="text-sm text-slate-500 dark:text-slate-400">
-            Bạn có chắc muốn xóa{" "}
-            <span className="font-semibold text-slate-900 dark:text-slate-100">&quot;{title}&quot;</span>? Hành động này không thể hoàn tác.
-          </p>
-        </div>
-        <div className="flex justify-end gap-2 rounded-b-xl border-t bg-slate-50 px-5 py-3 dark:border-slate-700 dark:bg-slate-800">
-          <Button variant="outline" onClick={closeDialog} disabled={loading}>Hủy</Button>
-          <Button
-            onClick={handleDelete}
-            loading={loading}
-            loadingLabel="Đang xóa..."
-            className="min-w-[7rem] bg-red-600 text-white hover:bg-red-700"
-          >
-            Xóa
-          </Button>
-        </div>
-      </Modal>
-
-      {/* ── Sell modal ───────────────────────────────────────────────────── */}
-      <Modal open={openDialog === "sell"} onClose={closeDialog}>
-        <div className="p-5">
-          <div className="mb-4 flex items-start justify-between">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-green-50 dark:bg-green-500/10">
-              <ShoppingCart className="h-5 w-5 text-green-600" />
-            </div>
-            <button onClick={closeDialog} disabled={loading} className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 dark:text-slate-500 dark:hover:bg-slate-700">
-              <X className="h-4 w-4" />
-            </button>
-          </div>
-          <h2 className="mb-1 text-base font-semibold text-slate-900 dark:text-slate-100">Xác Nhận Bán Tài Khoản</h2>
-          <p className="mb-4 text-sm text-slate-500 dark:text-slate-400">
-            Giá dự kiến sẽ cập nhật thành giá bán thực tế. Email liên kết sẽ bị gỡ tự động.
-          </p>
-          <Label className="mb-1.5 text-slate-700 dark:text-slate-200">Giá Bán Thực Tế (VNĐ)</Label>
-          <Input
-            type="number"
-            value={sellPrice}
-            onChange={(e) => setSellPrice(e.target.value)}
-            min={0}
-            step={1}
-            disabled={loading}
-            className="mt-1.5 rounded-xl border-slate-300 dark:border-slate-600"
-            autoFocus
-          />
-          {error && <p className="mt-1.5 text-xs text-red-600 dark:text-red-400">{error}</p>}
-        </div>
-        <div className="flex justify-end gap-2 rounded-b-xl border-t bg-slate-50 px-5 py-3 dark:border-slate-700 dark:bg-slate-800">
-          <Button variant="outline" onClick={closeDialog} disabled={loading}>Hủy</Button>
-          <Button
-            onClick={handleSell}
-            loading={loading}
-            loadingLabel="Đang xử lý..."
-            className="min-w-[10rem] bg-green-600 text-white hover:bg-green-700"
-          >
-            Xác Nhận Bán
-          </Button>
-        </div>
-      </Modal>
-
-      {/* ── Sale modal ───────────────────────────────────────────────────── */}
-      <Modal open={openDialog === "sale"} onClose={closeDialog}>
-        <div className="p-5">
-          <div className="mb-4 flex items-start justify-between">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-rose-50 dark:bg-rose-500/10">
-              <Tag className="h-5 w-5 text-rose-600" />
-            </div>
-            <button onClick={closeDialog} disabled={loading} className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 dark:text-slate-500 dark:hover:bg-slate-700">
-              <X className="h-4 w-4" />
-            </button>
-          </div>
-          <h2 className="mb-1 text-base font-semibold text-slate-900 dark:text-slate-100">Cài Đặt Khuyến Mãi (Sale)</h2>
-          <p className="mb-4 text-sm text-slate-500 dark:text-slate-400">
-            Thiết lập giá gốc và giá giảm để tạo hiệu ứng thẻ sale nổi bật.
-          </p>
-          <div className="space-y-3">
-            <div>
-              <Label className="text-slate-700 dark:text-slate-200">Giá Bị Gạch / Giá Gốc (VNĐ)</Label>
-              <Input
-                type="number"
-                value={saleOriginalPrice}
-                onChange={(e) => setSaleOriginalPrice(e.target.value)}
-                min={0}
-                step={1}
-                disabled={loading}
-                className="mt-1.5 rounded-xl border-slate-300 dark:border-slate-600"
-                placeholder="Để trống nếu không có"
-              />
-            </div>
-            <div>
-              <Label className="text-slate-700 dark:text-slate-200">Giá Sale Bán Thực Tế (VNĐ)</Label>
-              <Input
-                type="number"
-                value={salePrice}
-                onChange={(e) => setSalePrice(e.target.value)}
-                min={0}
-                step={1}
-                disabled={loading}
-                className="mt-1.5 rounded-xl border-rose-300 bg-rose-50/30 dark:border-rose-500/30 dark:bg-rose-500/10"
-              />
-            </div>
-            {error && <p className="text-xs text-red-600 dark:text-red-400">{error}</p>}
-          </div>
-        </div>
-        <div className="rounded-b-xl border-t bg-slate-50 px-5 py-3 dark:border-slate-700 dark:bg-slate-800">
-          <div className="flex justify-end gap-2">
+            <AlertDialogTitle>Chuyển về chờ duyệt</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tài khoản <span className="font-semibold text-slate-900 dark:text-slate-100">&quot;{title}&quot;</span> sẽ không còn hiển thị công khai và cần được duyệt lại.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
             <Button variant="outline" onClick={closeDialog} disabled={loading}>Hủy</Button>
             <Button
-              onClick={handleSaleConfirm}
+              onClick={handleUnapprove}
               loading={loading}
               loadingLabel="Đang xử lý..."
-              className="min-w-[9rem] bg-rose-600 text-white hover:bg-rose-700"
+              className="min-w-[8rem] bg-amber-600 text-white hover:bg-amber-700"
             >
-              Lưu Thay Đổi
+              Xác nhận
             </Button>
-          </div>
-          {isOnSale && (
-            <button
-              onClick={handleRemoveSale}
-              disabled={loading}
-              className="mt-2 w-full rounded-lg py-1.5 text-center text-sm text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:underline disabled:opacity-50"
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* ── Delete dialog ──────────────────────────────────────────────────── */}
+      <AlertDialog open={openDialog === "delete"} onOpenChange={(v) => !loading && !v && closeDialog()}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-red-50 dark:bg-red-500/10">
+              <Trash2 className="h-5 w-5 text-red-600" />
+            </div>
+            <AlertDialogTitle>Xóa tài khoản</AlertDialogTitle>
+            <AlertDialogDescription>
+              Bạn có chắc muốn xóa{" "}
+              <span className="font-semibold text-slate-900 dark:text-slate-100">&quot;{title}&quot;</span>? Hành động này không thể hoàn tác.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <Button variant="outline" onClick={closeDialog} disabled={loading}>Hủy</Button>
+            <Button
+              onClick={handleDelete}
+              loading={loading}
+              loadingLabel="Đang xóa..."
+              className="min-w-[7rem] bg-red-600 text-white hover:bg-red-700"
             >
-              Hủy bỏ sale cho tài khoản này
-            </button>
-          )}
-        </div>
-      </Modal>
+              Xóa
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
-      {/* ── Deposit modal ──────────────────────────────────────────────── */}
-      <Modal open={openDialog === "deposit"} onClose={closeDialog}>
-        <div className="p-5">
-          <div className="mb-4 flex items-start justify-between">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-500/10">
-              <Banknote className="h-5 w-5 text-blue-600" />
-            </div>
-            <button onClick={closeDialog} disabled={loading} className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 dark:text-slate-500 dark:hover:bg-slate-700">
-              <X className="h-4 w-4" />
-            </button>
+      {/* ── Sell dialog ───────────────────────────────────────────────────── */}
+      <Dialog open={openDialog === "sell"} onOpenChange={(v) => !loading && !v && closeDialog()}>
+        <DialogContent showCloseButton={false} className="sm:max-w-sm p-0 gap-0">
+          <div className="p-5">
+            <DialogHeader className="mb-4">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-green-50 dark:bg-green-500/10">
+                <ShoppingCart className="h-5 w-5 text-green-600" />
+              </div>
+              <DialogTitle className="text-base font-semibold">Xác Nhận Bán Tài Khoản</DialogTitle>
+              <DialogDescription>
+                Giá dự kiến sẽ cập nhật thành giá bán thực tế. Email liên kết sẽ bị gỡ tự động.
+              </DialogDescription>
+            </DialogHeader>
+            <Label className="mb-1.5 text-slate-700 dark:text-slate-200">Giá Bán Thực Tế (VNĐ)</Label>
+            <Input
+              type="number"
+              value={sellPrice}
+              onChange={(e) => setSellPrice(e.target.value)}
+              min={0}
+              step={1}
+              disabled={loading}
+              className="mt-1.5 rounded-xl border-slate-300 dark:border-slate-600"
+              autoFocus
+            />
+            {error && <p className="mt-1.5 text-xs text-red-600 dark:text-red-400">{error}</p>}
           </div>
-          <h2 className="mb-1 text-base font-semibold text-slate-900 dark:text-slate-100">Cọc Tài Khoản</h2>
-          <p className="mb-4 text-sm text-slate-500 dark:text-slate-400">
-            Nhập thông tin khách cọc để giữ acc đến ngày hẹn.
-          </p>
-          <div className="space-y-3">
-            <div>
-              <Label className="text-slate-700 dark:text-slate-200">Tên Khách Hàng *</Label>
-              <Input
-                value={depositCustomerName}
-                onChange={(e) => setDepositCustomerName(e.target.value)}
-                disabled={loading}
-                className="mt-1.5 rounded-xl border-slate-300 dark:border-slate-600"
-                placeholder="VD: Nguyễn Văn A"
-                autoFocus
-              />
-            </div>
-            <div>
-              <Label className="text-slate-700 dark:text-slate-200">Liên Hệ (SĐT / Zalo / FB)</Label>
-              <Input
-                value={depositCustomerContact}
-                onChange={(e) => setDepositCustomerContact(e.target.value)}
-                disabled={loading}
-                className="mt-1.5 rounded-xl border-slate-300 dark:border-slate-600"
-                placeholder="VD: 0901234567"
-              />
-            </div>
-            <div>
-              <Label className="text-slate-700 dark:text-slate-200">Số Tiền Cọc (VNĐ) *</Label>
-              <Input
-                type="number"
-                value={depositAmount}
-                onChange={(e) => setDepositAmount(e.target.value)}
-                min="0"
-                step="1"
-                disabled={loading}
-                className="mt-1.5 rounded-xl border-blue-300 bg-blue-50/30 dark:border-blue-500/30 dark:bg-blue-500/10"
-              />
-            </div>
-            <div>
-              <Label className="text-slate-700 dark:text-slate-200">Giữ Đến Ngày *</Label>
-              <Input
-                type="date"
-                value={depositHoldUntil}
-                onChange={(e) => setDepositHoldUntil(e.target.value)}
-                disabled={loading}
-                className="mt-1.5 rounded-xl border-slate-300 dark:border-slate-600"
-              />
-            </div>
-            <div>
-              <Label className="text-slate-700 dark:text-slate-200">Ghi Chú</Label>
-              <textarea
-                value={depositNotes}
-                onChange={(e) => setDepositNotes(e.target.value)}
-                disabled={loading}
-                rows={2}
-                className="mt-1.5 w-full rounded-xl border border-slate-300 bg-transparent px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-slate-600 dark:text-slate-200"
-                placeholder="Ghi chú thêm..."
-              />
-            </div>
-            {error && <p className="text-xs text-red-600 dark:text-red-400">{error}</p>}
-          </div>
-        </div>
-        <div className="flex justify-end gap-2 rounded-b-xl border-t bg-slate-50 px-5 py-3 dark:border-slate-700 dark:bg-slate-800">
-          <Button variant="outline" onClick={closeDialog} disabled={loading}>Hủy</Button>
-          <Button
-            onClick={handleDeposit}
-            loading={loading}
-            loadingLabel="Đang xử lý..."
-            className="min-w-[10rem] bg-blue-600 text-white hover:bg-blue-700"
-          >
-            Xác Nhận Cọc
-          </Button>
-        </div>
-      </Modal>
+          <DialogFooter>
+            <Button variant="outline" onClick={closeDialog} disabled={loading}>Hủy</Button>
+            <Button
+              onClick={handleSell}
+              loading={loading}
+              loadingLabel="Đang xử lý..."
+              className="min-w-[10rem] bg-green-600 text-white hover:bg-green-700"
+            >
+              Xác Nhận Bán
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
-      {/* ── Undeposit modal ──────────────────────────────────────────────── */}
-      <Modal open={openDialog === "undeposit"} onClose={closeDialog}>
-        <div className="p-5">
-          <div className="mb-4 flex items-start justify-between">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-500/10">
+      {/* ── Sale dialog ───────────────────────────────────────────────────── */}
+      <Dialog open={openDialog === "sale"} onOpenChange={(v) => !loading && !v && closeDialog()}>
+        <DialogContent showCloseButton={false} className="sm:max-w-sm p-0 gap-0">
+          <div className="p-5">
+            <DialogHeader className="mb-4">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-rose-50 dark:bg-rose-500/10">
+                <Tag className="h-5 w-5 text-rose-600" />
+              </div>
+              <DialogTitle className="text-base font-semibold">Cài Đặt Khuyến Mãi (Sale)</DialogTitle>
+              <DialogDescription>
+                Thiết lập giá gốc và giá giảm để tạo hiệu ứng thẻ sale nổi bật.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-3">
+              <div>
+                <Label className="text-slate-700 dark:text-slate-200">Giá Bị Gạch / Giá Gốc (VNĐ)</Label>
+                <Input
+                  type="number"
+                  value={saleOriginalPrice}
+                  onChange={(e) => setSaleOriginalPrice(e.target.value)}
+                  min={0}
+                  step={1}
+                  disabled={loading}
+                  className="mt-1.5 rounded-xl border-slate-300 dark:border-slate-600"
+                  placeholder="Để trống nếu không có"
+                />
+              </div>
+              <div>
+                <Label className="text-slate-700 dark:text-slate-200">Giá Sale Bán Thực Tế (VNĐ)</Label>
+                <Input
+                  type="number"
+                  value={salePrice}
+                  onChange={(e) => setSalePrice(e.target.value)}
+                  min={0}
+                  step={1}
+                  disabled={loading}
+                  className="mt-1.5 rounded-xl border-rose-300 bg-rose-50/30 dark:border-rose-500/30 dark:bg-rose-500/10"
+                />
+              </div>
+              {error && <p className="text-xs text-red-600 dark:text-red-400">{error}</p>}
+            </div>
+          </div>
+          <div className="-mx-4 -mb-4 rounded-b-xl border-t bg-muted/50 p-4">
+            <div className="flex justify-end gap-2">
+              <Button variant="outline" onClick={closeDialog} disabled={loading}>Hủy</Button>
+              <Button
+                onClick={handleSaleConfirm}
+                loading={loading}
+                loadingLabel="Đang xử lý..."
+                className="min-w-[9rem] bg-rose-600 text-white hover:bg-rose-700"
+              >
+                Lưu Thay Đổi
+              </Button>
+            </div>
+            {isOnSale && (
+              <button
+                onClick={handleRemoveSale}
+                disabled={loading}
+                className="mt-2 w-full rounded-lg py-1.5 text-center text-sm text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:underline disabled:opacity-50"
+              >
+                Hủy bỏ sale cho tài khoản này
+              </button>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* ── Deposit dialog ──────────────────────────────────────────────── */}
+      <Dialog open={openDialog === "deposit"} onOpenChange={(v) => !loading && !v && closeDialog()}>
+        <DialogContent showCloseButton={false} className="sm:max-w-sm p-0 gap-0">
+          <div className="p-5">
+            <DialogHeader className="mb-4">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-500/10">
+                <Banknote className="h-5 w-5 text-blue-600" />
+              </div>
+              <DialogTitle className="text-base font-semibold">Cọc Tài Khoản</DialogTitle>
+              <DialogDescription>
+                Nhập thông tin khách cọc để giữ acc đến ngày hẹn.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-3">
+              <div>
+                <Label className="text-slate-700 dark:text-slate-200">Tên Khách Hàng *</Label>
+                <Input
+                  value={depositCustomerName}
+                  onChange={(e) => setDepositCustomerName(e.target.value)}
+                  disabled={loading}
+                  className="mt-1.5 rounded-xl border-slate-300 dark:border-slate-600"
+                  placeholder="VD: Nguyễn Văn A"
+                  autoFocus
+                />
+              </div>
+              <div>
+                <Label className="text-slate-700 dark:text-slate-200">Liên Hệ (SĐT / Zalo / FB)</Label>
+                <Input
+                  value={depositCustomerContact}
+                  onChange={(e) => setDepositCustomerContact(e.target.value)}
+                  disabled={loading}
+                  className="mt-1.5 rounded-xl border-slate-300 dark:border-slate-600"
+                  placeholder="VD: 0901234567"
+                />
+              </div>
+              <div>
+                <Label className="text-slate-700 dark:text-slate-200">Số Tiền Cọc (VNĐ) *</Label>
+                <Input
+                  type="number"
+                  value={depositAmount}
+                  onChange={(e) => setDepositAmount(e.target.value)}
+                  min="0"
+                  step="1"
+                  disabled={loading}
+                  className="mt-1.5 rounded-xl border-blue-300 bg-blue-50/30 dark:border-blue-500/30 dark:bg-blue-500/10"
+                />
+              </div>
+              <div>
+                <Label className="text-slate-700 dark:text-slate-200">Giữ Đến Ngày *</Label>
+                <Input
+                  type="date"
+                  value={depositHoldUntil}
+                  onChange={(e) => setDepositHoldUntil(e.target.value)}
+                  disabled={loading}
+                  className="mt-1.5 rounded-xl border-slate-300 dark:border-slate-600"
+                />
+              </div>
+              <div>
+                <Label className="text-slate-700 dark:text-slate-200">Ghi Chú</Label>
+                <textarea
+                  value={depositNotes}
+                  onChange={(e) => setDepositNotes(e.target.value)}
+                  disabled={loading}
+                  rows={2}
+                  className="mt-1.5 w-full rounded-xl border border-slate-300 bg-transparent px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-slate-600 dark:text-slate-200"
+                  placeholder="Ghi chú thêm..."
+                />
+              </div>
+              {error && <p className="text-xs text-red-600 dark:text-red-400">{error}</p>}
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={closeDialog} disabled={loading}>Hủy</Button>
+            <Button
+              onClick={handleDeposit}
+              loading={loading}
+              loadingLabel="Đang xử lý..."
+              className="min-w-[10rem] bg-blue-600 text-white hover:bg-blue-700"
+            >
+              Xác Nhận Cọc
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* ── Undeposit dialog ──────────────────────────────────────────────── */}
+      <AlertDialog open={openDialog === "undeposit"} onOpenChange={(v) => !loading && !v && closeDialog()}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-500/10">
               <RotateCcw className="h-5 w-5 text-blue-600" />
             </div>
-            <button onClick={closeDialog} disabled={loading} className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 dark:text-slate-500 dark:hover:bg-slate-700">
-              <X className="h-4 w-4" />
-            </button>
-          </div>
-          <h2 className="mb-1 text-base font-semibold text-slate-900 dark:text-slate-100">Hủy Cọc Tài Khoản</h2>
-          <p className="text-sm text-slate-500 dark:text-slate-400">
-            Tài khoản <span className="font-semibold text-slate-900 dark:text-slate-100">&quot;{title}&quot;</span> sẽ được chuyển về trạng thái{" "}
-            <span className="font-semibold text-slate-700 dark:text-slate-200">Đang bán</span> và xóa thông tin cọc.
-          </p>
-          {error && <p className="mt-2 text-xs text-red-600 dark:text-red-400">{error}</p>}
-        </div>
-        <div className="flex justify-end gap-2 rounded-b-xl border-t bg-slate-50 px-5 py-3 dark:border-slate-700 dark:bg-slate-800">
-          <Button variant="outline" onClick={closeDialog} disabled={loading}>Hủy</Button>
-          <Button
-            onClick={handleUndeposit}
-            loading={loading}
-            loadingLabel="Đang xử lý..."
-            className="min-w-[8rem] bg-blue-600 text-white hover:bg-blue-700"
-          >
-            Xác Nhận Hủy Cọc
-          </Button>
-        </div>
-      </Modal>
+            <AlertDialogTitle>Hủy Cọc Tài Khoản</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tài khoản <span className="font-semibold text-slate-900 dark:text-slate-100">&quot;{title}&quot;</span> sẽ được chuyển về trạng thái{" "}
+              <span className="font-semibold text-slate-700 dark:text-slate-200">Đang bán</span> và xóa thông tin cọc.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          {error && <p className="text-xs text-red-600 dark:text-red-400">{error}</p>}
+          <AlertDialogFooter>
+            <Button variant="outline" onClick={closeDialog} disabled={loading}>Hủy</Button>
+            <Button
+              onClick={handleUndeposit}
+              loading={loading}
+              loadingLabel="Đang xử lý..."
+              className="min-w-[8rem] bg-blue-600 text-white hover:bg-blue-700"
+            >
+              Xác Nhận Hủy Cọc
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
-      {/* ── Unmark sold modal ─────────────────────────────────────────────── */}
-      <Modal open={openDialog === "unmark-sold"} onClose={closeDialog}>
-        <div className="p-5">
-          <div className="mb-4 flex items-start justify-between">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-500/10">
+      {/* ── Unmark sold dialog ─────────────────────────────────────────────── */}
+      <AlertDialog open={openDialog === "unmark-sold"} onOpenChange={(v) => !loading && !v && closeDialog()}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-500/10">
               <RotateCcw className="h-5 w-5 text-blue-600" />
             </div>
-            <button onClick={closeDialog} disabled={loading} className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 dark:text-slate-500 dark:hover:bg-slate-700">
-              <X className="h-4 w-4" />
-            </button>
-          </div>
-          <h2 className="mb-1 text-base font-semibold text-slate-900 dark:text-slate-100">Gỡ đánh dấu đã bán</h2>
-          <p className="text-sm text-slate-500 dark:text-slate-400">
-            Tài khoản <span className="font-semibold text-slate-900 dark:text-slate-100">&quot;{title}&quot;</span> sẽ được chuyển về trạng thái Còn hàng.
-          </p>
-          {error && <p className="mt-2 text-xs text-red-600 dark:text-red-400">{error}</p>}
-        </div>
-        <div className="flex justify-end gap-2 rounded-b-xl border-t bg-slate-50 px-5 py-3 dark:border-slate-700 dark:bg-slate-800">
-          <Button variant="outline" onClick={closeDialog} disabled={loading}>Hủy</Button>
-          <Button
-            onClick={handleUnmarkSold}
-            loading={loading}
-            loadingLabel="Đang xử lý..."
-            className="min-w-[8rem] bg-blue-600 text-white hover:bg-blue-700"
-          >
-            Xác nhận
-          </Button>
-        </div>
-      </Modal>
+            <AlertDialogTitle>Gỡ đánh dấu đã bán</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tài khoản <span className="font-semibold text-slate-900 dark:text-slate-100">&quot;{title}&quot;</span> sẽ được chuyển về trạng thái Còn hàng.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          {error && <p className="text-xs text-red-600 dark:text-red-400">{error}</p>}
+          <AlertDialogFooter>
+            <Button variant="outline" onClick={closeDialog} disabled={loading}>Hủy</Button>
+            <Button
+              onClick={handleUnmarkSold}
+              loading={loading}
+              loadingLabel="Đang xử lý..."
+              className="min-w-[8rem] bg-blue-600 text-white hover:bg-blue-700"
+            >
+              Xác nhận
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
-      {/* ── Buyback modal ──────────────────────────────────────────────── */}
-      <Modal open={openDialog === "buyback"} onClose={closeDialog}>
-        <div className="p-5">
-          <div className="mb-4 flex items-start justify-between">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 dark:bg-emerald-500/10">
-              <RotateCcw className="h-5 w-5 text-emerald-600" />
-            </div>
-            <button onClick={closeDialog} disabled={loading} className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 dark:text-slate-500 dark:hover:bg-slate-700">
-              <X className="h-4 w-4" />
-            </button>
-          </div>
-          <h2 className="mb-1 text-base font-semibold text-slate-900 dark:text-slate-100">Thu Lại Tài Khoản</h2>
-          <p className="mb-4 text-sm text-slate-500 dark:text-slate-400">
-            Thu lại <span className="font-semibold text-slate-900 dark:text-slate-100">&quot;{title}&quot;</span> theo chính sách giá thu.
-          </p>
+      {/* ── Buyback dialog ──────────────────────────────────────────────── */}
+      <Dialog open={openDialog === "buyback"} onOpenChange={(v) => !loading && !v && closeDialog()}>
+        <DialogContent showCloseButton={false} className="sm:max-w-sm p-0 gap-0">
+          <div className="p-5">
+            <DialogHeader className="mb-4">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 dark:bg-emerald-500/10">
+                <RotateCcw className="h-5 w-5 text-emerald-600" />
+              </div>
+              <DialogTitle className="text-base font-semibold">Thu Lại Tài Khoản</DialogTitle>
+              <DialogDescription>
+                Thu lại <span className="font-semibold text-slate-900 dark:text-slate-100">&quot;{title}&quot;</span> theo chính sách giá thu.
+              </DialogDescription>
+            </DialogHeader>
 
-          {/* Buyback info */}
-          {buybackInfo && (
-            <div className="mb-4 space-y-1.5 rounded-xl border border-emerald-200 bg-emerald-50/50 p-3 dark:border-emerald-500/20 dark:bg-emerald-500/5">
-              <div className="flex justify-between text-xs">
-                <span className="text-slate-500 dark:text-slate-400">Giá lúc bán</span>
-                <span className="font-semibold text-slate-900 dark:text-slate-100">{formatCurrency(account.selling_price)}</span>
-              </div>
-              <div className="flex justify-between text-xs">
-                <span className="text-slate-500 dark:text-slate-400">Đã bán</span>
-                <span className="font-medium text-slate-700 dark:text-slate-300">{buybackInfo.days} ngày trước</span>
-              </div>
-              <div className="flex justify-between text-xs">
-                <span className="text-slate-500 dark:text-slate-400">Mức thu ({buybackInfo.label})</span>
-                <span className="font-bold text-emerald-700 dark:text-emerald-400">{buybackInfo.percent}%</span>
-              </div>
-              <div className="border-t border-emerald-200 pt-1.5 dark:border-emerald-500/20">
+            {/* Buyback info */}
+            {buybackInfo && (
+              <div className="mb-4 space-y-1.5 rounded-xl border border-emerald-200 bg-emerald-50/50 p-3 dark:border-emerald-500/20 dark:bg-emerald-500/5">
                 <div className="flex justify-between text-xs">
-                  <span className="font-medium text-slate-700 dark:text-slate-300">Giá thu gợi ý</span>
-                  <span className="font-bold text-emerald-700 dark:text-emerald-300">{formatCurrency(suggestedBuybackPrice)}</span>
+                  <span className="text-slate-500 dark:text-slate-400">Giá lúc bán</span>
+                  <span className="font-semibold text-slate-900 dark:text-slate-100">{formatCurrency(account.selling_price)}</span>
+                </div>
+                <div className="flex justify-between text-xs">
+                  <span className="text-slate-500 dark:text-slate-400">Đã bán</span>
+                  <span className="font-medium text-slate-700 dark:text-slate-300">{buybackInfo.days} ngày trước</span>
+                </div>
+                <div className="flex justify-between text-xs">
+                  <span className="text-slate-500 dark:text-slate-400">Mức thu ({buybackInfo.label})</span>
+                  <span className="font-bold text-emerald-700 dark:text-emerald-400">{buybackInfo.percent}%</span>
+                </div>
+                <div className="border-t border-emerald-200 pt-1.5 dark:border-emerald-500/20">
+                  <div className="flex justify-between text-xs">
+                    <span className="font-medium text-slate-700 dark:text-slate-300">Giá thu gợi ý</span>
+                    <span className="font-bold text-emerald-700 dark:text-emerald-300">{formatCurrency(suggestedBuybackPrice)}</span>
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
+            )}
 
-          <div className="space-y-3">
-            <div>
-              <Label className="text-slate-700 dark:text-slate-200">Giá Thu Thực Tế (VNĐ)</Label>
-              <Input
-                type="number"
-                value={buybackPrice}
-                onChange={(e) => setBuybackPrice(e.target.value)}
-                min={0}
-                step={1}
-                disabled={loading}
-                className="mt-1.5 rounded-xl border-emerald-300 bg-emerald-50/30 dark:border-emerald-500/30 dark:bg-emerald-500/10"
-                autoFocus
-              />
+            <div className="space-y-3">
+              <div>
+                <Label className="text-slate-700 dark:text-slate-200">Giá Thu Thực Tế (VNĐ)</Label>
+                <Input
+                  type="number"
+                  value={buybackPrice}
+                  onChange={(e) => setBuybackPrice(e.target.value)}
+                  min={0}
+                  step={1}
+                  disabled={loading}
+                  className="mt-1.5 rounded-xl border-emerald-300 bg-emerald-50/30 dark:border-emerald-500/30 dark:bg-emerald-500/10"
+                  autoFocus
+                />
+              </div>
+              <div>
+                <Label className="text-slate-700 dark:text-slate-200">Email Liên Kết</Label>
+                <Select value={buybackEmailId || "__none__"} onValueChange={(val) => { if (val !== null) setBuybackEmailId(val === "__none__" ? "" : val) }} disabled={loading}>
+                  <SelectTrigger className="mt-1.5 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm transition-colors focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="__none__">Không liên kết email</SelectItem>
+                    {availableEmails.map((e) => (
+                      <SelectItem key={e.id} value={e.id}>
+                        {e.email_address}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              {error && <p className="text-xs text-red-600 dark:text-red-400">{error}</p>}
             </div>
-            <div>
-              <Label className="text-slate-700 dark:text-slate-200">Email Liên Kết</Label>
-              <select
-                value={buybackEmailId}
-                onChange={(e) => setBuybackEmailId(e.target.value)}
-                disabled={loading}
-                className="mt-1.5 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm outline-none transition-colors focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100"
-              >
-                <option value="">Không liên kết email</option>
-                {availableEmails.map((e) => (
-                  <option key={e.id} value={e.id}>
-                    {e.email_address}
-                  </option>
-                ))}
-              </select>
-            </div>
-            {error && <p className="text-xs text-red-600 dark:text-red-400">{error}</p>}
           </div>
-        </div>
-        <div className="flex justify-end gap-2 rounded-b-xl border-t bg-slate-50 px-5 py-3 dark:border-slate-700 dark:bg-slate-800">
-          <Button variant="outline" onClick={closeDialog} disabled={loading}>Hủy</Button>
-          <Button
-            onClick={handleBuyback}
-            loading={loading}
-            loadingLabel="Đang xử lý..."
-            className="min-w-[10rem] bg-emerald-600 text-white hover:bg-emerald-700"
-          >
-            Xác Nhận Thu Lại
-          </Button>
-        </div>
-      </Modal>
+          <DialogFooter>
+            <Button variant="outline" onClick={closeDialog} disabled={loading}>Hủy</Button>
+            <Button
+              onClick={handleBuyback}
+              loading={loading}
+              loadingLabel="Đang xử lý..."
+              className="min-w-[10rem] bg-emerald-600 text-white hover:bg-emerald-700"
+            >
+              Xác Nhận Thu Lại
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* ── Detail drawer ─────────────────────────────────────────────────── */}
       <PendingAccountDrawer
