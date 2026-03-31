@@ -140,6 +140,7 @@ export interface AdminSettings {
   is_disabled: boolean;
   display_name?: string | null;
   avatar_url?: string | null;
+  zalo_name?: string | null;
   zalo_link?: string | null;
   facebook_link?: string | null;
   transaction_box_url?: string | null;

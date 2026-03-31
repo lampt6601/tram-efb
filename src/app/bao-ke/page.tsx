@@ -27,6 +27,7 @@ export const metadata: Metadata = {
 interface SellerWithCollateral {
   user_id: string;
   display_name: string;
+  zalo_name: string | null;
   avatar_url: string | null;
   collateral_amount: number;
   transaction_box_url: string | null;
@@ -42,7 +43,7 @@ async function getGuaranteedSellers(): Promise<SellerWithCollateral[]> {
   const { data: sellers } = await supabase
     .from("admin_settings")
     .select(
-      "user_id, display_name, avatar_url, collateral_amount, transaction_box_url, zalo_link"
+      "user_id, display_name, zalo_name, avatar_url, collateral_amount, transaction_box_url, zalo_link"
     )
     .gt("collateral_amount", 0)
     .not("display_name", "is", null)
@@ -79,6 +80,7 @@ async function getGuaranteedSellers(): Promise<SellerWithCollateral[]> {
   return sellers.map((s) => ({
     user_id: s.user_id,
     display_name: s.display_name!,
+    zalo_name: s.zalo_name,
     avatar_url: s.avatar_url,
     collateral_amount: Number(s.collateral_amount),
     transaction_box_url: s.transaction_box_url,
@@ -177,6 +179,11 @@ export default async function BaoKePage() {
                       <div className="flex flex-wrap items-center gap-2">
                         <h2 className="text-base font-bold text-slate-900 sm:text-lg dark:text-slate-100">
                           {seller.display_name}
+                          {seller.zalo_name && (
+                            <span className="ml-1.5 text-sm font-medium text-slate-500 dark:text-slate-400">
+                              (Zalo: {seller.zalo_name})
+                            </span>
+                          )}
                         </h2>
                         {seller.sold_count > 0 && (
                           <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-400">

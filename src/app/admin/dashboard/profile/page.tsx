@@ -23,10 +23,11 @@ export default async function ProfilePage() {
   const service = createSupabaseServiceClient();
   const { data: settings } = await service
     .from("admin_settings")
-    .select("avatar_url")
+    .select("avatar_url, zalo_name")
     .eq("user_id", user.id)
     .single();
   const avatarUrl = (settings?.avatar_url as string) ?? "";
+  const zaloName = (settings?.zalo_name as string) ?? "";
 
   return (
     <div className="mx-auto max-w-lg">
@@ -76,7 +77,7 @@ export default async function ProfilePage() {
         </div>
         <div className="p-6 space-y-6">
           <AvatarUpload currentAvatarUrl={avatarUrl} />
-          <ProfileForm currentName={currentName} email={user.email ?? ""} />
+          <ProfileForm currentName={currentName} email={user.email ?? ""} currentZaloName={zaloName} />
         </div>
       </div>
 

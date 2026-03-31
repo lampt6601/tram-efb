@@ -77,6 +77,27 @@ export async function uploadAdminAvatar(formData: FormData): Promise<string> {
   return await uploadFileToImageKit(file);
 }
 
+export async function updateMyZaloName(zaloName: string | null) {
+  const supabase = await createSupabaseServerClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) throw new Error("Unauthorized");
+
+  const service = createSupabaseServiceClient();
+  const { error } = await service
+    .from("admin_settings")
+    .upsert(
+      { user_id: user.id, zalo_name: zaloName },
+      { onConflict: "user_id" }
+    );
+
+  if (error) throw new Error(error.message);
+  revalidatePath("/admin/dashboard/profile");
+  revalidatePath("/bao-ke");
+}
+
 export async function updateMyAvatar(avatarUrl: string | null) {
   const supabase = await createSupabaseServerClient();
   const {

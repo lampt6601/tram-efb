@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Save } from "lucide-react";
-import { updateMyProfile } from "@/app/actions/profile-actions";
+import { updateMyProfile, updateMyZaloName } from "@/app/actions/profile-actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -12,11 +12,13 @@ import { toast } from "sonner";
 interface ProfileFormProps {
   currentName: string;
   email: string;
+  currentZaloName?: string;
 }
 
-export function ProfileForm({ currentName, email }: ProfileFormProps) {
+export function ProfileForm({ currentName, email, currentZaloName = "" }: ProfileFormProps) {
   const router = useRouter();
   const [name, setName] = useState(currentName);
+  const [zaloName, setZaloName] = useState(currentZaloName);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -30,6 +32,9 @@ export function ProfileForm({ currentName, email }: ProfileFormProps) {
     setError("");
     try {
       await updateMyProfile(name.trim());
+      if (zaloName.trim() !== currentZaloName) {
+        await updateMyZaloName(zaloName.trim() || null);
+      }
       toast.success("Đã cập nhật hồ sơ thành công");
       router.refresh();
     } catch (err) {
@@ -63,10 +68,24 @@ export function ProfileForm({ currentName, email }: ProfileFormProps) {
         />
         {error && <p className="mt-1.5 text-sm text-red-600 dark:text-red-400">{error}</p>}
       </div>
+      <div>
+        <Label className="text-slate-700 dark:text-slate-200">Tên Zalo</Label>
+        <Input
+          type="text"
+          value={zaloName}
+          onChange={(e) => { setZaloName(e.target.value); setError(""); }}
+          placeholder="Tên hiển thị trên Zalo"
+          disabled={loading}
+          className="mt-1.5 rounded-xl border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100"
+        />
+        <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">
+          Tên Zalo sẽ hiển thị trên trang bảo kê. Để trống sẽ dùng tên admin.
+        </p>
+      </div>
       <div className="flex justify-end pt-2">
         <Button
           type="submit"
-          disabled={name.trim() === currentName}
+          disabled={name.trim() === currentName && zaloName.trim() === currentZaloName}
           loading={loading}
           loadingLabel="Đang lưu..."
           className="min-w-[9rem] bg-indigo-600 text-white hover:bg-indigo-700"
