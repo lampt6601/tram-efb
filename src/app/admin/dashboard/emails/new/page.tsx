@@ -33,10 +33,18 @@ export default function NewEmailPage() {
     setLoading(true);
     setError("");
 
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      setError("Bạn chưa đăng nhập");
+      setLoading(false);
+      return;
+    }
+
     const { error: err } = await supabase.from("emails").insert({
       email_address: values.emailAddress,
       password: values.password,
       recovery_info: values.recoveryInfo || null,
+      user_id: user.id,
     });
 
     if (err) {
