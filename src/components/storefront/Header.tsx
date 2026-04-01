@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import avatarOwner from "../../../public/avatar-owner.jpeg";
 import zaloIcon from "@/assets/icons/zalo.png";
 import { ThemeToggle } from "./ThemeToggle";
 
@@ -9,11 +10,12 @@ export function Header() {
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link href="/" className="flex items-center gap-2.5">
           <Image
-            src="/avatar-owner.jpeg"
+            src={avatarOwner}
             alt="THC eFootball Shop"
             width={36}
             height={36}
             priority
+            placeholder="blur"
             className="h-9 w-9 shrink-0 rounded-lg object-cover"
           />
           <h1 className="text-lg font-bold text-white">
