@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 import { AdminShell } from "@/components/admin/AdminShell";
 import { createSupabaseServerClient } from "@/lib/supabase-server";
 import { createSupabaseServiceClient } from "@/lib/supabase-service";
@@ -25,16 +26,22 @@ export default async function DashboardLayout({
   const adminName =
     (user?.user_metadata?.full_name as string | undefined) ?? "";
 
-  // Fetch avatar from admin_settings
+  // Fetch avatar + disabled status in a single query (moved from middleware to save CPU)
   let adminAvatarUrl = "";
   if (user) {
     const service = createSupabaseServiceClient();
     const { data: settings } = await service
       .from("admin_settings")
-      .select("avatar_url")
+      .select("avatar_url, is_disabled")
       .eq("user_id", user.id)
       .single();
     adminAvatarUrl = (settings?.avatar_url as string) ?? "";
+
+    // Redirect disabled admins (previously checked in middleware on every request)
+    if (settings?.is_disabled && !isSuperAdmin) {
+      await supabase.auth.signOut();
+      redirect("/admin/login?error=disabled");
+    }
   }
 
   return (

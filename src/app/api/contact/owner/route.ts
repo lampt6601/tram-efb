@@ -22,5 +22,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Invalid type" }, { status: 400 });
   }
 
-  return NextResponse.redirect(link, 302);
+  const response = NextResponse.redirect(link, 302);
+  response.headers.set("Cache-Control", "public, max-age=3600, s-maxage=3600");
+  return response;
 }

@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { createSupabaseServerClient } from "@/lib/supabase-server";
 import { createSupabaseServiceClient } from "@/lib/supabase-service";
+import { getAdminUsers } from "@/lib/cached-users";
 import { formatCurrency } from "@/lib/constants";
+
+export const revalidate = 120; // 2 minutes
 
 export const metadata: Metadata = { title: "Bảng Điều Khiển" };
 import { StatCard } from "@/components/ui/StatCard";
@@ -172,8 +175,8 @@ export default async function DashboardPage({
     .eq("status", "Sold")
     .gte("updated_at", monthStart);
 
-  // Get admin names from auth.users via service client
-  const { data: { users: allUsers } } = await service.auth.admin.listUsers();
+  // Get admin names from auth.users via cached utility
+  const allUsers = await getAdminUsers();
   const userMap = new Map(
     (allUsers ?? []).map((u) => [
       u.id,

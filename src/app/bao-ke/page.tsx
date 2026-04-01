@@ -1,4 +1,5 @@
 import { createSupabaseServiceClient } from "@/lib/supabase-service";
+import { getAdminUsers } from "@/lib/cached-users";
 import { Header } from "@/components/storefront/Header";
 import { Footer } from "@/components/storefront/Footer";
 import { formatCurrency } from "@/lib/constants";
@@ -50,7 +51,7 @@ async function getGuaranteedSellers(): Promise<SellerWithCollateral[]> {
   if (!sellers || sellers.length === 0) return [];
 
   // Get full_name from auth.users metadata
-  const { data: { users: allUsers } } = await supabase.auth.admin.listUsers();
+  const allUsers = await getAdminUsers();
   const userNameMap = new Map(
     (allUsers ?? []).map((u) => [
       u.id,

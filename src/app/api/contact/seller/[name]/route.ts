@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createSupabaseServiceClient } from "@/lib/supabase-service";
+import { getAdminUsers } from "@/lib/cached-users";
 
 export async function GET(
   request: NextRequest,
@@ -16,8 +17,8 @@ export async function GET(
   const service = createSupabaseServiceClient();
 
   // Find user by full_name in auth.users metadata
-  const { data: { users } } = await service.auth.admin.listUsers();
-  const user = (users ?? []).find(
+  const allUsers = await getAdminUsers();
+  const user = (allUsers ?? []).find(
     (u) => (u.user_metadata?.full_name || u.email?.split("@")[0]) === sellerName,
   );
 
@@ -43,5 +44,8 @@ export async function GET(
     );
   }
 
-  return NextResponse.redirect(link, 302);
+  const response = NextResponse.redirect(link, 302);
+  // Cache redirect for 5 minutes to reduce repeated lookups
+  response.headers.set("Cache-Control", "public, max-age=300, s-maxage=300");
+  return response;
 }

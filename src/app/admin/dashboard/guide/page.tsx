@@ -23,6 +23,8 @@ import {
   MessageCircle,
 } from "lucide-react";
 
+export const revalidate = 3600; // 1 hour — static content
+
 function SectionHeader({
   step,
   icon: Icon,

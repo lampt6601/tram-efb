@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { createSupabaseServerClient } from "@/lib/supabase-server";
 import { createSupabaseServiceClient } from "@/lib/supabase-service";
 import { checkIsSuperAdmin } from "@/lib/super-admin";
+import { getAdminUsers } from "@/lib/cached-users";
+
+export const revalidate = 120; // 2 minutes
 
 export const metadata: Metadata = { title: "Tất Cả Tài Khoản" };
 import { redirect } from "next/navigation";
@@ -35,9 +38,9 @@ export default async function AllAccountsPage({
 
   const service = createSupabaseServiceClient();
 
-  const { data: usersData } = await service.auth.admin.listUsers({ perPage: 1000 });
+  const allUsers = await getAdminUsers();
   const adminNameMap = new Map<string, string>(
-    (usersData?.users ?? []).map((u) => [
+    (allUsers ?? []).map((u) => [
       u.id,
       u.user_metadata?.full_name ?? u.email ?? u.id,
     ])

@@ -1,5 +1,6 @@
 import { createSupabaseServiceClient } from "@/lib/supabase-service";
 import { SUPER_ADMIN_EMAIL } from "@/lib/super-admin";
+import { getAdminUsers } from "@/lib/cached-users";
 import { SellerApplyForm } from "./SellerApplyForm";
 
 export const revalidate = 3600; // revalidate every hour
@@ -16,18 +17,18 @@ export default async function SellerApplyPage() {
   const service = createSupabaseServiceClient();
   const monthStart = getStartOfMonthISO();
 
-  const [{ data: soldThisMonth }, { data: usersData }] = await Promise.all([
+  const [{ data: soldThisMonth }, allUsers] = await Promise.all([
     service
       .from("accounts")
       .select("user_id")
       .eq("status", "Sold")
       .gte("updated_at", monthStart),
-    service.auth.admin.listUsers({ perPage: 1000 }),
+    getAdminUsers(),
   ]);
 
   // Build map of active (non-deleted) admins, excluding super admin
   const activeAdminMap = new Map<string, string>(
-    (usersData?.users ?? [])
+    (allUsers ?? [])
       .filter((u) => !!u.email && u.email !== SUPER_ADMIN_EMAIL)
       .map((u) => [u.id, u.user_metadata?.full_name ?? u.email ?? "Người bán"]),
   );

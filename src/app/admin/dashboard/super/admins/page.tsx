@@ -2,8 +2,11 @@ import type { Metadata } from "next";
 import { createSupabaseServerClient } from "@/lib/supabase-server";
 import { createSupabaseServiceClient } from "@/lib/supabase-service";
 import { checkIsSuperAdmin, SUPER_ADMIN_EMAIL } from "@/lib/super-admin";
+import { getAdminUsers } from "@/lib/cached-users";
 import { redirect } from "next/navigation";
 import { Users, ShieldCheck, Gamepad2, Mail, Calendar, Clock, Wallet, User } from "lucide-react";
+
+export const revalidate = 120; // 2 minutes
 
 export const metadata: Metadata = { title: "Quản Lý Admin" };
 import { formatCurrency } from "@/lib/constants";
@@ -33,8 +36,7 @@ export default async function SuperAdminsPage() {
 
   const service = createSupabaseServiceClient();
 
-  const { data: usersData } = await service.auth.admin.listUsers({ perPage: 1000 });
-  const allUsers = usersData?.users ?? [];
+  const allUsers = await getAdminUsers();
 
   const [
     { data: accountRows },

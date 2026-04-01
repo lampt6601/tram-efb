@@ -3,6 +3,8 @@ import { createSupabaseServerClient } from "@/lib/supabase-server";
 import Link from "next/link";
 import { Plus, Mail, Pencil, Link2, Link2Off } from "lucide-react";
 
+export const revalidate = 120; // 2 minutes
+
 export const metadata: Metadata = { title: "Email" };
 import { DeleteEmailButton } from "./DeleteButton";
 import { EmailFilters } from "./EmailFilters";

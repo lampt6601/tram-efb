@@ -2,8 +2,11 @@ import type { Metadata } from "next";
 import { createSupabaseServerClient } from "@/lib/supabase-server";
 import { createSupabaseServiceClient } from "@/lib/supabase-service";
 import { checkIsSuperAdmin } from "@/lib/super-admin";
+import { getAdminUsers } from "@/lib/cached-users";
 import { redirect } from "next/navigation";
 import { formatCurrency } from "@/lib/constants";
+
+export const revalidate = 120; // 2 minutes
 
 export const metadata: Metadata = { title: "Doanh Thu Toàn Shop" };
 import { StatCard } from "@/components/ui/StatCard";
@@ -89,13 +92,12 @@ export default async function SuperRevenuePage({
 
   // Use service client to bypass RLS and get all shop data
   const service = createSupabaseServiceClient();
-  const [{ data: accounts }, { data: usersData }] = await Promise.all([
+  const [{ data: accounts }, allUsers] = await Promise.all([
     service.from("accounts").select("id, status, selling_price, purchase_price, user_id, created_at, updated_at"),
-    service.auth.admin.listUsers({ perPage: 1000 }),
+    getAdminUsers(),
   ]);
 
   const items = (accounts ?? []) as Account[];
-  const allUsers = usersData?.users ?? [];
 
   // Build admin options list (excluding super admin)
   const adminOptions = allUsers

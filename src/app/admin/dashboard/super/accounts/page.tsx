@@ -2,8 +2,11 @@ import type { Metadata } from "next";
 import { createSupabaseServerClient } from "@/lib/supabase-server";
 import { createSupabaseServiceClient } from "@/lib/supabase-service";
 import { checkIsSuperAdmin } from "@/lib/super-admin";
+import { getAdminUsers } from "@/lib/cached-users";
 import { redirect } from "next/navigation";
 import { Globe, Gamepad2, Star, ExternalLink } from "lucide-react";
+
+export const revalidate = 120; // 2 minutes
 
 export const metadata: Metadata = { title: "Tất Cả Tài Khoản (Super)" };
 import { StatusBadge } from "@/components/ui/Badge";
@@ -44,9 +47,9 @@ export default async function SuperAccountsPage({
   const service = createSupabaseServiceClient();
 
   // Build admin email map from all users
-  const { data: usersData } = await service.auth.admin.listUsers({ perPage: 1000 });
+  const allUsers = await getAdminUsers();
   const adminEmailMap = new Map<string, string>(
-    (usersData?.users ?? []).map((u) => [u.id, u.user_metadata?.full_name ?? u.email ?? u.id])
+    (allUsers ?? []).map((u) => [u.id, u.user_metadata?.full_name ?? u.email ?? u.id])
   );
 
   // Fetch available emails for buyback (not linked to any account)
