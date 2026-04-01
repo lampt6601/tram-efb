@@ -13,7 +13,8 @@ export function Header() {
             alt="THC eFootball Shop"
             width={36}
             height={36}
-            className="h-9 w-9 rounded-lg object-cover"
+            priority
+            className="h-9 w-9 shrink-0 rounded-lg object-cover"
           />
           <h1 className="text-lg font-bold text-white">
             <span className="text-indigo-400">THC</span> eFootball Shop
