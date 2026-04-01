@@ -1,6 +1,9 @@
+import type { Metadata } from "next";
 import { createSupabaseServerClient } from "@/lib/supabase-server";
 import { createSupabaseServiceClient } from "@/lib/supabase-service";
 import { checkIsSuperAdmin } from "@/lib/super-admin";
+
+export const metadata: Metadata = { title: "Tất Cả Tài Khoản" };
 import { redirect } from "next/navigation";
 import { Globe, Gamepad2, Star, ExternalLink } from "lucide-react";
 import { StatusBadge } from "@/components/ui/Badge";

@@ -1,5 +1,8 @@
+import type { Metadata } from "next";
 import { createSupabaseServerClient } from "@/lib/supabase-server";
 import Link from "next/link";
+
+export const metadata: Metadata = { title: "Tài Khoản" };
 import { Plus, Gamepad2, Star, Clock, CheckCircle2, ExternalLink } from "lucide-react";
 import { StatusBadge } from "@/components/ui/Badge";
 import { formatCurrency } from "@/lib/constants";

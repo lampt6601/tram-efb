@@ -1,7 +1,10 @@
+import type { Metadata } from "next";
 import { createSupabaseServerClient } from "@/lib/supabase-server";
 import { createSupabaseServiceClient } from "@/lib/supabase-service";
 import { checkIsSuperAdmin } from "@/lib/super-admin";
 import { redirect, notFound } from "next/navigation";
+
+export const metadata: Metadata = { title: "Chỉnh Sửa Tài Khoản (Super)" };
 import { SuperAdminAccountForm } from "./SuperAdminAccountForm";
 import type { Account, Email } from "@/types/database";
 

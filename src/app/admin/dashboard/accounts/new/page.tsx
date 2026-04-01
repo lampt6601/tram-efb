@@ -1,5 +1,8 @@
+import type { Metadata } from "next";
 import { AccountForm } from "@/components/admin/AccountForm";
 import { createSupabaseServerClient } from "@/lib/supabase-server";
+
+export const metadata: Metadata = { title: "Thêm Tài Khoản" };
 import type { Account, Email } from "@/types/database";
 
 export default async function NewAccountPage({

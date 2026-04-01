@@ -1,8 +1,11 @@
+import type { Metadata } from "next";
 import { createSupabaseServerClient } from "@/lib/supabase-server";
 import { createSupabaseServiceClient } from "@/lib/supabase-service";
 import { checkIsSuperAdmin } from "@/lib/super-admin";
 import { redirect } from "next/navigation";
 import { Globe, Gamepad2, Star, ExternalLink } from "lucide-react";
+
+export const metadata: Metadata = { title: "Tất Cả Tài Khoản (Super)" };
 import { StatusBadge } from "@/components/ui/Badge";
 import { formatCurrency } from "@/lib/constants";
 import { SuperAccountFilters } from "./SuperAccountFilters";
@@ -55,7 +58,7 @@ export default async function SuperAccountsPage({
     (linkedAccounts ?? []).map((a: { email_id: string }) => a.email_id)
   );
   const availableEmails = (allEmails ?? []).filter(
-    (e: Email) => !linkedEmailIds.has(e.id)
+    (e: Email) => !linkedEmailIds.has(e.id) && e.user_id === user!.id
   ) as Email[];
 
   let query = service.from("accounts").select("id, title, description, selling_price, purchase_price, original_price, images, primary_image_url, status, total_gp, total_coins_android, total_coins_ios, team_strength, is_priority, is_clone, is_approved, server_region, monthly_log_quota, email_id, user_id, created_at, updated_at, emails(*)");

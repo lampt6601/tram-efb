@@ -1,6 +1,9 @@
+import type { Metadata } from "next";
 import { createSupabaseServerClient } from "@/lib/supabase-server";
 import Link from "next/link";
 import { Plus, SearchCheck, User, Banknote, MessageCircle } from "lucide-react";
+
+export const metadata: Metadata = { title: "Yêu Cầu Tìm Acc" };
 import { Button } from "@/components/ui/button";
 import { RequestFilters } from "./RequestFilters";
 import type { AccountRequest } from "@/types/database";

@@ -1,6 +1,9 @@
+import type { Metadata } from "next";
 import { createSupabaseServerClient } from "@/lib/supabase-server";
 import { createSupabaseServiceClient } from "@/lib/supabase-service";
 import { formatCurrency } from "@/lib/constants";
+
+export const metadata: Metadata = { title: "Bảng Điều Khiển" };
 import { StatCard } from "@/components/ui/StatCard";
 import { StatusBadge } from "@/components/ui/Badge";
 import { DashboardPeriodFilter } from "./DashboardPeriodFilter";

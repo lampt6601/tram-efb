@@ -1,5 +1,8 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase-server";
+
+export const metadata: Metadata = { title: "Chỉnh Sửa Tài Khoản" };
 import { AccountForm } from "@/components/admin/AccountForm";
 import type { Account, Email } from "@/types/database";
 

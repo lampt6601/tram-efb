@@ -1,8 +1,11 @@
+import type { Metadata } from "next";
 import { createSupabaseServerClient } from "@/lib/supabase-server";
 import { createSupabaseServiceClient } from "@/lib/supabase-service";
 import { checkIsSuperAdmin } from "@/lib/super-admin";
 import { redirect } from "next/navigation";
 import { formatCurrency } from "@/lib/constants";
+
+export const metadata: Metadata = { title: "Doanh Thu Toàn Shop" };
 import { StatCard } from "@/components/ui/StatCard";
 import { DashboardPeriodFilter } from "../../DashboardPeriodFilter";
 import { AdminRevenueFilter } from "./AdminRevenueFilter";

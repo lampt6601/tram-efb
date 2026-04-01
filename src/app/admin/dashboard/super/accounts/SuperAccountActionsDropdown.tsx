@@ -910,7 +910,12 @@ export function SuperAccountActionsDropdown({
                 <Label className="text-slate-700 dark:text-slate-200">Email Liên Kết</Label>
                 <Select value={buybackEmailId || "__none__"} onValueChange={(val) => { if (val !== null) setBuybackEmailId(val === "__none__" ? "" : val) }} disabled={loading}>
                   <SelectTrigger className="mt-1.5 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm transition-colors focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100">
-                    <SelectValue />
+                    <SelectValue placeholder="Chọn email">
+                      {(value: string) => {
+                        if (!value || value === "__none__") return "Không liên kết email";
+                        return availableEmails.find((e) => e.id === value)?.email_address ?? value;
+                      }}
+                    </SelectValue>
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="__none__">Không liên kết email</SelectItem>

@@ -517,7 +517,12 @@ export function SuperAdminAccountForm({ account, availableEmails }: Props) {
                 render={({ field }) => (
                   <Select value={field.value || "__none__"} onValueChange={(val) => field.onChange(val === "__none__" ? "" : val)}>
                     <SelectTrigger className={cn("mt-1.5", "w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm outline-none transition-colors focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 bg-white dark:bg-slate-800 dark:border-slate-600 dark:text-slate-100")}>
-                      <SelectValue />
+                      <SelectValue>
+                        {(value: string) => {
+                          if (!value || value === "__none__") return "Không có email liên kết";
+                          return availableEmails.find((e) => e.id === value)?.email_address ?? value;
+                        }}
+                      </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="__none__">Không có email liên kết</SelectItem>

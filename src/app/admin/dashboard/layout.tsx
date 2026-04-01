@@ -1,7 +1,15 @@
+import type { Metadata } from "next";
 import { AdminShell } from "@/components/admin/AdminShell";
 import { createSupabaseServerClient } from "@/lib/supabase-server";
 import { createSupabaseServiceClient } from "@/lib/supabase-service";
 import { checkIsSuperAdmin } from "@/lib/super-admin";
+
+export const metadata: Metadata = {
+  title: {
+    template: "%s | THC Admin",
+    default: "Admin | THC eFootball Shop",
+  },
+};
 
 export default async function DashboardLayout({
   children,

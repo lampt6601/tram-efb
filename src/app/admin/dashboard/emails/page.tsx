@@ -1,6 +1,9 @@
+import type { Metadata } from "next";
 import { createSupabaseServerClient } from "@/lib/supabase-server";
 import Link from "next/link";
 import { Plus, Mail, Pencil, Link2, Link2Off } from "lucide-react";
+
+export const metadata: Metadata = { title: "Email" };
 import { DeleteEmailButton } from "./DeleteButton";
 import { EmailFilters } from "./EmailFilters";
 import type { AccountWithEmail, Email } from "@/types/database";

@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import {
   BookOpen,
   Mail,
@@ -115,6 +116,8 @@ function ActionChip({ icon: Icon, label, color = "slate" }: { icon: React.Elemen
     </span>
   );
 }
+
+export const metadata: Metadata = { title: "Hướng Dẫn Sử Dụng" };
 
 export default function GuidePage() {
   return (

@@ -1,8 +1,11 @@
+import type { Metadata } from "next";
 import { createSupabaseServerClient } from "@/lib/supabase-server";
 import { createSupabaseServiceClient } from "@/lib/supabase-service";
 import { checkIsSuperAdmin, SUPER_ADMIN_EMAIL } from "@/lib/super-admin";
 import { redirect } from "next/navigation";
 import { Users, ShieldCheck, Gamepad2, Mail, Calendar, Clock, Wallet, User } from "lucide-react";
+
+export const metadata: Metadata = { title: "Quản Lý Admin" };
 import { formatCurrency } from "@/lib/constants";
 import { CreateAdminModal } from "./CreateAdminModal";
 import { AutoApproveToggle } from "./AutoApproveToggle";

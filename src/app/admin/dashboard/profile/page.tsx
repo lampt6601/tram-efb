@@ -1,9 +1,12 @@
+import type { Metadata } from "next";
 import { createSupabaseServerClient } from "@/lib/supabase-server";
 import { createSupabaseServiceClient } from "@/lib/supabase-service";
 import { checkIsSuperAdmin } from "@/lib/super-admin";
 import { redirect } from "next/navigation";
 import Image from "next/image";
 import { UserCircle, ShieldCheck } from "lucide-react";
+
+export const metadata: Metadata = { title: "Hồ Sơ Cá Nhân" };
 import { ProfileForm } from "./ProfileForm";
 import { AvatarUpload } from "./AvatarUpload";
 import { ChangePasswordSection } from "./ChangePasswordSection";

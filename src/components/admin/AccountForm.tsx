@@ -864,7 +864,12 @@ export function AccountForm({ account, duplicating, availableEmails }: AccountFo
                         }
                       >
                         <SelectTrigger className="mt-1.5">
-                          <SelectValue />
+                          <SelectValue>
+                            {(value: string) => {
+                              if (!value || value === "__all__") return "Không có";
+                              return availableEmails.find((e) => e.id === value)?.email_address ?? value;
+                            }}
+                          </SelectValue>
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="__all__">Không có</SelectItem>
