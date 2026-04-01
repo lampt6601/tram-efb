@@ -44,6 +44,10 @@ interface AccountFormProps {
   /** True when creating a new account pre-filled from an existing one */
   duplicating?: boolean;
   availableEmails: Email[];
+  /** When true, renders without outer wrapper/back link for use inside Sheet */
+  embedded?: boolean;
+  /** Called after successful save in embedded mode */
+  onSuccess?: () => void;
 }
 
 type AccountFormValues = {
@@ -73,7 +77,7 @@ const inputClass =
 const selectClass =
   "w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm outline-none transition-colors focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 bg-white dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100";
 
-export function AccountForm({ account, duplicating, availableEmails }: AccountFormProps) {
+export function AccountForm({ account, duplicating, availableEmails, embedded, onSuccess }: AccountFormProps) {
   const isEditing = !!account && !duplicating;
   const [images, setImages] = useState<string[]>(account?.images ?? []);
   const [primaryImage, setPrimaryImage] = useState<string | null>(
@@ -446,7 +450,11 @@ export function AccountForm({ account, duplicating, availableEmails }: AccountFo
         );
       }
       router.refresh();
-      router.push("/admin/dashboard/accounts");
+      if (embedded && onSuccess) {
+        onSuccess();
+      } else {
+        router.push("/admin/dashboard/accounts");
+      }
     } catch (err: unknown) {
       toast.error(
         err instanceof Error ? err.message : "Đã xảy ra lỗi khi lưu tài khoản.",
@@ -467,23 +475,9 @@ export function AccountForm({ account, duplicating, availableEmails }: AccountFo
     </div>
   );
 
-  return (
-    <div className="mx-auto max-w-3xl">
-      <Link
-        href="/admin/dashboard/accounts"
-        className="mb-6 inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400"
-      >
-        <ArrowLeft className="h-4 w-4" /> Quay lại danh sách
-      </Link>
+  const formContent = (
+        <form onSubmit={handleSubmit(onSubmit)} className={cn("space-y-5", embedded ? "p-5" : "mt-5")}>
 
-      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800">
-        <div className="flex items-center justify-between">
-          <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">
-            {isEditing ? "Chỉnh Sửa Tài Khoản" : "Thêm Tài Khoản Mới"}
-          </h1>
-        </div>
-
-        <form onSubmit={handleSubmit(onSubmit)} className="mt-5 space-y-5">
           {/* ── Thông tin cơ bản ── */}
           <SectionHeader label="Thông tin" />
 
@@ -1131,15 +1125,37 @@ export function AccountForm({ account, duplicating, availableEmails }: AccountFo
             >
               {isEditing ? "Cập nhật" : "Tạo tài khoản"}
             </Button>
-            <Button
-              variant="outline"
-              render={<Link href="/admin/dashboard/accounts" />}
-              className="h-10 px-6 text-sm font-medium text-slate-700 dark:text-slate-300"
-            >
-              Hủy
-            </Button>
+            {!embedded && (
+              <Button
+                variant="outline"
+                render={<Link href="/admin/dashboard/accounts" />}
+                className="h-10 px-6 text-sm font-medium text-slate-700 dark:text-slate-300"
+              >
+                Hủy
+              </Button>
+            )}
           </div>
         </form>
+  );
+
+  if (embedded) return formContent;
+
+  return (
+    <div className="mx-auto max-w-3xl">
+      <Link
+        href="/admin/dashboard/accounts"
+        className="mb-6 inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400"
+      >
+        <ArrowLeft className="h-4 w-4" /> Quay lại danh sách
+      </Link>
+
+      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+        <div className="flex items-center justify-between">
+          <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">
+            {isEditing ? "Chỉnh Sửa Tài Khoản" : "Thêm Tài Khoản Mới"}
+          </h1>
+        </div>
+        {formContent}
       </div>
     </div>
   );

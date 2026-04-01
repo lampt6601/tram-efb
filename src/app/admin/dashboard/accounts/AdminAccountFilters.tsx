@@ -33,11 +33,7 @@ const STATUS_OPTIONS = [
   { value: "Sold", label: "Đã Bán" },
 ];
 
-interface AdminAccountFiltersProps {
-  totalCount: number;
-}
-
-export function AdminAccountFilters({ totalCount }: AdminAccountFiltersProps) {
+export function AdminAccountFilters() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -117,7 +113,7 @@ export function AdminAccountFilters({ totalCount }: AdminAccountFiltersProps) {
           />
         </div>
 
-        {/* Status + Sort + Apply + Clear */}
+        {/* Status + Sort */}
         <div className="flex items-center gap-2 w-full md:w-auto">
           {/* Status */}
           <div className="flex flex-1 md:flex-none items-center gap-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-2.5 shadow-sm">
@@ -151,22 +147,10 @@ export function AdminAccountFilters({ totalCount }: AdminAccountFiltersProps) {
               </SelectContent>
             </Select>
           </div>
-
-          {/* Clear */}
-          {hasActiveFilters && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={clearAll}
-              className="h-9 shrink-0 rounded-xl border-rose-200 bg-rose-50 px-3 text-sm font-medium text-rose-600 transition-all hover:bg-rose-100 hover:text-rose-700 hover:border-rose-300 shadow-sm"
-            >
-              Xoá lọc
-            </Button>
-          )}
         </div>
 
-        {/* Price range + Apply + count */}
-        <div className="flex items-center gap-2 w-full md:w-auto">
+        {/* Price range + Apply + Clear */}
+        <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
           <div className="flex items-center gap-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-1 pl-2.5 shadow-sm">
             <SlidersHorizontal className="h-3.5 w-3.5 shrink-0 text-slate-400 dark:text-slate-500" />
             <PriceInput
@@ -195,9 +179,17 @@ export function AdminAccountFilters({ totalCount }: AdminAccountFiltersProps) {
             Lọc
           </Button>
 
-          <span className="ml-auto shrink-0 text-sm font-medium text-slate-500 dark:text-slate-400">
-            {isPending ? "Đang lọc..." : `${totalCount} tài khoản`}
-          </span>
+          {/* Clear */}
+          {hasActiveFilters && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={clearAll}
+              className="h-9 shrink-0 rounded-xl border-rose-200 bg-rose-50 px-3 text-sm font-medium text-rose-600 transition-all hover:bg-rose-100 hover:text-rose-700 hover:border-rose-300 shadow-sm dark:border-rose-500/30 dark:bg-rose-500/10 dark:text-rose-400 dark:hover:bg-rose-500/20"
+            >
+              Xoá lọc
+            </Button>
+          )}
         </div>
       </div>
     </div>

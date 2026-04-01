@@ -109,7 +109,7 @@ export default async function AccountsPage({
       {/* Filters */}
       <div className="mb-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4 shadow-sm">
         <Suspense fallback={null}>
-          <AdminAccountFilters totalCount={items.length} />
+          <AdminAccountFilters />
         </Suspense>
       </div>
 

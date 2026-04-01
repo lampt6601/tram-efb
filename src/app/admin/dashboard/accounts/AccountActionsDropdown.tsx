@@ -49,6 +49,7 @@ import {
   AlertDialogFooter,
 } from "@/components/ui/alert-dialog";
 import { PendingAccountDrawer } from "@/app/admin/dashboard/super/pending/PendingAccountDrawer";
+import { AccountEditSheet } from "@/components/admin/AccountEditSheet";
 import { toggleAccountPriority } from "@/app/actions/account-actions";
 import { toast } from "sonner";
 
@@ -85,6 +86,7 @@ export function AccountActionsDropdown({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [editSheetOpen, setEditSheetOpen] = useState(false);
 
   // Copy link
   const [copied, setCopied] = useState(false);
@@ -430,14 +432,7 @@ export function AccountActionsDropdown({
           }
         />
         <DropdownMenuContent align="end" className="w-52">
-          <DropdownMenuItem
-            render={
-              <Link
-                href={`/admin/dashboard/accounts/${id}/edit`}
-                className="flex items-center gap-2"
-              />
-            }
-          >
+          <DropdownMenuItem onClick={() => setEditSheetOpen(true)} className="gap-2">
             <Pencil className="h-4 w-4 text-slate-400" />
             Chỉnh sửa
           </DropdownMenuItem>
@@ -584,6 +579,13 @@ export function AccountActionsDropdown({
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+
+      {/* ── Edit sheet ──────────────────────────────────────────────────── */}
+      <AccountEditSheet
+        accountId={id}
+        open={editSheetOpen}
+        onOpenChange={setEditSheetOpen}
+      />
 
       {/* ── Detail drawer ─────────────────────────────────────────────────── */}
       <PendingAccountDrawer
