@@ -1,4 +1,5 @@
 import { Header } from "@/components/storefront/Header";
+import { Footer } from "@/components/storefront/Footer";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   AccountGridSkeleton,
@@ -116,6 +117,7 @@ export default function HomeLoading() {
           </div>
         </section>
       </main>
+      <Footer />
     </div>
   );
 }
