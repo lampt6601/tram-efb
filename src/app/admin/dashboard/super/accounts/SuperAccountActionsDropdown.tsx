@@ -689,7 +689,7 @@ export function SuperAccountActionsDropdown({
               {error && <p className="text-xs text-red-600 dark:text-red-400">{error}</p>}
             </div>
           </div>
-          <div className="-mx-4 -mb-4 rounded-b-xl border-t bg-muted/50 p-4">
+          <div className="border-t bg-muted/50 p-4">
             <div className="flex justify-end gap-2">
               <Button variant="outline" onClick={closeDialog} disabled={loading}>Hủy</Button>
               <Button
