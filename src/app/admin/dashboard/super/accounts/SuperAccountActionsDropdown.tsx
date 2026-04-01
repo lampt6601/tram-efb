@@ -58,6 +58,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { PendingAccountDrawer } from "@/app/admin/dashboard/super/pending/PendingAccountDrawer";
+import { SuperAccountEditSheet } from "./SuperAccountEditSheet";
 import type { AccountWithEmail, Email } from "@/types/database";
 import { getBuybackInfo, calculateBuybackPrice } from "@/lib/buyback";
 import { formatCurrency } from "@/lib/constants";
@@ -87,6 +88,7 @@ export function SuperAccountActionsDropdown({
   const [approving, setApproving] = useState(false);
   const [copied, setCopied] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [editSheetOpen, setEditSheetOpen] = useState(false);
   const [error, setError] = useState("");
   const [toggling, setToggling] = useState<"priority" | "clone" | null>(null);
   const [priority, setPriority] = useState(account.is_priority ?? false);
@@ -397,14 +399,7 @@ export function SuperAccountActionsDropdown({
           }
         />
         <DropdownMenuContent align="end" className="w-52">
-          <DropdownMenuItem
-            render={
-              <Link
-                href={`/admin/dashboard/super/accounts/${id}/edit`}
-                className="flex items-center gap-2"
-              />
-            }
-          >
+          <DropdownMenuItem onClick={() => setEditSheetOpen(true)} className="gap-2">
             <Pencil className="h-4 w-4 text-slate-400" />
             Chỉnh sửa
           </DropdownMenuItem>
@@ -943,6 +938,13 @@ export function SuperAccountActionsDropdown({
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* ── Edit sheet ──────────────────────────────────────────────────── */}
+      <SuperAccountEditSheet
+        accountId={id}
+        open={editSheetOpen}
+        onOpenChange={setEditSheetOpen}
+      />
 
       {/* ── Detail drawer ─────────────────────────────────────────────────── */}
       <PendingAccountDrawer

@@ -357,6 +357,36 @@ export async function updateSellerCollateral(
   revalidatePath("/bao-ke");
 }
 
+export async function getSuperAccountForEdit(accountId: string) {
+  await verifySuperAdmin();
+  const service = createSupabaseServiceClient();
+
+  const [{ data: account }, { data: allEmails }, { data: linkedAccounts }] =
+    await Promise.all([
+      service
+        .from("accounts")
+        .select("id, title, description, selling_price, purchase_price, original_price, images, primary_image_url, status, total_gp, total_coins_android, total_coins_ios, team_strength, is_priority, is_clone, is_approved, server_region, monthly_log_quota, email_id, user_id, created_at, updated_at, deposit_customer_name, deposit_customer_contact, deposit_amount, deposit_hold_until, deposit_notes")
+        .eq("id", accountId)
+        .single(),
+      service.from("emails").select("id, email_address, password, recovery_info, user_id, created_at, updated_at").order("email_address"),
+      service.from("accounts").select("email_id").not("email_id", "is", null).neq("id", accountId),
+    ]);
+
+  if (!account) return null;
+
+  const linkedIds = new Set((linkedAccounts ?? []).map((a: { email_id: string }) => a.email_id));
+  const availableEmails = (allEmails ?? []).filter((e: { id: string }) => !linkedIds.has(e.id));
+
+  if (account.email_id) {
+    const cur = (allEmails ?? []).find((e: { id: string }) => e.id === account.email_id);
+    if (cur && !availableEmails.find((e: { id: string }) => e.id === cur.id)) {
+      availableEmails.unshift(cur);
+    }
+  }
+
+  return { account, availableEmails };
+}
+
 export async function getSellerCollateralHistory(adminId: string) {
   await verifySuperAdmin();
   const service = createSupabaseServiceClient();
