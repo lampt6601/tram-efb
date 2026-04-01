@@ -5,6 +5,7 @@ const nextConfig: NextConfig = {
     serverActions: {
       bodySizeLimit: "5mb",
     },
+    scrollRestoration: true
   },
   images: {
     unoptimized: true, // Use ImageKit CDN transformations instead of Vercel (saves bandwidth)

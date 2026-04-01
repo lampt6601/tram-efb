@@ -1,5 +1,7 @@
 import { createSupabaseAnonClient } from "@/lib/supabase-anon";
 import { Header } from "@/components/storefront/Header";
+import { BackButton } from "@/components/ui/BackButton";
+import Link from "next/link";
 import { Footer } from "@/components/storefront/Footer";
 import { StatusBadge } from "@/components/ui/Badge";
 import { ImageGallery } from "@/components/ui/ImageGallery";
@@ -21,7 +23,6 @@ import {
   ExternalLink,
   Search,
 } from "lucide-react";
-import Link from "next/link";
 import Image from "next/image";
 import facebookIcon from "@/assets/icons/facebook.webp";
 import zaloIcon from "@/assets/icons/zalo.png";
@@ -158,12 +159,12 @@ export default async function AccountDetailPage({
         <main className="flex-1">
           <div className="mx-auto w-full max-w-4xl overflow-x-hidden px-0 py-4 sm:px-6 sm:py-8 lg:px-8">
             <div className="mb-4 px-4 sm:mb-6 sm:px-0">
-              <Link
-                href="/"
+              <BackButton
+                fallbackHref="/"
                 className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 transition-colors hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400"
               >
                 <ArrowLeft className="h-4 w-4" /> Quay lại Cửa Hàng
-              </Link>
+              </BackButton>
             </div>
 
             {/* Sold banner — prominent */}
@@ -296,12 +297,12 @@ export default async function AccountDetailPage({
         <div className="mx-auto w-full max-w-5xl overflow-x-hidden px-3 py-2 sm:px-6 sm:py-8 lg:px-8">
           {/* Back link + Share */}
           <div className="mb-2 flex items-center justify-between sm:mb-4">
-            <Link
-              href="/"
+            <BackButton
+              fallbackHref="/"
               className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 transition-colors hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400"
             >
               <ArrowLeft className="h-4 w-4" /> Quay lại Cửa Hàng
-            </Link>
+            </BackButton>
             <ShareButtons accountId={id} />
           </div>
 
