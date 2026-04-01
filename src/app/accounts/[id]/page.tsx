@@ -90,6 +90,9 @@ export async function generateMetadata({
     robots: isSold
       ? { index: false, follow: false }
       : { index: true, follow: true },
+    alternates: !isSold
+      ? { canonical: `https://thc-efb.com/accounts/${id}` }
+      : undefined,
     openGraph: {
       title,
       description,
@@ -599,65 +602,69 @@ export default async function AccountDetailPage({
             </span>
           </Link>
 
-          <script
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{
-              __html: JSON.stringify({
-                "@context": "https://schema.org",
-                "@type": "Product",
-                name: account.title,
-                image: galleryImages,
-                description: `Mua acc eFootball ${account.server_region ? `server ${account.server_region}` : ""} với lực chiến ${account.team_strength ?? 0}, tổng GP ${account.total_gp ?? 0}. Giao dịch uy tín tại THC eFootball Shop.`,
-                sku: account.id,
-                brand: {
-                  "@type": "Brand",
-                  name: "eFootball",
-                },
-                category: "Game Accounts",
-                offers: {
-                  "@type": "Offer",
-                  priceCurrency: "VND",
-                  price: account.selling_price,
-                  availability: "https://schema.org/InStock",
-                  url: `https://thc-efb.com/accounts/${account.id}`,
-                  seller: {
-                    "@type": "Organization",
-                    name: "THC eFootball Shop",
-                    url: "https://thc-efb.com",
+          {!isSale && (
+            <script
+              type="application/ld+json"
+              dangerouslySetInnerHTML={{
+                __html: JSON.stringify({
+                  "@context": "https://schema.org",
+                  "@type": "Product",
+                  name: account.title,
+                  image: galleryImages,
+                  description: `Mua acc eFootball ${account.server_region ? `server ${account.server_region}` : ""} với lực chiến ${account.team_strength ?? 0}, tổng GP ${account.total_gp ?? 0}. Giao dịch uy tín tại THC eFootball Shop.`,
+                  sku: account.id,
+                  brand: {
+                    "@type": "Brand",
+                    name: "eFootball",
                   },
-                },
-                additionalProperty: [
-                  ...(account.team_strength
-                    ? [
-                        {
-                          "@type": "PropertyValue",
-                          name: "Team Strength",
-                          value: account.team_strength,
-                        },
-                      ]
-                    : []),
-                  ...(account.total_gp
-                    ? [
-                        {
-                          "@type": "PropertyValue",
-                          name: "Total GP",
-                          value: account.total_gp,
-                        },
-                      ]
-                    : []),
-                  ...(account.server_region
-                    ? [
-                        {
-                          "@type": "PropertyValue",
-                          name: "Server Region",
-                          value: account.server_region,
-                        },
-                      ]
-                    : []),
-                ],
-              }),
-            }}
-          />
+                  category: "Game Accounts",
+                  offers: {
+                    "@type": "Offer",
+                    priceCurrency: "VND",
+                    price: account.selling_price,
+                    availability: isDeposited
+                      ? "https://schema.org/LimitedAvailability"
+                      : "https://schema.org/InStock",
+                    url: `https://thc-efb.com/accounts/${account.id}`,
+                    seller: {
+                      "@type": "Organization",
+                      name: "THC eFootball Shop",
+                      url: "https://thc-efb.com",
+                    },
+                  },
+                  additionalProperty: [
+                    ...(account.team_strength
+                      ? [
+                          {
+                            "@type": "PropertyValue",
+                            name: "Team Strength",
+                            value: account.team_strength,
+                          },
+                        ]
+                      : []),
+                    ...(account.total_gp
+                      ? [
+                          {
+                            "@type": "PropertyValue",
+                            name: "Total GP",
+                            value: account.total_gp,
+                          },
+                        ]
+                      : []),
+                    ...(account.server_region
+                      ? [
+                          {
+                            "@type": "PropertyValue",
+                            name: "Server Region",
+                            value: account.server_region,
+                          },
+                        ]
+                      : []),
+                  ],
+                }),
+              }}
+            />
+          )}
           <script
             type="application/ld+json"
             dangerouslySetInnerHTML={{

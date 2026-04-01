@@ -28,10 +28,24 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { name } = await params;
   const sellerName = decodeURIComponent(name);
+  const canonicalUrl = `https://thc-efb.com/shop/${encodeURIComponent(sellerName)}`;
 
   return {
     title: `Gian hàng ${sellerName} | THC eFootball Shop`,
     description: `Xem tất cả tài khoản eFootball đang bán và đã bán của ${sellerName} tại THC eFootball Shop.`,
+    alternates: { canonical: canonicalUrl },
+    openGraph: {
+      title: `Gian hàng ${sellerName} | THC eFootball Shop`,
+      description: `Xem tất cả tài khoản eFootball đang bán và đã bán của ${sellerName} tại THC eFootball Shop.`,
+      url: canonicalUrl,
+      type: "website",
+      siteName: "THC eFootball Shop",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `Gian hàng ${sellerName} | THC eFootball Shop`,
+      description: `Xem tất cả tài khoản eFootball đang bán và đã bán của ${sellerName} tại THC eFootball Shop.`,
+    },
   };
 }
 
@@ -191,6 +205,62 @@ export default async function SellerShopPage({
             </section>
           )}
         </div>
+
+        {/* ProfilePage JSON-LD */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "ProfilePage",
+              mainEntity: {
+                "@type": "Person",
+                name: seller.name,
+                ...(seller.avatar && { image: seller.avatar }),
+                worksFor: {
+                  "@type": "Organization",
+                  name: "THC eFootball Shop",
+                  url: "https://thc-efb.com",
+                },
+                makesOffer: available.map((a) => ({
+                  "@type": "Offer",
+                  itemOffered: {
+                    "@type": "Product",
+                    name: a.title,
+                    url: `https://thc-efb.com/accounts/${a.id}`,
+                  },
+                  priceCurrency: "VND",
+                  price: a.selling_price,
+                })),
+              },
+            }),
+          }}
+        />
+
+        {/* BreadcrumbList JSON-LD */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "BreadcrumbList",
+              itemListElement: [
+                {
+                  "@type": "ListItem",
+                  position: 1,
+                  name: "Trang chủ",
+                  item: "https://thc-efb.com",
+                },
+                {
+                  "@type": "ListItem",
+                  position: 2,
+                  name: `Gian hàng ${seller.name}`,
+                  item: `https://thc-efb.com/shop/${encodeURIComponent(seller.name)}`,
+                },
+              ],
+            }),
+          }}
+        />
       </main>
       <Footer />
     </div>

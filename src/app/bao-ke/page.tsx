@@ -23,6 +23,16 @@ export const metadata: Metadata = {
   title: "Người Bán Được Bảo Kê | THC eFootball Shop",
   description:
     "Danh sách người bán được THC bảo kê giao dịch. Mua acc eFootball an toàn với mức bảo kê rõ ràng từ ký quỹ của người bán.",
+  alternates: {
+    canonical: "https://thc-efb.com/bao-ke",
+  },
+  openGraph: {
+    title: "Người Bán Được Bảo Kê | THC eFootball Shop",
+    description:
+      "Danh sách người bán uy tín được bảo kê bởi THC eFootball Shop. Giao dịch an toàn, đã đặt cọc cam kết.",
+    url: "/bao-ke",
+    type: "website",
+  },
 };
 
 interface SellerWithCollateral {
