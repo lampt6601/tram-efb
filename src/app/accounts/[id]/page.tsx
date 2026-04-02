@@ -377,6 +377,7 @@ export default async function AccountDetailPage({
                               avatarUrl: account.seller_avatar_url ?? undefined,
                               transactionBoxUrl: account.seller_transaction_box_url ? `/api/contact/${id}?type=transaction_box` : undefined,
                               soldCount: account.seller_sold_count ?? undefined,
+                              collateralAmount: Number(account.seller_collateral_amount) || undefined,
                             }
                           : undefined
                       }

@@ -13,7 +13,6 @@ import { StatusBadge, Badge } from "@/components/ui/Badge";
 import { formatCompactCurrency } from "@/lib/constants";
 import type { PublicAccount } from "@/types/database";
 import { thumbCard } from "@/lib/image-utils";
-import { CollateralBadge } from "./CollateralBadge";
 
 export function AccountCard({ account, priority = false }: { account: PublicAccount; priority?: boolean }) {
   const thumbnail = account.primary_image_url || account.images?.[0];
@@ -153,9 +152,6 @@ export function AccountCard({ account, priority = false }: { account: PublicAcco
               >
                 Clone
               </Badge>
-            )}
-            {(account.seller_collateral_amount ?? 0) > 0 && (
-              <CollateralBadge amount={account.seller_collateral_amount!} />
             )}
           </div>
         </div>

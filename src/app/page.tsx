@@ -8,7 +8,8 @@ import { StatsBar } from "@/components/storefront/StatsBar";
 import { ZaloNotify } from "@/components/storefront/ZaloNotify";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { AutoScrollSlider } from "@/components/ui/AutoScrollSlider";
-import { Gamepad2, Search, BadgeCheck, Flame, Clock } from "lucide-react";
+import Link from "next/link";
+import { Gamepad2, Search, BadgeCheck, Flame, Clock, ShieldCheck, ArrowRight } from "lucide-react";
 import Image from "next/image";
 import { RecruitHeroCTA } from "@/components/storefront/RecruitHeroCTA";
 import { RecruitAdminSection } from "@/components/storefront/RecruitAdminSection";
@@ -303,6 +304,31 @@ export default async function HomePage({
       <section className="border-t border-slate-200 dark:border-slate-700">
         <div className="mx-auto max-w-xl px-4 py-8 sm:px-6 sm:py-10">
           <ZaloNotify />
+        </div>
+      </section>
+
+      {/* Bảo kê trust banner */}
+      <section className="border-t border-slate-200 dark:border-slate-700">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <Link
+            href="/bao-ke"
+            className="flex items-center justify-between gap-4 py-3.5 transition-opacity hover:opacity-80"
+          >
+            <div className="flex items-center gap-3">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-emerald-100 dark:bg-emerald-500/20">
+                <ShieldCheck className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+              </div>
+              <div className="flex items-center gap-2.5">
+                <span className="text-sm font-bold text-slate-800 dark:text-slate-100">
+                  Người Bán Được Bảo Kê
+                </span>
+                <span className="hidden sm:inline text-xs text-slate-500 dark:text-slate-400">
+                  Ký quỹ minh bạch · Giao dịch an toàn
+                </span>
+              </div>
+            </div>
+            <ArrowRight className="h-5 w-5 shrink-0 text-emerald-400" />
+          </Link>
         </div>
       </section>
 

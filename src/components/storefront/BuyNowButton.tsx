@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import {
   ShieldCheck,
   AlertTriangle,
@@ -9,6 +10,8 @@ import {
   MessageCircle,
   ExternalLink,
 } from "lucide-react";
+import { formatCompactCurrency } from "@/lib/constants";
+import { BuybackPolicyContent } from "./BuybackPolicy";
 import {
   Drawer,
   DrawerContent,
@@ -21,6 +24,7 @@ interface SellerInfo {
   avatarUrl?: string;
   transactionBoxUrl?: string;
   soldCount?: number;
+  collateralAmount?: number;
 }
 
 interface BuyNowButtonProps {
@@ -106,12 +110,23 @@ export function BuyNowButton({
                     </p>
                   </div>
                 </div>
+                {(seller.collateralAmount ?? 0) > 0 && (
+                  <Link
+                    href="/bao-ke"
+                    className="mt-2.5 flex items-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 dark:border-emerald-500/20 dark:bg-emerald-500/10"
+                  >
+                    <ShieldCheck className="h-4 w-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
+                    <span className="flex-1 text-[11px] font-medium text-emerald-700 dark:text-emerald-300">
+                      Bảo kê: <span className="font-bold">{formatCompactCurrency(seller.collateralAmount!)}</span> ký quỹ
+                    </span>
+                  </Link>
+                )}
                 {seller.transactionBoxUrl && (
                   <a
                     href={seller.transactionBoxUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="mt-2.5 flex items-center justify-center gap-2 rounded-lg bg-emerald-600 px-3 py-2.5 text-xs font-semibold text-white transition-colors hover:bg-emerald-700"
+                    className="mt-2 flex items-center justify-center gap-2 rounded-lg bg-emerald-600 px-3 py-2.5 text-xs font-semibold text-white transition-colors hover:bg-emerald-700"
                   >
                     <MessageCircle className="h-4 w-4" />
                     Tham gia Box Giao Dịch
@@ -120,6 +135,11 @@ export function BuyNowButton({
                 )}
               </div>
             )}
+
+            {/* Buyback policy */}
+            <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3 dark:border-slate-700 dark:bg-slate-800/50">
+              <BuybackPolicyContent tierBg="bg-white dark:bg-slate-800" />
+            </div>
           </div>
         </DrawerContent>
       </Drawer>
