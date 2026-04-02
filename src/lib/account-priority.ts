@@ -1,7 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 /** Số acc nổi bật tối đa mỗi admin (chỉ tính acc trạng thái Available). */
-export const MAX_PRIORITY_AVAILABLE_ACCOUNTS = 2;
+export const MAX_PRIORITY_AVAILABLE_ACCOUNTS = 1;
 
 type MinimalAccountRow = {
   user_id: string;
@@ -54,7 +54,7 @@ export async function assertAvailablePriorityLimit(
   );
   if (others >= MAX_PRIORITY_AVAILABLE_ACCOUNTS) {
     throw new Error(
-      `Mỗi admin chỉ có tối đa ${MAX_PRIORITY_AVAILABLE_ACCOUNTS} acc nổi bật ở trạng thái Sẵn sàng. Hãy bỏ nổi bật ở acc khác trước.`,
+      `Mỗi admin chỉ được ${MAX_PRIORITY_AVAILABLE_ACCOUNTS} acc nổi bật ở trạng thái Sẵn sàng. Hãy bỏ nổi bật ở acc khác trước.`,
     );
   }
 }
