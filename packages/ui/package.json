@@ -43,6 +43,10 @@
     "@thc-efb/shared": "workspace:*",
     "@thc-efb/supabase": "workspace:*"
   },
+  "devDependencies": {
+    "@types/react": "^19",
+    "@types/react-dom": "^19"
+  },
   "peerDependencies": {
     "react": ">=18",
     "react-dom": ">=18",
