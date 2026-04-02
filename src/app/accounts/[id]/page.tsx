@@ -40,6 +40,8 @@ import {
   IosCoinIcon,
 } from "@/components/ui/PlatformCoinIcons";
 import { BuybackPolicy } from "@/components/storefront/BuybackPolicy";
+import { StickyBuyBar } from "@/components/storefront/StickyBuyBar";
+import { getSiteSettings } from "@/lib/site-settings";
 
 export const revalidate = 3600; // 1 hour — revalidated on account update via revalidatePath
 
@@ -261,6 +263,10 @@ export default async function AccountDetailPage({
   }
 
   // ── AVAILABLE / DEPOSITED ACCOUNT PAGE ──────────────────────────────────
+  const siteSettingsMap = await getSiteSettings(["zalo_box_members", "zalo_group_members"]);
+  const zaloBoxMembers = siteSettingsMap["zalo_box_members"] || "200+";
+  const zaloGroupMembers = siteSettingsMap["zalo_group_members"] || "";
+
   const account = publicData as PublicAccount;
   const isDeposited = account.status === "Deposited";
   const isSale = account.original_price
@@ -385,6 +391,23 @@ export default async function AccountDetailPage({
                   )}
                 </div>
               </div>
+              {/* Sticky buy bar sentinel + bar (mobile) */}
+              <StickyBuyBar
+                price={account.selling_price}
+                isDeposited={isDeposited}
+                isSale={isSale}
+                seller={
+                  account.seller_full_name
+                    ? {
+                        name: account.seller_full_name,
+                        transactionBoxUrl: account.seller_transaction_box_url
+                          ? `/api/contact/${id}?type=transaction_box`
+                          : undefined,
+                      }
+                    : undefined
+                }
+              />
+
               {/* Divider */}
               <div className="my-3 border-t border-slate-100 sm:my-4 dark:border-slate-700" />
 
@@ -399,67 +422,69 @@ export default async function AccountDetailPage({
 
               {/* Stats grid */}
               {hasStats && (
-                <div className="mb-3 grid grid-cols-2 gap-1.5 sm:mb-4 sm:gap-2">
+                <div className="mb-3 grid grid-cols-2 gap-1 sm:mb-4 sm:gap-2">
                   {(account.total_gp ?? 0) > 0 && (
-                    <div className="flex items-center gap-2 rounded-xl border border-amber-100 bg-amber-50 px-2.5 py-2 sm:gap-2.5 sm:px-3 sm:py-2.5 dark:border-amber-500/20 dark:bg-amber-500/10">
-                      <Zap className="h-4 w-4 shrink-0 text-amber-500" />
+                    <div className="flex items-center gap-2 rounded-lg border border-amber-100 bg-amber-50 px-2 py-1.5 sm:rounded-xl sm:px-3 sm:py-2.5 dark:border-amber-500/20 dark:bg-amber-500/10">
+                      <Zap className="h-3.5 w-3.5 shrink-0 text-amber-500 sm:h-4 sm:w-4" />
                       <div className="min-w-0">
-                        <p className="text-[10px] font-medium uppercase tracking-wide text-amber-600/70 dark:text-amber-400/70">
+                        <p className="text-[9px] font-medium uppercase tracking-wide text-amber-600/70 sm:text-[10px] dark:text-amber-400/70">
                           Tổng GP
                         </p>
-                        <p className="truncate text-sm font-bold text-slate-900 dark:text-slate-100">
+                        <p className="truncate text-xs font-bold text-slate-900 sm:text-sm dark:text-slate-100">
                           {formatNumber(account.total_gp)}
                         </p>
                       </div>
                     </div>
                   )}
                   {(account.total_coins_android ?? 0) > 0 && (
-                    <div className="flex items-center gap-2 rounded-xl border border-emerald-100 bg-emerald-50 px-2.5 py-2 sm:gap-2.5 sm:px-3 sm:py-2.5 dark:border-emerald-500/20 dark:bg-emerald-500/10">
-                      <AndroidCoinIcon size={16} className="shrink-0" />
+                    <div className="flex items-center gap-2 rounded-lg border border-emerald-100 bg-emerald-50 px-2 py-1.5 sm:rounded-xl sm:px-3 sm:py-2.5 dark:border-emerald-500/20 dark:bg-emerald-500/10">
+                      <AndroidCoinIcon size={14} className="shrink-0 sm:hidden" />
+                      <AndroidCoinIcon size={16} className="hidden shrink-0 sm:block" />
                       <div className="min-w-0">
-                        <p className="text-[10px] font-medium uppercase tracking-wide text-emerald-600/70 dark:text-emerald-400/70">
+                        <p className="text-[9px] font-medium uppercase tracking-wide text-emerald-600/70 sm:text-[10px] dark:text-emerald-400/70">
                           Coins Android
                         </p>
-                        <p className="truncate text-sm font-bold text-slate-900 dark:text-slate-100">
+                        <p className="truncate text-xs font-bold text-slate-900 sm:text-sm dark:text-slate-100">
                           {formatNumber(account.total_coins_android)}
                         </p>
                       </div>
                     </div>
                   )}
                   {(account.total_coins_ios ?? 0) > 0 && (
-                    <div className="flex items-center gap-2 rounded-xl border border-teal-100 bg-teal-50 px-2.5 py-2 sm:gap-2.5 sm:px-3 sm:py-2.5 dark:border-teal-500/20 dark:bg-teal-500/10">
-                      <IosCoinIcon size={16} className="shrink-0" />
+                    <div className="flex items-center gap-2 rounded-lg border border-teal-100 bg-teal-50 px-2 py-1.5 sm:rounded-xl sm:px-3 sm:py-2.5 dark:border-teal-500/20 dark:bg-teal-500/10">
+                      <IosCoinIcon size={14} className="shrink-0 sm:hidden" />
+                      <IosCoinIcon size={16} className="hidden shrink-0 sm:block" />
                       <div className="min-w-0">
-                        <p className="text-[10px] font-medium uppercase tracking-wide text-teal-600/70 dark:text-teal-400/70">
+                        <p className="text-[9px] font-medium uppercase tracking-wide text-teal-600/70 sm:text-[10px] dark:text-teal-400/70">
                           Coins iOS
                         </p>
-                        <p className="truncate text-sm font-bold text-slate-900 dark:text-slate-100">
+                        <p className="truncate text-xs font-bold text-slate-900 sm:text-sm dark:text-slate-100">
                           {formatNumber(account.total_coins_ios)}
                         </p>
                       </div>
                     </div>
                   )}
                   {(account.team_strength ?? 0) > 0 && (
-                    <div className="flex items-center gap-2 rounded-xl border border-blue-100 bg-blue-50 px-2.5 py-2 sm:gap-2.5 sm:px-3 sm:py-2.5 dark:border-blue-500/20 dark:bg-blue-500/10">
-                      <Shield className="h-4 w-4 shrink-0 text-blue-500" />
+                    <div className="flex items-center gap-2 rounded-lg border border-blue-100 bg-blue-50 px-2 py-1.5 sm:rounded-xl sm:px-3 sm:py-2.5 dark:border-blue-500/20 dark:bg-blue-500/10">
+                      <Shield className="h-3.5 w-3.5 shrink-0 text-blue-500 sm:h-4 sm:w-4" />
                       <div className="min-w-0">
-                        <p className="text-[10px] font-medium uppercase tracking-wide text-blue-600/70 dark:text-blue-400/70">
+                        <p className="text-[9px] font-medium uppercase tracking-wide text-blue-600/70 sm:text-[10px] dark:text-blue-400/70">
                           Lực Chiến
                         </p>
-                        <p className="truncate text-sm font-bold text-slate-900 dark:text-slate-100">
+                        <p className="truncate text-xs font-bold text-slate-900 sm:text-sm dark:text-slate-100">
                           {account.team_strength}
                         </p>
                       </div>
                     </div>
                   )}
                   {account.monthly_log_quota != null && (
-                    <div className="flex items-center gap-2 rounded-xl border border-indigo-100 bg-indigo-50 px-2.5 py-2 sm:gap-2.5 sm:px-3 sm:py-2.5 dark:border-indigo-500/20 dark:bg-indigo-500/10">
-                      <MessageCircle className="h-4 w-4 shrink-0 text-indigo-500" />
+                    <div className="flex items-center gap-2 rounded-lg border border-indigo-100 bg-indigo-50 px-2 py-1.5 sm:rounded-xl sm:px-3 sm:py-2.5 dark:border-indigo-500/20 dark:bg-indigo-500/10">
+                      <MessageCircle className="h-3.5 w-3.5 shrink-0 text-indigo-500 sm:h-4 sm:w-4" />
                       <div className="min-w-0">
-                        <p className="text-[10px] font-medium uppercase tracking-wide text-indigo-600/70 dark:text-indigo-400/70">
+                        <p className="text-[9px] font-medium uppercase tracking-wide text-indigo-600/70 sm:text-[10px] dark:text-indigo-400/70">
                           Số lượng log
                         </p>
-                        <p className="truncate text-sm font-bold text-slate-900 dark:text-slate-100">
+                        <p className="truncate text-xs font-bold text-slate-900 sm:text-sm dark:text-slate-100">
                           {account.monthly_log_quota}
                         </p>
                       </div>
@@ -467,13 +492,6 @@ export default async function AccountDetailPage({
                   )}
                 </div>
               )}
-
-              <div className="mb-3 flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50/50 px-3 py-2.5 dark:border-emerald-500/20 dark:bg-emerald-500/10">
-                <ShieldCheck className="h-4 w-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
-                <p className="text-[11px] leading-relaxed font-medium text-emerald-700 dark:text-emerald-300">
-                  Giao dịch qua Chủ Sàn — an toàn & được hỗ trợ
-                </p>
-              </div>
 
               {/* Seller info */}
               {account.seller_full_name && account.seller_full_name !== "Trần Hữu Cảnh" && (
@@ -487,73 +505,82 @@ export default async function AccountDetailPage({
               )}
 
               {/* Shop owner — intermediary */}
-              <div className="mb-3 rounded-xl border border-emerald-100 bg-emerald-50/50 p-4 dark:border-emerald-500/20 dark:bg-emerald-500/5">
-                <div className="flex items-center gap-3">
+              <div className="mb-3 rounded-xl border border-emerald-100 bg-emerald-50/50 px-3 py-2.5 sm:p-4 dark:border-emerald-500/20 dark:bg-emerald-500/5">
+                <div className="flex items-center gap-2.5 sm:gap-3">
                   <div className="relative shrink-0">
                     <Image
                       src="/avatar-owner.jpeg"
                       alt="Chủ sàn"
                       width={44}
                       height={44}
-                      className="h-11 w-11 rounded-2xl object-cover shadow-sm"
+                      className="h-9 w-9 rounded-xl object-cover shadow-sm sm:h-11 sm:w-11 sm:rounded-2xl"
                       priority
                     />
-                    <div className="absolute -bottom-1.5 -right-1.5 flex h-6 w-6 items-center justify-center rounded-full border-2 border-white bg-emerald-500 shadow dark:border-slate-800">
-                      <ShieldCheck className="h-3 w-3 text-white" />
+                    <div className="absolute -bottom-1 -right-1 flex h-4.5 w-4.5 items-center justify-center rounded-full border-2 border-white bg-emerald-500 shadow sm:-bottom-1.5 sm:-right-1.5 sm:h-6 sm:w-6 dark:border-slate-800">
+                      <ShieldCheck className="h-2.5 w-2.5 text-white sm:h-3 sm:w-3" />
                     </div>
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-[10px] font-semibold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">
+                    <p className="text-[9px] font-semibold uppercase tracking-wider text-emerald-700 sm:text-[10px] dark:text-emerald-400">
                       {account.seller_full_name === "Trần Hữu Cảnh"
                         ? "Người Bán · Chủ Sàn · Trung Gian"
                         : "Chủ Sàn · Trung Gian Uy Tín"}
                     </p>
-                    <p className="mt-0.5 text-sm font-semibold text-slate-900 dark:text-slate-100">
+                    <p className="mt-0.5 text-xs font-semibold text-slate-900 sm:text-sm dark:text-slate-100">
                       Trần Hữu Cảnh
                     </p>
                   </div>
+                  <p className="hidden text-[10px] font-medium text-emerald-600 sm:block dark:text-emerald-400">
+                    Giao dịch an toàn qua trung gian
+                  </p>
                 </div>
 
-                {/* Zalo boxes — owned by shop owner */}
-                <div className="mt-3 space-y-1.5">
+                {/* Zalo boxes + contact — compact on mobile */}
+                <div className="mt-2 grid grid-cols-2 gap-1.5 sm:mt-3 sm:grid-cols-1 sm:gap-1.5">
                   <a
                     href="https://zalo.me/g/umniisdttnw5kcubv74y"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center justify-between gap-2 rounded-lg bg-white/80 px-3 py-2 transition-colors hover:bg-white dark:bg-slate-800 dark:hover:bg-slate-700"
+                    className="flex items-center gap-1.5 rounded-lg bg-white/80 px-2 py-1.5 transition-colors hover:bg-white sm:justify-between sm:gap-2 sm:px-3 sm:py-2 dark:bg-slate-800 dark:hover:bg-slate-700"
                   >
-                    <div className="flex items-center gap-2">
-                      <MessageCircle className="h-3.5 w-3.5 shrink-0 text-blue-500" />
-                      <span className="text-xs font-medium text-slate-700 dark:text-slate-300">Box Zalo Shop · Chủ box · 200+ tv</span>
+                    <div className="flex items-center gap-1.5 sm:gap-2">
+                      <MessageCircle className="h-3 w-3 shrink-0 text-blue-500 sm:h-3.5 sm:w-3.5" />
+                      <span className="text-[10px] font-medium text-slate-700 sm:text-xs dark:text-slate-300">
+                        <span className="sm:hidden">Box Zalo{zaloBoxMembers ? ` · ${zaloBoxMembers} tv` : ""}</span>
+                        <span className="hidden sm:inline">Box Zalo Shop · Chủ box{zaloBoxMembers ? ` · ${zaloBoxMembers} tv` : ""}</span>
+                      </span>
                     </div>
-                    <ExternalLink className="h-3.5 w-3.5 text-slate-400" />
+                    <ExternalLink className="hidden h-3.5 w-3.5 text-slate-400 sm:block" />
                   </a>
                   <a
                     href={CONTACT_ZALO_GROUP_URL}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center justify-between gap-2 rounded-lg bg-white/80 px-3 py-2 transition-colors hover:bg-white dark:bg-slate-800 dark:hover:bg-slate-700"
+                    className="flex items-center gap-1.5 rounded-lg bg-white/80 px-2 py-1.5 transition-colors hover:bg-white sm:justify-between sm:gap-2 sm:px-3 sm:py-2 dark:bg-slate-800 dark:hover:bg-slate-700"
                   >
-                    <div className="flex items-center gap-2">
-                      <MessageCircle className="h-3.5 w-3.5 shrink-0 text-indigo-500" />
-                      <span className="text-xs font-medium text-slate-700 dark:text-slate-300">Group Tư Vấn · Chủ group</span>
+                    <div className="flex items-center gap-1.5 sm:gap-2">
+                      <MessageCircle className="h-3 w-3 shrink-0 text-indigo-500 sm:h-3.5 sm:w-3.5" />
+                      <span className="text-[10px] font-medium text-slate-700 sm:text-xs dark:text-slate-300">
+                        <span className="sm:hidden">Group Tư Vấn{zaloGroupMembers ? ` · ${zaloGroupMembers} tv` : ""}</span>
+                        <span className="hidden sm:inline">Group Tư Vấn · Chủ group{zaloGroupMembers ? ` · ${zaloGroupMembers} tv` : ""}</span>
+                      </span>
                     </div>
-                    <ExternalLink className="h-3.5 w-3.5 text-slate-400" />
+                    <ExternalLink className="hidden h-3.5 w-3.5 text-slate-400 sm:block" />
                   </a>
                 </div>
 
                 {/* Owner contact */}
-                <div className="mt-2.5 flex flex-wrap gap-2">
+                <div className="mt-2 flex gap-1.5 sm:mt-2.5 sm:gap-2">
                   <a
                     href={`/api/contact/owner?type=zalo&text=${contactMessage}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-blue-600 px-3 py-2 text-xs font-semibold text-white transition-colors hover:bg-blue-700"
+                    className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-blue-600 px-2.5 py-1.5 text-[11px] font-semibold text-white transition-colors hover:bg-blue-700 sm:px-3 sm:py-2 sm:text-xs"
                   >
                     <Image
                       src={zaloIcon}
                       alt="Zalo"
-                      className="h-3.5 w-3.5 object-contain"
+                      className="h-3 w-3 object-contain sm:h-3.5 sm:w-3.5"
                     />
                     Zalo Chủ Sàn
                   </a>
@@ -561,12 +588,12 @@ export default async function AccountDetailPage({
                     href="/api/contact/owner?type=facebook"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 transition-colors hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600"
+                    className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-[11px] font-semibold text-slate-700 transition-colors hover:bg-slate-50 sm:px-3 sm:py-2 sm:text-xs dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600"
                   >
                     <Image
                       src={facebookIcon}
                       alt="Facebook"
-                      className="h-3.5 w-3.5 object-contain"
+                      className="h-3 w-3 object-contain sm:h-3.5 sm:w-3.5"
                     />
                     Facebook
                   </a>

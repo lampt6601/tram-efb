@@ -398,3 +398,18 @@ export async function getSellerCollateralHistory(adminId: string) {
   if (error) throw new Error(error.message);
   return data;
 }
+
+// ============================================
+// Site Settings
+// ============================================
+
+export async function updateSiteSetting(key: string, value: string) {
+  await verifySuperAdmin();
+  const service = createSupabaseServiceClient();
+  const { error } = await service
+    .from("site_settings")
+    .upsert({ key, value, updated_at: new Date().toISOString() }, { onConflict: "key" });
+  if (error) throw new Error(error.message);
+  revalidatePath("/admin/dashboard/super/settings");
+  revalidatePath("/accounts", "layout");
+}

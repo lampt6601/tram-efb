@@ -20,6 +20,7 @@ import {
   Star,
   UserPlus,
   Tag,
+  Settings,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/storefront/ThemeToggle";
@@ -41,6 +42,7 @@ const superAdminNavItems = [
   { href: "/admin/dashboard/super/admins", label: "Quản Lý Admin", icon: Users },
   { href: "/admin/dashboard/super/reviews", label: "Đánh Giá", icon: Star },
   { href: "/admin/dashboard/super/applications", label: "Đơn Đăng Ký Bán Hàng", icon: UserPlus },
+  { href: "/admin/dashboard/super/settings", label: "Cài Đặt Chung", icon: Settings },
 ];
 
 interface SidebarProps {

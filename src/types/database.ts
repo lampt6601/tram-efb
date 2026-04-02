@@ -157,6 +157,13 @@ export interface SellerCollateralHistory {
   created_at: string;
 }
 
+export interface SiteSetting {
+  key: string;
+  value: string;
+  label: string | null;
+  updated_at: string;
+}
+
 export interface DashboardMetrics {
   totalAccounts: number;
   availableAccounts: number;
