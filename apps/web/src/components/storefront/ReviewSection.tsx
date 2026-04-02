@@ -187,7 +187,7 @@ export function ReviewSection({
               <Input
                 placeholder="Tên của bạn"
                 value={name}
-                onChange={(e) => setName(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
                 maxLength={100}
                 className="h-9 rounded-lg border-slate-200 text-sm dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200"
               />
@@ -204,7 +204,7 @@ export function ReviewSection({
               <textarea
                 placeholder="Nhận xét (không bắt buộc, tối đa 500 ký tự)"
                 value={comment}
-                onChange={(e) => setComment(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setComment(e.target.value)}
                 maxLength={500}
                 rows={3}
                 className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/20 resize-none dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200 dark:placeholder:text-slate-500"

@@ -402,7 +402,7 @@ function SellerApplyFormInner({ leaderboard }: { leaderboard: SellerRank[] }) {
                   <Input
                     id="fullName"
                     value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFullName(e.target.value)}
                     required
                     maxLength={100}
                     placeholder="Nguyễn Văn A"
@@ -421,7 +421,7 @@ function SellerApplyFormInner({ leaderboard }: { leaderboard: SellerRank[] }) {
                     id="email"
                     type="email"
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
                     required
                     placeholder="email@example.com"
                     className="mt-1.5 rounded-lg border-slate-200 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200"
@@ -442,7 +442,7 @@ function SellerApplyFormInner({ leaderboard }: { leaderboard: SellerRank[] }) {
                     id="password"
                     type="password"
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
                     required
                     minLength={8}
                     placeholder="Tối thiểu 8 ký tự"
@@ -464,7 +464,7 @@ function SellerApplyFormInner({ leaderboard }: { leaderboard: SellerRank[] }) {
                     id="zalo"
                     type="tel"
                     value={zaloPhone}
-                    onChange={(e) => setZaloPhone(e.target.value.replace(/[^0-9]/g, ""))}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setZaloPhone(e.target.value.replace(/[^0-9]/g, ""))}
                     required
                     maxLength={15}
                     placeholder="0969347283"
@@ -490,7 +490,7 @@ function SellerApplyFormInner({ leaderboard }: { leaderboard: SellerRank[] }) {
                   <textarea
                     id="reason"
                     value={reason}
-                    onChange={(e) => setReason(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setReason(e.target.value)}
                     maxLength={1000}
                     rows={3}
                     placeholder="Bạn đã có kinh nghiệm bán acc chưa? Kể thêm về bạn..."

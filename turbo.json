@@ -1,5 +1,24 @@
 {
   "$schema": "https://turbo.build/schema.json",
+  "globalEnv": [
+    "NEXT_PUBLIC_SUPABASE_URL",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+    "NEXT_PUBLIC_GA_ID",
+    "NEXT_PUBLIC_VAPID_PUBLIC_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "EMAIL_USER",
+    "EMAIL_APP_PASSWORD",
+    "IMAGEKIT_PUBLIC_KEY",
+    "IMAGEKIT_PRIVATE_KEY",
+    "IMAGEKIT_URL_ENDPOINT",
+    "ZALO_BOT_TOKEN",
+    "ZALO_BOT_CHAT_ID",
+    "APPROVE_SECRET_TOKEN",
+    "ZALO_WEBHOOK_SECRET",
+    "VAPID_PRIVATE_KEY",
+    "VAPID_EMAIL",
+    "SUPER_ADMIN_EMAIL"
+  ],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],

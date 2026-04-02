@@ -143,7 +143,7 @@ export default function RequestPage() {
                 <textarea
                   id="detail"
                   value={detail}
-                  onChange={(e) => setDetail(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setDetail(e.target.value)}
                   required
                   maxLength={1000}
                   rows={3}
@@ -163,7 +163,7 @@ export default function RequestPage() {
                 <Input
                   id="priceLevel"
                   value={priceLevel}
-                  onChange={(e) => setPriceLevel(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPriceLevel(e.target.value)}
                   placeholder="VD: 100K–300K, dưới 500K..."
                   className="mt-1.5 rounded-lg border-slate-200 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200"
                 />
@@ -180,7 +180,7 @@ export default function RequestPage() {
                 <Input
                   id="requesterName"
                   value={requesterName}
-                  onChange={(e) => setRequesterName(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setRequesterName(e.target.value)}
                   required
                   maxLength={100}
                   placeholder="Tên Zalo / Facebook của bạn"

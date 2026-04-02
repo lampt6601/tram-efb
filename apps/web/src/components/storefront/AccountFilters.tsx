@@ -211,7 +211,7 @@ export function AccountFilters({
             type="text"
             placeholder="Tìm kiếm tài khoản..."
             value={localSearch}
-            onChange={(e) => setLocalSearch(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLocalSearch(e.target.value)}
             onKeyDown={handleKeyDown}
             className="h-9 w-full rounded-lg border-slate-200 pl-9 pr-3 text-sm text-slate-700 shadow-sm transition-all focus-visible:border-indigo-400 focus-visible:ring-4 focus-visible:ring-indigo-400/20 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
           />
@@ -320,7 +320,7 @@ export function AccountFilters({
               type="text"
               placeholder="Tìm kiếm tài khoản..."
               value={localSearch}
-              onChange={(e) => setLocalSearch(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLocalSearch(e.target.value)}
               onKeyDown={handleKeyDown}
               className="h-9 w-full rounded-lg border-slate-200 pl-9 pr-3 text-sm text-slate-700 shadow-sm transition-all focus-visible:border-indigo-400 focus-visible:ring-4 focus-visible:ring-indigo-400/20 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
             />
@@ -493,7 +493,7 @@ export function AccountFilters({
                 placeholder="VD: 50000"
                 value={localMinGp}
                 min={0}
-                onChange={(e) => setLocalMinGp(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLocalMinGp(e.target.value)}
                 onKeyDown={handleKeyDown}
                 className="h-8 rounded-lg border-slate-200 bg-slate-50 text-sm text-slate-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
               />

@@ -265,7 +265,7 @@ export default function SellPage() {
                 <textarea
                   id="description"
                   value={description}
-                  onChange={(e) => setDescription(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setDescription(e.target.value)}
                   maxLength={1000}
                   rows={2}
                   placeholder="VD: Acc có Messi, Neymar, GP 3M, coin Android 500K..."
@@ -285,7 +285,7 @@ export default function SellPage() {
                 <select
                   id="priceExpectation"
                   value={priceExpectation}
-                  onChange={(e) => setPriceExpectation(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setPriceExpectation(e.target.value)}
                   required
                   className="mt-1.5 w-full rounded-lg border border-slate-200 px-3 py-2 text-base text-slate-700 focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-400/20 md:text-sm dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200"
                 >
@@ -310,7 +310,7 @@ export default function SellPage() {
                 <Input
                   id="sellerName"
                   value={sellerName}
-                  onChange={(e) => setSellerName(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSellerName(e.target.value)}
                   required
                   maxLength={100}
                   placeholder="Tên Zalo của bạn"

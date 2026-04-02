@@ -129,7 +129,7 @@ export function NumberPickerForm({ onSuccess }: NumberPickerFormProps) {
           <input
             type="text"
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
             placeholder="Nhập tên Zalo hoặc Facebook của bạn..."
             className="w-full bg-transparent text-sm text-white outline-none placeholder:text-white/30"
           />
@@ -182,7 +182,7 @@ export function NumberPickerForm({ onSuccess }: NumberPickerFormProps) {
               type="text"
               inputMode="numeric"
               value={numbers[i] ?? ""}
-              onChange={(e) => handleNumberChange(i, e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleNumberChange(i, e.target.value)}
               placeholder={`Nhập số thứ ${i + 1}...`}
               className="w-full bg-transparent text-sm font-semibold text-white outline-none placeholder:text-white/30"
               maxLength={3}
