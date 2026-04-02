@@ -41,10 +41,11 @@ export default async function SuperAccountsPage({
 
   const params = await searchParams;
   const sort = params.sort ?? "newest";
-  const statusFilter = params.status ?? "Available";
+  const detailAccountId = params.detail ?? null;
+  // When deep-linking to a specific account, show all statuses so the account is always findable
+  const statusFilter = detailAccountId ? (params.status ?? "all") : (params.status ?? "Available");
   const approvalFilter = params.approval ?? "all";
   const searchQuery = params.q ?? "";
-  const detailAccountId = params.detail ?? null;
 
   const service = createSupabaseServiceClient();
 
@@ -68,10 +69,13 @@ export default async function SuperAccountsPage({
 
   let query = service.from("accounts").select("id, title, description, selling_price, purchase_price, original_price, images, primary_image_url, status, total_gp, total_coins_android, total_coins_ios, team_strength, is_priority, is_clone, is_approved, server_region, monthly_log_quota, email_id, user_id, created_at, updated_at, emails(*)");
   if (statusFilter && statusFilter !== "all") query = query.eq("status", statusFilter);
-  if (approvalFilter === "pending") {
-    query = query.eq("is_approved", false).neq("status", "Sold");
+  // When deep-linking to a specific account, skip approval filter so the account is always findable
+  if (!detailAccountId) {
+    if (approvalFilter === "pending") {
+      query = query.eq("is_approved", false).neq("status", "Sold");
+    }
+    if (approvalFilter === "approved") query = query.eq("is_approved", true);
   }
-  if (approvalFilter === "approved") query = query.eq("is_approved", true);
   if (searchQuery) query = query.ilike("title", `%${searchQuery}%`);
 
   switch (sort) {

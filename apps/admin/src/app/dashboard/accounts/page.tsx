@@ -47,9 +47,10 @@ export default async function AccountsPage({
 }) {
   const params = await searchParams;
   const sort = params.sort ?? "newest";
-  const statusFilter = params.status ?? "Available";
-  const searchQuery = params.q ?? "";
   const detailAccountId = params.detail ?? null;
+  // When deep-linking to a specific account, show all statuses so the account is always findable
+  const statusFilter = detailAccountId ? (params.status ?? "all") : (params.status ?? "Available");
+  const searchQuery = params.q ?? "";
 
   const supabase = await createSupabaseServerClient();
   const { data: { user } } = await supabase.auth.getUser();

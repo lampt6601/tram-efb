@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import {
   ShoppingCart,
   Star,
@@ -52,19 +51,18 @@ export function NotificationPanel({
   onMarkAllAsRead,
   onClose,
 }: NotificationPanelProps) {
-  const router = useRouter();
   const hasUnread = notifications.some((n) => !n.is_read);
 
   const handleClick = (notification: Notification) => {
     if (!notification.is_read) {
       onMarkAsRead([notification.id]);
     }
-    // Navigate to relevant page if URL provided
+    onClose();
+    // Hard navigation to ensure Server Components re-render with new searchParams
     const url = notification.data?.url as string | undefined;
     if (url) {
-      router.push(url);
+      window.location.href = url;
     }
-    onClose();
   };
 
   return (

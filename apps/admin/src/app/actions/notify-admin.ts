@@ -102,13 +102,13 @@ export async function notifyAdminAction(
     };
     const notifType: NotificationType = notifTypeMap[actionType] || "account_created";
 
-    // Deep-link URL based on context
-    const notifUrl =
-      needsApproval && accountId
+    // Deep-link URL — always super accounts page since only super admin views these notifications
+    // (notifyAdminAction is skipped when super admin performs actions)
+    const notifUrl = accountId
+      ? needsApproval
         ? `/dashboard/super/accounts?approval=pending&detail=${accountId}`
-        : accountId
-          ? `/dashboard/accounts?detail=${accountId}`
-          : "/dashboard";
+        : `/dashboard/super/accounts?detail=${accountId}`
+      : "/dashboard";
 
     // Run all notifications in parallel (non-blocking)
     await Promise.allSettled([
