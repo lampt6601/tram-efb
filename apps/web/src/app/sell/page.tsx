@@ -330,7 +330,7 @@ export default function SellPage() {
                   id="zaloPhone"
                   type="tel"
                   value={zaloPhone}
-                  onChange={(e) =>
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                     setZaloPhone(e.target.value.replace(/[^0-9]/g, ""))
                   }
                   required
