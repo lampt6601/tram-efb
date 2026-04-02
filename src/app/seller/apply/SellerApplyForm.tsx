@@ -271,10 +271,10 @@ function SellerApplyFormInner({ leaderboard }: { leaderboard: SellerRank[] }) {
               <UserPlus className="h-7 w-7 text-indigo-600 dark:text-indigo-400" />
             </div>
             <h1 className="text-2xl font-bold text-slate-900 sm:text-3xl dark:text-slate-100">
-              Mở Gian Hàng Bán Acc
+              Đăng Ký Bán Acc
             </h1>
             <p className="mt-2 text-slate-600 dark:text-slate-400">
-              Mở gian hàng riêng, tự đăng và bán acc eFootball trên THC Shop
+              Đăng ký để tự đăng và bán acc eFootball trên THC Shop
             </p>
           </div>
 
