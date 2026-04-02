@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
+import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { getSellRequests, updateSellRequestStatus } from "@/app/actions/sell-request-actions";
 import {
@@ -47,6 +48,8 @@ export default function SellRequestsPage() {
   const [items, setItems] = useState<SellRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [isPending, startTransition] = useTransition();
+  const searchParams = useSearchParams();
+  const highlightId = searchParams.get("highlight");
 
   useEffect(() => {
     getSellRequests().then((data) => {
@@ -112,6 +115,7 @@ export default function SellRequestsPage() {
               key={item.id}
               item={item}
               isPending={isPending}
+              highlighted={item.id === highlightId}
               onContact={() => handleUpdate(item.id, "contacted")}
               onPurchase={() => handleUpdate(item.id, "purchased")}
               onReject={() => handleUpdate(item.id, "rejected")}
@@ -132,6 +136,7 @@ export default function SellRequestsPage() {
               key={item.id}
               item={item}
               isPending={isPending}
+              highlighted={item.id === highlightId}
               onPurchase={() => handleUpdate(item.id, "purchased")}
               onReject={() => handleUpdate(item.id, "rejected")}
             />
@@ -146,7 +151,7 @@ export default function SellRequestsPage() {
           className="mt-8"
         >
           {others.map((item) => (
-            <SellRequestCard key={item.id} item={item} isPending={isPending} />
+            <SellRequestCard key={item.id} item={item} isPending={isPending} highlighted={item.id === highlightId} />
           ))}
         </Section>
       )}
@@ -187,12 +192,14 @@ function Section({
 function SellRequestCard({
   item,
   isPending,
+  highlighted,
   onContact,
   onPurchase,
   onReject,
 }: {
   item: SellRequest;
   isPending: boolean;
+  highlighted?: boolean;
   onContact?: () => void;
   onPurchase?: () => void;
   onReject?: () => void;
@@ -200,10 +207,26 @@ function SellRequestCard({
   const status = statusConfig[item.status];
   const StatusIcon = status.icon;
   const [showImages, setShowImages] = useState(false);
+  const [showRing, setShowRing] = useState(highlighted);
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (highlighted && cardRef.current) {
+      cardRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+      const timer = setTimeout(() => {
+        setShowRing(false);
+        window.history.replaceState(null, "", window.location.pathname);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [highlighted]);
 
   return (
     <div
-      className={`rounded-xl border p-4 ${
+      ref={cardRef}
+      className={`rounded-xl border p-4 transition-shadow ${
+        showRing ? "ring-2 ring-indigo-500 shadow-lg" : ""
+      } ${
         item.status === "pending"
           ? "border-amber-200 bg-amber-50 dark:border-amber-500/20 dark:bg-amber-500/10"
           : "border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800"

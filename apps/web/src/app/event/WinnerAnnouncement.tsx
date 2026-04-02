@@ -35,7 +35,7 @@ export function WinnerAnnouncement({ results }: WinnerAnnouncementProps) {
           <div className="relative">
             <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-center gap-2">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-500/20">
+                <div className="flex h-10 w-10 items-center justify-center mx-auto justify-center rounded-xl bg-amber-500/20">
                   <Trophy className="h-5 w-5 text-amber-400" />
                 </div>
                 <div>

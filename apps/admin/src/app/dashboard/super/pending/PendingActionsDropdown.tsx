@@ -9,20 +9,20 @@ import { openFacebookShare } from "@/lib/facebook-share";
 import { PendingAccountDrawer } from "./PendingAccountDrawer";
 import { Button } from "@thc-efb/ui/button";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@thc-efb/ui/dropdown-menu";
+  ResponsiveDropdownMenu,
+  ResponsiveDropdownMenuContent,
+  ResponsiveDropdownMenuItem,
+  ResponsiveDropdownMenuSeparator,
+  ResponsiveDropdownMenuTrigger,
+} from "@thc-efb/ui/responsive-dropdown-menu";
 import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogDescription,
-  AlertDialogFooter,
-} from "@thc-efb/ui/alert-dialog";
+  ResponsiveAlertDialog,
+  ResponsiveAlertDialogContent,
+  ResponsiveAlertDialogHeader,
+  ResponsiveAlertDialogTitle,
+  ResponsiveAlertDialogDescription,
+  ResponsiveAlertDialogFooter,
+} from "@thc-efb/ui/responsive-alert-dialog";
 import type { AccountWithEmail } from "@thc-efb/supabase/types";
 
 interface PendingActionsDropdownProps {
@@ -78,8 +78,8 @@ export function PendingActionsDropdown({ account, adminEmail }: PendingActionsDr
 
   return (
     <>
-      <DropdownMenu>
-        <DropdownMenuTrigger
+      <ResponsiveDropdownMenu>
+        <ResponsiveDropdownMenuTrigger
           render={
             <button className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-2.5 py-1.5 text-xs font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-700 dark:hover:text-slate-100">
               Tác vụ
@@ -87,8 +87,8 @@ export function PendingActionsDropdown({ account, adminEmail }: PendingActionsDr
             </button>
           }
         />
-        <DropdownMenuContent align="end" className="w-44">
-          <DropdownMenuItem
+        <ResponsiveDropdownMenuContent align="end" className="w-44">
+          <ResponsiveDropdownMenuItem
             onClick={handleApprove}
             disabled={approving}
             className="gap-2"
@@ -99,22 +99,22 @@ export function PendingActionsDropdown({ account, adminEmail }: PendingActionsDr
               <CheckCircle className="h-4 w-4 text-emerald-500" />
             )}
             {approving ? "Đang duyệt..." : "Duyệt tài khoản"}
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => setDrawerOpen(true)} className="gap-2">
+          </ResponsiveDropdownMenuItem>
+          <ResponsiveDropdownMenuItem onClick={() => setDrawerOpen(true)} className="gap-2">
             <Eye className="h-4 w-4 text-indigo-400" />
             Xem chi tiết
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem
+          </ResponsiveDropdownMenuItem>
+          <ResponsiveDropdownMenuSeparator />
+          <ResponsiveDropdownMenuItem
             variant="destructive"
             onClick={() => setDeleteOpen(true)}
             className="gap-2"
           >
             <Trash2 className="h-4 w-4" />
             Xóa tài khoản
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+          </ResponsiveDropdownMenuItem>
+        </ResponsiveDropdownMenuContent>
+      </ResponsiveDropdownMenu>
 
       <PendingAccountDrawer
         account={account}
@@ -125,18 +125,18 @@ export function PendingActionsDropdown({ account, adminEmail }: PendingActionsDr
       />
 
       {/* Delete confirmation */}
-      <AlertDialog open={deleteOpen} onOpenChange={(v) => !deleting && !v && closeDelete()}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-red-50 dark:bg-red-500/10">
+      <ResponsiveAlertDialog open={deleteOpen} onOpenChange={(v) => !deleting && !v && closeDelete()}>
+        <ResponsiveAlertDialogContent>
+          <ResponsiveAlertDialogHeader>
+            <div className="mb-4 flex h-10 w-10 shrink-0 place-items-center items-center justify-center mx-auto rounded-xl bg-red-50 dark:bg-red-500/10">
               <Trash2 className="h-5 w-5 text-red-600 dark:text-red-400" />
             </div>
-            <AlertDialogTitle>Xóa tài khoản</AlertDialogTitle>
-            <AlertDialogDescription>
+            <ResponsiveAlertDialogTitle>Xóa tài khoản</ResponsiveAlertDialogTitle>
+            <ResponsiveAlertDialogDescription>
               Bạn có chắc muốn xóa <span className="font-semibold text-slate-900 dark:text-slate-100">&quot;{account.title}&quot;</span>? Hành động này không thể hoàn tác.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
+            </ResponsiveAlertDialogDescription>
+          </ResponsiveAlertDialogHeader>
+          <ResponsiveAlertDialogFooter>
             <Button variant="outline" onClick={closeDelete} disabled={deleting}>Hủy</Button>
             <Button
               onClick={handleDelete}
@@ -146,9 +146,9 @@ export function PendingActionsDropdown({ account, adminEmail }: PendingActionsDr
             >
               Xóa
             </Button>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+          </ResponsiveAlertDialogFooter>
+        </ResponsiveAlertDialogContent>
+      </ResponsiveAlertDialog>
     </>
   );
 }

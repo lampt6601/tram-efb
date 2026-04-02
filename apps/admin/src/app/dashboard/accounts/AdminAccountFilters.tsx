@@ -2,7 +2,7 @@
 
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useCallback, useTransition, useState, useEffect } from "react";
-import { ArrowUpDown, Search, SlidersHorizontal } from "lucide-react";
+import { ArrowUpDown, Search, X } from "lucide-react";
 import { Input } from "@thc-efb/ui/input";
 import { Button } from "@thc-efb/ui/button";
 import { PriceInput } from "@thc-efb/ui/price-input";
@@ -33,7 +33,7 @@ const STATUS_OPTIONS = [
   { value: "Sold", label: "Đã Bán" },
 ];
 
-export function AdminAccountFilters() {
+export function AdminAccountFilters({ totalCount }: { totalCount: number }) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -51,7 +51,6 @@ export function AdminAccountFilters() {
   const [localSort, setLocalSort] = useState(currentSort);
   const [localStatus, setLocalStatus] = useState(currentStatus);
 
-  // Sync local state when URL params change
   useEffect(() => { setLocalSearch(currentSearch); }, [currentSearch]);
   useEffect(() => { setLocalMinPrice(currentMinPrice); }, [currentMinPrice]);
   useEffect(() => { setLocalMaxPrice(currentMaxPrice); }, [currentMaxPrice]);
@@ -96,101 +95,100 @@ export function AdminAccountFilters() {
   };
 
   return (
-    <div
-      className={`transition-opacity duration-200 ${isPending ? "opacity-60 pointer-events-none" : "opacity-100"}`}
-    >
-      <div className="flex flex-col gap-2.5 md:flex-row md:flex-wrap md:items-center md:gap-3">
-        {/* Search */}
-        <div className="relative w-full md:flex-1 md:min-w-48">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 dark:text-slate-500 z-10 pointer-events-none" />
-          <Input
-            type="text"
-            placeholder="Tìm theo tiêu đề..."
-            value={localSearch}
-            onChange={(e) => setLocalSearch(e.target.value)}
-            onKeyDown={handleKeyDown}
-            className="h-10 w-full rounded-xl border-slate-200 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 pl-10 pr-4 text-sm text-slate-700 shadow-sm transition-all focus-visible:border-indigo-400 focus-visible:ring-4 focus-visible:ring-indigo-400/20"
-          />
+    <div className={`transition-opacity duration-200 ${isPending ? "pointer-events-none opacity-60" : "opacity-100"}`}>
+      <div className="flex flex-wrap items-center gap-1.5 md:flex-nowrap md:gap-2">
+        {/* Mobile row 1: Search | Desktop: inline */}
+        <div className="flex w-full items-center gap-1.5 md:contents">
+          <div className="relative min-w-0 flex-1 md:min-w-48">
+            <Search className="pointer-events-none absolute left-3 top-1/2 z-10 h-4 w-4 -translate-y-1/2 text-slate-400" />
+            <Input
+              type="text"
+              placeholder="Tìm theo tiêu đề..."
+              value={localSearch}
+              onChange={(e) => setLocalSearch(e.target.value)}
+              onKeyDown={handleKeyDown}
+              style={{ paddingLeft: '2.25rem' }}
+              className="h-9 w-full rounded-lg border-slate-200 pr-3 text-sm text-slate-700 shadow-sm transition-all focus-visible:border-indigo-400 focus-visible:ring-4 focus-visible:ring-indigo-400/20 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
+            />
+          </div>
         </div>
 
-        {/* Status + Sort */}
-        <div className="flex items-center gap-2 w-full md:w-auto">
-          {/* Status */}
-          <div className="flex flex-1 md:flex-none items-center gap-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-2.5 shadow-sm">
+        {/* Mobile row 2: Status + Sort + Price | Desktop: inline */}
+        <div className="flex w-full items-center gap-1.5 md:contents">
+          <div className="shrink-0">
             <Select value={localStatus} onValueChange={(val) => { if (val !== null) setLocalStatus(val) }}>
-              <SelectTrigger className="h-9 w-full border-0 bg-transparent text-sm text-slate-700 dark:text-slate-200 px-0 shadow-none">
+              <SelectTrigger className="h-8 rounded-lg border-slate-200 bg-white text-xs text-slate-700 shadow-sm md:h-9 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200">
                 <SelectValue>{STATUS_OPTIONS.find((o) => o.value === localStatus)?.label}</SelectValue>
               </SelectTrigger>
               <SelectContent>
                 {STATUS_OPTIONS.map((o) => (
-                  <SelectItem key={o.value} value={o.value}>
-                    {o.label}
-                  </SelectItem>
+                  <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </div>
 
-          {/* Sort */}
-          <div className="flex flex-1 md:flex-none items-center gap-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-2.5 shadow-sm">
-            <ArrowUpDown className="h-3.5 w-3.5 text-slate-400 dark:text-slate-500" />
+          <div className="shrink-0">
             <Select value={localSort} onValueChange={(val) => { if (val !== null) setLocalSort(val) }}>
-              <SelectTrigger className="h-9 w-full border-0 bg-transparent text-sm text-slate-700 dark:text-slate-200 px-0 shadow-none">
-                <SelectValue>{SORT_OPTIONS.find((o) => o.value === localSort)?.label}</SelectValue>
+              <SelectTrigger className="h-8 rounded-lg border-slate-200 bg-white text-xs text-slate-700 shadow-sm md:h-9 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200">
+                <SelectValue>
+                  <ArrowUpDown className="h-3 w-3 shrink-0 text-slate-400" />
+                  {SORT_OPTIONS.find((o) => o.value === localSort)?.label}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent>
                 {SORT_OPTIONS.map((o) => (
-                  <SelectItem key={o.value} value={o.value}>
-                    {o.label}
-                  </SelectItem>
+                  <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </div>
-        </div>
 
-        {/* Price range + Apply + Clear */}
-        <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
-          <div className="flex items-center gap-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-1 pl-2.5 shadow-sm">
-            <SlidersHorizontal className="h-3.5 w-3.5 shrink-0 text-slate-400 dark:text-slate-500" />
+          <div className="flex h-8 min-w-0 flex-1 items-center gap-1 rounded-lg border border-slate-200 bg-white px-2 shadow-sm md:h-9 md:w-56 md:flex-none md:px-2.5 dark:border-slate-700 dark:bg-slate-800">
             <PriceInput
               placeholder="Giá từ"
               value={localMinPrice}
               onChange={setLocalMinPrice}
-              className="h-7 w-[4.5rem] md:w-24 border-0 bg-transparent px-1.5 text-sm text-slate-700 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus-visible:ring-0 shadow-none"
+              className="h-7 w-full min-w-0 border-0 bg-transparent px-0 text-xs text-slate-700 shadow-none placeholder:text-slate-400 focus-visible:ring-0 dark:text-slate-200 dark:placeholder:text-slate-500"
             />
-            <span className="text-xs text-slate-300 dark:text-slate-600">—</span>
+            <span className="shrink-0 text-[10px] text-slate-300 dark:text-slate-600">—</span>
             <PriceInput
               placeholder="đến"
               value={localMaxPrice}
               onChange={setLocalMaxPrice}
-              className="h-7 w-[4.5rem] md:w-24 border-0 bg-transparent px-1.5 text-sm text-slate-700 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus-visible:ring-0 shadow-none"
+              className="h-7 w-full min-w-0 border-0 bg-transparent px-0 text-xs text-slate-700 shadow-none placeholder:text-slate-400 focus-visible:ring-0 dark:text-slate-200 dark:placeholder:text-slate-500"
             />
           </div>
-
-          {/* Apply button */}
-          <Button
-            size="sm"
-            onClick={applyFilters}
-            disabled={!hasUnsavedChanges}
-            className="h-9 shrink-0 rounded-xl bg-indigo-600 px-4 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-40 shadow-sm"
-          >
-            <Search className="mr-1 h-3.5 w-3.5" />
-            Lọc
-          </Button>
-
-          {/* Clear */}
-          {hasActiveFilters && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={clearAll}
-              className="h-9 shrink-0 rounded-xl border-rose-200 bg-rose-50 px-3 text-sm font-medium text-rose-600 transition-all hover:bg-rose-100 hover:text-rose-700 hover:border-rose-300 shadow-sm dark:border-rose-500/30 dark:bg-rose-500/10 dark:text-rose-400 dark:hover:bg-rose-500/20"
-            >
-              Xoá lọc
-            </Button>
-          )}
         </div>
+
+        {/* Apply */}
+        <Button
+          size="sm"
+          onClick={applyFilters}
+          disabled={!hasUnsavedChanges}
+          className="h-8 shrink-0 rounded-lg bg-indigo-600 px-4 text-xs font-medium text-white shadow-sm hover:bg-indigo-700 disabled:opacity-40 md:h-9"
+        >
+          <Search className="mr-1.5 h-3.5 w-3.5" />
+          Lọc
+        </Button>
+      </div>
+
+      {/* Bottom bar: Count + Clear + Apply (mobile) */}
+      <div className="mt-2 flex items-center gap-2">
+        <span className="text-xs font-medium text-slate-500 dark:text-slate-400">
+          {isPending ? "Đang lọc..." : `${totalCount} tài khoản`}
+        </span>
+
+        {hasActiveFilters && (
+          <button
+            onClick={clearAll}
+            className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-xs text-rose-500 transition-colors hover:bg-rose-50 dark:hover:bg-rose-500/10"
+          >
+            <X className="h-3 w-3" />
+            Xoá lọc
+          </button>
+        )}
+
       </div>
     </div>
   );

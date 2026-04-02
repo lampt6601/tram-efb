@@ -6,13 +6,13 @@ import { Trash2 } from "lucide-react";
 import { superAdminDeleteAccount } from "@/app/actions/super-admin-actions";
 import { Button } from "@thc-efb/ui/button";
 import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogDescription,
-  AlertDialogFooter,
-} from "@thc-efb/ui/alert-dialog";
+  ResponsiveAlertDialog,
+  ResponsiveAlertDialogContent,
+  ResponsiveAlertDialogHeader,
+  ResponsiveAlertDialogTitle,
+  ResponsiveAlertDialogDescription,
+  ResponsiveAlertDialogFooter,
+} from "@thc-efb/ui/responsive-alert-dialog";
 import { toast } from "sonner";
 
 export function SuperAccountDeleteButton({ id, title }: { id: string; title: string }) {
@@ -41,18 +41,18 @@ export function SuperAccountDeleteButton({ id, title }: { id: string; title: str
         className="inline-flex items-center gap-1 rounded-lg border border-red-200 bg-red-50 px-2 py-1 text-xs font-medium text-red-600 hover:bg-red-100 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-400 dark:hover:bg-red-500/20">
         <Trash2 className="h-3.5 w-3.5" /> Xóa
       </button>
-      <AlertDialog open={open} onOpenChange={(v) => !loading && !v && onClose()}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-red-50 dark:bg-red-500/10">
+      <ResponsiveAlertDialog open={open} onOpenChange={(v) => !loading && !v && onClose()}>
+        <ResponsiveAlertDialogContent>
+          <ResponsiveAlertDialogHeader>
+            <div className="mb-4 flex h-10 w-10 shrink-0 place-items-center items-center justify-center mx-auto rounded-xl bg-red-50 dark:bg-red-500/10">
               <Trash2 className="h-5 w-5 text-red-600" />
             </div>
-            <AlertDialogTitle>Xóa tài khoản</AlertDialogTitle>
-            <AlertDialogDescription>
+            <ResponsiveAlertDialogTitle>Xóa tài khoản</ResponsiveAlertDialogTitle>
+            <ResponsiveAlertDialogDescription>
               Bạn có chắc muốn xóa <span className="font-semibold text-slate-900 dark:text-slate-100">&quot;{title}&quot;</span>? Hành động này không thể hoàn tác.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
+            </ResponsiveAlertDialogDescription>
+          </ResponsiveAlertDialogHeader>
+          <ResponsiveAlertDialogFooter>
             <Button variant="outline" onClick={onClose} disabled={loading}>Hủy</Button>
             <Button
               onClick={handleDelete}
@@ -62,9 +62,9 @@ export function SuperAccountDeleteButton({ id, title }: { id: string; title: str
             >
               Xóa
             </Button>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+          </ResponsiveAlertDialogFooter>
+        </ResponsiveAlertDialogContent>
+      </ResponsiveAlertDialog>
     </>
   );
 }

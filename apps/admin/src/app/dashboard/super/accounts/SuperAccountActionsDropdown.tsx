@@ -34,30 +34,30 @@ import { Input } from "@thc-efb/ui/input";
 import { Label } from "@thc-efb/ui/label";
 import { toast } from "sonner";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@thc-efb/ui/dropdown-menu";
+  ResponsiveDropdownMenu,
+  ResponsiveDropdownMenuContent,
+  ResponsiveDropdownMenuItem,
+  ResponsiveDropdownMenuSeparator,
+  ResponsiveDropdownMenuTrigger,
+} from "@thc-efb/ui/responsive-dropdown-menu";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from "@thc-efb/ui/dialog";
+  ResponsiveDialog,
+  ResponsiveDialogContent,
+  ResponsiveDialogHeader,
+  ResponsiveDialogTitle,
+  ResponsiveDialogDescription,
+  ResponsiveDialogFooter,
+} from "@thc-efb/ui/responsive-dialog";
 import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogDescription,
-  AlertDialogFooter,
-} from "@thc-efb/ui/alert-dialog";
+  ResponsiveAlertDialog,
+  ResponsiveAlertDialogContent,
+  ResponsiveAlertDialogHeader,
+  ResponsiveAlertDialogTitle,
+  ResponsiveAlertDialogDescription,
+  ResponsiveAlertDialogFooter,
+} from "@thc-efb/ui/responsive-alert-dialog";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@thc-efb/ui/select";
-import { PendingAccountDrawer } from "@/app/dashboard/super/pending/PendingAccountDrawer";
+import { AccountDetailDialog } from "@/components/admin/AccountDetailDialog";
 import { SuperAccountEditSheet } from "./SuperAccountEditSheet";
 import type { AccountWithEmail, Email } from "@thc-efb/supabase/types";
 import { getBuybackInfo, calculateBuybackPrice } from "@thc-efb/shared/buyback";
@@ -389,8 +389,8 @@ export function SuperAccountActionsDropdown({
   return (
     <>
       {/* ── Dropdown ─────────────────────────────────────────────────────── */}
-      <DropdownMenu>
-        <DropdownMenuTrigger
+      <ResponsiveDropdownMenu>
+        <ResponsiveDropdownMenuTrigger
           render={
             <button className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-2.5 py-1.5 text-xs font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-700 dark:hover:text-slate-100">
               Tác vụ
@@ -398,14 +398,14 @@ export function SuperAccountActionsDropdown({
             </button>
           }
         />
-        <DropdownMenuContent align="end" className="w-52">
-          <DropdownMenuItem onClick={() => setEditSheetOpen(true)} className="gap-2">
+        <ResponsiveDropdownMenuContent align="end" className="w-52">
+          <ResponsiveDropdownMenuItem onClick={() => setEditSheetOpen(true)} className="gap-2">
             <Pencil className="h-4 w-4 text-slate-400" />
             Chỉnh sửa
-          </DropdownMenuItem>
+          </ResponsiveDropdownMenuItem>
 
           {isApproved && (
-            <DropdownMenuItem
+            <ResponsiveDropdownMenuItem
               render={
                 <Link
                   href={`/accounts/${id}`}
@@ -416,103 +416,103 @@ export function SuperAccountActionsDropdown({
             >
               <ExternalLink className="h-4 w-4 text-slate-400" />
               Xem trang công khai
-            </DropdownMenuItem>
+            </ResponsiveDropdownMenuItem>
           )}
 
-          <DropdownMenuItem onClick={() => setDrawerOpen(true)} className="gap-2">
+          <ResponsiveDropdownMenuItem onClick={() => setDrawerOpen(true)} className="gap-2">
             <Eye className="h-4 w-4 text-indigo-400" />
             Xem chi tiết
-          </DropdownMenuItem>
+          </ResponsiveDropdownMenuItem>
 
-          <DropdownMenuItem onClick={handleCopyLink} className="gap-2">
+          <ResponsiveDropdownMenuItem onClick={handleCopyLink} className="gap-2">
             {copied ? (
               <Check className="h-4 w-4 text-emerald-500" />
             ) : (
               <LinkIcon className="h-4 w-4 text-slate-400" />
             )}
             {copied ? "Đã copy!" : "Copy link"}
-          </DropdownMenuItem>
+          </ResponsiveDropdownMenuItem>
 
-          <DropdownMenuItem
+          <ResponsiveDropdownMenuItem
             onClick={() => openFacebookShare(id, title, account.selling_price)}
             className="gap-2"
           >
             <Share2 className="h-4 w-4 text-blue-500" />
             Chia sẻ Facebook
-          </DropdownMenuItem>
+          </ResponsiveDropdownMenuItem>
 
-          <DropdownMenuSeparator />
+          <ResponsiveDropdownMenuSeparator />
 
           {!isSold && (
-            <DropdownMenuItem onClick={handleTogglePriority} disabled={toggling !== null} className="gap-2">
+            <ResponsiveDropdownMenuItem onClick={handleTogglePriority} disabled={toggling !== null} className="gap-2">
               {toggling === "priority" ? (
                 <Loader2 className="h-4 w-4 animate-spin text-amber-400" />
               ) : (
                 <Star className={`h-4 w-4 ${priority ? "fill-amber-500 text-amber-500" : "text-slate-400"}`} />
               )}
               {priority ? "Bỏ nổi bật" : "Đánh dấu nổi bật"}
-            </DropdownMenuItem>
+            </ResponsiveDropdownMenuItem>
           )}
 
-          <DropdownMenuItem onClick={handleToggleClone} disabled={toggling !== null} className="gap-2">
+          <ResponsiveDropdownMenuItem onClick={handleToggleClone} disabled={toggling !== null} className="gap-2">
             {toggling === "clone" ? (
               <Loader2 className="h-4 w-4 animate-spin text-violet-400" />
             ) : (
               <Copy className={`h-4 w-4 ${clone ? "text-violet-500" : "text-slate-400"}`} />
             )}
             {clone ? "Bỏ Clone" : "Đánh dấu Clone"}
-          </DropdownMenuItem>
+          </ResponsiveDropdownMenuItem>
 
           {!isSold && !isDeposited && (
             <>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => openWith("sale")} className="gap-2">
+              <ResponsiveDropdownMenuSeparator />
+              <ResponsiveDropdownMenuItem onClick={() => openWith("sale")} className="gap-2">
                 <Tag className="h-4 w-4 text-rose-400" />
                 {isOnSale ? "Chỉnh giá sale" : "Thiết lập sale"}
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => openWith("deposit")} className="gap-2">
+              </ResponsiveDropdownMenuItem>
+              <ResponsiveDropdownMenuItem onClick={() => openWith("deposit")} className="gap-2">
                 <Banknote className="h-4 w-4 text-blue-500" />
                 Cọc acc
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => openWith("sell")} className="gap-2">
+              </ResponsiveDropdownMenuItem>
+              <ResponsiveDropdownMenuItem onClick={() => openWith("sell")} className="gap-2">
                 <ShoppingCart className="h-4 w-4 text-green-500" />
                 Đánh dấu đã bán
-              </DropdownMenuItem>
+              </ResponsiveDropdownMenuItem>
             </>
           )}
 
           {isDeposited && (
             <>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => openWith("undeposit")} className="gap-2">
+              <ResponsiveDropdownMenuSeparator />
+              <ResponsiveDropdownMenuItem onClick={() => openWith("undeposit")} className="gap-2">
                 <RotateCcw className="h-4 w-4 text-blue-500" />
                 Hủy cọc
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => openWith("sell")} className="gap-2">
+              </ResponsiveDropdownMenuItem>
+              <ResponsiveDropdownMenuItem onClick={() => openWith("sell")} className="gap-2">
                 <ShoppingCart className="h-4 w-4 text-green-500" />
                 Đánh dấu đã bán
-              </DropdownMenuItem>
+              </ResponsiveDropdownMenuItem>
             </>
           )}
 
           {isSold && (
             <>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => openWith("buyback")} className="gap-2">
+              <ResponsiveDropdownMenuSeparator />
+              <ResponsiveDropdownMenuItem onClick={() => openWith("buyback")} className="gap-2">
                 <RotateCcw className="h-4 w-4 text-emerald-500" />
                 Thu lại acc
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => openWith("unmark-sold")} className="gap-2">
+              </ResponsiveDropdownMenuItem>
+              <ResponsiveDropdownMenuItem onClick={() => openWith("unmark-sold")} className="gap-2">
                 <RotateCcw className="h-4 w-4 text-blue-500" />
                 Gỡ đánh dấu đã bán
-              </DropdownMenuItem>
+              </ResponsiveDropdownMenuItem>
             </>
           )}
 
           {!isApproved && !isSold && (
             <>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
+              <ResponsiveDropdownMenuSeparator />
+              <ResponsiveDropdownMenuItem
                 onClick={handleApprove}
                 disabled={approving}
                 className="gap-2"
@@ -523,45 +523,45 @@ export function SuperAccountActionsDropdown({
                   <CheckCircle className="h-4 w-4 text-emerald-500" />
                 )}
                 {approving ? "Đang duyệt..." : "Duyệt tài khoản"}
-              </DropdownMenuItem>
+              </ResponsiveDropdownMenuItem>
             </>
           )}
 
           {isApproved && !isSold && (
             <>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => openWith("unapprove")} className="gap-2">
+              <ResponsiveDropdownMenuSeparator />
+              <ResponsiveDropdownMenuItem onClick={() => openWith("unapprove")} className="gap-2">
                 <RotateCcw className="h-4 w-4 text-amber-500" />
                 Chờ duyệt lại
-              </DropdownMenuItem>
+              </ResponsiveDropdownMenuItem>
             </>
           )}
 
-          <DropdownMenuSeparator />
-          <DropdownMenuItem
+          <ResponsiveDropdownMenuSeparator />
+          <ResponsiveDropdownMenuItem
             variant="destructive"
             onClick={() => openWith("delete")}
             className="gap-2"
           >
             <Trash2 className="h-4 w-4" />
             Xóa tài khoản
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+          </ResponsiveDropdownMenuItem>
+        </ResponsiveDropdownMenuContent>
+      </ResponsiveDropdownMenu>
 
       {/* ── Unapprove dialog ───────────────────────────────────────────────── */}
-      <AlertDialog open={openDialog === "unapprove"} onOpenChange={(v) => !loading && !v && closeDialog()}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 dark:bg-amber-500/10">
+      <ResponsiveAlertDialog open={openDialog === "unapprove"} onOpenChange={(v) => !loading && !v && closeDialog()}>
+        <ResponsiveAlertDialogContent>
+          <ResponsiveAlertDialogHeader>
+            <div className="mb-4 flex h-10 w-10 shrink-0 place-items-center items-center justify-center mx-auto rounded-xl bg-amber-50 dark:bg-amber-500/10">
               <RotateCcw className="h-5 w-5 text-amber-600" />
             </div>
-            <AlertDialogTitle>Chuyển về chờ duyệt</AlertDialogTitle>
-            <AlertDialogDescription>
+            <ResponsiveAlertDialogTitle>Chuyển về chờ duyệt</ResponsiveAlertDialogTitle>
+            <ResponsiveAlertDialogDescription>
               Tài khoản <span className="font-semibold text-slate-900 dark:text-slate-100">&quot;{title}&quot;</span> sẽ không còn hiển thị công khai và cần được duyệt lại.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
+            </ResponsiveAlertDialogDescription>
+          </ResponsiveAlertDialogHeader>
+          <ResponsiveAlertDialogFooter>
             <Button variant="outline" onClick={closeDialog} disabled={loading}>Hủy</Button>
             <Button
               onClick={handleUnapprove}
@@ -571,24 +571,24 @@ export function SuperAccountActionsDropdown({
             >
               Xác nhận
             </Button>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+          </ResponsiveAlertDialogFooter>
+        </ResponsiveAlertDialogContent>
+      </ResponsiveAlertDialog>
 
       {/* ── Delete dialog ──────────────────────────────────────────────────── */}
-      <AlertDialog open={openDialog === "delete"} onOpenChange={(v) => !loading && !v && closeDialog()}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-red-50 dark:bg-red-500/10">
+      <ResponsiveAlertDialog open={openDialog === "delete"} onOpenChange={(v) => !loading && !v && closeDialog()}>
+        <ResponsiveAlertDialogContent>
+          <ResponsiveAlertDialogHeader>
+            <div className="mb-4 flex h-10 w-10 shrink-0 place-items-center items-center justify-center mx-auto rounded-xl bg-red-50 dark:bg-red-500/10">
               <Trash2 className="h-5 w-5 text-red-600" />
             </div>
-            <AlertDialogTitle>Xóa tài khoản</AlertDialogTitle>
-            <AlertDialogDescription>
+            <ResponsiveAlertDialogTitle>Xóa tài khoản</ResponsiveAlertDialogTitle>
+            <ResponsiveAlertDialogDescription>
               Bạn có chắc muốn xóa{" "}
               <span className="font-semibold text-slate-900 dark:text-slate-100">&quot;{title}&quot;</span>? Hành động này không thể hoàn tác.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
+            </ResponsiveAlertDialogDescription>
+          </ResponsiveAlertDialogHeader>
+          <ResponsiveAlertDialogFooter>
             <Button variant="outline" onClick={closeDialog} disabled={loading}>Hủy</Button>
             <Button
               onClick={handleDelete}
@@ -598,23 +598,23 @@ export function SuperAccountActionsDropdown({
             >
               Xóa
             </Button>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+          </ResponsiveAlertDialogFooter>
+        </ResponsiveAlertDialogContent>
+      </ResponsiveAlertDialog>
 
       {/* ── Sell dialog ───────────────────────────────────────────────────── */}
-      <Dialog open={openDialog === "sell"} onOpenChange={(v) => !loading && !v && closeDialog()}>
-        <DialogContent showCloseButton={false} className="sm:max-w-sm p-0 gap-0">
-          <div className="p-5">
-            <DialogHeader className="mb-4">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-green-50 dark:bg-green-500/10">
+      <ResponsiveDialog open={openDialog === "sell"} onOpenChange={(v) => !loading && !v && closeDialog()}>
+        <ResponsiveDialogContent showCloseButton={false} className="sm:max-w-sm p-0 gap-0">
+          <div className="px-5">
+            <ResponsiveDialogHeader className="mb-4">
+              <div className="flex h-10 w-10 shrink-0 place-items-center items-center justify-center mx-auto rounded-xl bg-green-50 dark:bg-green-500/10">
                 <ShoppingCart className="h-5 w-5 text-green-600" />
               </div>
-              <DialogTitle className="text-base font-semibold">Xác Nhận Bán Tài Khoản</DialogTitle>
-              <DialogDescription>
+              <ResponsiveDialogTitle className="text-base font-semibold">Xác Nhận Bán Tài Khoản</ResponsiveDialogTitle>
+              <ResponsiveDialogDescription>
                 Giá dự kiến sẽ cập nhật thành giá bán thực tế. Email liên kết sẽ bị gỡ tự động.
-              </DialogDescription>
-            </DialogHeader>
+              </ResponsiveDialogDescription>
+            </ResponsiveDialogHeader>
             <Label className="mb-1.5 text-slate-700 dark:text-slate-200">Giá Bán Thực Tế (VNĐ)</Label>
             <Input
               type="number"
@@ -628,7 +628,7 @@ export function SuperAccountActionsDropdown({
             />
             {error && <p className="mt-1.5 text-xs text-red-600 dark:text-red-400">{error}</p>}
           </div>
-          <DialogFooter>
+          <ResponsiveDialogFooter>
             <Button variant="outline" onClick={closeDialog} disabled={loading}>Hủy</Button>
             <Button
               onClick={handleSell}
@@ -638,23 +638,23 @@ export function SuperAccountActionsDropdown({
             >
               Xác Nhận Bán
             </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+          </ResponsiveDialogFooter>
+        </ResponsiveDialogContent>
+      </ResponsiveDialog>
 
       {/* ── Sale dialog ───────────────────────────────────────────────────── */}
-      <Dialog open={openDialog === "sale"} onOpenChange={(v) => !loading && !v && closeDialog()}>
-        <DialogContent showCloseButton={false} className="sm:max-w-sm p-0 gap-0">
-          <div className="p-5">
-            <DialogHeader className="mb-4">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-rose-50 dark:bg-rose-500/10">
+      <ResponsiveDialog open={openDialog === "sale"} onOpenChange={(v) => !loading && !v && closeDialog()}>
+        <ResponsiveDialogContent showCloseButton={false} className="sm:max-w-sm p-0 gap-0">
+          <div className="px-5">
+            <ResponsiveDialogHeader className="mb-4">
+              <div className="flex h-10 w-10 shrink-0 place-items-center items-center justify-center mx-auto rounded-xl bg-rose-50 dark:bg-rose-500/10">
                 <Tag className="h-5 w-5 text-rose-600" />
               </div>
-              <DialogTitle className="text-base font-semibold">Cài Đặt Khuyến Mãi (Sale)</DialogTitle>
-              <DialogDescription>
+              <ResponsiveDialogTitle className="text-base font-semibold">Cài Đặt Khuyến Mãi (Sale)</ResponsiveDialogTitle>
+              <ResponsiveDialogDescription>
                 Thiết lập giá gốc và giá giảm để tạo hiệu ứng thẻ sale nổi bật.
-              </DialogDescription>
-            </DialogHeader>
+              </ResponsiveDialogDescription>
+            </ResponsiveDialogHeader>
             <div className="space-y-3">
               <div>
                 <Label className="text-slate-700 dark:text-slate-200">Giá Bị Gạch / Giá Gốc (VNĐ)</Label>
@@ -684,44 +684,42 @@ export function SuperAccountActionsDropdown({
               {error && <p className="text-xs text-red-600 dark:text-red-400">{error}</p>}
             </div>
           </div>
-          <div className="border-t bg-muted/50 p-4">
-            <div className="flex justify-end gap-2">
-              <Button variant="outline" onClick={closeDialog} disabled={loading}>Hủy</Button>
-              <Button
-                onClick={handleSaleConfirm}
-                loading={loading}
-                loadingLabel="Đang xử lý..."
-                className="min-w-[9rem] bg-rose-600 text-white hover:bg-rose-700"
-              >
-                Lưu Thay Đổi
-              </Button>
-            </div>
+          <ResponsiveDialogFooter>
             {isOnSale && (
               <button
                 onClick={handleRemoveSale}
                 disabled={loading}
-                className="mt-2 w-full rounded-lg py-1.5 text-center text-sm text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:underline disabled:opacity-50"
+                className="w-full rounded-lg py-1.5 text-center text-sm text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:underline disabled:opacity-50"
               >
                 Hủy bỏ sale cho tài khoản này
               </button>
             )}
-          </div>
-        </DialogContent>
-      </Dialog>
+            <Button variant="outline" onClick={closeDialog} disabled={loading}>Hủy</Button>
+            <Button
+              onClick={handleSaleConfirm}
+              loading={loading}
+              loadingLabel="Đang xử lý..."
+              className="bg-rose-600 text-white hover:bg-rose-700"
+            >
+              Lưu Thay Đổi
+            </Button>
+          </ResponsiveDialogFooter>
+        </ResponsiveDialogContent>
+      </ResponsiveDialog>
 
       {/* ── Deposit dialog ──────────────────────────────────────────────── */}
-      <Dialog open={openDialog === "deposit"} onOpenChange={(v) => !loading && !v && closeDialog()}>
-        <DialogContent showCloseButton={false} className="sm:max-w-sm p-0 gap-0">
-          <div className="p-5">
-            <DialogHeader className="mb-4">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-500/10">
+      <ResponsiveDialog open={openDialog === "deposit"} onOpenChange={(v) => !loading && !v && closeDialog()}>
+        <ResponsiveDialogContent showCloseButton={false} className="sm:max-w-sm p-0 gap-0">
+          <div className="px-5">
+            <ResponsiveDialogHeader className="mb-4">
+              <div className="flex h-10 w-10 shrink-0 place-items-center items-center justify-center mx-auto rounded-xl bg-blue-50 dark:bg-blue-500/10">
                 <Banknote className="h-5 w-5 text-blue-600" />
               </div>
-              <DialogTitle className="text-base font-semibold">Cọc Tài Khoản</DialogTitle>
-              <DialogDescription>
+              <ResponsiveDialogTitle className="text-base font-semibold">Cọc Tài Khoản</ResponsiveDialogTitle>
+              <ResponsiveDialogDescription>
                 Nhập thông tin khách cọc để giữ acc đến ngày hẹn.
-              </DialogDescription>
-            </DialogHeader>
+              </ResponsiveDialogDescription>
+            </ResponsiveDialogHeader>
             <div className="space-y-3">
               <div>
                 <Label className="text-slate-700 dark:text-slate-200">Tên Khách Hàng *</Label>
@@ -780,7 +778,7 @@ export function SuperAccountActionsDropdown({
               {error && <p className="text-xs text-red-600 dark:text-red-400">{error}</p>}
             </div>
           </div>
-          <DialogFooter>
+          <ResponsiveDialogFooter>
             <Button variant="outline" onClick={closeDialog} disabled={loading}>Hủy</Button>
             <Button
               onClick={handleDeposit}
@@ -790,25 +788,25 @@ export function SuperAccountActionsDropdown({
             >
               Xác Nhận Cọc
             </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+          </ResponsiveDialogFooter>
+        </ResponsiveDialogContent>
+      </ResponsiveDialog>
 
       {/* ── Undeposit dialog ──────────────────────────────────────────────── */}
-      <AlertDialog open={openDialog === "undeposit"} onOpenChange={(v) => !loading && !v && closeDialog()}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-500/10">
+      <ResponsiveAlertDialog open={openDialog === "undeposit"} onOpenChange={(v) => !loading && !v && closeDialog()}>
+        <ResponsiveAlertDialogContent>
+          <ResponsiveAlertDialogHeader>
+            <div className="mb-4 flex h-10 w-10 shrink-0 place-items-center items-center justify-center mx-auto rounded-xl bg-blue-50 dark:bg-blue-500/10">
               <RotateCcw className="h-5 w-5 text-blue-600" />
             </div>
-            <AlertDialogTitle>Hủy Cọc Tài Khoản</AlertDialogTitle>
-            <AlertDialogDescription>
+            <ResponsiveAlertDialogTitle>Hủy Cọc Tài Khoản</ResponsiveAlertDialogTitle>
+            <ResponsiveAlertDialogDescription>
               Tài khoản <span className="font-semibold text-slate-900 dark:text-slate-100">&quot;{title}&quot;</span> sẽ được chuyển về trạng thái{" "}
               <span className="font-semibold text-slate-700 dark:text-slate-200">Đang bán</span> và xóa thông tin cọc.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
+            </ResponsiveAlertDialogDescription>
+          </ResponsiveAlertDialogHeader>
           {error && <p className="text-xs text-red-600 dark:text-red-400">{error}</p>}
-          <AlertDialogFooter>
+          <ResponsiveAlertDialogFooter>
             <Button variant="outline" onClick={closeDialog} disabled={loading}>Hủy</Button>
             <Button
               onClick={handleUndeposit}
@@ -818,24 +816,24 @@ export function SuperAccountActionsDropdown({
             >
               Xác Nhận Hủy Cọc
             </Button>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+          </ResponsiveAlertDialogFooter>
+        </ResponsiveAlertDialogContent>
+      </ResponsiveAlertDialog>
 
       {/* ── Unmark sold dialog ─────────────────────────────────────────────── */}
-      <AlertDialog open={openDialog === "unmark-sold"} onOpenChange={(v) => !loading && !v && closeDialog()}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-500/10">
+      <ResponsiveAlertDialog open={openDialog === "unmark-sold"} onOpenChange={(v) => !loading && !v && closeDialog()}>
+        <ResponsiveAlertDialogContent>
+          <ResponsiveAlertDialogHeader>
+            <div className="mb-4 flex h-10 w-10 shrink-0 place-items-center items-center justify-center mx-auto rounded-xl bg-blue-50 dark:bg-blue-500/10">
               <RotateCcw className="h-5 w-5 text-blue-600" />
             </div>
-            <AlertDialogTitle>Gỡ đánh dấu đã bán</AlertDialogTitle>
-            <AlertDialogDescription>
+            <ResponsiveAlertDialogTitle>Gỡ đánh dấu đã bán</ResponsiveAlertDialogTitle>
+            <ResponsiveAlertDialogDescription>
               Tài khoản <span className="font-semibold text-slate-900 dark:text-slate-100">&quot;{title}&quot;</span> sẽ được chuyển về trạng thái Còn hàng.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
+            </ResponsiveAlertDialogDescription>
+          </ResponsiveAlertDialogHeader>
           {error && <p className="text-xs text-red-600 dark:text-red-400">{error}</p>}
-          <AlertDialogFooter>
+          <ResponsiveAlertDialogFooter>
             <Button variant="outline" onClick={closeDialog} disabled={loading}>Hủy</Button>
             <Button
               onClick={handleUnmarkSold}
@@ -845,23 +843,23 @@ export function SuperAccountActionsDropdown({
             >
               Xác nhận
             </Button>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+          </ResponsiveAlertDialogFooter>
+        </ResponsiveAlertDialogContent>
+      </ResponsiveAlertDialog>
 
       {/* ── Buyback dialog ──────────────────────────────────────────────── */}
-      <Dialog open={openDialog === "buyback"} onOpenChange={(v) => !loading && !v && closeDialog()}>
-        <DialogContent showCloseButton={false} className="sm:max-w-sm p-0 gap-0">
-          <div className="p-5">
-            <DialogHeader className="mb-4">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 dark:bg-emerald-500/10">
+      <ResponsiveDialog open={openDialog === "buyback"} onOpenChange={(v) => !loading && !v && closeDialog()}>
+        <ResponsiveDialogContent showCloseButton={false} className="sm:max-w-sm p-0 gap-0">
+          <div className="px-5">
+            <ResponsiveDialogHeader className="mb-4">
+              <div className="flex h-10 w-10 shrink-0 place-items-center items-center justify-center mx-auto rounded-xl bg-emerald-50 dark:bg-emerald-500/10">
                 <RotateCcw className="h-5 w-5 text-emerald-600" />
               </div>
-              <DialogTitle className="text-base font-semibold">Thu Lại Tài Khoản</DialogTitle>
-              <DialogDescription>
+              <ResponsiveDialogTitle className="text-base font-semibold">Thu Lại Tài Khoản</ResponsiveDialogTitle>
+              <ResponsiveDialogDescription>
                 Thu lại <span className="font-semibold text-slate-900 dark:text-slate-100">&quot;{title}&quot;</span> theo chính sách giá thu.
-              </DialogDescription>
-            </DialogHeader>
+              </ResponsiveDialogDescription>
+            </ResponsiveDialogHeader>
 
             {/* Buyback info */}
             {buybackInfo && (
@@ -925,7 +923,7 @@ export function SuperAccountActionsDropdown({
               {error && <p className="text-xs text-red-600 dark:text-red-400">{error}</p>}
             </div>
           </div>
-          <DialogFooter>
+          <ResponsiveDialogFooter>
             <Button variant="outline" onClick={closeDialog} disabled={loading}>Hủy</Button>
             <Button
               onClick={handleBuyback}
@@ -935,9 +933,9 @@ export function SuperAccountActionsDropdown({
             >
               Xác Nhận Thu Lại
             </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+          </ResponsiveDialogFooter>
+        </ResponsiveDialogContent>
+      </ResponsiveDialog>
 
       {/* ── Edit sheet ──────────────────────────────────────────────────── */}
       <SuperAccountEditSheet
@@ -946,13 +944,12 @@ export function SuperAccountActionsDropdown({
         onOpenChange={setEditSheetOpen}
       />
 
-      {/* ── Detail drawer ─────────────────────────────────────────────────── */}
-      <PendingAccountDrawer
+      {/* ── Detail dialog ─────────────────────────────────────────────────── */}
+      <AccountDetailDialog
         account={account}
-        adminEmail={adminEmail}
-        showApproveButton
-        controlledOpen={drawerOpen}
-        onControlledClose={() => setDrawerOpen(false)}
+        adminName={adminEmail}
+        open={drawerOpen}
+        onOpenChange={setDrawerOpen}
       />
     </>
   );

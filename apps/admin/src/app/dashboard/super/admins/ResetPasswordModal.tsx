@@ -7,13 +7,13 @@ import { Button } from "@thc-efb/ui/button";
 import { Input } from "@thc-efb/ui/input";
 import { Label } from "@thc-efb/ui/label";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from "@thc-efb/ui/dialog";
+  ResponsiveDialog,
+  ResponsiveDialogContent,
+  ResponsiveDialogHeader,
+  ResponsiveDialogTitle,
+  ResponsiveDialogDescription,
+  ResponsiveDialogFooter,
+} from "@thc-efb/ui/responsive-dialog";
 import { toast } from "sonner";
 
 export function ResetPasswordModal({ adminId, adminEmail }: { adminId: string; adminEmail: string }) {
@@ -45,21 +45,17 @@ export function ResetPasswordModal({ adminId, adminEmail }: { adminId: string; a
         <KeyRound className="h-3.5 w-3.5" /> Đổi MK
       </button>
 
-      <Dialog open={open} onOpenChange={(v) => !loading && (v ? setOpen(true) : handleClose())}>
-        <DialogContent showCloseButton={false} className="sm:max-w-sm p-0 gap-0">
+      <ResponsiveDialog open={open} onOpenChange={(v) => !loading && (v ? setOpen(true) : handleClose())}>
+        <ResponsiveDialogContent showCloseButton={false} className="sm:max-w-sm p-0 gap-0">
           <form onSubmit={handleSubmit}>
-            <div className="p-5">
-              <DialogHeader className="mb-4">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-700">
-                    <KeyRound className="h-5 w-5 text-slate-600 dark:text-slate-300" />
-                  </div>
-                  <div>
-                    <DialogTitle className="text-base font-semibold">Đổi Mật Khẩu</DialogTitle>
-                    <DialogDescription className="text-xs truncate max-w-[160px]">{adminEmail}</DialogDescription>
-                  </div>
+            <div className="px-5">
+              <ResponsiveDialogHeader className="mb-4">
+                <div className="flex h-10 w-10 shrink-0 place-items-center items-center justify-center mx-auto rounded-xl bg-slate-100 dark:bg-slate-700">
+                  <KeyRound className="h-5 w-5 text-slate-600 dark:text-slate-300" />
                 </div>
-              </DialogHeader>
+                <ResponsiveDialogTitle className="text-base font-semibold">Đổi Mật Khẩu</ResponsiveDialogTitle>
+                <ResponsiveDialogDescription className="text-xs truncate">{adminEmail}</ResponsiveDialogDescription>
+              </ResponsiveDialogHeader>
               <div>
                 <Label className="text-slate-700 dark:text-slate-200">Mật Khẩu Mới</Label>
                 <div className="relative mt-1.5">
@@ -75,7 +71,7 @@ export function ResetPasswordModal({ adminId, adminEmail }: { adminId: string; a
                 {error && <p className="mt-1.5 text-xs text-red-600 dark:text-red-400">{error}</p>}
               </div>
             </div>
-            <DialogFooter>
+            <ResponsiveDialogFooter>
               <Button type="button" variant="outline" onClick={handleClose} disabled={loading}>Hủy</Button>
               <Button
                 type="submit"
@@ -85,10 +81,10 @@ export function ResetPasswordModal({ adminId, adminEmail }: { adminId: string; a
               >
                 Lưu
               </Button>
-            </DialogFooter>
+            </ResponsiveDialogFooter>
           </form>
-        </DialogContent>
-      </Dialog>
+        </ResponsiveDialogContent>
+      </ResponsiveDialog>
     </>
   );
 }

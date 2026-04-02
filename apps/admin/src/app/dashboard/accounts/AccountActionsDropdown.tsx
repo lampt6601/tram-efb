@@ -27,29 +27,29 @@ import { Input } from "@thc-efb/ui/input";
 import { CurrencyInput } from "@thc-efb/ui/currency-input";
 import { Label } from "@thc-efb/ui/label";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@thc-efb/ui/dropdown-menu";
+  ResponsiveDropdownMenu,
+  ResponsiveDropdownMenuContent,
+  ResponsiveDropdownMenuItem,
+  ResponsiveDropdownMenuSeparator,
+  ResponsiveDropdownMenuTrigger,
+} from "@thc-efb/ui/responsive-dropdown-menu";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from "@thc-efb/ui/dialog";
+  ResponsiveDialog,
+  ResponsiveDialogContent,
+  ResponsiveDialogHeader,
+  ResponsiveDialogTitle,
+  ResponsiveDialogDescription,
+  ResponsiveDialogFooter,
+} from "@thc-efb/ui/responsive-dialog";
 import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogDescription,
-  AlertDialogFooter,
-} from "@thc-efb/ui/alert-dialog";
-import { PendingAccountDrawer } from "@/app/dashboard/super/pending/PendingAccountDrawer";
+  ResponsiveAlertDialog,
+  ResponsiveAlertDialogContent,
+  ResponsiveAlertDialogHeader,
+  ResponsiveAlertDialogTitle,
+  ResponsiveAlertDialogDescription,
+  ResponsiveAlertDialogFooter,
+} from "@thc-efb/ui/responsive-alert-dialog";
+import { AccountDetailDialog } from "@/components/admin/AccountDetailDialog";
 import { AccountEditSheet } from "@/components/admin/AccountEditSheet";
 import { toggleAccountPriority } from "@/app/actions/account-actions";
 import { toast } from "sonner";
@@ -423,8 +423,8 @@ export function AccountActionsDropdown({
   return (
     <>
       {/* ── Dropdown ─────────────────────────────────────────────────────── */}
-      <DropdownMenu>
-        <DropdownMenuTrigger
+      <ResponsiveDropdownMenu>
+        <ResponsiveDropdownMenuTrigger
           render={
             <button className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-2.5 py-1.5 text-xs font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-700 dark:hover:text-slate-100">
               Tác vụ
@@ -432,18 +432,18 @@ export function AccountActionsDropdown({
             </button>
           }
         />
-        <DropdownMenuContent align="end" className="w-52">
-          <DropdownMenuItem onClick={() => setEditSheetOpen(true)} className="gap-2">
+        <ResponsiveDropdownMenuContent align="end" className="w-52">
+          <ResponsiveDropdownMenuItem onClick={() => setEditSheetOpen(true)} className="gap-2">
             <Pencil className="h-4 w-4 text-slate-400" />
             Chỉnh sửa
-          </DropdownMenuItem>
+          </ResponsiveDropdownMenuItem>
 
-          <DropdownMenuItem onClick={() => setDrawerOpen(true)} className="gap-2">
+          <ResponsiveDropdownMenuItem onClick={() => setDrawerOpen(true)} className="gap-2">
             <Eye className="h-4 w-4 text-indigo-400" />
             Xem chi tiết
-          </DropdownMenuItem>
+          </ResponsiveDropdownMenuItem>
 
-          <DropdownMenuItem
+          <ResponsiveDropdownMenuItem
             render={
               <Link
                 href={`/accounts/${id}`}
@@ -454,18 +454,18 @@ export function AccountActionsDropdown({
           >
             <ExternalLink className="h-4 w-4 text-slate-400" />
             Xem trang công khai
-          </DropdownMenuItem>
+          </ResponsiveDropdownMenuItem>
 
-          <DropdownMenuItem onClick={handleCopyLink} className="gap-2">
+          <ResponsiveDropdownMenuItem onClick={handleCopyLink} className="gap-2">
             {copied ? (
               <Check className="h-4 w-4 text-emerald-500" />
             ) : (
               <LinkIcon className="h-4 w-4 text-slate-400" />
             )}
             {copied ? "Đã copy!" : "Copy link"}
-          </DropdownMenuItem>
+          </ResponsiveDropdownMenuItem>
 
-          <DropdownMenuItem
+          <ResponsiveDropdownMenuItem
             render={
               <Link
                 href={`/dashboard/accounts/new?from=${id}`}
@@ -475,11 +475,11 @@ export function AccountActionsDropdown({
           >
             <Copy className="h-4 w-4 text-slate-400" />
             Tạo acc tương tự
-          </DropdownMenuItem>
+          </ResponsiveDropdownMenuItem>
 
-          <DropdownMenuSeparator />
+          <ResponsiveDropdownMenuSeparator />
 
-          <DropdownMenuItem
+          <ResponsiveDropdownMenuItem
             onClick={handleToggleClone}
             disabled={toggling !== null}
             className="gap-2"
@@ -490,10 +490,10 @@ export function AccountActionsDropdown({
               <Copy className={`h-4 w-4 ${clone ? "text-violet-500" : "text-slate-400"}`} />
             )}
             {clone ? "Bỏ Clone" : "Đánh dấu Clone"}
-          </DropdownMenuItem>
+          </ResponsiveDropdownMenuItem>
 
           {!isSold && (
-            <DropdownMenuItem
+            <ResponsiveDropdownMenuItem
               onClick={handleTogglePriority}
               disabled={toggling !== null}
               className="gap-2"
@@ -506,80 +506,80 @@ export function AccountActionsDropdown({
                 />
               )}
               {priority ? "Bỏ nổi bật" : "Nổi bật"}
-            </DropdownMenuItem>
+            </ResponsiveDropdownMenuItem>
           )}
 
           {!isSold && !isDeposited && (
             <>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
+              <ResponsiveDropdownMenuSeparator />
+              <ResponsiveDropdownMenuItem
                 onClick={() => openWith("sale")}
                 className="gap-2"
               >
                 <Tag className="h-4 w-4 text-rose-400" />
                 {isOnSale ? "Chỉnh giá sale" : "Thiết lập sale"}
-              </DropdownMenuItem>
-              <DropdownMenuItem
+              </ResponsiveDropdownMenuItem>
+              <ResponsiveDropdownMenuItem
                 onClick={() => openWith("deposit")}
                 className="gap-2"
               >
                 <Banknote className="h-4 w-4 text-blue-500" />
                 Cọc acc
-              </DropdownMenuItem>
-              <DropdownMenuItem
+              </ResponsiveDropdownMenuItem>
+              <ResponsiveDropdownMenuItem
                 onClick={() => openWith("sell")}
                 className="gap-2"
               >
                 <ShoppingCart className="h-4 w-4 text-green-500" />
                 Đánh dấu đã bán
-              </DropdownMenuItem>
+              </ResponsiveDropdownMenuItem>
             </>
           )}
 
           {isDeposited && (
             <>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
+              <ResponsiveDropdownMenuSeparator />
+              <ResponsiveDropdownMenuItem
                 onClick={() => openWith("undeposit")}
                 className="gap-2"
               >
                 <RotateCcw className="h-4 w-4 text-blue-500" />
                 Hủy cọc
-              </DropdownMenuItem>
-              <DropdownMenuItem
+              </ResponsiveDropdownMenuItem>
+              <ResponsiveDropdownMenuItem
                 onClick={() => openWith("sell")}
                 className="gap-2"
               >
                 <ShoppingCart className="h-4 w-4 text-green-500" />
                 Đánh dấu đã bán
-              </DropdownMenuItem>
+              </ResponsiveDropdownMenuItem>
             </>
           )}
 
           {isSold && (
             <>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
+              <ResponsiveDropdownMenuSeparator />
+              <ResponsiveDropdownMenuItem
                 onClick={() => openWith("unmark-sold")}
                 className="gap-2"
               >
                 <RotateCcw className="h-4 w-4 text-blue-500" />
                 Gỡ đánh dấu đã bán
-              </DropdownMenuItem>
+              </ResponsiveDropdownMenuItem>
             </>
           )}
 
-          <DropdownMenuSeparator />
-          <DropdownMenuItem
+          <ResponsiveDropdownMenuSeparator />
+          <ResponsiveDropdownMenuItem
             variant="destructive"
             onClick={() => openWith("delete")}
             className="gap-2"
           >
             <Trash2 className="h-4 w-4" />
             Xóa tài khoản
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+          </ResponsiveDropdownMenuItem>
+        </ResponsiveDropdownMenuContent>
+      </ResponsiveDropdownMenu>
 
       {/* ── Edit sheet ──────────────────────────────────────────────────── */}
       <AccountEditSheet
@@ -588,27 +588,27 @@ export function AccountActionsDropdown({
         onOpenChange={setEditSheetOpen}
       />
 
-      {/* ── Detail drawer ─────────────────────────────────────────────────── */}
-      <PendingAccountDrawer
+      {/* ── Detail dialog ─────────────────────────────────────────────────── */}
+      <AccountDetailDialog
         account={account}
-        adminEmail={adminEmail}
-        controlledOpen={drawerOpen}
-        onControlledClose={() => setDrawerOpen(false)}
+        adminName={adminEmail}
+        open={drawerOpen}
+        onOpenChange={setDrawerOpen}
       />
 
       {/* ── Sell dialog ───────────────────────────────────────────────────── */}
-      <Dialog open={openDialog === "sell"} onOpenChange={(v) => !loading && !v && closeDialog()}>
-        <DialogContent showCloseButton={false} className="sm:max-w-sm p-0 gap-0">
-          <div className="p-5">
-            <DialogHeader className="mb-4">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-green-50 dark:bg-green-500/10">
+      <ResponsiveDialog open={openDialog === "sell"} onOpenChange={(v) => !loading && !v && closeDialog()}>
+        <ResponsiveDialogContent showCloseButton={false} className="sm:max-w-sm p-0 gap-0">
+          <div className="px-5">
+            <ResponsiveDialogHeader className="mb-4">
+              <div className="flex h-10 w-10 shrink-0 place-items-center items-center justify-center mx-auto rounded-xl bg-green-50 dark:bg-green-500/10">
                 <ShoppingCart className="h-5 w-5 text-green-600" />
               </div>
-              <DialogTitle className="text-base font-semibold">Xác Nhận Bán Tài Khoản</DialogTitle>
-              <DialogDescription>
+              <ResponsiveDialogTitle className="text-base font-semibold">Xác Nhận Bán Tài Khoản</ResponsiveDialogTitle>
+              <ResponsiveDialogDescription>
                 Giá dự kiến sẽ cập nhật thành giá bán thực tế. Email liên kết sẽ bị gỡ tự động.
-              </DialogDescription>
-            </DialogHeader>
+              </ResponsiveDialogDescription>
+            </ResponsiveDialogHeader>
             <Label className="mb-1.5 text-slate-700 dark:text-slate-200">Giá Bán Thực Tế</Label>
             <CurrencyInput
               value={sellPrice}
@@ -621,7 +621,7 @@ export function AccountActionsDropdown({
             />
             {error && <p className="mt-1.5 text-xs text-red-600 dark:text-red-400">{error}</p>}
           </div>
-          <DialogFooter>
+          <ResponsiveDialogFooter>
             <Button variant="outline" onClick={closeDialog} disabled={loading}>
               Hủy
             </Button>
@@ -633,23 +633,23 @@ export function AccountActionsDropdown({
             >
               Xác Nhận Bán
             </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+          </ResponsiveDialogFooter>
+        </ResponsiveDialogContent>
+      </ResponsiveDialog>
 
       {/* ── Sale dialog ───────────────────────────────────────────────────── */}
-      <Dialog open={openDialog === "sale"} onOpenChange={(v) => !loading && !v && closeDialog()}>
-        <DialogContent showCloseButton={false} className="sm:max-w-sm p-0 gap-0">
-          <div className="p-5">
-            <DialogHeader className="mb-4">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-rose-50 dark:bg-rose-500/10">
+      <ResponsiveDialog open={openDialog === "sale"} onOpenChange={(v) => !loading && !v && closeDialog()}>
+        <ResponsiveDialogContent showCloseButton={false} className="sm:max-w-sm p-0 gap-0">
+          <div className="px-5">
+            <ResponsiveDialogHeader className="mb-4">
+              <div className="flex h-10 w-10 shrink-0 place-items-center items-center justify-center mx-auto rounded-xl bg-rose-50 dark:bg-rose-500/10">
                 <Tag className="h-5 w-5 text-rose-600" />
               </div>
-              <DialogTitle className="text-base font-semibold">Cài Đặt Khuyến Mãi (Sale)</DialogTitle>
-              <DialogDescription>
+              <ResponsiveDialogTitle className="text-base font-semibold">Cài Đặt Khuyến Mãi (Sale)</ResponsiveDialogTitle>
+              <ResponsiveDialogDescription>
                 Thiết lập giá gốc và giá giảm để tạo hiệu ứng thẻ sale nổi bật.
-              </DialogDescription>
-            </DialogHeader>
+              </ResponsiveDialogDescription>
+            </ResponsiveDialogHeader>
             <div className="space-y-3">
               <div>
                 <Label className="text-slate-700 dark:text-slate-200">Giá Bị Gạch / Giá Gốc</Label>
@@ -677,46 +677,47 @@ export function AccountActionsDropdown({
               {error && <p className="text-xs text-red-600 dark:text-red-400">{error}</p>}
             </div>
           </div>
-          <div className="border-t bg-muted/50 p-4">
-            <div className="flex justify-end gap-2">
-              <Button variant="outline" onClick={closeDialog} disabled={loading}>
-                Hủy
-              </Button>
-              <Button
-                onClick={handleSaleConfirm}
-                loading={loading}
-                loadingLabel="Đang xử lý..."
-                className="min-w-[9rem] bg-rose-600 text-white hover:bg-rose-700"
-              >
-                Lưu Thay Đổi
-              </Button>
-            </div>
+          <ResponsiveDialogFooter>
             {isOnSale && (
               <button
                 onClick={handleRemoveSale}
                 disabled={loading}
-                className="mt-2 w-full rounded-lg py-1.5 text-center text-sm text-slate-500 hover:text-slate-700 hover:underline disabled:opacity-50 dark:text-slate-400 dark:hover:text-slate-200"
+                className="w-full rounded-lg py-1.5 text-center text-sm text-slate-500 hover:text-slate-700 hover:underline disabled:opacity-50 dark:text-slate-400 dark:hover:text-slate-200"
               >
                 Hủy bỏ sale cho tài khoản này
               </button>
             )}
-          </div>
-        </DialogContent>
-      </Dialog>
+            <Button variant="outline" onClick={closeDialog} disabled={loading}>
+              Hủy
+            </Button>
+            <Button
+              onClick={handleSaleConfirm}
+              loading={loading}
+              loadingLabel="Đang xử lý..."
+              className="bg-rose-600 text-white hover:bg-rose-700"
+            >
+              Lưu Thay Đổi
+            </Button>
+          </ResponsiveDialogFooter>
+        </ResponsiveDialogContent>
+      </ResponsiveDialog>
 
       {/* ── Delete dialog ─────────────────────────────────────────────────── */}
-      <AlertDialog open={openDialog === "delete"} onOpenChange={(v) => !loading && !v && closeDialog()}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Xóa tài khoản</AlertDialogTitle>
-            <AlertDialogDescription>
+      <ResponsiveAlertDialog open={openDialog === "delete"} onOpenChange={(v) => !loading && !v && closeDialog()}>
+        <ResponsiveAlertDialogContent>
+          <ResponsiveAlertDialogHeader>
+            <div className="flex h-10 w-10 shrink-0 place-items-center items-center justify-center mx-auto rounded-xl bg-red-50 dark:bg-red-500/10">
+              <Trash2 className="h-5 w-5 text-red-600" />
+            </div>
+            <ResponsiveAlertDialogTitle>Xóa tài khoản</ResponsiveAlertDialogTitle>
+            <ResponsiveAlertDialogDescription>
               Bạn có chắc chắn muốn xóa tài khoản{" "}
               <span className="font-semibold text-slate-900 dark:text-slate-100">&quot;{title}&quot;</span>?
               Hành động này không thể hoàn tác.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
+            </ResponsiveAlertDialogDescription>
+          </ResponsiveAlertDialogHeader>
           {error && <p className="text-xs text-red-600 dark:text-red-400">{error}</p>}
-          <AlertDialogFooter>
+          <ResponsiveAlertDialogFooter>
             <Button variant="outline" onClick={closeDialog} disabled={loading}>
               Hủy
             </Button>
@@ -728,23 +729,23 @@ export function AccountActionsDropdown({
             >
               Xóa
             </Button>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+          </ResponsiveAlertDialogFooter>
+        </ResponsiveAlertDialogContent>
+      </ResponsiveAlertDialog>
 
       {/* ── Deposit dialog ──────────────────────────────────────────────── */}
-      <Dialog open={openDialog === "deposit"} onOpenChange={(v) => !loading && !v && closeDialog()}>
-        <DialogContent showCloseButton={false} className="sm:max-w-sm p-0 gap-0">
-          <div className="p-5">
-            <DialogHeader className="mb-4">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-500/10">
+      <ResponsiveDialog open={openDialog === "deposit"} onOpenChange={(v) => !loading && !v && closeDialog()}>
+        <ResponsiveDialogContent showCloseButton={false} className="sm:max-w-sm p-0 gap-0">
+          <div className="px-5">
+            <ResponsiveDialogHeader className="mb-4">
+              <div className="flex h-10 w-10 shrink-0 place-items-center items-center justify-center mx-auto rounded-xl bg-blue-50 dark:bg-blue-500/10">
                 <Banknote className="h-5 w-5 text-blue-600" />
               </div>
-              <DialogTitle className="text-base font-semibold">Cọc Tài Khoản</DialogTitle>
-              <DialogDescription>
+              <ResponsiveDialogTitle className="text-base font-semibold">Cọc Tài Khoản</ResponsiveDialogTitle>
+              <ResponsiveDialogDescription>
                 Nhập thông tin khách cọc để giữ acc đến ngày hẹn.
-              </DialogDescription>
-            </DialogHeader>
+              </ResponsiveDialogDescription>
+            </ResponsiveDialogHeader>
             <div className="space-y-3">
               <div>
                 <Label className="text-slate-700 dark:text-slate-200">Tên Khách Hàng *</Label>
@@ -802,7 +803,7 @@ export function AccountActionsDropdown({
               {error && <p className="text-xs text-red-600 dark:text-red-400">{error}</p>}
             </div>
           </div>
-          <DialogFooter>
+          <ResponsiveDialogFooter>
             <Button variant="outline" onClick={closeDialog} disabled={loading}>
               Hủy
             </Button>
@@ -814,25 +815,25 @@ export function AccountActionsDropdown({
             >
               Xác Nhận Cọc
             </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+          </ResponsiveDialogFooter>
+        </ResponsiveDialogContent>
+      </ResponsiveDialog>
 
       {/* ── Undeposit dialog ──────────────────────────────────────────────── */}
-      <AlertDialog open={openDialog === "undeposit"} onOpenChange={(v) => !loading && !v && closeDialog()}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-500/10">
+      <ResponsiveAlertDialog open={openDialog === "undeposit"} onOpenChange={(v) => !loading && !v && closeDialog()}>
+        <ResponsiveAlertDialogContent>
+          <ResponsiveAlertDialogHeader>
+            <div className="mb-4 flex h-10 w-10 shrink-0 place-items-center items-center justify-center mx-auto rounded-xl bg-blue-50 dark:bg-blue-500/10">
               <RotateCcw className="h-5 w-5 text-blue-600" />
             </div>
-            <AlertDialogTitle>Hủy Cọc Tài Khoản</AlertDialogTitle>
-            <AlertDialogDescription>
+            <ResponsiveAlertDialogTitle>Hủy Cọc Tài Khoản</ResponsiveAlertDialogTitle>
+            <ResponsiveAlertDialogDescription>
               Tài khoản <span className="font-semibold text-slate-900 dark:text-slate-100">&quot;{title}&quot;</span> sẽ được chuyển về trạng thái{" "}
               <span className="font-semibold text-slate-700 dark:text-slate-200">Đang bán</span> và xóa thông tin cọc.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
+            </ResponsiveAlertDialogDescription>
+          </ResponsiveAlertDialogHeader>
           {error && <p className="text-xs text-red-600 dark:text-red-400">{error}</p>}
-          <AlertDialogFooter>
+          <ResponsiveAlertDialogFooter>
             <Button variant="outline" onClick={closeDialog} disabled={loading}>
               Hủy
             </Button>
@@ -844,25 +845,25 @@ export function AccountActionsDropdown({
             >
               Xác Nhận Hủy Cọc
             </Button>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+          </ResponsiveAlertDialogFooter>
+        </ResponsiveAlertDialogContent>
+      </ResponsiveAlertDialog>
 
       {/* ── Unmark sold dialog ─────────────────────────────────────────────── */}
-      <AlertDialog open={openDialog === "unmark-sold"} onOpenChange={(v) => !loading && !v && closeDialog()}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-500/10">
+      <ResponsiveAlertDialog open={openDialog === "unmark-sold"} onOpenChange={(v) => !loading && !v && closeDialog()}>
+        <ResponsiveAlertDialogContent>
+          <ResponsiveAlertDialogHeader>
+            <div className="mb-4 flex h-10 w-10 shrink-0 place-items-center items-center justify-center mx-auto rounded-xl bg-blue-50 dark:bg-blue-500/10">
               <RotateCcw className="h-5 w-5 text-blue-600" />
             </div>
-            <AlertDialogTitle>Gỡ Đánh Dấu Đã Bán</AlertDialogTitle>
-            <AlertDialogDescription>
+            <ResponsiveAlertDialogTitle>Gỡ Đánh Dấu Đã Bán</ResponsiveAlertDialogTitle>
+            <ResponsiveAlertDialogDescription>
               Tài khoản <span className="font-semibold text-slate-900 dark:text-slate-100">&quot;{title}&quot;</span> sẽ được chuyển về trạng thái{" "}
               <span className="font-semibold text-slate-700 dark:text-slate-200">Đang bán</span>.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
+            </ResponsiveAlertDialogDescription>
+          </ResponsiveAlertDialogHeader>
           {error && <p className="text-xs text-red-600 dark:text-red-400">{error}</p>}
-          <AlertDialogFooter>
+          <ResponsiveAlertDialogFooter>
             <Button variant="outline" onClick={closeDialog} disabled={loading}>
               Hủy
             </Button>
@@ -874,9 +875,9 @@ export function AccountActionsDropdown({
             >
               Xác nhận
             </Button>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+          </ResponsiveAlertDialogFooter>
+        </ResponsiveAlertDialogContent>
+      </ResponsiveAlertDialog>
     </>
   );
 }

@@ -19,13 +19,13 @@ import { Button } from "@thc-efb/ui/button";
 import { Input } from "@thc-efb/ui/input";
 import { Label } from "@thc-efb/ui/label";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from "@thc-efb/ui/dialog";
+  ResponsiveDialog,
+  ResponsiveDialogContent,
+  ResponsiveDialogHeader,
+  ResponsiveDialogTitle,
+  ResponsiveDialogDescription,
+  ResponsiveDialogFooter,
+} from "@thc-efb/ui/responsive-dialog";
 import { toast } from "sonner";
 import { formatCurrency } from "@thc-efb/shared/constants";
 import type { SellerCollateralHistory } from "@thc-efb/supabase/types";
@@ -132,21 +132,17 @@ export function CollateralManageModal({
   };
 
   return (
-    <Dialog open={open} onOpenChange={(v) => !loading && !v && stableOnClose()}>
-      <DialogContent showCloseButton={false} className="sm:max-w-md p-0 gap-0 flex flex-col" style={{ maxHeight: "90vh" }}>
+    <ResponsiveDialog open={open} onOpenChange={(v) => !loading && !v && stableOnClose()}>
+      <ResponsiveDialogContent showCloseButton={false} className="sm:max-w-md p-0 gap-0 flex flex-col" style={{ maxHeight: "90vh" }}>
         {/* Header */}
         <div className="shrink-0 p-5 pb-0">
-          <DialogHeader className="mb-4">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 dark:bg-amber-500/10">
-                <Wallet className="h-5 w-5 text-amber-600 dark:text-amber-400" />
-              </div>
-              <div>
-                <DialogTitle className="text-base font-semibold">Quản Lý Ký Quỹ</DialogTitle>
-                <DialogDescription className="max-w-[220px] truncate text-xs">{adminEmail}</DialogDescription>
-              </div>
+          <ResponsiveDialogHeader className="mb-4">
+            <div className="flex h-10 w-10 shrink-0 place-items-center items-center justify-center mx-auto rounded-xl bg-amber-50 dark:bg-amber-500/10">
+              <Wallet className="h-5 w-5 text-amber-600 dark:text-amber-400" />
             </div>
-          </DialogHeader>
+            <ResponsiveDialogTitle className="text-base font-semibold">Quản Lý Ký Quỹ</ResponsiveDialogTitle>
+            <ResponsiveDialogDescription className="truncate text-xs">{adminEmail}</ResponsiveDialogDescription>
+          </ResponsiveDialogHeader>
 
           {/* Current amount */}
           <div className="mb-4 rounded-lg bg-amber-50 p-3 dark:bg-amber-500/10">
@@ -266,7 +262,7 @@ export function CollateralManageModal({
         </div>
 
         {/* Footer */}
-        <DialogFooter>
+        <ResponsiveDialogFooter>
           <Button type="button" variant="outline" onClick={stableOnClose} disabled={loading}>
             Hủy
           </Button>
@@ -279,8 +275,8 @@ export function CollateralManageModal({
           >
             Cập nhật
           </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        </ResponsiveDialogFooter>
+      </ResponsiveDialogContent>
+    </ResponsiveDialog>
   );
 }

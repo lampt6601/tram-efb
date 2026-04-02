@@ -13,6 +13,7 @@ import { StatusBadge } from "@thc-efb/ui/badge";
 import { formatCurrency } from "@thc-efb/shared/constants";
 import { SuperAccountFilters } from "./SuperAccountFilters";
 import { SuperAccountActionsDropdown } from "./SuperAccountActionsDropdown";
+import { SuperAccountDetailOpener } from "./SuperAccountDetailOpener";
 import { Suspense } from "react";
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
@@ -21,7 +22,7 @@ import Link from "next/link";
 import type { AccountWithEmail, Email } from "@thc-efb/supabase/types";
 import { SUPER_ADMIN_EMAIL } from "@thc-efb/shared/super-admin";
 
-type SearchParams = { sort?: string; status?: string; approval?: string; q?: string };
+type SearchParams = { sort?: string; status?: string; approval?: string; q?: string; detail?: string };
 
 function compactPrice(price: number): string {
   if (price >= 1_000_000) return `${(price / 1_000_000).toFixed(price % 1_000_000 === 0 ? 0 : 1)}tr`;
@@ -43,6 +44,7 @@ export default async function SuperAccountsPage({
   const statusFilter = params.status ?? "Available";
   const approvalFilter = params.approval ?? "all";
   const searchQuery = params.q ?? "";
+  const detailAccountId = params.detail ?? null;
 
   const service = createSupabaseServiceClient();
 
@@ -217,6 +219,16 @@ export default async function SuperAccountsPage({
           </Table>
         </div>
       </div>
+
+      {detailAccountId && (
+        <Suspense fallback={null}>
+          <SuperAccountDetailOpener
+            accountId={detailAccountId}
+            accounts={items}
+            adminEmailMap={Object.fromEntries(adminEmailMap)}
+          />
+        </Suspense>
+      )}
     </div>
   );
 }

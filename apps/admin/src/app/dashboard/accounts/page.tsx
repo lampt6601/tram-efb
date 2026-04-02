@@ -10,6 +10,7 @@ import { StatusBadge } from "@thc-efb/ui/badge";
 import { formatCurrency } from "@thc-efb/shared/constants";
 import { AdminAccountFilters } from "./AdminAccountFilters";
 import { AccountActionsDropdown } from "./AccountActionsDropdown";
+import { AccountDetailOpener } from "./AccountDetailOpener";
 import { Suspense } from "react";
 import type { AccountWithEmail } from "@thc-efb/supabase/types";
 import { Button } from "@thc-efb/ui/button";
@@ -36,6 +37,7 @@ type SearchParams = {
   sort?: string;
   status?: string;
   q?: string;
+  detail?: string;
 };
 
 export default async function AccountsPage({
@@ -47,6 +49,7 @@ export default async function AccountsPage({
   const sort = params.sort ?? "newest";
   const statusFilter = params.status ?? "Available";
   const searchQuery = params.q ?? "";
+  const detailAccountId = params.detail ?? null;
 
   const supabase = await createSupabaseServerClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -101,6 +104,7 @@ export default async function AccountsPage({
           </p>
         </div>
         <Button
+          nativeButton={false}
           render={<Link href="/dashboard/accounts/new" />}
           className="bg-indigo-600 hover:bg-indigo-700 text-white"
         >
@@ -111,7 +115,7 @@ export default async function AccountsPage({
       {/* Filters */}
       <div className="mb-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4 shadow-sm">
         <Suspense fallback={null}>
-          <AdminAccountFilters />
+          <AdminAccountFilters totalCount={items.length} />
         </Suspense>
       </div>
 
@@ -230,6 +234,16 @@ export default async function AccountsPage({
           </Table>
         </div>
       </div>
+
+      {detailAccountId && (
+        <Suspense fallback={null}>
+          <AccountDetailOpener
+            accountId={detailAccountId}
+            accounts={items}
+            adminName={adminEmail}
+          />
+        </Suspense>
+      )}
     </div>
   );
 }

@@ -96,7 +96,7 @@ export function BuyNowButton({
                   {seller.avatarUrl ? (
                     <Image src={seller.avatarUrl} alt={seller.name} width={40} height={40} className="h-10 w-10 rounded-xl object-cover shadow-sm" />
                   ) : (
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-100 shadow-sm dark:bg-indigo-500/20">
+                    <div className="flex h-10 w-10 items-center justify-center mx-auto justify-center rounded-xl bg-indigo-100 shadow-sm dark:bg-indigo-500/20">
                       <User className="h-5 w-5 text-indigo-500" />
                     </div>
                   )}

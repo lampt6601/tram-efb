@@ -66,15 +66,15 @@ export async function submitSellRequest(formData: FormData) {
 
   // Save to database
   const service = createSupabaseServiceClient();
-  const { error } = await service.from("sell_requests").insert({
+  const { data: inserted, error } = await service.from("sell_requests").insert({
     images: imageUrls,
     description,
     price_expectation: priceExpectation,
     seller_name: sellerName,
     zalo_phone: zaloPhone,
-  });
+  }).select('id').single();
 
-  if (error) {
+  if (error || !inserted) {
     console.error("Sell request error:", error);
     return { error: "Không thể gửi yêu cầu. Vui lòng thử lại." };
   }
@@ -82,6 +82,7 @@ export async function submitSellRequest(formData: FormData) {
   // Notify via all channels (non-blocking)
   const notifTitle = `🏷️ Yêu cầu bán acc mới`;
   const notifBody = `${sellerName} - ${priceExpectation}`;
+  const notifUrl = `/dashboard/sell-requests?highlight=${inserted.id}`;
   await Promise.allSettled([
     sendZaloBotNotification(
       `${notifTitle}\n\n` +
@@ -90,19 +91,19 @@ export async function submitSellRequest(formData: FormData) {
       `💰 Giá: ${priceExpectation}\n` +
       (description ? `📝 Mô tả: ${description}\n` : "") +
       `📸 ${imageUrls.length} ảnh\n` +
-      `\n👉 Xem tại: https://thc-efb.com/dashboard/sell-requests`,
+      `\n👉 Xem tại: https://admin.thc-efb.com/dashboard/sell-requests?highlight=${inserted.id}`,
       imageUrls[0],
     ),
     createNotification({
       type: "sell_request",
       title: notifTitle,
       body: notifBody,
-      data: { url: "/dashboard/sell-requests" },
+      data: { url: notifUrl },
     }),
     sendPushToAllAdmins({
       title: notifTitle,
       body: notifBody,
-      url: "/dashboard/sell-requests",
+      url: notifUrl,
       tag: "sell-request-new",
     }),
   ]);

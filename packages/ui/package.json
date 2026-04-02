@@ -32,7 +32,13 @@
     "./auto-scroll-slider": "./src/AutoScrollSlider.tsx",
     "./floating-consultation": "./src/FloatingConsultation.tsx",
     "./scroll-reveal": "./src/ScrollReveal.tsx",
-    "./back-button": "./src/BackButton.tsx"
+    "./back-button": "./src/BackButton.tsx",
+    "./use-mobile": "./src/use-mobile.tsx",
+    "./responsive-core": "./src/responsive-core.tsx",
+    "./responsive-dialog": "./src/responsive-dialog.tsx",
+    "./responsive-alert-dialog": "./src/responsive-alert-dialog.tsx",
+    "./responsive-sheet": "./src/responsive-sheet.tsx",
+    "./responsive-dropdown-menu": "./src/responsive-dropdown-menu.tsx"
   },
   "dependencies": {
     "@base-ui/react": "^1.2.0",

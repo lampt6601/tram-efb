@@ -37,17 +37,17 @@ export async function submitSellerApplication(input: ApplySellerInput) {
 
   const supabase = createSupabaseAnonClient();
 
-  const { error } = await supabase.from("seller_applications").insert({
+  const { data: inserted, error } = await supabase.from("seller_applications").insert({
     full_name: input.fullName.trim(),
     email: input.email.trim().toLowerCase(),
     password: input.password,
     zalo_link: input.zaloLink.trim(),
     reason: input.reason?.trim() || null,
     referred_by: input.referredBy?.trim() || null,
-  });
+  }).select('id').single();
 
-  if (error) {
-    if (error.code === "23505") {
+  if (error || !inserted) {
+    if (error?.code === "23505") {
       return { error: "Email này đã được đăng ký. Vui lòng liên hệ admin nếu cần hỗ trợ." };
     }
     console.error("Seller application error:", error);
@@ -58,6 +58,7 @@ export async function submitSellerApplication(input: ApplySellerInput) {
   const zaloPhone = input.zaloLink.replace(/^https?:\/\/zalo\.me\//, "");
   const notifTitle = `📋 Đơn đăng ký người bán mới`;
   const notifBody = `${input.fullName.trim()} - ${input.email.trim()}`;
+  const notifUrl = `/dashboard/super/applications?highlight=${inserted.id}`;
   await Promise.allSettled([
     sendZaloBotNotification(
       `${notifTitle}\n\n` +
@@ -65,18 +66,18 @@ export async function submitSellerApplication(input: ApplySellerInput) {
       `📧 ${input.email.trim()}\n` +
       `📱 Zalo: ${zaloPhone}\n` +
       (input.reason ? `💬 Lý do: ${input.reason.trim()}\n` : "") +
-      `\n👉 Duyệt tại: https://thc-efb.com/dashboard/super/applications`,
+      `\n👉 Duyệt tại: https://admin.thc-efb.com/dashboard/super/applications?highlight=${inserted.id}`,
     ),
     createNotification({
       type: "application",
       title: notifTitle,
       body: notifBody,
-      data: { url: "/dashboard/super/applications" },
+      data: { url: notifUrl },
     }),
     sendPushToAllAdmins({
       title: notifTitle,
       body: notifBody,
-      url: "/dashboard/super/applications",
+      url: notifUrl,
       tag: "application-new",
     }),
   ]);

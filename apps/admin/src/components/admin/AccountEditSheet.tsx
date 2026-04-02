@@ -4,13 +4,13 @@ import { useEffect, useState } from "react";
 import { createSupabaseBrowserClient } from "@thc-efb/supabase/browser";
 import { AccountForm } from "./AccountForm";
 import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetDescription,
-  SheetBody,
-} from "@thc-efb/ui/sheet";
+  ResponsiveSheet,
+  ResponsiveSheetContent,
+  ResponsiveSheetHeader,
+  ResponsiveSheetTitle,
+  ResponsiveSheetDescription,
+  ResponsiveSheetBody,
+} from "@thc-efb/ui/responsive-sheet";
 import { Skeleton } from "@thc-efb/ui/skeleton";
 import { Pencil } from "lucide-react";
 import type { Account, Email } from "@thc-efb/supabase/types";
@@ -81,22 +81,22 @@ export function AccountEditSheet({ accountId, open, onOpenChange }: AccountEditS
   }, [accountId, open]);
 
   return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="right" className="w-full sm:max-w-xl">
-        <SheetHeader>
+    <ResponsiveSheet open={open} onOpenChange={onOpenChange}>
+      <ResponsiveSheetContent side="right" className="w-full sm:max-w-xl">
+        <ResponsiveSheetHeader>
           <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-100 dark:bg-indigo-500/20">
+            <div className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-indigo-100 dark:bg-indigo-500/20">
               <Pencil className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
             </div>
             <div>
-              <SheetTitle>Chỉnh Sửa Tài Khoản</SheetTitle>
-              <SheetDescription>
+              <ResponsiveSheetTitle>Chỉnh Sửa Tài Khoản</ResponsiveSheetTitle>
+              <ResponsiveSheetDescription>
                 {account?.title ? `${account.title.slice(0, 50)}${account.title.length > 50 ? "..." : ""}` : "Đang tải..."}
-              </SheetDescription>
+              </ResponsiveSheetDescription>
             </div>
           </div>
-        </SheetHeader>
-        <SheetBody>
+        </ResponsiveSheetHeader>
+        <ResponsiveSheetBody>
           {loading ? (
             <div className="space-y-4 p-5">
               <Skeleton className="h-10 w-full rounded-xl" />
@@ -118,8 +118,8 @@ export function AccountEditSheet({ accountId, open, onOpenChange }: AccountEditS
               Không tìm thấy tài khoản
             </div>
           )}
-        </SheetBody>
-      </SheetContent>
-    </Sheet>
+        </ResponsiveSheetBody>
+      </ResponsiveSheetContent>
+    </ResponsiveSheet>
   );
 }

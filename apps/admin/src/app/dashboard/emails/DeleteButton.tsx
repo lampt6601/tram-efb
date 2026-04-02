@@ -3,18 +3,18 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createSupabaseBrowserClient } from "@thc-efb/supabase/browser";
-import { Trash2 } from "lucide-react";
+import { Trash2, Mail } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@thc-efb/ui/button";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@thc-efb/ui/dialog";
+  ResponsiveDialog,
+  ResponsiveDialogContent,
+  ResponsiveDialogDescription,
+  ResponsiveDialogFooter,
+  ResponsiveDialogHeader,
+  ResponsiveDialogTitle,
+  ResponsiveDialogTrigger,
+} from "@thc-efb/ui/responsive-dialog";
 
 export function DeleteEmailButton({ id }: { id: string }) {
   const [open, setOpen] = useState(false);
@@ -38,24 +38,29 @@ export function DeleteEmailButton({ id }: { id: string }) {
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger
+    <ResponsiveDialog open={open} onOpenChange={setOpen}>
+      <ResponsiveDialogTrigger
         render={
           <button className="rounded-lg p-2 text-slate-400 transition-colors hover:bg-red-50 hover:text-red-600 dark:text-slate-500 dark:hover:bg-red-500/10 dark:hover:text-red-400">
             <Trash2 className="h-4 w-4" />
           </button>
         }
       />
-      <DialogContent showCloseButton={false}>
-        <DialogHeader>
-          <DialogTitle>Xóa email</DialogTitle>
-          <DialogDescription>
-            Bạn có chắc chắn muốn xóa email này? Việc này sẽ hủy liên kết nó
-            khỏi bất kỳ tài khoản nào được kết nối. Hành động này không thể
-            hoàn tác.
-          </DialogDescription>
-        </DialogHeader>
-        <DialogFooter>
+      <ResponsiveDialogContent showCloseButton={false} className="sm:max-w-sm p-0 gap-0">
+        <div className="px-5">
+          <ResponsiveDialogHeader className="mb-4">
+            <div className="flex h-10 w-10 shrink-0 place-items-center items-center justify-center mx-auto rounded-xl bg-red-50 dark:bg-red-500/10">
+              <Mail className="h-5 w-5 text-red-600" />
+            </div>
+            <ResponsiveDialogTitle className="text-base font-semibold">Xóa email</ResponsiveDialogTitle>
+            <ResponsiveDialogDescription>
+              Bạn có chắc chắn muốn xóa email này? Việc này sẽ hủy liên kết nó
+              khỏi bất kỳ tài khoản nào được kết nối. Hành động này không thể
+              hoàn tác.
+            </ResponsiveDialogDescription>
+          </ResponsiveDialogHeader>
+        </div>
+        <ResponsiveDialogFooter>
           <Button
             variant="outline"
             onClick={() => setOpen(false)}
@@ -72,8 +77,8 @@ export function DeleteEmailButton({ id }: { id: string }) {
           >
             Xóa
           </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        </ResponsiveDialogFooter>
+      </ResponsiveDialogContent>
+    </ResponsiveDialog>
   );
 }

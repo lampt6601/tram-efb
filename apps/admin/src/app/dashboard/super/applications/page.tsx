@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
+import { useSearchParams } from "next/navigation";
 import { createSupabaseBrowserClient } from "@thc-efb/supabase/browser";
 import { updateApplicationStatus } from "@/app/actions/seller-application-actions";
 import { Check, X, Clock, Mail, Phone, MessageCircle } from "lucide-react";
@@ -19,6 +20,8 @@ export default function ManageApplicationsPage() {
   const [loading, setLoading] = useState(true);
   const [isPending, startTransition] = useTransition();
   const supabase = createSupabaseBrowserClient();
+  const searchParams = useSearchParams();
+  const highlightId = searchParams.get("highlight");
 
   useEffect(() => {
     const fetch = async () => {
@@ -84,6 +87,7 @@ export default function ManageApplicationsPage() {
                 key={app.id}
                 app={app}
                 isPending={isPending}
+                highlighted={app.id === highlightId}
                 onApprove={() => handleUpdate(app.id, "approved")}
                 onReject={() => handleUpdate(app.id, "rejected")}
               />
@@ -99,7 +103,7 @@ export default function ManageApplicationsPage() {
           </h2>
           <div className="space-y-3">
             {others.map((app) => (
-              <ApplicationCard key={app.id} app={app} isPending={isPending} />
+              <ApplicationCard key={app.id} app={app} isPending={isPending} highlighted={app.id === highlightId} />
             ))}
           </div>
         </div>
@@ -115,19 +119,34 @@ export default function ManageApplicationsPage() {
 function ApplicationCard({
   app,
   isPending,
+  highlighted,
   onApprove,
   onReject,
 }: {
   app: SellerApplication;
   isPending: boolean;
+  highlighted?: boolean;
   onApprove?: () => void;
   onReject?: () => void;
 }) {
   const status = statusConfig[app.status];
   const StatusIcon = status.icon;
+  const [showRing, setShowRing] = useState(highlighted);
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (highlighted && cardRef.current) {
+      cardRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+      const timer = setTimeout(() => {
+        setShowRing(false);
+        window.history.replaceState(null, "", window.location.pathname);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [highlighted]);
 
   return (
-    <div className={`rounded-xl border p-4 ${app.status === "pending" ? "border-amber-200 dark:border-amber-500/20 bg-amber-50 dark:bg-amber-500/10" : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800"}`}>
+    <div ref={cardRef} className={`rounded-xl border p-4 transition-shadow ${showRing ? "ring-2 ring-indigo-500 shadow-lg" : ""} ${app.status === "pending" ? "border-amber-200 dark:border-amber-500/20 bg-amber-50 dark:bg-amber-500/10" : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800"}`}>
       <div>
         <div className="min-w-0">
           <div className="flex items-center gap-2 flex-wrap">

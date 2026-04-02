@@ -72,7 +72,7 @@ function DrawerHeader({
   return (
     <div
       data-slot="drawer-header"
-      className={cn("flex items-center justify-center border-b border-slate-100 px-5 py-3 dark:border-slate-700", className)}
+      className={cn("grid gap-1.5 p-4 text-center sm:text-left", className)}
       {...props}
     />
   )
@@ -85,7 +85,7 @@ function DrawerFooter({
   return (
     <div
       data-slot="drawer-footer"
-      className={cn("mt-auto border-t border-slate-100 p-4 dark:border-slate-700", className)}
+      className={cn("mt-auto flex flex-col-reverse gap-2 p-4", className)}
       {...props}
     />
   )

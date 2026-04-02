@@ -26,6 +26,7 @@ const actionEmoji: Record<string, string> = {
 };
 
 const BASE_URL = "https://thc-efb.com";
+const ADMIN_URL = "https://admin.thc-efb.com";
 
 /**
  * Notifies the owner via Zalo Bot when a different admin performs an action.
@@ -86,7 +87,7 @@ export async function notifyAdminAction(
       const approveSecret = process.env.APPROVE_SECRET_TOKEN;
       if (approveSecret) {
         lines.push("");
-        lines.push(`✅ Duyệt ngay: ${BASE_URL}/api/approve/${accountId}?token=${approveSecret}`);
+        lines.push(`✅ Duyệt ngay: ${ADMIN_URL}/api/approve/${accountId}?token=${approveSecret}`);
       }
     }
 
@@ -101,6 +102,14 @@ export async function notifyAdminAction(
     };
     const notifType: NotificationType = notifTypeMap[actionType] || "account_created";
 
+    // Deep-link URL based on context
+    const notifUrl =
+      needsApproval && accountId
+        ? `/dashboard/super/accounts?approval=pending&detail=${accountId}`
+        : accountId
+          ? `/dashboard/accounts?detail=${accountId}`
+          : "/dashboard";
+
     // Run all notifications in parallel (non-blocking)
     await Promise.allSettled([
       // 1. Zalo bot (existing)
@@ -113,7 +122,7 @@ export async function notifyAdminAction(
         body: adminName ? `${adminName} (${adminEmail})` : adminEmail,
         data: {
           accountId,
-          url: accountId ? `/dashboard/accounts` : "/dashboard",
+          url: notifUrl,
         },
       }),
 
@@ -121,7 +130,7 @@ export async function notifyAdminAction(
       sendPushToAllAdmins({
         title: `${emoji} ${actionText}`,
         body: accountTitle,
-        url: accountId ? `/dashboard/accounts` : "/dashboard",
+        url: notifUrl,
         tag: `admin-action-${accountId || Date.now()}`,
       }),
     ]);

@@ -30,30 +30,30 @@ import { Button } from "@thc-efb/ui/button";
 import { Input } from "@thc-efb/ui/input";
 import { Label } from "@thc-efb/ui/label";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from "@thc-efb/ui/dialog";
+  ResponsiveDialog,
+  ResponsiveDialogContent,
+  ResponsiveDialogHeader,
+  ResponsiveDialogTitle,
+  ResponsiveDialogDescription,
+  ResponsiveDialogFooter,
+} from "@thc-efb/ui/responsive-dialog";
 import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogDescription,
-  AlertDialogFooter,
-} from "@thc-efb/ui/alert-dialog";
+  ResponsiveAlertDialog,
+  ResponsiveAlertDialogContent,
+  ResponsiveAlertDialogHeader,
+  ResponsiveAlertDialogTitle,
+  ResponsiveAlertDialogDescription,
+  ResponsiveAlertDialogFooter,
+} from "@thc-efb/ui/responsive-alert-dialog";
 import { toast } from "sonner";
 import { CollateralManageModal } from "./CollateralManageModal";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@thc-efb/ui/dropdown-menu";
+  ResponsiveDropdownMenu,
+  ResponsiveDropdownMenuContent,
+  ResponsiveDropdownMenuItem,
+  ResponsiveDropdownMenuSeparator,
+  ResponsiveDropdownMenuTrigger,
+} from "@thc-efb/ui/responsive-dropdown-menu";
 
 interface AdminActionsDropdownProps {
   adminId: string;
@@ -228,8 +228,8 @@ export function AdminActionsDropdown({
   return (
     <>
       {/* ── Dropdown ─────────────────────────────────────────────────────── */}
-      <DropdownMenu>
-        <DropdownMenuTrigger
+      <ResponsiveDropdownMenu>
+        <ResponsiveDropdownMenuTrigger
           render={
             <button className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-2.5 py-1.5 text-xs font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-700 dark:hover:text-slate-100">
               Tác vụ
@@ -237,10 +237,10 @@ export function AdminActionsDropdown({
             </button>
           }
         />
-        <DropdownMenuContent align="end" className="w-48">
+        <ResponsiveDropdownMenuContent align="end" className="w-48">
           {/* Toggle items — visible on mobile only (hidden columns on md+) */}
           <div className="md:hidden">
-            <DropdownMenuItem
+            <ResponsiveDropdownMenuItem
               onClick={handleToggleAutoApprove}
               disabled={toggling !== null}
               className="gap-2"
@@ -251,8 +251,8 @@ export function AdminActionsDropdown({
                 <Zap className={`h-4 w-4 ${autoApprove ? "fill-emerald-500 text-emerald-500" : "text-slate-400"}`} />
               )}
               {autoApprove ? "Tắt auto duyệt" : "Bật auto duyệt"}
-            </DropdownMenuItem>
-            <DropdownMenuItem
+            </ResponsiveDropdownMenuItem>
+            <ResponsiveDropdownMenuItem
               onClick={handleToggleDisable}
               disabled={toggling !== null}
               className="gap-2"
@@ -263,62 +263,58 @@ export function AdminActionsDropdown({
                 <Ban className={`h-4 w-4 ${isDisabled ? "text-red-500" : "text-slate-400"}`} />
               )}
               {isDisabled ? "Kích hoạt lại" : "Vô hiệu hóa"}
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
+            </ResponsiveDropdownMenuItem>
+            <ResponsiveDropdownMenuSeparator />
           </div>
 
-          <DropdownMenuItem onClick={() => openWith("editProfile")} className="gap-2">
+          <ResponsiveDropdownMenuItem onClick={() => openWith("editProfile")} className="gap-2">
             <Pencil className="h-4 w-4 text-slate-400" />
             Chỉnh sửa thông tin
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={handleCopyEmail} className="gap-2">
+          </ResponsiveDropdownMenuItem>
+          <ResponsiveDropdownMenuItem onClick={handleCopyEmail} className="gap-2">
             {copiedEmail ? (
               <Check className="h-4 w-4 text-emerald-500" />
             ) : (
               <Mail className="h-4 w-4 text-slate-400" />
             )}
             {copiedEmail ? "Đã copy!" : "Copy email"}
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => openWith("resetPassword")} className="gap-2">
+          </ResponsiveDropdownMenuItem>
+          <ResponsiveDropdownMenuItem onClick={() => openWith("resetPassword")} className="gap-2">
             <KeyRound className="h-4 w-4 text-slate-400" />
             Đổi mật khẩu
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => openWith("transactionBox")} className="gap-2">
+          </ResponsiveDropdownMenuItem>
+          <ResponsiveDropdownMenuItem onClick={() => openWith("transactionBox")} className="gap-2">
             <MessageCircle className="h-4 w-4 text-emerald-500" />
             Box Giao Dịch
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => openWith("collateral")} className="gap-2">
+          </ResponsiveDropdownMenuItem>
+          <ResponsiveDropdownMenuItem onClick={() => openWith("collateral")} className="gap-2">
             <Wallet className="h-4 w-4 text-amber-500" />
             Quản lý ký quỹ
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem
+          </ResponsiveDropdownMenuItem>
+          <ResponsiveDropdownMenuSeparator />
+          <ResponsiveDropdownMenuItem
             variant="destructive"
             onClick={() => openWith("delete")}
             className="gap-2"
           >
             <Trash2 className="h-4 w-4" />
             Xóa admin
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+          </ResponsiveDropdownMenuItem>
+        </ResponsiveDropdownMenuContent>
+      </ResponsiveDropdownMenu>
 
       {/* ── Edit profile dialog ─────────────────────────────────────────── */}
-      <Dialog open={openDialog === "editProfile"} onOpenChange={(v) => !loading && !v && closeDialog()}>
-        <DialogContent showCloseButton={false} className="sm:max-w-sm p-0 gap-0">
+      <ResponsiveDialog open={openDialog === "editProfile"} onOpenChange={(v) => !loading && !v && closeDialog()}>
+        <ResponsiveDialogContent showCloseButton={false} className="sm:max-w-sm p-0 gap-0">
           <form onSubmit={handleEditProfile}>
-            <div className="p-5">
-              <DialogHeader className="mb-4">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 dark:bg-indigo-500/10">
-                    <Pencil className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
-                  </div>
-                  <div>
-                    <DialogTitle className="text-base font-semibold">Chỉnh Sửa Thông Tin</DialogTitle>
-                    <DialogDescription className="max-w-[200px] truncate text-xs">{adminEmail}</DialogDescription>
-                  </div>
+            <div className="px-5">
+              <ResponsiveDialogHeader className="mb-4">
+                <div className="flex h-10 w-10 shrink-0 place-items-center items-center justify-center mx-auto rounded-xl bg-indigo-50 dark:bg-indigo-500/10">
+                  <Pencil className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
                 </div>
-              </DialogHeader>
+                <ResponsiveDialogTitle className="text-base font-semibold">Chỉnh Sửa Thông Tin</ResponsiveDialogTitle>
+                <ResponsiveDialogDescription className="truncate text-xs">{adminEmail}</ResponsiveDialogDescription>
+              </ResponsiveDialogHeader>
               <div className="space-y-4">
                 <div>
                   <Label className="text-slate-700 dark:text-slate-200">Tên Admin</Label>
@@ -347,7 +343,7 @@ export function AdminActionsDropdown({
               </div>
               {error && <p className="mt-3 text-xs text-red-600 dark:text-red-400">{error}</p>}
             </div>
-            <DialogFooter>
+            <ResponsiveDialogFooter>
               <Button type="button" variant="outline" onClick={closeDialog} disabled={loading}>Hủy</Button>
               <Button
                 type="submit"
@@ -357,27 +353,23 @@ export function AdminActionsDropdown({
               >
                 Lưu
               </Button>
-            </DialogFooter>
+            </ResponsiveDialogFooter>
           </form>
-        </DialogContent>
-      </Dialog>
+        </ResponsiveDialogContent>
+      </ResponsiveDialog>
 
       {/* ── Reset password dialog ──────────────────────────────────────────── */}
-      <Dialog open={openDialog === "resetPassword"} onOpenChange={(v) => !loading && !v && closeDialog()}>
-        <DialogContent showCloseButton={false} className="sm:max-w-sm p-0 gap-0">
+      <ResponsiveDialog open={openDialog === "resetPassword"} onOpenChange={(v) => !loading && !v && closeDialog()}>
+        <ResponsiveDialogContent showCloseButton={false} className="sm:max-w-sm p-0 gap-0">
           <form onSubmit={handleResetPassword}>
-            <div className="p-5">
-              <DialogHeader className="mb-4">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-700">
-                    <KeyRound className="h-5 w-5 text-slate-600 dark:text-slate-300" />
-                  </div>
-                  <div>
-                    <DialogTitle className="text-base font-semibold">Đổi Mật Khẩu</DialogTitle>
-                    <DialogDescription className="max-w-[200px] truncate text-xs">{adminEmail}</DialogDescription>
-                  </div>
+            <div className="px-5">
+              <ResponsiveDialogHeader className="mb-4">
+                <div className="flex h-10 w-10 shrink-0 place-items-center items-center justify-center mx-auto rounded-xl bg-slate-100 dark:bg-slate-700">
+                  <KeyRound className="h-5 w-5 text-slate-600 dark:text-slate-300" />
                 </div>
-              </DialogHeader>
+                <ResponsiveDialogTitle className="text-base font-semibold">Đổi Mật Khẩu</ResponsiveDialogTitle>
+                <ResponsiveDialogDescription className="truncate text-xs">{adminEmail}</ResponsiveDialogDescription>
+              </ResponsiveDialogHeader>
               <Label className="text-slate-700 dark:text-slate-200">Mật Khẩu Mới</Label>
               <div className="relative mt-1.5">
                 <Input
@@ -400,7 +392,7 @@ export function AdminActionsDropdown({
               </div>
               {error && <p className="mt-1.5 text-xs text-red-600 dark:text-red-400">{error}</p>}
             </div>
-            <DialogFooter>
+            <ResponsiveDialogFooter>
               <Button type="button" variant="outline" onClick={closeDialog} disabled={loading}>Hủy</Button>
               <Button
                 type="submit"
@@ -410,24 +402,24 @@ export function AdminActionsDropdown({
               >
                 Lưu
               </Button>
-            </DialogFooter>
+            </ResponsiveDialogFooter>
           </form>
-        </DialogContent>
-      </Dialog>
+        </ResponsiveDialogContent>
+      </ResponsiveDialog>
 
       {/* ── Delete dialog ──────────────────────────────────────────────────── */}
-      <AlertDialog open={openDialog === "delete"} onOpenChange={(v) => !loading && !v && closeDialog()}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-red-50 dark:bg-red-500/10">
+      <ResponsiveAlertDialog open={openDialog === "delete"} onOpenChange={(v) => !loading && !v && closeDialog()}>
+        <ResponsiveAlertDialogContent>
+          <ResponsiveAlertDialogHeader>
+            <div className="mb-4 flex h-10 w-10 shrink-0 place-items-center items-center justify-center mx-auto rounded-xl bg-red-50 dark:bg-red-500/10">
               <Trash2 className="h-5 w-5 text-red-600 dark:text-red-400" />
             </div>
-            <AlertDialogTitle>Xóa tài khoản admin</AlertDialogTitle>
-            <AlertDialogDescription>
+            <ResponsiveAlertDialogTitle>Xóa tài khoản admin</ResponsiveAlertDialogTitle>
+            <ResponsiveAlertDialogDescription>
               Bạn có chắc muốn xóa admin{" "}
               <span className="font-semibold text-slate-900 dark:text-slate-100">{adminEmail}</span>?
-            </AlertDialogDescription>
-          </AlertDialogHeader>
+            </ResponsiveAlertDialogDescription>
+          </ResponsiveAlertDialogHeader>
           {accountCount > 0 && (
             <div className="flex items-start gap-2 rounded-lg bg-amber-50 p-3 dark:bg-amber-500/10">
               <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-500" />
@@ -436,7 +428,7 @@ export function AdminActionsDropdown({
               </p>
             </div>
           )}
-          <AlertDialogFooter>
+          <ResponsiveAlertDialogFooter>
             <Button variant="outline" onClick={closeDialog} disabled={loading}>Hủy</Button>
             <Button
               onClick={handleDelete}
@@ -446,26 +438,22 @@ export function AdminActionsDropdown({
             >
               Xóa Admin
             </Button>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+          </ResponsiveAlertDialogFooter>
+        </ResponsiveAlertDialogContent>
+      </ResponsiveAlertDialog>
 
       {/* ── Transaction Box dialog ──────────────────────────────────────── */}
-      <Dialog open={openDialog === "transactionBox"} onOpenChange={(v) => !loading && !v && closeDialog()}>
-        <DialogContent showCloseButton={false} className="sm:max-w-sm p-0 gap-0">
+      <ResponsiveDialog open={openDialog === "transactionBox"} onOpenChange={(v) => !loading && !v && closeDialog()}>
+        <ResponsiveDialogContent showCloseButton={false} className="sm:max-w-sm p-0 gap-0">
           <form onSubmit={handleUpdateTransactionBox}>
-            <div className="p-5">
-              <DialogHeader className="mb-4">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 dark:bg-emerald-500/10">
-                    <MessageCircle className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
-                  </div>
-                  <div>
-                    <DialogTitle className="text-base font-semibold">Box Giao Dịch</DialogTitle>
-                    <DialogDescription className="max-w-[200px] truncate text-xs">{adminEmail}</DialogDescription>
-                  </div>
+            <div className="px-5">
+              <ResponsiveDialogHeader className="mb-4">
+                <div className="flex h-10 w-10 shrink-0 place-items-center items-center justify-center mx-auto rounded-xl bg-emerald-50 dark:bg-emerald-500/10">
+                  <MessageCircle className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
                 </div>
-              </DialogHeader>
+                <ResponsiveDialogTitle className="text-base font-semibold">Box Giao Dịch</ResponsiveDialogTitle>
+                <ResponsiveDialogDescription className="truncate text-xs">{adminEmail}</ResponsiveDialogDescription>
+              </ResponsiveDialogHeader>
               <Label className="text-slate-700 dark:text-slate-200">Link Box Giao Dịch</Label>
               <Input
                 type="url"
@@ -481,7 +469,7 @@ export function AdminActionsDropdown({
               </p>
               {error && <p className="mt-2 text-xs text-red-600 dark:text-red-400">{error}</p>}
             </div>
-            <DialogFooter>
+            <ResponsiveDialogFooter>
               <Button type="button" variant="outline" onClick={closeDialog} disabled={loading}>Hủy</Button>
               <Button
                 type="submit"
@@ -491,10 +479,10 @@ export function AdminActionsDropdown({
               >
                 Lưu
               </Button>
-            </DialogFooter>
+            </ResponsiveDialogFooter>
           </form>
-        </DialogContent>
-      </Dialog>
+        </ResponsiveDialogContent>
+      </ResponsiveDialog>
 
       {/* ── Collateral modal ─────────────────────────────────────────────── */}
       <CollateralManageModal

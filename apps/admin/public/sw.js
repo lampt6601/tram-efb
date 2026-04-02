@@ -93,9 +93,12 @@ self.addEventListener("notificationclick", (event) => {
     self.clients
       .matchAll({ type: "window", includeUncontrolled: true })
       .then((clients) => {
-        // Focus existing window if available
+        // Focus existing window and navigate to the deep-link URL
+        const target = new URL(targetUrl, self.location.origin);
         for (const client of clients) {
-          if (client.url.includes(targetUrl) && "focus" in client) {
+          const clientUrl = new URL(client.url);
+          if (clientUrl.pathname === target.pathname && "focus" in client) {
+            client.navigate(targetUrl);
             return client.focus();
           }
         }

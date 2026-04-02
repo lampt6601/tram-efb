@@ -8,13 +8,13 @@ import { Button } from "@thc-efb/ui/button";
 import { Input } from "@thc-efb/ui/input";
 import { Label } from "@thc-efb/ui/label";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from "@thc-efb/ui/dialog";
+  ResponsiveDialog,
+  ResponsiveDialogContent,
+  ResponsiveDialogHeader,
+  ResponsiveDialogTitle,
+  ResponsiveDialogDescription,
+  ResponsiveDialogFooter,
+} from "@thc-efb/ui/responsive-dialog";
 import { toast } from "sonner";
 
 export function CreateAdminModal() {
@@ -58,21 +58,17 @@ export function CreateAdminModal() {
         <UserPlus className="h-4 w-4" /> Thêm Admin
       </Button>
 
-      <Dialog open={open} onOpenChange={(v) => !loading && (v ? setOpen(true) : handleClose())}>
-        <DialogContent showCloseButton={false} className="sm:max-w-md p-0 gap-0">
+      <ResponsiveDialog open={open} onOpenChange={(v) => !loading && (v ? setOpen(true) : handleClose())}>
+        <ResponsiveDialogContent showCloseButton={false} className="sm:max-w-md p-0 gap-0">
           <form onSubmit={handleSubmit}>
             <div className="p-6">
-              <DialogHeader className="mb-5">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 dark:bg-amber-500/10">
-                    <UserPlus className="h-5 w-5 text-amber-600" />
-                  </div>
-                  <div>
-                    <DialogTitle className="text-base font-semibold">Tạo Tài Khoản Admin</DialogTitle>
-                    <DialogDescription className="text-xs">Admin mới có thể đăng nhập ngay sau khi tạo</DialogDescription>
-                  </div>
+              <ResponsiveDialogHeader className="mb-5">
+                <div className="flex h-10 w-10 shrink-0 place-items-center items-center justify-center mx-auto rounded-xl bg-amber-50 dark:bg-amber-500/10">
+                  <UserPlus className="h-5 w-5 text-amber-600" />
                 </div>
-              </DialogHeader>
+                <ResponsiveDialogTitle className="text-base font-semibold">Tạo Tài Khoản Admin</ResponsiveDialogTitle>
+                <ResponsiveDialogDescription className="text-xs">Admin mới có thể đăng nhập ngay sau khi tạo</ResponsiveDialogDescription>
+              </ResponsiveDialogHeader>
               <div className="space-y-4">
                 <div>
                   <Label className="text-slate-700 dark:text-slate-200">Tên</Label>
@@ -102,7 +98,7 @@ export function CreateAdminModal() {
                 {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
               </div>
             </div>
-            <DialogFooter>
+            <ResponsiveDialogFooter>
               <Button type="button" variant="outline" onClick={handleClose} disabled={loading}>Hủy</Button>
               <Button
                 type="submit"
@@ -112,10 +108,10 @@ export function CreateAdminModal() {
               >
                 Tạo Admin
               </Button>
-            </DialogFooter>
+            </ResponsiveDialogFooter>
           </form>
-        </DialogContent>
-      </Dialog>
+        </ResponsiveDialogContent>
+      </ResponsiveDialog>
     </>
   );
 }

@@ -74,19 +74,19 @@ export function OwnerSection() {
           {/* Stats */}
           <div className="flex shrink-0 gap-4 sm:gap-6">
             <div className="flex flex-col items-center gap-1">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 dark:bg-indigo-500/15">
+              <div className="flex h-10 w-10 items-center justify-center mx-auto justify-center rounded-xl bg-indigo-50 dark:bg-indigo-500/15">
                 <Zap className="h-5 w-5 text-indigo-500 dark:text-indigo-400" />
               </div>
               <span className="text-xs font-medium text-slate-500 dark:text-slate-400">Nhanh Chóng</span>
             </div>
             <div className="flex flex-col items-center gap-1">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 dark:bg-emerald-500/15">
+              <div className="flex h-10 w-10 items-center justify-center mx-auto justify-center rounded-xl bg-emerald-50 dark:bg-emerald-500/15">
                 <ShieldCheck className="h-5 w-5 text-emerald-500 dark:text-emerald-400" />
               </div>
               <span className="text-xs font-medium text-slate-500 dark:text-slate-400">Uy Tín</span>
             </div>
             <div className="flex flex-col items-center gap-1">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-rose-50 dark:bg-rose-500/15">
+              <div className="flex h-10 w-10 items-center justify-center mx-auto justify-center rounded-xl bg-rose-50 dark:bg-rose-500/15">
                 <HeartHandshake className="h-5 w-5 text-rose-500 dark:text-rose-400" />
               </div>
               <span className="text-xs font-medium text-slate-500 dark:text-slate-400">Hỗ Trợ 24/7</span>
