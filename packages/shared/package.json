@@ -1,0 +1,21 @@
+{
+  "name": "@thc-efb/shared",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    "./utils": "./src/utils.ts",
+    "./constants": "./src/constants.ts",
+    "./super-admin": "./src/super-admin.ts",
+    "./account-priority": "./src/account-priority.ts",
+    "./buyback": "./src/buyback.ts",
+    "./image-utils": "./src/image-utils.ts",
+    "./rate-limit": "./src/rate-limit.ts"
+  },
+  "dependencies": {
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^3.5.0"
+  },
+  "peerDependencies": {
+    "@supabase/supabase-js": ">=2"
+  }
+}

@@ -1,0 +1,725 @@
+import { createSupabaseAnonClient } from '@thc-efb/supabase/anon';
+import { Header } from "@/components/storefront/Header";
+import { BackButton } from '@thc-efb/ui/back-button';
+import Link from "next/link";
+import { Footer } from "@/components/storefront/Footer";
+import { StatusBadge } from '@thc-efb/ui/badge';
+import { ImageGallery } from '@thc-efb/ui/image-gallery';
+import {
+  formatCurrency,
+  formatCompactCurrency,
+  formatNumber,
+  CONTACT_ZALO_GROUP_URL,
+} from '@thc-efb/shared/constants';
+import {
+  ArrowLeft,
+  Zap,
+  Coins,
+  Shield,
+  MessageCircle,
+  CheckCircle2,
+  Star,
+  ShieldCheck,
+  ExternalLink,
+  Search,
+} from "lucide-react";
+import Image from "next/image";
+import facebookIcon from "@/assets/icons/facebook.webp";
+import zaloIcon from "@/assets/icons/zalo.png";
+import { notFound } from "next/navigation";
+import type { Metadata } from "next";
+import type { PublicAccount, PublicReview } from '@thc-efb/supabase/types';
+import { ogImage } from '@thc-efb/shared/image-utils';
+import { ReviewSection } from "@/components/storefront/ReviewSection";
+import { RelatedAccounts } from "@/components/storefront/RelatedAccounts";
+import { ShareButtons } from "@/components/storefront/ShareButtons";
+import { BuyNowButton } from "@/components/storefront/BuyNowButton";
+import { SellerContactCard } from "@/components/storefront/SellerContactCard";
+import {
+  AndroidCoinIcon,
+  IosCoinIcon,
+} from '@thc-efb/ui/platform-coin-icons';
+import { BuybackPolicy } from "@/components/storefront/BuybackPolicy";
+import { StickyBuyBar } from "@/components/storefront/StickyBuyBar";
+import { getSiteSettings } from "@/lib/site-settings";
+
+export const revalidate = 3600; // 1 hour — revalidated on account update via revalidatePath
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  const supabase = createSupabaseAnonClient();
+
+  const { data: pub } = await supabase
+    .from("public_accounts")
+    .select("title, selling_price, primary_image_url, status")
+    .eq("id", id)
+    .single();
+
+  const { data: sold } = !pub
+    ? await supabase
+        .from("public_sold_accounts")
+        .select("title, selling_price, primary_image_url, status")
+        .eq("id", id)
+        .single()
+    : { data: null };
+
+  const account = pub ?? sold;
+  if (!account) return {};
+
+  const isSold = account.status === "Sold";
+  const isDepositedMeta = account.status === "Deposited";
+  const title = isSold
+    ? `[Đã Bán] ${account.title}`
+    : isDepositedMeta
+      ? `[Đang Cọc] ${account.title}`
+      : account.title;
+  const description = isSold
+    ? `Tài khoản ${account.title} đã được bán. Xem các tài khoản khác đang sẵn sàng tại THC eFootball Shop.`
+    : isDepositedMeta
+      ? `Tài khoản ${account.title} đang được cọc. Xem các tài khoản khác đang sẵn sàng tại THC eFootball Shop.`
+      : `Mua ngay tài khoản ${account.title} với giá ${formatCurrency(account.selling_price)}. Giao dịch nhanh, uy tín tại THC eFootball Shop.`;
+  const image = account.primary_image_url
+    ? ogImage(account.primary_image_url)
+    : undefined;
+
+  return {
+    title,
+    description,
+    robots: isSold
+      ? { index: false, follow: false }
+      : { index: true, follow: true },
+    alternates: !isSold
+      ? { canonical: `https://thc-efb.com/accounts/${id}` }
+      : undefined,
+    openGraph: {
+      title,
+      description,
+      url: `/accounts/${id}`,
+      images: image
+        ? [{ url: image, width: 1200, height: 630, alt: account.title }]
+        : [],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: image ? [image] : [],
+    },
+  };
+}
+
+export default async function AccountDetailPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  const supabase = createSupabaseAnonClient();
+
+  // Try public_accounts view first (Available/Pending)
+  const accountFields = "id, title, description, selling_price, original_price, images, primary_image_url, status, total_gp, total_coins_android, total_coins_ios, team_strength, is_priority, is_clone, server_region, monthly_log_quota, created_at, seller_full_name, seller_avatar_url, seller_transaction_box_url, seller_collateral_amount, seller_sold_count";
+
+  const { data: publicData } = await supabase
+    .from("public_accounts")
+    .select(accountFields)
+    .eq("id", id)
+    .single();
+
+  // Fallback: check if it's a sold account
+  if (!publicData) {
+    const { data: soldData } = await supabase
+      .from("public_sold_accounts")
+      .select(accountFields)
+      .eq("id", id)
+      .single();
+
+    if (!soldData) notFound();
+
+    const { data: reviewsData } = await supabase
+      .from("public_reviews")
+      .select("id, account_id, reviewer_name, rating, comment, created_at")
+      .eq("account_id", id)
+      .order("created_at", { ascending: false })
+      .limit(20);
+    const reviews = (reviewsData ?? []) as PublicReview[];
+
+    const account = soldData as PublicAccount;
+    const galleryImages = account.primary_image_url
+      ? [
+          account.primary_image_url,
+          ...(account.images?.filter(
+            (img) => img !== account.primary_image_url,
+          ) || []),
+        ]
+      : account.images || [];
+
+    // ── SOLD ACCOUNT PAGE ──────────────────────────────────────────────
+    return (
+      <div className="flex min-h-screen flex-col bg-slate-50 dark:bg-slate-900">
+        <Header />
+        <main className="flex-1">
+          <div className="mx-auto w-full max-w-4xl overflow-x-hidden px-0 py-4 sm:px-6 sm:py-8 lg:px-8">
+            <div className="mb-4 px-4 sm:mb-6 sm:px-0">
+              <BackButton
+                fallbackHref="/"
+                className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 transition-colors hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400"
+              >
+                <ArrowLeft className="h-4 w-4" /> Quay lại Cửa Hàng
+              </BackButton>
+            </div>
+
+            {/* Sold banner — prominent */}
+            <div className="mx-4 mb-6 flex items-center gap-3 rounded-2xl border border-emerald-100 bg-emerald-50 px-5 py-4 sm:mx-0 dark:border-emerald-500/20 dark:bg-emerald-500/10">
+              <CheckCircle2 className="h-8 w-8 shrink-0 text-emerald-500" />
+              <div>
+                <p className="font-semibold text-emerald-800 dark:text-emerald-300">
+                  Tài khoản đã được bán
+                </p>
+                <p className="mt-0.5 text-sm text-emerald-600 dark:text-emerald-400">
+                  Tài khoản này đã có chủ. Khám phá các tài khoản khác đang sẵn
+                  sàng ngay bên dưới!
+                </p>
+              </div>
+            </div>
+
+            {/* Related accounts — pushed up for sold page */}
+            <div className="px-4 sm:px-0">
+              <RelatedAccounts
+                currentAccountId={id}
+                currentPrice={account.selling_price}
+                onlyAvailable
+              />
+            </div>
+
+            {/* Collapsed account details */}
+            <div className="mt-8 overflow-hidden px-4 shadow-sm sm:rounded-xl sm:px-0">
+              <div className="grid max-w-full grid-cols-1 gap-6 p-4">
+                {/* Images — greyed out */}
+                <div className="relative min-w-0 max-w-full overflow-hidden">
+                  <div className="pointer-events-none opacity-60 grayscale">
+                    <ImageGallery
+                      images={galleryImages}
+                      title={account.title}
+                    />
+                  </div>
+                </div>
+
+                {/* Info */}
+                <div className="flex flex-col">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex flex-col gap-2">
+                      <h1 className="text-2xl font-bold text-slate-700 line-through decoration-slate-400 lg:text-3xl dark:text-slate-300 dark:decoration-slate-500">
+                        {account.title}
+                      </h1>
+                      <div className="flex flex-wrap gap-2">
+                        {account.server_region && (
+                          <span className="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600 dark:bg-slate-700 dark:text-slate-300">
+                            Server: {account.server_region}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <StatusBadge status="Sold" />
+                  </div>
+
+                  <div className="mt-auto pt-8">
+                    <div className="mb-6">
+                      <p className="text-sm text-slate-500 dark:text-slate-400">
+                        Giá Đã Bán
+                      </p>
+                      <p className="text-3xl font-extrabold text-slate-400 line-through decoration-slate-300 dark:text-slate-500 dark:decoration-slate-600">
+                        {formatCompactCurrency(account.selling_price)}
+                      </p>
+                    </div>
+
+                    <Link
+                      href="/"
+                      className="flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-indigo-700"
+                    >
+                      Xem Tài Khoản Khác
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Reviews */}
+            <div className="px-4 sm:px-0">
+              <ReviewSection
+                accountId={id}
+                reviews={reviews}
+                isSold={true}
+              />
+            </div>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  // ── AVAILABLE / DEPOSITED ACCOUNT PAGE ──────────────────────────────────
+  const siteSettingsMap = await getSiteSettings(["zalo_box_members", "zalo_group_members"]);
+  const zaloBoxMembers = siteSettingsMap["zalo_box_members"] || "200+";
+  const zaloGroupMembers = siteSettingsMap["zalo_group_members"] || "";
+
+  const account = publicData as PublicAccount;
+  const isDeposited = account.status === "Deposited";
+  const isSale = account.original_price
+    ? account.original_price > account.selling_price
+    : false;
+  const discount = isSale
+    ? Math.round(
+        ((account.original_price! - account.selling_price) /
+          account.original_price!) *
+          100,
+      )
+    : 0;
+  const contactMessage = encodeURIComponent(
+    `Chào chủ sàn, mình quan tâm tài khoản ${account.title} (ID: ${account.id}).`,
+  );
+
+  const galleryImages = account.primary_image_url
+    ? [
+        account.primary_image_url,
+        ...(account.images?.filter(
+          (img) => img !== account.primary_image_url,
+        ) || []),
+      ]
+    : account.images || [];
+
+  const hasStats =
+    (account.total_gp ?? 0) > 0 ||
+    (account.total_coins_android ?? 0) > 0 ||
+    (account.total_coins_ios ?? 0) > 0 ||
+    (account.team_strength ?? 0) > 0 ||
+    account.monthly_log_quota != null;
+
+  return (
+    <div className="flex min-h-screen flex-col bg-slate-50 dark:bg-slate-900">
+      <Header />
+      <main className="flex-1">
+        <div className="mx-auto w-full max-w-5xl overflow-x-hidden px-3 py-2 sm:px-6 sm:py-8 lg:px-8">
+          {/* Back link + Share */}
+          <div className="mb-2 flex items-center justify-between sm:mb-4">
+            <BackButton
+              fallbackHref="/"
+              className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 transition-colors hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400"
+            >
+              <ArrowLeft className="h-4 w-4" /> Quay lại Cửa Hàng
+            </BackButton>
+            <ShareButtons accountId={id} />
+          </div>
+
+          {/* ── 2-column layout on desktop ── */}
+          <div className="grid min-w-0 max-w-full grid-cols-1 gap-3 sm:gap-6 lg:grid-cols-5">
+            {/* Left — Images */}
+            <div className="relative min-w-0 max-w-full overflow-hidden rounded-2xl bg-white shadow-sm lg:col-span-3 dark:bg-slate-800">
+              {/* Sale ribbon */}
+              {isSale && (
+                <div className="absolute left-3 top-3 z-10 rounded-lg bg-rose-600 px-3 py-1.5 text-xs font-bold text-white shadow-lg">
+                  GIẢM {discount}%
+                </div>
+              )}
+              <ImageGallery images={galleryImages} title={account.title} />
+            </div>
+
+            {/* Right — Info card (sticky on desktop) */}
+            <div className="min-w-0 overflow-hidden rounded-2xl bg-white p-3.5 shadow-sm sm:p-6 lg:col-span-2 lg:sticky lg:top-4 lg:self-start dark:bg-slate-800">
+              {/* Title */}
+              <h1 className="flex items-start gap-2 text-lg font-bold leading-snug text-slate-900 sm:text-2xl dark:text-slate-100">
+                <span>{account.title}</span>
+                {account.is_priority && (
+                  <Star className="mt-0.5 h-5 w-5 shrink-0 fill-amber-500 text-amber-500" />
+                )}
+              </h1>
+
+              {/* Tags */}
+              {account.server_region && (
+                <div className="mt-1.5 flex flex-wrap gap-2">
+                  <span className="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-600 dark:bg-slate-700 dark:text-slate-300">
+                    Server: {account.server_region}
+                  </span>
+                </div>
+              )}
+
+              {/* Price + Buy now */}
+              <div className="mt-2 sm:mt-4">
+                <p className="text-[10px] font-medium uppercase tracking-wide text-slate-400 sm:text-xs dark:text-slate-500">
+                  Giá Bán
+                </p>
+                <div className="mt-0.5 flex items-center justify-between gap-3 sm:mt-1">
+                  <div className="flex items-end gap-3">
+                    <p
+                      className={`text-2xl font-extrabold sm:text-3xl ${isSale ? "text-rose-600 dark:text-rose-400" : "text-indigo-600 dark:text-indigo-400"}`}
+                    >
+                      {formatCompactCurrency(account.selling_price)}
+                    </p>
+                    {isSale && (
+                      <div className="mb-0.5 flex flex-col">
+                        <span className="text-sm font-medium text-slate-400 line-through dark:text-slate-500">
+                          {formatCompactCurrency(account.original_price!)}
+                        </span>
+                        <span className="inline-flex w-fit items-center rounded-md bg-rose-100 px-1.5 py-0.5 text-xs font-bold text-rose-600 dark:bg-rose-500/15 dark:text-rose-400">
+                          -{discount}% GIẢM
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                  {isDeposited ? (
+                    <span className="shrink-0 rounded-xl bg-blue-100 px-5 py-2.5 text-sm font-semibold text-blue-700 dark:bg-blue-500/15 dark:text-blue-400">
+                      Đang được cọc
+                    </span>
+                  ) : (
+                    <BuyNowButton
+                      seller={
+                        account.seller_full_name
+                          ? {
+                              name: account.seller_full_name,
+                              avatarUrl: account.seller_avatar_url ?? undefined,
+                              transactionBoxUrl: account.seller_transaction_box_url ? `/api/contact/${id}?type=transaction_box` : undefined,
+                              soldCount: account.seller_sold_count ?? undefined,
+                              collateralAmount: Number(account.seller_collateral_amount) || undefined,
+                            }
+                          : undefined
+                      }
+                    />
+                  )}
+                </div>
+              </div>
+              {/* Sticky buy bar sentinel + bar (mobile) */}
+              <StickyBuyBar
+                price={account.selling_price}
+                isDeposited={isDeposited}
+                isSale={isSale}
+                seller={
+                  account.seller_full_name
+                    ? {
+                        name: account.seller_full_name,
+                        transactionBoxUrl: account.seller_transaction_box_url
+                          ? `/api/contact/${id}?type=transaction_box`
+                          : undefined,
+                      }
+                    : undefined
+                }
+              />
+
+              {/* Divider */}
+              <div className="my-3 border-t border-slate-100 sm:my-4 dark:border-slate-700" />
+
+              {/* Description */}
+              {account.description && (
+                <div className="mb-4 rounded-xl border border-slate-100 bg-slate-50 px-4 py-3 dark:border-slate-700 dark:bg-slate-800/50">
+                  <p className="whitespace-pre-line text-sm leading-relaxed text-slate-700 dark:text-slate-300">
+                    {account.description}
+                  </p>
+                </div>
+              )}
+
+              {/* Stats grid */}
+              {hasStats && (
+                <div className="mb-3 grid grid-cols-2 gap-1 sm:mb-4 sm:gap-2">
+                  {(account.total_gp ?? 0) > 0 && (
+                    <div className="flex items-center gap-2 rounded-lg border border-amber-100 bg-amber-50 px-2 py-1.5 sm:rounded-xl sm:px-3 sm:py-2.5 dark:border-amber-500/20 dark:bg-amber-500/10">
+                      <Zap className="h-3.5 w-3.5 shrink-0 text-amber-500 sm:h-4 sm:w-4" />
+                      <div className="min-w-0">
+                        <p className="text-[9px] font-medium uppercase tracking-wide text-amber-600/70 sm:text-[10px] dark:text-amber-400/70">
+                          Tổng GP
+                        </p>
+                        <p className="truncate text-xs font-bold text-slate-900 sm:text-sm dark:text-slate-100">
+                          {formatNumber(account.total_gp)}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                  {(account.total_coins_android ?? 0) > 0 && (
+                    <div className="flex items-center gap-2 rounded-lg border border-emerald-100 bg-emerald-50 px-2 py-1.5 sm:rounded-xl sm:px-3 sm:py-2.5 dark:border-emerald-500/20 dark:bg-emerald-500/10">
+                      <AndroidCoinIcon size={14} className="shrink-0 sm:hidden" />
+                      <AndroidCoinIcon size={16} className="hidden shrink-0 sm:block" />
+                      <div className="min-w-0">
+                        <p className="text-[9px] font-medium uppercase tracking-wide text-emerald-600/70 sm:text-[10px] dark:text-emerald-400/70">
+                          Coins Android
+                        </p>
+                        <p className="truncate text-xs font-bold text-slate-900 sm:text-sm dark:text-slate-100">
+                          {formatNumber(account.total_coins_android)}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                  {(account.total_coins_ios ?? 0) > 0 && (
+                    <div className="flex items-center gap-2 rounded-lg border border-teal-100 bg-teal-50 px-2 py-1.5 sm:rounded-xl sm:px-3 sm:py-2.5 dark:border-teal-500/20 dark:bg-teal-500/10">
+                      <IosCoinIcon size={14} className="shrink-0 sm:hidden" />
+                      <IosCoinIcon size={16} className="hidden shrink-0 sm:block" />
+                      <div className="min-w-0">
+                        <p className="text-[9px] font-medium uppercase tracking-wide text-teal-600/70 sm:text-[10px] dark:text-teal-400/70">
+                          Coins iOS
+                        </p>
+                        <p className="truncate text-xs font-bold text-slate-900 sm:text-sm dark:text-slate-100">
+                          {formatNumber(account.total_coins_ios)}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                  {(account.team_strength ?? 0) > 0 && (
+                    <div className="flex items-center gap-2 rounded-lg border border-blue-100 bg-blue-50 px-2 py-1.5 sm:rounded-xl sm:px-3 sm:py-2.5 dark:border-blue-500/20 dark:bg-blue-500/10">
+                      <Shield className="h-3.5 w-3.5 shrink-0 text-blue-500 sm:h-4 sm:w-4" />
+                      <div className="min-w-0">
+                        <p className="text-[9px] font-medium uppercase tracking-wide text-blue-600/70 sm:text-[10px] dark:text-blue-400/70">
+                          Lực Chiến
+                        </p>
+                        <p className="truncate text-xs font-bold text-slate-900 sm:text-sm dark:text-slate-100">
+                          {account.team_strength}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                  {account.monthly_log_quota != null && (
+                    <div className="flex items-center gap-2 rounded-lg border border-indigo-100 bg-indigo-50 px-2 py-1.5 sm:rounded-xl sm:px-3 sm:py-2.5 dark:border-indigo-500/20 dark:bg-indigo-500/10">
+                      <MessageCircle className="h-3.5 w-3.5 shrink-0 text-indigo-500 sm:h-4 sm:w-4" />
+                      <div className="min-w-0">
+                        <p className="text-[9px] font-medium uppercase tracking-wide text-indigo-600/70 sm:text-[10px] dark:text-indigo-400/70">
+                          Số lượng log
+                        </p>
+                        <p className="truncate text-xs font-bold text-slate-900 sm:text-sm dark:text-slate-100">
+                          {account.monthly_log_quota}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Seller info */}
+              {account.seller_full_name && account.seller_full_name !== "Trần Hữu Cảnh" && (
+                <SellerContactCard
+                  sellerName={account.seller_full_name}
+                  sellerAvatarUrl={account.seller_avatar_url}
+                  sellerSoldCount={account.seller_sold_count}
+                  sellerCollateralAmount={account.seller_collateral_amount}
+                  transactionBoxUrl={account.seller_transaction_box_url ? `/api/contact/${id}?type=transaction_box` : undefined}
+                />
+              )}
+
+              {/* Shop owner — intermediary */}
+              <div className="mb-3 rounded-xl border border-emerald-100 bg-emerald-50/50 px-3 py-2.5 sm:p-4 dark:border-emerald-500/20 dark:bg-emerald-500/5">
+                <div className="flex items-center gap-2.5 sm:gap-3">
+                  <div className="relative shrink-0">
+                    <Image
+                      src="/avatar-owner.jpeg"
+                      alt="Chủ sàn"
+                      width={44}
+                      height={44}
+                      className="h-9 w-9 rounded-xl object-cover shadow-sm sm:h-11 sm:w-11 sm:rounded-2xl"
+                      priority
+                    />
+                    <div className="absolute -bottom-1 -right-1 flex h-4.5 w-4.5 items-center justify-center rounded-full border-2 border-white bg-emerald-500 shadow sm:-bottom-1.5 sm:-right-1.5 sm:h-6 sm:w-6 dark:border-slate-800">
+                      <ShieldCheck className="h-2.5 w-2.5 text-white sm:h-3 sm:w-3" />
+                    </div>
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-[9px] font-semibold uppercase tracking-wider text-emerald-700 sm:text-[10px] dark:text-emerald-400">
+                      {account.seller_full_name === "Trần Hữu Cảnh"
+                        ? "Người Bán · Chủ Sàn · Trung Gian"
+                        : "Chủ Sàn · Trung Gian Uy Tín"}
+                    </p>
+                    <p className="mt-0.5 text-xs font-semibold text-slate-900 sm:text-sm dark:text-slate-100">
+                      Trần Hữu Cảnh
+                    </p>
+                  </div>
+                  <p className="hidden text-[10px] font-medium text-emerald-600 sm:block dark:text-emerald-400">
+                    Giao dịch an toàn qua trung gian
+                  </p>
+                </div>
+
+                {/* Zalo boxes + contact — compact on mobile */}
+                <div className="mt-2 grid grid-cols-2 gap-1.5 sm:mt-3 sm:grid-cols-1 sm:gap-1.5">
+                  <a
+                    href="https://zalo.me/g/umniisdttnw5kcubv74y"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1.5 rounded-lg bg-white/80 px-2 py-1.5 transition-colors hover:bg-white sm:justify-between sm:gap-2 sm:px-3 sm:py-2 dark:bg-slate-800 dark:hover:bg-slate-700"
+                  >
+                    <div className="flex items-center gap-1.5 sm:gap-2">
+                      <MessageCircle className="h-3 w-3 shrink-0 text-blue-500 sm:h-3.5 sm:w-3.5" />
+                      <span className="text-[10px] font-medium text-slate-700 sm:text-xs dark:text-slate-300">
+                        <span className="sm:hidden">Box Zalo{zaloBoxMembers ? ` · ${zaloBoxMembers} tv` : ""}</span>
+                        <span className="hidden sm:inline">Box Zalo Shop · Chủ box{zaloBoxMembers ? ` · ${zaloBoxMembers} tv` : ""}</span>
+                      </span>
+                    </div>
+                    <ExternalLink className="hidden h-3.5 w-3.5 text-slate-400 sm:block" />
+                  </a>
+                  <a
+                    href={CONTACT_ZALO_GROUP_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1.5 rounded-lg bg-white/80 px-2 py-1.5 transition-colors hover:bg-white sm:justify-between sm:gap-2 sm:px-3 sm:py-2 dark:bg-slate-800 dark:hover:bg-slate-700"
+                  >
+                    <div className="flex items-center gap-1.5 sm:gap-2">
+                      <MessageCircle className="h-3 w-3 shrink-0 text-indigo-500 sm:h-3.5 sm:w-3.5" />
+                      <span className="text-[10px] font-medium text-slate-700 sm:text-xs dark:text-slate-300">
+                        <span className="sm:hidden">Group Tư Vấn{zaloGroupMembers ? ` · ${zaloGroupMembers} tv` : ""}</span>
+                        <span className="hidden sm:inline">Group Tư Vấn · Chủ group{zaloGroupMembers ? ` · ${zaloGroupMembers} tv` : ""}</span>
+                      </span>
+                    </div>
+                    <ExternalLink className="hidden h-3.5 w-3.5 text-slate-400 sm:block" />
+                  </a>
+                </div>
+
+                {/* Owner contact */}
+                <div className="mt-2 flex gap-1.5 sm:mt-2.5 sm:gap-2">
+                  <a
+                    href={`/api/contact/owner?type=zalo&text=${contactMessage}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-blue-600 px-2.5 py-1.5 text-[11px] font-semibold text-white transition-colors hover:bg-blue-700 sm:px-3 sm:py-2 sm:text-xs"
+                  >
+                    <Image
+                      src={zaloIcon}
+                      alt="Zalo"
+                      className="h-3 w-3 object-contain sm:h-3.5 sm:w-3.5"
+                    />
+                    Zalo Chủ Sàn
+                  </a>
+                  <a
+                    href="/api/contact/owner?type=facebook"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-[11px] font-semibold text-slate-700 transition-colors hover:bg-slate-50 sm:px-3 sm:py-2 sm:text-xs dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600"
+                  >
+                    <Image
+                      src={facebookIcon}
+                      alt="Facebook"
+                      className="h-3 w-3 object-contain sm:h-3.5 sm:w-3.5"
+                    />
+                    Facebook
+                  </a>
+                </div>
+              </div>
+
+              {/* Buyback policy */}
+              <BuybackPolicy />
+            </div>
+          </div>
+
+          {/* Related accounts */}
+          <RelatedAccounts
+            currentAccountId={id}
+            currentPrice={account.selling_price}
+          />
+
+          {/* Request CTA */}
+          <Link
+            href="/request"
+            className="mt-6 flex items-center gap-3 rounded-xl border border-indigo-200 bg-indigo-50/50 px-4 py-3 transition-colors hover:bg-indigo-100/50 sm:mt-8 dark:border-indigo-500/20 dark:bg-indigo-500/5 dark:hover:bg-indigo-500/10"
+          >
+            <Search className="h-5 w-5 shrink-0 text-indigo-500" />
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-semibold text-slate-800 dark:text-slate-200">
+                Chưa tìm được acc ưng ý?
+              </p>
+              <p className="text-xs text-slate-500 dark:text-slate-400">
+                Gửi yêu cầu để sàn tìm giúp — miễn phí
+              </p>
+            </div>
+            <span className="shrink-0 rounded-lg bg-indigo-600 px-3 py-1.5 text-xs font-semibold text-white">
+              Gửi
+            </span>
+          </Link>
+
+          {!isSale && (
+            <script
+              type="application/ld+json"
+              dangerouslySetInnerHTML={{
+                __html: JSON.stringify({
+                  "@context": "https://schema.org",
+                  "@type": "Product",
+                  name: account.title,
+                  image: galleryImages,
+                  description: `Mua acc eFootball ${account.server_region ? `server ${account.server_region}` : ""} với lực chiến ${account.team_strength ?? 0}, tổng GP ${account.total_gp ?? 0}. Giao dịch uy tín tại THC eFootball Shop.`,
+                  sku: account.id,
+                  brand: {
+                    "@type": "Brand",
+                    name: "eFootball",
+                  },
+                  category: "Game Accounts",
+                  offers: {
+                    "@type": "Offer",
+                    priceCurrency: "VND",
+                    price: account.selling_price,
+                    availability: isDeposited
+                      ? "https://schema.org/LimitedAvailability"
+                      : "https://schema.org/InStock",
+                    url: `https://thc-efb.com/accounts/${account.id}`,
+                    seller: {
+                      "@type": "Organization",
+                      name: "THC eFootball Shop",
+                      url: "https://thc-efb.com",
+                    },
+                  },
+                  additionalProperty: [
+                    ...(account.team_strength
+                      ? [
+                          {
+                            "@type": "PropertyValue",
+                            name: "Team Strength",
+                            value: account.team_strength,
+                          },
+                        ]
+                      : []),
+                    ...(account.total_gp
+                      ? [
+                          {
+                            "@type": "PropertyValue",
+                            name: "Total GP",
+                            value: account.total_gp,
+                          },
+                        ]
+                      : []),
+                    ...(account.server_region
+                      ? [
+                          {
+                            "@type": "PropertyValue",
+                            name: "Server Region",
+                            value: account.server_region,
+                          },
+                        ]
+                      : []),
+                  ],
+                }),
+              }}
+            />
+          )}
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "BreadcrumbList",
+                itemListElement: [
+                  {
+                    "@type": "ListItem",
+                    position: 1,
+                    name: "Trang chủ",
+                    item: "https://thc-efb.com",
+                  },
+                  {
+                    "@type": "ListItem",
+                    position: 2,
+                    name: account.title,
+                    item: `https://thc-efb.com/accounts/${account.id}`,
+                  },
+                ],
+              }),
+            }}
+          />
+        </div>
+      </main>
+
+      <Footer />
+    </div>
+  );
+}

@@ -1,0 +1,19 @@
+{
+  "name": "@thc-efb/supabase",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    "./browser": "./src/clients/browser.ts",
+    "./server": "./src/clients/server.ts",
+    "./service": "./src/clients/service.ts",
+    "./anon": "./src/clients/anon.ts",
+    "./types": "./src/types/database.ts"
+  },
+  "dependencies": {
+    "@supabase/ssr": "^0.9.0",
+    "@supabase/supabase-js": "^2.98.0"
+  },
+  "peerDependencies": {
+    "next": ">=14"
+  }
+}
