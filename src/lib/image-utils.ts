@@ -72,9 +72,9 @@ export function optimizeImage(
 
 // ─── Preset helpers for common sizes ────────────────────────────────────────
 
-/** Card thumbnail on homepage (mobile ~400px, desktop grid ~500px) */
+/** Card thumbnail on homepage (mobile ~400px, desktop grid ~500px, 2x for retina) */
 export function thumbCard(url: string): string {
-  return optimizeImage(url, { w: 600, q: 75 });
+  return optimizeImage(url, { w: 800, q: 80 });
 }
 
 /** Gallery main image (detail page inline view) */
