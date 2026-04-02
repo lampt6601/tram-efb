@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { UserPlus, ArrowRight, Upload } from "lucide-react";
+import { UserPlus, ArrowRight, Megaphone } from "lucide-react";
 
 export function RecruitAdminSection() {
   return (
@@ -27,20 +27,20 @@ export function RecruitAdminSection() {
           <ArrowRight className="h-5 w-5 shrink-0 text-indigo-400" />
         </Link>
 
-        {/* Bán acc cho shop */}
+        {/* Thanh lý acc */}
         <Link
           href="/sell"
           className="flex items-center justify-between gap-4 py-3.5 transition-opacity hover:opacity-80"
         >
           <div className="flex items-center gap-3">
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-emerald-100 dark:bg-emerald-500/20">
-              <Upload className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-amber-100 dark:bg-amber-500/20">
+              <Megaphone className="h-4 w-4 text-amber-600 dark:text-amber-400" />
             </div>
             <span className="text-sm font-bold text-slate-800 dark:text-slate-100">
-              Thu Mua Acc
+              Thanh Lý Tài Khoản
             </span>
           </div>
-          <ArrowRight className="h-5 w-5 shrink-0 text-emerald-400" />
+          <ArrowRight className="h-5 w-5 shrink-0 text-amber-400" />
         </Link>
       </div>
     </section>

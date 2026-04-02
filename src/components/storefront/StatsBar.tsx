@@ -42,7 +42,7 @@ export async function StatsBar() {
   ];
 
   return (
-    <div className="mt-8 flex flex-wrap items-center justify-center gap-6 sm:gap-10 lg:justify-start">
+    <div className="mt-4 flex flex-wrap items-center justify-center gap-5 sm:mt-8 sm:gap-10 lg:justify-start">
       {stats.map((stat) => (
         <div key={stat.label} className="flex items-center gap-2.5">
           <stat.icon className={`h-5 w-5 ${stat.color}`} />

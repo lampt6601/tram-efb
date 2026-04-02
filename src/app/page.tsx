@@ -147,27 +147,33 @@ export default async function HomePage({
         {/* Hero */}
         <section className="gradient-bg relative overflow-hidden">
           <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wMyI+PHBhdGggZD0iTTM2IDE4YzAtOS45NC04LjA2LTE4LTE4LTE4UzAgOC4wNiAwIDE4czguMDYgMTggMTggMTggMTgtOC4wNiAxOC0xOCIvPjwvZz48L2c+PC9zdmc+')] opacity-30" />
-          <div className="relative mx-auto max-w-7xl px-4 py-2 sm:px-6 sm:py-8 lg:px-8 lg:py-10">
-            <div className="flex flex-col py-3 sm:py-6 md:py-10">
+          <div className="relative mx-auto max-w-7xl px-4 py-1 sm:px-6 sm:py-8 lg:px-8 lg:py-10">
+            <div className="flex flex-col py-2 sm:py-6 md:py-10">
               <div className="text-center lg:text-left">
-                <div className="mx-auto mb-5 inline-flex items-center gap-2.5 rounded-full border border-indigo-500/30 bg-indigo-500/10 py-1.5 pl-1.5 pr-4 lg:mx-0">
+                <div className="mx-auto mb-3 inline-flex items-center gap-2 rounded-full border border-indigo-500/30 bg-indigo-500/10 py-1 pl-1 pr-3 sm:mb-5 sm:gap-2.5 sm:py-1.5 sm:pl-1.5 sm:pr-4 lg:mx-0">
                   <Image
                     src="/avatar-owner.jpeg"
                     alt="Trần Hữu Cảnh"
                     width={28}
                     height={28}
-                    className="h-7 w-7 rounded-full object-cover ring-2 ring-indigo-400/50"
+                    className="h-6 w-6 rounded-full object-cover ring-2 ring-indigo-400/50 sm:h-7 sm:w-7"
                     priority
                   />
-                  <span className="text-xs font-semibold tracking-wide text-indigo-300">
+                  <span className="text-[11px] font-semibold tracking-wide text-indigo-300 sm:text-xs">
                     Shop của <span className="text-white">Trần Hữu Cảnh</span>
                   </span>
-                  <BadgeCheck className="h-4 w-4 text-indigo-400" />
+                  <BadgeCheck className="h-3.5 w-3.5 text-indigo-400 sm:h-4 sm:w-4" />
                 </div>
-                <h1 className="text-balance text-3xl font-extrabold tracking-tight text-white sm:text-4xl lg:text-5xl">
-                  Tài Khoản eFootball{" "}
-                  <span className="block text-indigo-400">Uy Tín, Giá Tốt</span>
+                <h1 className="text-balance text-2xl font-extrabold tracking-tight text-white sm:text-4xl lg:text-5xl">
+                  Sàn Giao Dịch{" "}
+                  <span className="text-indigo-400 sm:block">
+                    Tài Khoản eFootball
+                  </span>
                 </h1>
+                <p className="mx-auto mt-2 max-w-xl text-xs leading-relaxed text-slate-400 sm:mt-4 sm:text-base lg:mx-0">
+                  Kết nối người mua — người bán tài khoản eFootball uy tín.
+                  Mỗi seller đều được xác minh và đặt tiền bảo kê.
+                </p>
                 {/* Recruitment CTA */}
                 <RecruitHeroCTA />
                 {/* Social proof stats */}
@@ -178,7 +184,10 @@ export default async function HomePage({
         </section>
 
         {/* Account Grid */}
-        <section className="mx-auto max-w-7xl px-3 py-6 sm:px-6 sm:py-12 lg:px-8 lg:py-10">
+        <section
+          id="accounts"
+          className="mx-auto max-w-7xl scroll-mt-4 px-3 py-6 sm:px-6 sm:py-12 lg:px-8 lg:py-10"
+        >
           <ScrollReveal direction="left" className="mb-3 sm:mb-4">
             <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100 sm:text-2xl">
               Tài Khoản Đang Bán

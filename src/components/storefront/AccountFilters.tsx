@@ -85,24 +85,45 @@ export function AccountFilters({
   const [localMinGp, setLocalMinGp] = useState(currentMinGp);
 
   // Derive dynamic server list
-  const dynamicServers = serverRegions && serverRegions.length > 0
-    ? [{ value: "", label: "Tất cả server" }, ...serverRegions.map((s) => ({ value: s, label: s }))]
-    : SERVER_REGIONS;
+  const dynamicServers =
+    serverRegions && serverRegions.length > 0
+      ? [
+          { value: "", label: "Tất cả server" },
+          ...serverRegions.map((s) => ({ value: s, label: s })),
+        ]
+      : SERVER_REGIONS;
 
   // Auto-expand advanced filters if any advanced param is active
   useEffect(() => {
-    if (currentServer || currentMinStrength || currentMinGp) setShowAdvanced(true);
+    if (currentServer || currentMinStrength || currentMinGp)
+      setShowAdvanced(true);
   }, [currentServer, currentMinStrength, currentMinGp]);
 
-  // Sync local state when URL params change (e.g. back/forward navigation)
-  useEffect(() => { setLocalSearch(currentSearch); }, [currentSearch]);
-  useEffect(() => { setLocalMinPrice(currentMinPrice); }, [currentMinPrice]);
-  useEffect(() => { setLocalMaxPrice(currentMaxPrice); }, [currentMaxPrice]);
-  useEffect(() => { setLocalSort(currentSort); }, [currentSort]);
-  useEffect(() => { setLocalClone(currentClone); }, [currentClone]);
-  useEffect(() => { setLocalServer(currentServer); }, [currentServer]);
-  useEffect(() => { setLocalMinStrength(currentMinStrength); }, [currentMinStrength]);
-  useEffect(() => { setLocalMinGp(currentMinGp); }, [currentMinGp]);
+  // Sync local state when URL params change
+  useEffect(() => {
+    setLocalSearch(currentSearch);
+  }, [currentSearch]);
+  useEffect(() => {
+    setLocalMinPrice(currentMinPrice);
+  }, [currentMinPrice]);
+  useEffect(() => {
+    setLocalMaxPrice(currentMaxPrice);
+  }, [currentMaxPrice]);
+  useEffect(() => {
+    setLocalSort(currentSort);
+  }, [currentSort]);
+  useEffect(() => {
+    setLocalClone(currentClone);
+  }, [currentClone]);
+  useEffect(() => {
+    setLocalServer(currentServer);
+  }, [currentServer]);
+  useEffect(() => {
+    setLocalMinStrength(currentMinStrength);
+  }, [currentMinStrength]);
+  useEffect(() => {
+    setLocalMinGp(currentMinGp);
+  }, [currentMinGp]);
 
   // Apply all filters at once
   const applyFilters = useCallback(() => {
@@ -120,7 +141,18 @@ export function AccountFilters({
     startTransition(() => {
       router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
     });
-  }, [router, pathname, localSearch, localMinPrice, localMaxPrice, localSort, localClone, localServer, localMinStrength, localMinGp]);
+  }, [
+    router,
+    pathname,
+    localSearch,
+    localMinPrice,
+    localMaxPrice,
+    localSort,
+    localClone,
+    localServer,
+    localMinStrength,
+    localMinGp,
+  ]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") applyFilters();
@@ -141,45 +173,187 @@ export function AccountFilters({
   };
 
   const hasActiveFilters =
-    currentSearch !== "" || currentMinPrice !== "" || currentMaxPrice !== "" ||
-    currentSort !== "newest" || currentClone || currentServer !== "" ||
-    currentMinStrength !== "" || currentMinGp !== "";
+    currentSearch !== "" ||
+    currentMinPrice !== "" ||
+    currentMaxPrice !== "" ||
+    currentSort !== "newest" ||
+    currentClone ||
+    currentServer !== "" ||
+    currentMinStrength !== "" ||
+    currentMinGp !== "";
 
-  const advancedFilterCount = [currentServer, currentMinStrength, currentMinGp].filter(Boolean).length;
+  const advancedFilterCount = [
+    currentServer,
+    currentMinStrength,
+    currentMinGp,
+  ].filter(Boolean).length;
 
-  // Check if local state differs from URL (unsaved changes)
   const hasUnsavedChanges =
-    localSearch !== currentSearch || localMinPrice !== currentMinPrice ||
-    localMaxPrice !== currentMaxPrice || localSort !== currentSort ||
-    localClone !== currentClone || localServer !== currentServer ||
-    localMinStrength !== currentMinStrength || localMinGp !== currentMinGp;
+    localSearch !== currentSearch ||
+    localMinPrice !== currentMinPrice ||
+    localMaxPrice !== currentMaxPrice ||
+    localSort !== currentSort ||
+    localClone !== currentClone ||
+    localServer !== currentServer ||
+    localMinStrength !== currentMinStrength ||
+    localMinGp !== currentMinGp;
 
   return (
     <div
-      className={`transition-opacity duration-200 ${isPending ? "opacity-60 pointer-events-none" : "opacity-100"}`}
+      className={`transition-opacity duration-200 ${isPending ? "pointer-events-none opacity-60" : "opacity-100"}`}
     >
-      <div className="flex flex-col gap-2.5 md:flex-row md:flex-wrap md:items-center md:gap-3">
+      {/* ── Desktop: single row ── */}
+      <div className="hidden items-center gap-2 md:flex">
         {/* Search */}
-        <div className="relative w-full md:flex-1 md:min-w-48">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 z-10 pointer-events-none" />
+        <div className="relative min-w-0 flex-1">
+          <Search className="pointer-events-none absolute left-3 top-1/2 z-10 h-4 w-4 -translate-y-1/2 text-slate-400" />
           <Input
             type="text"
             placeholder="Tìm kiếm tài khoản..."
             value={localSearch}
             onChange={(e) => setLocalSearch(e.target.value)}
             onKeyDown={handleKeyDown}
-            className="h-10 w-full rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-800 pl-10 pr-4 text-sm text-slate-700 dark:text-slate-200 shadow-sm transition-all focus-visible:border-indigo-400 focus-visible:ring-4 focus-visible:ring-indigo-400/20"
+            className="h-9 w-full rounded-lg border-slate-200 pl-9 pr-3 text-sm text-slate-700 shadow-sm transition-all focus-visible:border-indigo-400 focus-visible:ring-4 focus-visible:ring-indigo-400/20 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
           />
         </div>
 
-        {/* Sort + Clone + Advanced + Apply + Clear */}
-        <div className="flex items-center gap-2 w-full md:w-auto">
-          {/* Sort */}
-          <div className="flex flex-1 md:flex-none items-center">
-            <ArrowUpDown className="absolute ml-2.5 h-3.5 w-3.5 text-slate-400 pointer-events-none z-10" />
-            <Select value={localSort} onValueChange={(val) => { if (val !== null) setLocalSort(val) }}>
-              <SelectTrigger className="h-9 rounded-xl border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm text-slate-700 dark:text-slate-200 pl-10 pr-2.5 shadow-sm">
-                <SelectValue>{SORT_OPTIONS.find((o) => o.value === localSort)?.label}</SelectValue>
+        {/* Sort */}
+        <div className="relative shrink-0">
+          <ArrowUpDown className="pointer-events-none absolute left-2.5 top-1/2 z-10 h-3 w-3 -translate-y-1/2 text-slate-400" />
+          <Select
+            value={localSort}
+            onValueChange={(val) => {
+              if (val !== null) setLocalSort(val);
+            }}
+          >
+            <SelectTrigger className="h-9 rounded-lg border-slate-200 bg-white pl-7 pr-2 text-xs text-slate-700 shadow-sm dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200">
+              <SelectValue>
+                {SORT_OPTIONS.find((o) => o.value === localSort)?.label}
+              </SelectValue>
+            </SelectTrigger>
+            <SelectContent>
+              {SORT_OPTIONS.map((o) => (
+                <SelectItem key={o.value} value={o.value}>
+                  {o.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* Clone */}
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setLocalClone(!localClone)}
+          className={`h-9 shrink-0 rounded-lg px-3 text-xs font-medium shadow-sm transition-all ${
+            localClone
+              ? "border-violet-400 bg-violet-500 text-white hover:border-violet-500 hover:bg-violet-600"
+              : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 dark:hover:text-slate-100"
+          }`}
+        >
+          <Copy className="mr-1 h-3.5 w-3.5" />
+          Clone
+        </Button>
+
+        {/* Price range */}
+        <div className="flex w-56 shrink-0 items-center gap-1 rounded-lg border border-slate-200 bg-white px-2.5 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+          <PriceInput
+            placeholder="Giá từ"
+            value={localMinPrice}
+            onChange={setLocalMinPrice}
+            className="h-8 w-full min-w-0 border-0 bg-transparent px-0 text-xs text-slate-700 shadow-none placeholder:text-slate-400 focus-visible:ring-0 dark:text-slate-200 dark:placeholder:text-slate-500"
+          />
+          <span className="shrink-0 text-[10px] text-slate-300 dark:text-slate-600">
+            —
+          </span>
+          <PriceInput
+            placeholder="đến"
+            value={localMaxPrice}
+            onChange={setLocalMaxPrice}
+            className="h-8 w-full min-w-0 border-0 bg-transparent px-0 text-xs text-slate-700 shadow-none placeholder:text-slate-400 focus-visible:ring-0 dark:text-slate-200 dark:placeholder:text-slate-500"
+          />
+        </div>
+
+        {/* Advanced Filter Toggle */}
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setShowAdvanced(!showAdvanced)}
+          className={`h-9 shrink-0 rounded-lg px-3 text-xs font-medium shadow-sm transition-all ${
+            showAdvanced || advancedFilterCount > 0
+              ? "border-indigo-400 bg-indigo-500 text-white hover:border-indigo-500 hover:bg-indigo-600"
+              : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 dark:hover:text-slate-100"
+          }`}
+        >
+          <SlidersHorizontal className="mr-1 h-3.5 w-3.5" />
+          Lọc
+          {advancedFilterCount > 0 && (
+            <span className="ml-1 flex h-4 w-4 items-center justify-center rounded-full bg-white/20 text-[10px] font-bold">
+              {advancedFilterCount}
+            </span>
+          )}
+          <ChevronDown
+            className={`ml-0.5 h-3 w-3 transition-transform ${showAdvanced ? "rotate-180" : ""}`}
+          />
+        </Button>
+
+        {/* Apply */}
+        <Button
+          size="sm"
+          onClick={applyFilters}
+          disabled={!hasUnsavedChanges}
+          className="h-9 shrink-0 rounded-lg bg-indigo-600 px-4 text-xs font-medium text-white shadow-sm hover:bg-indigo-700 disabled:opacity-40"
+        >
+          <Search className="mr-1.5 h-3.5 w-3.5" />
+          Tìm
+        </Button>
+      </div>
+
+      {/* ── Mobile: stacked rows ── */}
+      <div className="flex flex-col gap-1.5 md:hidden">
+        {/* Search + Clone */}
+        <div className="flex items-center gap-1.5">
+          <div className="relative min-w-0 flex-1">
+            <Search className="pointer-events-none absolute left-3 top-1/2 z-10 h-4 w-4 -translate-y-1/2 text-slate-400" />
+            <Input
+              type="text"
+              placeholder="Tìm kiếm tài khoản..."
+              value={localSearch}
+              onChange={(e) => setLocalSearch(e.target.value)}
+              onKeyDown={handleKeyDown}
+              className="h-9 w-full rounded-lg border-slate-200 pl-9 pr-3 text-sm text-slate-700 shadow-sm transition-all focus-visible:border-indigo-400 focus-visible:ring-4 focus-visible:ring-indigo-400/20 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
+            />
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setLocalClone(!localClone)}
+            className={`h-9 shrink-0 rounded-lg px-2.5 text-xs font-medium shadow-sm transition-all ${
+              localClone
+                ? "border-violet-400 bg-violet-500 text-white hover:border-violet-500 hover:bg-violet-600"
+                : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 dark:hover:text-slate-100"
+            }`}
+          >
+            <Copy className="mr-1 h-3 w-3" />
+            Clone
+          </Button>
+        </div>
+
+        {/* Sort | Price range | Filter toggle */}
+        <div className="flex items-center gap-1.5">
+          <div className="relative shrink-0">
+            <ArrowUpDown className="pointer-events-none absolute left-2.5 top-1/2 z-10 h-3 w-3 -translate-y-1/2 text-slate-400" />
+            <Select
+              value={localSort}
+              onValueChange={(val) => {
+                if (val !== null) setLocalSort(val);
+              }}
+            >
+              <SelectTrigger className="h-8 rounded-lg border-slate-200 bg-white pl-7 pr-2 text-xs text-slate-700 shadow-sm dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200">
+                <SelectValue>
+                  {SORT_OPTIONS.find((o) => o.value === localSort)?.label}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent>
                 {SORT_OPTIONS.map((o) => (
@@ -191,110 +365,81 @@ export function AccountFilters({
             </Select>
           </div>
 
-          {/* Clone */}
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setLocalClone(!localClone)}
-            className={`h-9 shrink-0 rounded-xl px-3 text-sm font-medium transition-all shadow-sm ${
-              localClone
-                ? "border-violet-400 bg-violet-500 text-white hover:bg-violet-600 hover:border-violet-500"
-                : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-slate-100"
-            }`}
-          >
-            <Copy className="mr-1 h-3.5 w-3.5" />
-            Clone
-          </Button>
+          <div className="flex min-w-0 flex-1 items-center gap-1 rounded-lg border border-slate-200 bg-white px-2 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+            <PriceInput
+              placeholder="Giá từ"
+              value={localMinPrice}
+              onChange={setLocalMinPrice}
+              className="h-7 w-full min-w-0 border-0 bg-transparent px-0 text-xs text-slate-700 shadow-none placeholder:text-slate-400 focus-visible:ring-0 dark:text-slate-200 dark:placeholder:text-slate-500"
+            />
+            <span className="shrink-0 text-[10px] text-slate-300 dark:text-slate-600">
+              —
+            </span>
+            <PriceInput
+              placeholder="đến"
+              value={localMaxPrice}
+              onChange={setLocalMaxPrice}
+              className="h-7 w-full min-w-0 border-0 bg-transparent px-0 text-xs text-slate-700 shadow-none placeholder:text-slate-400 focus-visible:ring-0 dark:text-slate-200 dark:placeholder:text-slate-500"
+            />
+          </div>
 
-          {/* Advanced Filter Toggle */}
           <Button
             variant="outline"
             size="sm"
             onClick={() => setShowAdvanced(!showAdvanced)}
-            className={`h-9 shrink-0 rounded-xl px-3 text-sm font-medium transition-all shadow-sm ${
+            className={`h-8 shrink-0 rounded-lg px-2.5 text-xs font-medium shadow-sm transition-all ${
               showAdvanced || advancedFilterCount > 0
-                ? "border-indigo-400 bg-indigo-500 text-white hover:bg-indigo-600 hover:border-indigo-500"
-                : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-slate-100"
+                ? "border-indigo-400 bg-indigo-500 text-white hover:border-indigo-500 hover:bg-indigo-600"
+                : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 dark:hover:text-slate-100"
             }`}
           >
-            <SlidersHorizontal className="mr-1 h-3.5 w-3.5" />
+            <SlidersHorizontal className="mr-1 h-3 w-3" />
             Lọc
             {advancedFilterCount > 0 && (
               <span className="ml-1 flex h-4 w-4 items-center justify-center rounded-full bg-white/20 text-[10px] font-bold">
                 {advancedFilterCount}
               </span>
             )}
-            <ChevronDown className={`ml-0.5 h-3 w-3 transition-transform ${showAdvanced ? "rotate-180" : ""}`} />
-          </Button>
-
-          {/* Clear */}
-          {hasActiveFilters && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={clearAll}
-              className="h-9 shrink-0 rounded-xl border-rose-200 bg-rose-50 px-3 text-sm font-medium text-rose-600 transition-all hover:bg-rose-100 hover:text-rose-700 hover:border-rose-300 shadow-sm"
-            >
-              Xoá lọc
-            </Button>
-          )}
-        </div>
-
-        {/* Price range + Apply + count */}
-        <div className="flex items-center gap-2 w-full md:w-auto">
-          <div className="flex items-center gap-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-1 pl-2.5 shadow-sm">
-            <SlidersHorizontal className="h-3.5 w-3.5 shrink-0 text-slate-400" />
-            <PriceInput
-              placeholder="Giá từ"
-              value={localMinPrice}
-              onChange={setLocalMinPrice}
-              className="h-7 w-[4.5rem] md:w-24 border-0 bg-transparent px-1.5 text-sm text-slate-700 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus-visible:ring-0 shadow-none"
+            <ChevronDown
+              className={`ml-0.5 h-3 w-3 transition-transform ${showAdvanced ? "rotate-180" : ""}`}
             />
-            <span className="text-xs text-slate-300 dark:text-slate-600">—</span>
-            <PriceInput
-              placeholder="đến"
-              value={localMaxPrice}
-              onChange={setLocalMaxPrice}
-              className="h-7 w-[4.5rem] md:w-24 border-0 bg-transparent px-1.5 text-sm text-slate-700 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus-visible:ring-0 shadow-none"
-            />
-          </div>
-
-          {/* Apply button */}
-          <Button
-            size="sm"
-            onClick={applyFilters}
-            disabled={!hasUnsavedChanges}
-            className="h-9 shrink-0 rounded-xl bg-indigo-600 px-4 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-40 shadow-sm"
-          >
-            <Search className="mr-1 h-3.5 w-3.5" />
-            Tìm
           </Button>
-
-          <span className="ml-auto shrink-0 text-sm font-medium text-slate-500 dark:text-slate-400">
-            {isPending ? "Đang lọc..." : `${totalCount} tài khoản`}
-          </span>
         </div>
       </div>
 
       {/* Advanced Filters Panel */}
       {showAdvanced && (
-        <div className="mt-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-3 shadow-sm animate-in fade-in slide-in-from-top-2 duration-200">
-          <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-end sm:gap-4">
+        <div className="mt-2 animate-in fade-in slide-in-from-top-2 rounded-xl border border-slate-200 bg-white p-3 shadow-sm duration-200 dark:border-slate-700 dark:bg-slate-800">
+          <div className="grid grid-cols-2 gap-2.5 md:flex md:flex-wrap md:items-end md:gap-4">
             {/* Server Region */}
-            <div className="flex flex-col gap-1 sm:min-w-[160px]">
-              <label className="flex items-center gap-1.5 text-xs font-medium text-slate-500 dark:text-slate-400">
+            <div className="flex flex-col gap-1 md:min-w-[150px]">
+              <label className="flex items-center gap-1.5 text-[11px] font-medium text-slate-500 dark:text-slate-400">
                 <Globe className="h-3 w-3" /> Server
               </label>
               <Select
                 value={localServer || "__all__"}
-                onValueChange={(val) => { if (val !== null) setLocalServer(val === "__all__" ? "" : val) }}
+                onValueChange={(val) => {
+                  if (val !== null)
+                    setLocalServer(val === "__all__" ? "" : val);
+                }}
               >
-                <SelectTrigger className="h-8 rounded-lg border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm text-slate-700 dark:text-slate-200 px-2.5">
-                  <SelectValue>{dynamicServers.find((s) => (s.value || "__all__") === (localServer || "__all__"))?.label}</SelectValue>
+                <SelectTrigger className="h-8 rounded-lg border-slate-200 bg-slate-50 px-2.5 text-sm text-slate-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200">
+                  <SelectValue>
+                    {
+                      dynamicServers.find(
+                        (s) =>
+                          (s.value || "__all__") ===
+                          (localServer || "__all__"),
+                      )?.label
+                    }
+                  </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
                   {dynamicServers.map((s) => (
-                    <SelectItem key={s.value || "__all__"} value={s.value || "__all__"}>
+                    <SelectItem
+                      key={s.value || "__all__"}
+                      value={s.value || "__all__"}
+                    >
                       {s.label}
                     </SelectItem>
                   ))}
@@ -303,20 +448,34 @@ export function AccountFilters({
             </div>
 
             {/* Team Strength */}
-            <div className="flex flex-col gap-1 sm:min-w-[160px]">
-              <label className="flex items-center gap-1.5 text-xs font-medium text-slate-500 dark:text-slate-400">
-                <Shield className="h-3 w-3" /> Lực chiến tối thiểu
+            <div className="flex flex-col gap-1 md:min-w-[150px]">
+              <label className="flex items-center gap-1.5 text-[11px] font-medium text-slate-500 dark:text-slate-400">
+                <Shield className="h-3 w-3" /> Lực chiến
               </label>
               <Select
                 value={localMinStrength || "__all__"}
-                onValueChange={(val) => { if (val !== null) setLocalMinStrength(val === "__all__" ? "" : val) }}
+                onValueChange={(val) => {
+                  if (val !== null)
+                    setLocalMinStrength(val === "__all__" ? "" : val);
+                }}
               >
-                <SelectTrigger className="h-8 rounded-lg border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm text-slate-700 dark:text-slate-200 px-2.5">
-                  <SelectValue>{TEAM_STRENGTH_PRESETS.find((s) => (s.value || "__all__") === (localMinStrength || "__all__"))?.label}</SelectValue>
+                <SelectTrigger className="h-8 rounded-lg border-slate-200 bg-slate-50 px-2.5 text-sm text-slate-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200">
+                  <SelectValue>
+                    {
+                      TEAM_STRENGTH_PRESETS.find(
+                        (s) =>
+                          (s.value || "__all__") ===
+                          (localMinStrength || "__all__"),
+                      )?.label
+                    }
+                  </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
                   {TEAM_STRENGTH_PRESETS.map((s) => (
-                    <SelectItem key={s.value || "__all__"} value={s.value || "__all__"}>
+                    <SelectItem
+                      key={s.value || "__all__"}
+                      value={s.value || "__all__"}
+                    >
                       {s.label}
                     </SelectItem>
                   ))}
@@ -325,8 +484,8 @@ export function AccountFilters({
             </div>
 
             {/* Min GP */}
-            <div className="flex flex-col gap-1 sm:min-w-[140px]">
-              <label className="flex items-center gap-1.5 text-xs font-medium text-slate-500 dark:text-slate-400">
+            <div className="flex flex-col gap-1 md:min-w-[130px]">
+              <label className="flex items-center gap-1.5 text-[11px] font-medium text-slate-500 dark:text-slate-400">
                 <Zap className="h-3 w-3" /> GP tối thiểu
               </label>
               <Input
@@ -336,29 +495,39 @@ export function AccountFilters({
                 min={0}
                 onChange={(e) => setLocalMinGp(e.target.value)}
                 onKeyDown={handleKeyDown}
-                className="h-8 rounded-lg border-slate-200 dark:border-slate-700 dark:bg-slate-800 text-sm text-slate-700 dark:text-slate-200"
+                className="h-8 rounded-lg border-slate-200 bg-slate-50 text-sm text-slate-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
               />
             </div>
-
-            {/* Clear advanced filters */}
-            {advancedFilterCount > 0 && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => {
-                  setLocalServer("");
-                  setLocalMinStrength("");
-                  setLocalMinGp("");
-                }}
-                className="h-8 shrink-0 gap-1 px-2.5 text-xs text-slate-500 hover:text-slate-700"
-              >
-                <X className="h-3 w-3" />
-                Xoá bộ lọc nâng cao
-              </Button>
-            )}
           </div>
         </div>
       )}
+
+      {/* Bottom bar: Count + Clear + Apply (mobile only, desktop has Apply inline) */}
+      <div className="mt-2 flex items-center gap-2">
+        <span className="text-xs font-medium text-slate-500 dark:text-slate-400">
+          {isPending ? "Đang lọc..." : `${totalCount} tài khoản`}
+        </span>
+
+        {hasActiveFilters && (
+          <button
+            onClick={clearAll}
+            className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-xs text-rose-500 transition-colors hover:bg-rose-50 dark:hover:bg-rose-500/10"
+          >
+            <X className="h-3 w-3" />
+            Xoá lọc
+          </button>
+        )}
+
+        <Button
+          size="sm"
+          onClick={applyFilters}
+          disabled={!hasUnsavedChanges}
+          className="ml-auto h-8 shrink-0 rounded-lg bg-indigo-600 px-4 text-xs font-medium text-white shadow-sm hover:bg-indigo-700 disabled:opacity-40 md:hidden"
+        >
+          <Search className="mr-1.5 h-3.5 w-3.5" />
+          Tìm
+        </Button>
+      </div>
     </div>
   );
 }
