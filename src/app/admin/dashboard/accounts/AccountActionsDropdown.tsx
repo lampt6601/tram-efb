@@ -24,6 +24,7 @@ import type { AccountStatus, AccountWithEmail } from "@/types/database";
 import { notifyAdminAction } from "@/app/actions/notify-admin";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { CurrencyInput } from "@/components/ui/currency-input";
 import { Label } from "@/components/ui/label";
 import {
   DropdownMenu,
@@ -220,7 +221,7 @@ export function AccountActionsDropdown({
 
   // ── Sell ──────────────────────────────────────────────────────────────────
   const handleSell = async () => {
-    const parsed = parseFloat(sellPrice);
+    const parsed = Math.round(Number(sellPrice));
     if (isNaN(parsed) || parsed < 0) {
       setError("Vui lòng nhập giá bán hợp lệ.");
       return;
@@ -254,8 +255,8 @@ export function AccountActionsDropdown({
 
   // ── Sale ──────────────────────────────────────────────────────────────────
   const handleSaleConfirm = async () => {
-    const parsedOriginal = parseFloat(saleOriginalPrice);
-    const parsedSale = parseFloat(salePrice);
+    const parsedOriginal = Math.round(Number(saleOriginalPrice));
+    const parsedSale = Math.round(Number(salePrice));
     if (isNaN(parsedSale) || parsedSale < 0) {
       setError("Vui lòng nhập giá Sale hợp lệ.");
       return;
@@ -346,7 +347,7 @@ export function AccountActionsDropdown({
       setError("Vui lòng nhập tên khách hàng.");
       return;
     }
-    const parsedAmount = parseFloat(depositAmount);
+    const parsedAmount = Math.round(Number(depositAmount));
     if (!depositAmount || isNaN(parsedAmount) || parsedAmount < 0) {
       setError("Vui lòng nhập số tiền cọc hợp lệ.");
       return;
@@ -608,13 +609,12 @@ export function AccountActionsDropdown({
                 Giá dự kiến sẽ cập nhật thành giá bán thực tế. Email liên kết sẽ bị gỡ tự động.
               </DialogDescription>
             </DialogHeader>
-            <Label className="mb-1.5 text-slate-700 dark:text-slate-200">Giá Bán Thực Tế (VNĐ)</Label>
-            <Input
-              type="number"
+            <Label className="mb-1.5 text-slate-700 dark:text-slate-200">Giá Bán Thực Tế</Label>
+            <CurrencyInput
               value={sellPrice}
-              onChange={(e) => setSellPrice(e.target.value)}
-              min="0"
-              step="1"
+              onChange={setSellPrice}
+              min={0}
+              step={1}
               disabled={loading}
               className="mt-1.5 rounded-xl border-slate-300 dark:border-slate-600"
               autoFocus
@@ -652,26 +652,24 @@ export function AccountActionsDropdown({
             </DialogHeader>
             <div className="space-y-3">
               <div>
-                <Label className="text-slate-700 dark:text-slate-200">Giá Bị Gạch / Giá Gốc (VNĐ)</Label>
-                <Input
-                  type="number"
+                <Label className="text-slate-700 dark:text-slate-200">Giá Bị Gạch / Giá Gốc</Label>
+                <CurrencyInput
                   value={saleOriginalPrice}
-                  onChange={(e) => setSaleOriginalPrice(e.target.value)}
-                  min="0"
-                  step="1"
+                  onChange={setSaleOriginalPrice}
+                  min={0}
+                  step={1}
                   disabled={loading}
                   className="mt-1.5 rounded-xl border-slate-300 dark:border-slate-600"
                   placeholder="Để trống nếu không có"
                 />
               </div>
               <div>
-                <Label className="text-slate-700 dark:text-slate-200">Giá Sale Bán Thực Tế (VNĐ)</Label>
-                <Input
-                  type="number"
+                <Label className="text-slate-700 dark:text-slate-200">Giá Sale Bán Thực Tế</Label>
+                <CurrencyInput
                   value={salePrice}
-                  onChange={(e) => setSalePrice(e.target.value)}
-                  min="0"
-                  step="1"
+                  onChange={setSalePrice}
+                  min={0}
+                  step={1}
                   disabled={loading}
                   className="mt-1.5 rounded-xl border-rose-300 bg-rose-50/30 dark:border-rose-500/30 dark:bg-rose-500/10"
                 />
@@ -770,13 +768,12 @@ export function AccountActionsDropdown({
                 />
               </div>
               <div>
-                <Label className="text-slate-700 dark:text-slate-200">Số Tiền Cọc (VNĐ) *</Label>
-                <Input
-                  type="number"
+                <Label className="text-slate-700 dark:text-slate-200">Số Tiền Cọc *</Label>
+                <CurrencyInput
                   value={depositAmount}
-                  onChange={(e) => setDepositAmount(e.target.value)}
-                  min="0"
-                  step="1"
+                  onChange={setDepositAmount}
+                  min={0}
+                  step={1}
                   disabled={loading}
                   className="mt-1.5 rounded-xl border-blue-300 bg-blue-50/30 dark:border-blue-500/30 dark:bg-blue-500/10"
                 />

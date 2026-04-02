@@ -2,7 +2,6 @@
 
 import { useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { Input } from "@/components/ui/input";
 
 const PRICE_SUGGESTIONS = [
   { label: "10k", value: 10_000 },
@@ -19,6 +18,20 @@ const PRICE_SUGGESTIONS = [
   { label: "3M", value: 3_000_000 },
   { label: "10M", value: 10_000_000 },
 ];
+
+function toK(raw: string): string {
+  if (!raw) return "";
+  const n = Number(raw);
+  if (isNaN(n) || n === 0) return "";
+  return String(Math.round(n / 1000));
+}
+
+function toRaw(k: string): string {
+  if (k === "" || k === "-") return "";
+  const n = Number(k);
+  if (isNaN(n)) return "";
+  return String(Math.round(n * 1000));
+}
 
 interface PriceInputProps {
   value: string;
@@ -38,7 +51,17 @@ export function PriceInput({
 }: PriceInputProps) {
   const [open, setOpen] = useState(false);
   const [dropdownStyle, setDropdownStyle] = useState<React.CSSProperties>({});
+  const [displayValue, setDisplayValue] = useState(() => toK(value));
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Sync from external value changes
+  useEffect(() => {
+    const newK = toK(value);
+    setDisplayValue((prev) => {
+      if (toRaw(prev) === value) return prev;
+      return newK;
+    });
+  }, [value]);
 
   const updatePosition = () => {
     if (!inputRef.current) return;
@@ -76,6 +99,12 @@ export function PriceInput({
       ? "hover:bg-amber-50 hover:text-amber-700"
       : "hover:bg-indigo-50 hover:text-indigo-700";
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const k = e.target.value;
+    setDisplayValue(k);
+    onChange(toRaw(k));
+  };
+
   const dropdown = open ? (
     <div
       data-price-dropdown
@@ -89,6 +118,7 @@ export function PriceInput({
           onMouseDown={(e) => {
             e.preventDefault();
             onChange(String(s.value));
+            setDisplayValue(String(Math.round(s.value / 1000)));
             setOpen(false);
           }}
           className={`w-full px-3 py-1.5 text-left text-sm transition-colors ${
@@ -105,20 +135,26 @@ export function PriceInput({
 
   return (
     <>
-      <Input
-        ref={inputRef}
-        type="number"
-        placeholder={placeholder}
-        value={value}
-        min={0}
-        step={1}
-        onChange={(e) => onChange(e.target.value)}
-        onFocus={() => {
-          updatePosition();
-          setOpen(true);
-        }}
-        className={className}
-      />
+      <div className="relative">
+        <input
+          ref={inputRef}
+          type="number"
+          placeholder={placeholder}
+          value={displayValue}
+          min={0}
+          step={1}
+          onChange={handleChange}
+          onWheel={(e) => e.currentTarget.blur()}
+          onFocus={() => {
+            updatePosition();
+            setOpen(true);
+          }}
+          className={`${className ?? ""} pr-6 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none [-moz-appearance:textfield]`}
+        />
+        <span className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-medium text-slate-400 dark:text-slate-500">
+          k
+        </span>
+      </div>
       {typeof document !== "undefined" && dropdown
         ? createPortal(dropdown, document.body)
         : null}

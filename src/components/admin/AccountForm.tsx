@@ -24,6 +24,7 @@ import { notifyAdminAction } from "@/app/actions/notify-admin";
 import { checkAdminRestricted } from "@/app/actions/account-actions";
 import { useParallelUpload } from "@/hooks/use-parallel-upload";
 import { Input } from "@/components/ui/input";
+import { CurrencyInput } from "@/components/ui/currency-input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -107,15 +108,15 @@ export function AccountForm({ account, duplicating, availableEmails, embedded, o
     () => ({
       title: account?.title ?? "",
       description: account?.description ?? "",
-      purchasePrice: account?.purchase_price?.toString() ?? "",
-      sellingPrice: account?.selling_price?.toString() ?? "",
+      purchasePrice: account?.purchase_price != null ? Math.round(account.purchase_price).toString() : "",
+      sellingPrice: account?.selling_price != null ? Math.round(account.selling_price).toString() : "",
       status: account?.status ?? "Available",
       totalGp: account?.total_gp?.toString() ?? "",
       totalCoinsAndroid: account?.total_coins_android?.toString() ?? "",
       totalCoinsIos: account?.total_coins_ios?.toString() ?? "",
       emailId: account?.email_id ?? "",
       isClone: account?.is_clone ?? false,
-      originalPrice: account?.original_price?.toString() ?? "",
+      originalPrice: account?.original_price != null ? Math.round(account.original_price).toString() : "",
       serverRegion: account?.server_region ?? "",
       monthlyLogQuota: account?.monthly_log_quota?.toString() ?? "",
       depositCustomerName: account?.deposit_customer_name ?? "",
@@ -319,23 +320,23 @@ export function AccountForm({ account, duplicating, availableEmails, embedded, o
       const payload = {
         title: values.title,
         description: values.description?.trim() || null,
-        purchase_price: parseInt(values.purchasePrice as string) || 0,
-        selling_price: parseInt(values.sellingPrice as string) || 0,
+        purchase_price: Math.round(Number(values.purchasePrice) || 0),
+        selling_price: Math.round(Number(values.sellingPrice) || 0),
         status: values.status,
-        total_gp: parseInt(values.totalGp as string) || 0,
-        total_coins_android: parseInt(values.totalCoinsAndroid as string) || 0,
-        total_coins_ios: parseInt(values.totalCoinsIos as string) || 0,
+        total_gp: Math.round(Number(values.totalGp) || 0),
+        total_coins_android: Math.round(Number(values.totalCoinsAndroid) || 0),
+        total_coins_ios: Math.round(Number(values.totalCoinsIos) || 0),
         team_strength: 0,
         server_region: values.serverRegion || null,
         monthly_log_quota:
           values.monthlyLogQuota !== ""
-            ? parseInt(values.monthlyLogQuota as string)
+            ? Math.round(Number(values.monthlyLogQuota))
             : null,
         email_id: values.emailId || null,
         ...(isEditing ? {} : { is_priority: false }),
         is_clone: values.isClone,
         original_price: values.originalPrice
-          ? parseInt(values.originalPrice as string)
+          ? Math.round(Number(values.originalPrice))
           : null,
         images: finalImages,
         primary_image_url: finalPrimaryUrl,
@@ -422,12 +423,8 @@ export function AccountForm({ account, duplicating, availableEmails, embedded, o
           actionType,
           payload.title,
           {
-            purchasePrice: payload.purchase_price
-              ? parseInt(payload.purchase_price as unknown as string)
-              : undefined,
-            sellingPrice: payload.selling_price
-              ? parseInt(payload.selling_price as unknown as string)
-              : undefined,
+            purchasePrice: payload.purchase_price || undefined,
+            sellingPrice: payload.selling_price || undefined,
             originalPrice: payload.original_price,
           },
           accountId,
@@ -518,24 +515,31 @@ export function AccountForm({ account, duplicating, availableEmails, embedded, o
           )}
 
           {/* ── Giá ── */}
-          <SectionHeader label="Giá (VNĐ)" />
+          <SectionHeader label="Giá (đơn vị: nghìn đồng)" />
 
           <div className="grid gap-4 sm:grid-cols-3">
             <div>
               <Label className="text-slate-700 dark:text-slate-300">
                 Giá nhập <span className="text-red-500">*</span>
               </Label>
-              <Input
-                type="number"
-                {...register("purchasePrice", {
+              <Controller
+                name="purchasePrice"
+                control={control}
+                rules={{
                   required: "Vui lòng nhập giá nhập",
-                  min: { value: 1000, message: "Tối thiểu 1.000đ" },
-                })}
-                aria-invalid={!!errors.purchasePrice}
-                min="1000"
-                step="1"
-                className={cn(inputClass, "mt-1.5")}
-                placeholder="0"
+                  min: { value: 1000, message: "Tối thiểu 1k" },
+                }}
+                render={({ field }) => (
+                  <CurrencyInput
+                    value={field.value}
+                    onChange={field.onChange}
+                    aria-invalid={!!errors.purchasePrice}
+                    min={1}
+                    step={1}
+                    className={cn(inputClass, "mt-1.5")}
+                    placeholder="VD: 130"
+                  />
+                )}
               />
               {errors.purchasePrice && (
                 <p className="mt-1 text-xs text-red-600">
@@ -547,24 +551,30 @@ export function AccountForm({ account, duplicating, availableEmails, embedded, o
               <Label className="text-slate-700 dark:text-slate-300">
                 Giá bán <span className="text-red-500">*</span>
               </Label>
-              <Input
-                type="number"
-                {...register("sellingPrice", {
+              <Controller
+                name="sellingPrice"
+                control={control}
+                rules={{
                   required: "Vui lòng nhập giá bán",
-                  min: { value: 1000, message: "Tối thiểu 1.000đ" },
+                  min: { value: 1000, message: "Tối thiểu 1k" },
                   validate: (val, formValues) => {
-                    const sp = parseInt(val) || 0;
-                    const pp =
-                      parseInt(formValues.purchasePrice as string) || 0;
+                    const sp = Math.round(Number(val)) || 0;
+                    const pp = Math.round(Number(formValues.purchasePrice)) || 0;
                     if (sp > pp * 2) return "Không được lớn hơn 2 lần Giá nhập";
                     return true;
                   },
-                })}
-                aria-invalid={!!errors.sellingPrice}
-                min="1000"
-                step="1"
-                className={cn(inputClass, "mt-1.5")}
-                placeholder="0"
+                }}
+                render={({ field }) => (
+                  <CurrencyInput
+                    value={field.value}
+                    onChange={field.onChange}
+                    aria-invalid={!!errors.sellingPrice}
+                    min={1}
+                    step={1}
+                    className={cn(inputClass, "mt-1.5")}
+                    placeholder="VD: 130"
+                  />
+                )}
               />
               {errors.sellingPrice && (
                 <p className="mt-1 text-xs text-red-600">
@@ -579,22 +589,30 @@ export function AccountForm({ account, duplicating, availableEmails, embedded, o
                   (gạch ngang)
                 </span>
               </Label>
-              <Input
-                type="number"
-                {...register("originalPrice", {
-                  min: { value: 1000, message: "Tối thiểu 1.000đ" },
+              <Controller
+                name="originalPrice"
+                control={control}
+                rules={{
                   validate: (value, formValues) => {
                     if (!value) return true;
-                    if (parseInt(value) <= parseInt(formValues.sellingPrice))
+                    const v = Math.round(Number(value));
+                    if (v < 1000) return "Tối thiểu 1k";
+                    if (v <= Math.round(Number(formValues.sellingPrice)))
                       return "Phải lớn hơn giá bán";
                     return true;
                   },
-                })}
-                aria-invalid={!!errors.originalPrice}
-                min="1000"
-                step="1"
-                className={cn(inputClass, "mt-1.5")}
-                placeholder="Để trống nếu không sale"
+                }}
+                render={({ field }) => (
+                  <CurrencyInput
+                    value={field.value}
+                    onChange={field.onChange}
+                    aria-invalid={!!errors.originalPrice}
+                    min={1}
+                    step={1}
+                    className={cn(inputClass, "mt-1.5")}
+                    placeholder="Để trống nếu không sale"
+                  />
+                )}
               />
               {errors.originalPrice && (
                 <p className="mt-1 text-xs text-red-600">
@@ -702,15 +720,21 @@ export function AccountForm({ account, duplicating, availableEmails, embedded, o
                 </div>
                 <div>
                   <Label className="text-slate-700 dark:text-slate-300">
-                    Số tiền cọc (VNĐ) *
+                    Số tiền cọc *
                   </Label>
-                  <Input
-                    type="number"
-                    {...register("depositAmount")}
-                    min="0"
-                    step="1"
-                    className={cn(inputClass, "mt-1.5")}
-                    placeholder="0"
+                  <Controller
+                    name="depositAmount"
+                    control={control}
+                    render={({ field }) => (
+                      <CurrencyInput
+                        value={field.value}
+                        onChange={field.onChange}
+                        min={0}
+                        step={1}
+                        className={cn(inputClass, "mt-1.5")}
+                        placeholder="VD: 50"
+                      />
+                    )}
                   />
                 </div>
                 <div>
