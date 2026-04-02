@@ -52,22 +52,41 @@ export function AccountGridSkeleton({ count = 6 }: { count?: number }) {
 
 export function FiltersSkeleton() {
   return (
-    <div className="flex flex-col gap-2.5 md:flex-row md:flex-wrap md:items-center md:gap-3">
-      {/* Search */}
-      <Skeleton className="h-10 w-full md:flex-1 md:min-w-48 rounded-xl" />
-
-      {/* Sort + Clone + Advanced + Clear */}
-      <div className="flex items-center gap-2 w-full md:w-auto">
-        <Skeleton className="h-9 flex-1 md:flex-none md:w-32 rounded-xl" />
-        <Skeleton className="h-9 w-[76px] rounded-xl" />
-        <Skeleton className="h-9 w-14 rounded-xl" />
+    <div>
+      {/* ── Desktop: single row ── */}
+      <div className="hidden items-center gap-2 md:flex">
+        {/* Search */}
+        <Skeleton className="h-9 min-w-0 flex-1 rounded-lg" />
+        {/* Sort */}
+        <Skeleton className="h-9 w-28 shrink-0 rounded-lg" />
+        {/* Clone */}
+        <Skeleton className="h-9 w-[76px] shrink-0 rounded-lg" />
+        {/* Price range */}
+        <Skeleton className="h-9 w-56 shrink-0 rounded-lg" />
+        {/* Lọc */}
+        <Skeleton className="h-9 w-16 shrink-0 rounded-lg" />
+        {/* Tìm */}
+        <Skeleton className="h-9 w-16 shrink-0 rounded-lg" />
       </div>
 
-      {/* Price range + Apply + count */}
-      <div className="flex items-center gap-2 w-full md:w-auto">
-        <Skeleton className="h-9 w-[200px] md:w-[220px] rounded-xl" />
-        <Skeleton className="h-9 w-16 rounded-xl" />
-        <Skeleton className="ml-auto h-4 w-24" />
+      {/* ── Mobile: stacked rows ── */}
+      <div className="flex flex-col gap-1.5 md:hidden">
+        {/* Row 1: Search + Clone */}
+        <div className="flex items-center gap-1.5">
+          <Skeleton className="h-9 min-w-0 flex-1 rounded-lg" />
+          <Skeleton className="h-9 w-[72px] shrink-0 rounded-lg" />
+        </div>
+        {/* Row 2: Sort + Price + Lọc */}
+        <div className="flex items-center gap-1.5">
+          <Skeleton className="h-8 w-24 shrink-0 rounded-lg" />
+          <Skeleton className="h-8 min-w-0 flex-1 rounded-lg" />
+          <Skeleton className="h-8 w-14 shrink-0 rounded-lg" />
+        </div>
+        {/* Bottom bar: count + clear + apply */}
+        <div className="flex items-center gap-2 pt-1">
+          <Skeleton className="h-4 w-20" />
+          <Skeleton className="ml-auto h-8 w-14 rounded-lg" />
+        </div>
       </div>
     </div>
   );

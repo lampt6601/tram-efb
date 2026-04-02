@@ -13,28 +13,50 @@ export default function HomeLoading() {
       <main className="flex-1">
         {/* Hero — matches gradient-bg section */}
         <section className="gradient-bg relative overflow-hidden">
-          <div className="relative mx-auto max-w-7xl px-4 py-2 sm:px-6 sm:py-8 lg:px-8 lg:py-10">
-            <div className="flex flex-col py-3 sm:py-6 md:py-10">
+          <div className="relative mx-auto max-w-7xl px-4 py-1 sm:px-6 sm:py-8 lg:px-8 lg:py-10">
+            <div className="flex flex-col py-2 sm:py-6 md:py-10">
               <div className="text-center lg:text-left">
                 {/* Owner badge */}
-                <div className="mx-auto mb-5 inline-flex items-center gap-2.5 rounded-full border border-indigo-500/20 bg-indigo-500/10 py-1.5 pl-1.5 pr-4 lg:mx-0">
-                  <Skeleton className="h-7 w-7 rounded-full bg-indigo-500/20" />
-                  <Skeleton className="h-3 w-40 bg-white/10" />
+                <div className="mx-auto mb-3 inline-flex items-center gap-2 rounded-full border border-indigo-500/20 bg-indigo-500/10 py-1 pl-1 pr-3 sm:mb-5 sm:gap-2.5 sm:py-1.5 sm:pl-1.5 sm:pr-4 lg:mx-0">
+                  <Skeleton className="h-6 w-6 rounded-full bg-indigo-500/20 sm:h-7 sm:w-7" />
+                  <Skeleton className="h-3 w-36 bg-white/10 sm:w-40" />
                 </div>
 
                 {/* Heading */}
                 <div className="space-y-2">
-                  <Skeleton className="mx-auto lg:mx-0 h-9 w-[280px] sm:h-10 sm:w-[360px] lg:h-12 bg-white/10" />
-                  <Skeleton className="mx-auto lg:mx-0 h-9 w-[200px] sm:h-10 sm:w-[240px] lg:h-12 bg-indigo-400/20" />
+                  <Skeleton className="mx-auto h-8 w-[200px] bg-white/10 sm:h-10 sm:w-[360px] lg:mx-0 lg:h-12" />
+                  <Skeleton className="mx-auto h-8 w-[240px] bg-indigo-400/20 sm:h-10 sm:w-[280px] lg:mx-0 lg:h-12" />
                 </div>
 
-                {/* Recruit CTA */}
-                <Skeleton className="mx-auto lg:mx-0 mt-5 h-10 w-56 rounded-full bg-white/10" />
+                {/* Subtitle */}
+                <Skeleton className="mx-auto mt-2 h-3 w-56 bg-white/8 sm:mt-3 sm:h-4 sm:w-72 lg:mx-0" />
+
+                {/* Trust badges */}
+                <div className="mx-auto mt-2 flex flex-wrap justify-center gap-x-4 gap-y-1 sm:mt-3 lg:mx-0 lg:justify-start">
+                  <Skeleton className="h-3 w-40 bg-white/8 sm:h-4 sm:w-44" />
+                  <Skeleton className="h-3 w-52 bg-white/8 sm:h-4 sm:w-56" />
+                </div>
+
+                {/* Recruit CTA — 2 cards */}
+                <div className="mx-auto mt-5 grid w-full max-w-xl grid-cols-1 gap-2 sm:mt-10 sm:grid-cols-2 sm:gap-4 lg:mx-0">
+                  {Array.from({ length: 2 }).map((_, i) => (
+                    <div
+                      key={i}
+                      className="flex items-center gap-3 rounded-xl border border-white/[0.08] bg-white/[0.04] px-3.5 py-3 sm:flex-col sm:items-start sm:rounded-2xl sm:p-5"
+                    >
+                      <Skeleton className="h-9 w-9 shrink-0 rounded-lg bg-white/10 sm:h-10 sm:w-10 sm:rounded-xl" />
+                      <div className="min-w-0 flex-1 sm:flex-none sm:w-full">
+                        <Skeleton className="h-4 w-24 bg-white/10 sm:w-28" />
+                        <Skeleton className="mt-1.5 h-3 w-44 bg-white/6 sm:w-full" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
 
                 {/* Stats bar */}
-                <div className="mx-auto lg:mx-0 mt-6 flex justify-center lg:justify-start gap-6 sm:gap-8">
+                <div className="mx-auto mt-4 flex justify-center gap-6 sm:mt-8 sm:gap-8 lg:mx-0 lg:justify-start">
                   {Array.from({ length: 3 }).map((_, i) => (
-                    <div key={i} className="flex flex-col items-center lg:items-start gap-1">
+                    <div key={i} className="flex flex-col items-center gap-1 lg:items-start">
                       <Skeleton className="h-7 w-12 bg-white/15" />
                       <Skeleton className="h-3 w-16 bg-white/8" />
                     </div>
