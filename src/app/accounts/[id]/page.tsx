@@ -274,7 +274,7 @@ export default async function AccountDetailPage({
       )
     : 0;
   const contactMessage = encodeURIComponent(
-    `Chào chủ shop, mình quan tâm tài khoản ${account.title} (ID: ${account.id}).`,
+    `Chào chủ sàn, mình quan tâm tài khoản ${account.title} (ID: ${account.id}).`,
   );
 
   const galleryImages = account.primary_image_url
@@ -471,7 +471,7 @@ export default async function AccountDetailPage({
               <div className="mb-3 flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50/50 px-3 py-2.5 dark:border-emerald-500/20 dark:bg-emerald-500/10">
                 <ShieldCheck className="h-4 w-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
                 <p className="text-[11px] leading-relaxed font-medium text-emerald-700 dark:text-emerald-300">
-                  Giao dịch qua Chủ Shop — an toàn & được hỗ trợ
+                  Giao dịch qua Chủ Sàn — an toàn & được hỗ trợ
                 </p>
               </div>
 
@@ -492,7 +492,7 @@ export default async function AccountDetailPage({
                   <div className="relative shrink-0">
                     <Image
                       src="/avatar-owner.jpeg"
-                      alt="Chủ shop"
+                      alt="Chủ sàn"
                       width={44}
                       height={44}
                       className="h-11 w-11 rounded-2xl object-cover shadow-sm"
@@ -505,8 +505,8 @@ export default async function AccountDetailPage({
                   <div className="min-w-0 flex-1">
                     <p className="text-[10px] font-semibold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">
                       {account.seller_full_name === "Trần Hữu Cảnh"
-                        ? "Người Bán · Chủ Shop · Trung Gian"
-                        : "Chủ Shop · Trung Gian Uy Tín"}
+                        ? "Người Bán · Chủ Sàn · Trung Gian"
+                        : "Chủ Sàn · Trung Gian Uy Tín"}
                     </p>
                     <p className="mt-0.5 text-sm font-semibold text-slate-900 dark:text-slate-100">
                       Trần Hữu Cảnh
@@ -555,7 +555,7 @@ export default async function AccountDetailPage({
                       alt="Zalo"
                       className="h-3.5 w-3.5 object-contain"
                     />
-                    Zalo Chủ Shop
+                    Zalo Chủ Sàn
                   </a>
                   <a
                     href="/api/contact/owner?type=facebook"
@@ -595,7 +595,7 @@ export default async function AccountDetailPage({
                 Chưa tìm được acc ưng ý?
               </p>
               <p className="text-xs text-slate-500 dark:text-slate-400">
-                Gửi yêu cầu để shop tìm giúp — miễn phí
+                Gửi yêu cầu để sàn tìm giúp — miễn phí
               </p>
             </div>
             <span className="shrink-0 rounded-lg bg-indigo-600 px-3 py-1.5 text-xs font-semibold text-white">

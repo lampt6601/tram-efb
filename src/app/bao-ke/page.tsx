@@ -148,7 +148,7 @@ export default async function BaoKePage() {
               <div className="text-sm text-amber-800 dark:text-amber-300">
                 <p className="font-semibold">Bảo kê là gì?</p>
                 <p className="mt-1 leading-relaxed text-amber-700 dark:text-amber-400">
-                  Mỗi người bán trên shop đã ký quỹ một số tiền cho THC.
+                  Mỗi người bán trên sàn đã ký quỹ một số tiền cho THC.
                   Nếu xảy ra lừa đảo trong giao dịch, THC sẽ{" "}
                   <strong>hoàn tiền cho bạn</strong> từ khoản ký quỹ này, tối đa
                   bằng mức bảo kê hiển thị. Giao dịch có giá trị cao hơn mức bảo

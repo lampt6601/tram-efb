@@ -258,7 +258,7 @@ export default function GuidePage() {
         </div>
 
         <InfoBox type="warning">
-          Tài khoản mới đăng sẽ ở trạng thái <strong>chờ duyệt</strong> nếu chủ shop chưa bật auto-approve cho bạn. Acc sẽ <strong>chưa hiển thị</strong> trên web cho đến khi được duyệt.
+          Tài khoản mới đăng sẽ ở trạng thái <strong>chờ duyệt</strong> nếu chủ sàn chưa bật auto-approve cho bạn. Acc sẽ <strong>chưa hiển thị</strong> trên web cho đến khi được duyệt.
         </InfoBox>
       </div>
 
@@ -343,7 +343,7 @@ export default function GuidePage() {
         </ol>
         <div className="space-y-3">
           <InfoBox type="info">
-            Sau khi đánh dấu đã bán, acc vẫn hiển thị trên web trong mục <strong>&quot;Tài Khoản Đã Bán&quot;</strong> — giúp tăng độ tin cậy của shop với khách hàng mới.
+            Sau khi đánh dấu đã bán, acc vẫn hiển thị trên web trong mục <strong>&quot;Tài Khoản Đã Bán&quot;</strong> — giúp tăng độ tin cậy của sàn với khách hàng mới.
           </InfoBox>
           <InfoBox type="tip">
             Nếu đánh dấu nhầm, dùng <strong>&quot;Gỡ đánh dấu đã bán&quot;</strong> trong menu Tác vụ để đưa acc về trạng thái Đang bán.
@@ -443,8 +443,8 @@ export default function GuidePage() {
           color="slate"
         />
         <div className="rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 divide-y divide-slate-100 dark:divide-slate-800">
-          <FieldRow label="Tên hiển thị" desc="Tên này hiển thị trên giao diện quản trị và trong email thông báo gửi về chủ shop." />
-          <FieldRow label="Email" desc="Email đăng nhập — không thể thay đổi. Liên hệ chủ shop nếu cần đổi." />
+          <FieldRow label="Tên hiển thị" desc="Tên này hiển thị trên giao diện quản trị và trong email thông báo gửi về chủ sàn." />
+          <FieldRow label="Email" desc="Email đăng nhập — không thể thay đổi. Liên hệ chủ sàn nếu cần đổi." />
         </div>
       </div>
 
@@ -457,13 +457,13 @@ export default function GuidePage() {
           color="emerald"
         />
         <p className="mb-4 text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-          Khi khách liên hệ mua acc, hãy hướng dẫn họ giao dịch qua <strong>Chủ Shop làm trung gian</strong> để đảm bảo an toàn cho cả hai bên.
+          Khi khách liên hệ mua acc, hãy hướng dẫn họ giao dịch qua <strong>Chủ Sàn làm trung gian</strong> để đảm bảo an toàn cho cả hai bên.
         </p>
         <ol className="mb-4 space-y-3">
           {[
             "Khách thỏa thuận giá với bạn (người bán)",
-            "Bạn tạo Box giao dịch trên Zalo có Chủ Shop tham gia",
-            "Chủ Shop giữ tiền & xác nhận acc trước khi chuyển cho khách",
+            "Bạn tạo Box giao dịch trên Zalo có Chủ Sàn tham gia",
+            "Chủ Sàn giữ tiền & xác nhận acc trước khi chuyển cho khách",
           ].map((step, i) => (
             <li key={i} className="flex items-start gap-3">
               <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-100 dark:bg-emerald-500/20 text-xs font-bold text-emerald-700 dark:text-emerald-400">
@@ -474,7 +474,7 @@ export default function GuidePage() {
           ))}
         </ol>
         <InfoBox type="warning">
-          Chủ shop <strong>không chịu trách nhiệm</strong> nếu giao dịch không thông qua chủ shop làm trung gian. Khi khách liên hệ trực tiếp với bạn, hệ thống sẽ hiển thị cảnh báo này cho khách.
+          Chủ sàn <strong>không chịu trách nhiệm</strong> nếu giao dịch không thông qua chủ sàn làm trung gian. Khi khách liên hệ trực tiếp với bạn, hệ thống sẽ hiển thị cảnh báo này cho khách.
         </InfoBox>
       </div>
 
@@ -483,7 +483,7 @@ export default function GuidePage() {
         <SectionHeader
           icon={RotateCcw}
           title="Chính Sách Thu Lại Acc"
-          subtitle="Quy định thu lại acc đã bán của shop"
+          subtitle="Quy định thu lại acc đã bán của sàn"
           color="blue"
         />
         <p className="mb-4 text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
@@ -517,12 +517,12 @@ export default function GuidePage() {
         <div className="space-y-3">
           <InfoBox type="warning">
             <span>
-              <strong>Hệ thống phê duyệt:</strong> Acc mới tạo hoặc chỉnh sửa có thể cần chủ shop duyệt trước khi hiển thị công khai. Nếu bạn thấy badge <strong>&quot;Chờ duyệt&quot;</strong> trên acc, hãy nhắn chủ shop để được duyệt nhanh.
+              <strong>Hệ thống phê duyệt:</strong> Acc mới tạo hoặc chỉnh sửa có thể cần chủ sàn duyệt trước khi hiển thị công khai. Nếu bạn thấy badge <strong>&quot;Chờ duyệt&quot;</strong> trên acc, hãy nhắn chủ sàn để được duyệt nhanh.
             </span>
           </InfoBox>
           <InfoBox type="warning">
             <span>
-              <strong>Thông báo tự động:</strong> Mỗi khi bạn tạo mới, chỉnh sửa, xóa hoặc đánh dấu đã bán một acc, <strong>chủ shop sẽ nhận được email thông báo</strong>. Đây là cơ chế giám sát bình thường.
+              <strong>Thông báo tự động:</strong> Mỗi khi bạn tạo mới, chỉnh sửa, xóa hoặc đánh dấu đã bán một acc, <strong>chủ sàn sẽ nhận được email thông báo</strong>. Đây là cơ chế giám sát bình thường.
             </span>
           </InfoBox>
           <InfoBox type="info">
@@ -551,7 +551,7 @@ export default function GuidePage() {
             { step: "Thêm email game vào hệ thống", sub: "Menu Email → Thêm Email Mới", icon: Mail, color: "bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-400" },
             { step: "Tạo tài khoản mới", sub: "Menu Tài Khoản → Thêm Tài Khoản — điền đầy đủ thông tin và upload ảnh", icon: Gamepad2, color: "bg-indigo-100 text-indigo-700 dark:bg-indigo-500/20 dark:text-indigo-400" },
             { step: "Liên kết email với acc vừa tạo", sub: "Chọn email ở mục Liên kết Email trong form tạo/sửa acc", icon: Link2, color: "bg-purple-100 text-purple-700 dark:bg-purple-500/20 dark:text-purple-400" },
-            { step: "Chờ duyệt (nếu cần)", sub: "Nhắn chủ shop nếu acc chưa hiển thị sau vài phút", icon: Star, color: "bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400" },
+            { step: "Chờ duyệt (nếu cần)", sub: "Nhắn chủ sàn nếu acc chưa hiển thị sau vài phút", icon: Star, color: "bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400" },
             { step: "Khi có khách muốn tìm acc → Ghi yêu cầu", sub: "Menu Yêu Cầu Tìm Acc → Thêm Yêu Cầu (tuỳ chọn)", icon: SearchCheck, color: "bg-cyan-100 text-cyan-700 dark:bg-cyan-500/20 dark:text-cyan-400" },
             { step: "Khi có khách mua → Đánh dấu đã bán", sub: 'Nút "Tác vụ" → Đánh dấu đã bán → Nhập giá thực tế', icon: BadgeDollarSign, color: "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400" },
             { step: "Kiểm tra lợi nhuận trên Dashboard", sub: "Menu Bảng Điều Khiển", icon: LayoutDashboard, color: "bg-rose-100 text-rose-700 dark:bg-rose-500/20 dark:text-rose-400" },

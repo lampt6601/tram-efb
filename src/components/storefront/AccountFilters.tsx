@@ -257,7 +257,7 @@ export function AccountFilters({
         </Button>
 
         {/* Price range */}
-        <div className="flex w-56 shrink-0 items-center gap-1 rounded-lg border border-slate-200 bg-white px-2.5 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+        <div className="flex h-9 w-56 shrink-0 items-center gap-1 rounded-lg border border-slate-200 bg-white px-2.5 shadow-sm dark:border-slate-700 dark:bg-slate-800">
           <PriceInput
             placeholder="Giá từ"
             value={localMinPrice}
@@ -365,7 +365,7 @@ export function AccountFilters({
             </Select>
           </div>
 
-          <div className="flex min-w-0 flex-1 items-center gap-1 rounded-lg border border-slate-200 bg-white px-2 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+          <div className="flex h-8 min-w-0 flex-1 items-center gap-1 rounded-lg border border-slate-200 bg-white px-2 shadow-sm dark:border-slate-700 dark:bg-slate-800">
             <PriceInput
               placeholder="Giá từ"
               value={localMinPrice}

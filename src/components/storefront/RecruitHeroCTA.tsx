@@ -1,29 +1,17 @@
 import Link from "next/link";
-import { ShoppingBag, UserPlus, Megaphone, ChevronRight } from "lucide-react";
+import { UserPlus, Megaphone, ChevronRight } from "lucide-react";
 
 const cards = [
-  {
-    href: "#accounts",
-    icon: ShoppingBag,
-    iconColor: "text-indigo-400",
-    iconBg: "bg-indigo-500/15 border-indigo-500/25",
-    title: "Mua tài khoản",
-    desc: "Duyệt acc từ nhiều seller uy tín",
-    descFull: "Duyệt acc từ nhiều seller uy tín, được xác minh & bảo kê.",
-    cta: "Xem acc đang bán",
-    ctaStyle:
-      "bg-indigo-500 text-white hover:bg-indigo-400 shadow-lg shadow-indigo-500/25",
-  },
   {
     href: "/seller/apply",
     icon: UserPlus,
     iconColor: "text-emerald-400",
     iconBg: "bg-emerald-500/15 border-emerald-500/25",
     title: "Đăng ký bán",
-    desc: "Mở gian hàng, đăng acc & bán trực tiếp",
-    descFull: "Mở gian hàng miễn phí, đăng acc lên sàn & bán trực tiếp.",
+    desc: "Mở gian hàng & đăng acc lên sàn",
+    descFull: "Mở gian hàng miễn phí, đăng acc lên sàn để tiếp cận người mua.",
     badge: "Miễn phí",
-    cta: "Đăng ký seller",
+    cta: "Đăng ký ngay",
     ctaStyle:
       "border border-emerald-500/40 text-emerald-300 hover:bg-emerald-500/10",
   },
@@ -33,9 +21,10 @@ const cards = [
     iconColor: "text-amber-400",
     iconBg: "bg-amber-500/15 border-amber-500/25",
     title: "Thanh lý acc",
-    desc: "Đăng yêu cầu, seller sẽ liên hệ mua",
-    descFull: "Đăng yêu cầu bán, các seller sẽ xem và liên hệ mua lại.",
-    cta: "Đăng yêu cầu bán",
+    desc: "Tạo yêu cầu, người mua sẽ liên hệ",
+    descFull:
+      "Tạo yêu cầu thanh lý, người thu mua phù hợp sẽ liên hệ bạn.",
+    cta: "Tạo yêu cầu",
     ctaStyle:
       "border border-amber-500/40 text-amber-300 hover:bg-amber-500/10",
   },
@@ -43,7 +32,7 @@ const cards = [
 
 export function RecruitHeroCTA() {
   return (
-    <div className="mx-auto mt-5 grid w-full max-w-3xl grid-cols-1 gap-2 sm:mt-10 sm:grid-cols-3 sm:gap-4 lg:mx-0">
+    <div className="mx-auto mt-5 grid w-full max-w-xl grid-cols-1 gap-2 sm:mt-10 sm:grid-cols-2 sm:gap-4 lg:mx-0">
       {cards.map((card) => (
         <Link
           key={card.href}

@@ -477,7 +477,7 @@ export function AdminActionsDropdown({
                 autoFocus
               />
               <p className="mt-1.5 text-xs text-slate-400 dark:text-slate-500">
-                Zalo group giữa Chủ Shop và người bán. Khách mua sẽ join vào box này.
+                Zalo group giữa Chủ Sàn và người bán. Khách mua sẽ join vào box này.
               </p>
               {error && <p className="mt-2 text-xs text-red-600 dark:text-red-400">{error}</p>}
             </div>

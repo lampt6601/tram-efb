@@ -9,7 +9,7 @@ import { ZaloNotify } from "@/components/storefront/ZaloNotify";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { AutoScrollSlider } from "@/components/ui/AutoScrollSlider";
 import Link from "next/link";
-import { Gamepad2, Search, BadgeCheck, Flame, Clock, ShieldCheck, ArrowRight } from "lucide-react";
+import { Gamepad2, Search, BadgeCheck, Flame, Clock, ShieldCheck, CircleCheck, ArrowRight } from "lucide-react";
 import Image from "next/image";
 import { RecruitHeroCTA } from "@/components/storefront/RecruitHeroCTA";
 import { RecruitAdminSection } from "@/components/storefront/RecruitAdminSection";
@@ -160,20 +160,29 @@ export default async function HomePage({
                     priority
                   />
                   <span className="text-[11px] font-semibold tracking-wide text-indigo-300 sm:text-xs">
-                    Shop của <span className="text-white">Trần Hữu Cảnh</span>
+                    Sàn của <span className="text-white">Trần Hữu Cảnh</span>
                   </span>
                   <BadgeCheck className="h-3.5 w-3.5 text-indigo-400 sm:h-4 sm:w-4" />
                 </div>
                 <h1 className="text-balance text-2xl font-extrabold tracking-tight text-white sm:text-4xl lg:text-5xl">
                   Sàn Giao Dịch{" "}
-                  <span className="text-indigo-400 sm:block">
+                  <span className="block text-indigo-400">
                     Tài Khoản eFootball
                   </span>
                 </h1>
-                <p className="mx-auto mt-2 max-w-xl text-xs leading-relaxed text-slate-400 sm:mt-4 sm:text-base lg:mx-0">
-                  Kết nối người mua — người bán tài khoản eFootball uy tín.
-                  Mỗi seller đều được xác minh và đặt tiền bảo kê.
+                <p className="mx-auto mt-2 text-xs text-slate-400 sm:mt-3 sm:text-base lg:mx-0">
+                  Mua bán tài khoản eFootball an toàn, giá hợp lý.
                 </p>
+                <div className="mx-auto mt-2 flex flex-wrap justify-center gap-x-4 gap-y-1 sm:mt-3 lg:mx-0 lg:justify-start">
+                  <span className="inline-flex items-center gap-1.5 text-[11px] text-slate-400 sm:text-xs">
+                    <ShieldCheck className="h-3.5 w-3.5 text-indigo-400" />
+                    Chủ sàn duyệt trước khi đăng
+                  </span>
+                  <span className="inline-flex items-center gap-1.5 text-[11px] text-slate-400 sm:text-xs">
+                    <CircleCheck className="h-3.5 w-3.5 text-emerald-400" />
+                    Giao dịch an toàn qua trung gian chủ sàn
+                  </span>
+                </div>
                 {/* Recruitment CTA */}
                 <RecruitHeroCTA />
                 {/* Social proof stats */}
@@ -288,7 +297,7 @@ export default async function HomePage({
                   </h2>
                   <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
                     {soldItems.length} giao dịch thành công — minh chứng uy tín
-                    của shop
+                    của sàn
                   </p>
                 </div>
               </ScrollReveal>

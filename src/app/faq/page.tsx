@@ -9,19 +9,19 @@ const faqData = [
     questions: [
       {
         q: "Làm sao để mua tài khoản?",
-        a: "Quy trình mua acc rất đơn giản: 1) Chọn acc mà bạn thích, 2) Nhắn tin cho shop qua Zalo hoặc Facebook, 3) Chốt giá với shop, 4) Thanh toán theo hình thức mà shop đưa ra, 5) Nhận tài khoản trong vòng 5-15 phút sau khi xác nhận thanh toán.",
+        a: "Quy trình mua acc rất đơn giản: 1) Chọn acc mà bạn thích, 2) Nhắn tin cho chủ sàn qua Zalo hoặc Facebook, 3) Chốt giá với chủ sàn, 4) Thanh toán theo hình thức mà chủ sàn đưa ra, 5) Nhận tài khoản trong vòng 5-15 phút sau khi xác nhận thanh toán.",
       },
       {
         q: "Thanh toán bằng cách nào?",
-        a: "Shop chấp nhận nhiều hình thức thanh toán để bạn lựa chọn: Chuyển khoản ngân hàng (các ngân hàng nội địa), Momo (ví điện tử), ZaloPay (ví điện tử). Bạn có thể thảo luận với shop để chọn phương thức thanh toán phù hợp nhất.",
+        a: "Chủ sàn chấp nhận nhiều hình thức thanh toán để bạn lựa chọn: Chuyển khoản ngân hàng (các ngân hàng nội địa), Momo (ví điện tử), ZaloPay (ví điện tử). Bạn có thể thảo luận với chủ sàn để chọn phương thức thanh toán phù hợp nhất.",
       },
       {
         q: "Mua xong bao lâu nhận acc?",
-        a: "Sau khi bạn xác nhận thanh toán, shop sẽ gửi tài khoản cho bạn rất nhanh. Thường thì bạn sẽ nhận được acc trong vòng 5-15 phút. Nếu không nhận được trong thời gian này, vui lòng liên hệ ngay với shop qua Zalo để kiểm tra.",
+        a: "Sau khi bạn xác nhận thanh toán, chủ sàn sẽ gửi tài khoản cho bạn rất nhanh. Thường thì bạn sẽ nhận được acc trong vòng 5-15 phút. Nếu không nhận được trong thời gian này, vui lòng liên hệ ngay với chủ sàn qua Zalo để kiểm tra.",
       },
       {
         q: "Có được kiểm tra acc trước khi mua không?",
-        a: "Có, bạn hoàn toàn có quyền kiểm tra tài khoản trước khi mua. Shop sẽ gửi video hoặc ảnh chi tiết về acc (chỉ số game, tính năng, hình ảnh các màn hình chính) để bạn xem rõ. Nếu còn câu hỏi về acc nào, đừng ngần ngại nhắn tin cho shop để được tư vấn kỹ lưỡng.",
+        a: "Có, bạn hoàn toàn có quyền kiểm tra tài khoản trước khi mua. Chủ sàn sẽ gửi video hoặc ảnh chi tiết về acc (chỉ số game, tính năng, hình ảnh các màn hình chính) để bạn xem rõ. Nếu còn câu hỏi về acc nào, đừng ngần ngại nhắn tin cho chủ sàn để được tư vấn kỹ lưỡng.",
       },
     ],
   },
@@ -30,11 +30,11 @@ const faqData = [
     questions: [
       {
         q: "Acc có bảo hành không?",
-        a: "Có, tất cả acc bán tại THC eFootball Shop đều có bảo hành login 24 giờ đầu tiên. Điều này nghĩa là nếu bạn không thể đăng nhập được acc trong vòng 24 giờ đầu, shop sẽ hỗ trợ xử lý ngay. Ngoài ra, shop cung cấp hỗ trợ kỹ thuật miễn phí mọi lúc khi bạn cần.",
+        a: "Có, tất cả acc bán tại THC eFootball Shop đều có bảo hành login 24 giờ đầu tiên. Điều này nghĩa là nếu bạn không thể đăng nhập được acc trong vòng 24 giờ đầu, chủ sàn sẽ hỗ trợ xử lý ngay. Ngoài ra, chủ sàn cung cấp hỗ trợ kỹ thuật miễn phí mọi lúc khi bạn cần.",
       },
       {
         q: "Nếu acc bị lỗi sau khi mua thì sao?",
-        a: "Nếu acc bị lỗi hoặc gặp vấn đề sau khi mua, bạn cần liên hệ ngay với shop qua Zalo hoặc Facebook. Shop sẽ tiếp nhận thông tin chi tiết về lỗi và sẽ hỗ trợ xử lý ngay lập tức. Các vấn đề phổ biến như lỗi đăng nhập, lỗi kết nối server hay lỗi dữ liệu sẽ được giải quyết trong thời gian ngắn nhất.",
+        a: "Nếu acc bị lỗi hoặc gặp vấn đề sau khi mua, bạn cần liên hệ ngay với chủ sàn qua Zalo hoặc Facebook. Chủ sàn sẽ tiếp nhận thông tin chi tiết về lỗi và sẽ hỗ trợ xử lý ngay lập tức. Các vấn đề phổ biến như lỗi đăng nhập, lỗi kết nối server hay lỗi dữ liệu sẽ được giải quyết trong thời gian ngắn nhất.",
       },
       {
         q: "Shop có uy tín không?",
@@ -112,7 +112,7 @@ export default function FAQPage() {
                 Còn câu hỏi khác?
               </h3>
               <p className="text-slate-600 mb-6 dark:text-slate-400">
-                Liên hệ với shop qua Zalo hoặc Facebook để được tư vấn trực tiếp
+                Liên hệ với chủ sàn qua Zalo hoặc Facebook để được tư vấn trực tiếp
                 từ đội ngũ chuyên viên của chúng tôi.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">

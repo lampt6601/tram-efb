@@ -26,7 +26,7 @@ export function OwnerSection() {
           {/* Info */}
           <div className="flex-1 text-center sm:text-left">
             <p className="mb-1 text-xs font-semibold uppercase tracking-widest text-indigo-500 dark:text-indigo-400">
-              Chủ Shop
+              Chủ Sàn
             </p>
             <h2 className="text-2xl font-extrabold text-slate-900 dark:text-slate-100 sm:text-3xl">
               Trần Hữu Cảnh

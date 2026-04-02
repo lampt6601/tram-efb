@@ -1,16 +1,16 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Thu Mua Tài Khoản eFootball",
+  title: "Thanh Lý Tài Khoản eFootball",
   description:
-    "Bán tài khoản eFootball của bạn cho THC eFootball Shop. Định giá hợp lý, thanh toán nhanh chóng, quy trình đơn giản.",
+    "Đăng yêu cầu thanh lý tài khoản eFootball của bạn. Người thu mua phù hợp sẽ liên hệ trực tiếp, quy trình đơn giản và miễn phí.",
   alternates: {
     canonical: "https://thc-efb.com/sell",
   },
   openGraph: {
-    title: "Thu Mua Tài Khoản eFootball | THC EFB",
+    title: "Thanh Lý Tài Khoản eFootball | THC EFB",
     description:
-      "Bán tài khoản eFootball của bạn cho THC eFootball Shop. Định giá hợp lý, thanh toán nhanh chóng.",
+      "Đăng yêu cầu thanh lý tài khoản eFootball. Người thu mua phù hợp sẽ liên hệ bạn trực tiếp.",
     url: "/sell",
     type: "website",
   },

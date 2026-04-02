@@ -36,7 +36,7 @@ export function BuybackPolicyContent({ tierBg = "bg-slate-50 dark:bg-slate-800/5
       <div className="mt-2 flex items-center gap-2 rounded-lg bg-indigo-50 px-3 py-2 dark:bg-indigo-500/10">
         <MessageCircle className="h-3.5 w-3.5 shrink-0 text-indigo-500" />
         <span className="text-[11px] font-semibold text-indigo-700 dark:text-indigo-300">
-          Liên hệ Chủ Shop để được hỗ trợ thu lại acc
+          Liên hệ Chủ Sàn để được hỗ trợ thu lại acc
         </span>
       </div>
     </>

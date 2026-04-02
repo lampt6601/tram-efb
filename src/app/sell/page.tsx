@@ -129,8 +129,8 @@ export default function SellPage() {
               Đã gửi thành công!
             </h1>
             <p className="mt-3 text-slate-600 dark:text-slate-400">
-              Shop đã nhận thông tin acc của bạn. Chúng tôi sẽ liên hệ qua Zalo
-              để trao đổi thêm.
+              Yêu cầu thanh lý đã được đăng. Người thu mua phù hợp sẽ liên hệ
+              bạn qua Zalo.
             </p>
             <div className="mt-6 flex flex-wrap justify-center gap-3">
               <a
@@ -172,10 +172,10 @@ export default function SellPage() {
               <Upload className="h-6 w-6 text-emerald-600 sm:h-7 sm:w-7 dark:text-emerald-400" />
             </div>
             <h1 className="text-xl font-bold text-slate-900 sm:text-2xl dark:text-slate-100">
-              Thu Mua Acc
+              Thanh Lý Acc
             </h1>
             <p className="mt-1.5 text-sm text-slate-600 dark:text-slate-400">
-              Đăng ảnh acc của bạn, shop sẽ liên hệ thu mua nhanh chóng
+              Đăng thông tin acc của bạn, người thu mua phù hợp sẽ liên hệ
             </p>
           </div>
 
@@ -339,7 +339,7 @@ export default function SellPage() {
                   className="mt-1.5 rounded-lg border-slate-200 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200"
                 />
                 <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">
-                  Shop sẽ liên hệ bạn qua Zalo để trao đổi giá
+                  Người thu mua sẽ liên hệ bạn qua Zalo
                 </p>
               </div>
             </div>
@@ -349,11 +349,11 @@ export default function SellPage() {
               disabled={isPending}
               className="mt-6 h-11 w-full rounded-xl bg-emerald-600 text-sm font-semibold text-white hover:bg-emerald-700"
             >
-              {isPending ? "Đang gửi..." : "Gửi Cho Shop Xem"}
+              {isPending ? "Đang gửi..." : "Gửi Yêu Cầu"}
             </Button>
 
             <p className="mt-3 text-center text-xs text-slate-400 dark:text-slate-500">
-              Miễn phí · Shop sẽ liên hệ trong 24h nếu quan tâm
+              Miễn phí · Yêu cầu sẽ hiển thị cho người thu mua trên sàn
             </p>
           </form>
         </div>

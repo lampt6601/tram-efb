@@ -75,7 +75,7 @@ const comparisonRows = [
   },
   {
     feature: "Tập trung công việc",
-    thc: "Chỉ cần thu mua acc, shop lo phần bán",
+    thc: "Chỉ cần thu mua acc, sàn lo phần bán",
     fb: "Vừa thu mua, vừa đăng bài, vừa chăm khách",
   },
   {

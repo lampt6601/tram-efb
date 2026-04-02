@@ -120,7 +120,7 @@ export default function EventPageClient({ entries, results }: EventPageClientPro
             </span>
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-sm text-white/60 sm:text-base">
-            Minigame quay số trúng thưởng cây nhà lá vườn ngay trên hệ thống website của shop.
+            Minigame quay số trúng thưởng cây nhà lá vườn ngay trên hệ thống website của sàn.
             Trúng là bế acc về đá ngay! 🎮⚽
           </p>
         </div>

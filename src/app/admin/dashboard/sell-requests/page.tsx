@@ -97,7 +97,7 @@ export default function SellRequestsPage() {
         Yêu Cầu Bán Acc
       </h1>
       <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-        Khách muốn bán acc cho shop ({items.length} yêu cầu)
+        Khách muốn bán acc cho sàn ({items.length} yêu cầu)
       </p>
 
       {/* Pending */}

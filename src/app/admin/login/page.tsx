@@ -27,7 +27,7 @@ function AdminLoginForm() {
   const searchParams = useSearchParams();
   const isDisabled = searchParams.get("error") === "disabled";
   const [error, setError] = useState(
-    isDisabled ? "Tài khoản của bạn đã bị vô hiệu hóa. Vui lòng liên hệ chủ shop." : "",
+    isDisabled ? "Tài khoản của bạn đã bị vô hiệu hóa. Vui lòng liên hệ chủ sàn." : "",
   );
   const [loading, setLoading] = useState(false);
   const router = useRouter();

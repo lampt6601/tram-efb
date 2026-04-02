@@ -57,13 +57,13 @@ export function BuyNowButton({
               <div className="flex items-center gap-2 mb-2.5">
                 <ShieldCheck className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
                 <h3 className="text-sm font-bold text-emerald-800 dark:text-emerald-300">
-                  Giao dịch an toàn qua Shop
+                  Giao dịch an toàn qua Chủ Sàn
                 </h3>
               </div>
               <ol className="list-decimal pl-5 space-y-2 text-xs text-slate-600 marker:text-emerald-500 marker:font-semibold dark:text-slate-400">
-                <li>Tham gia <span className="font-semibold text-slate-900 dark:text-slate-100">Box Giao Dịch</span> (đã có Chủ Shop)</li>
+                <li>Tham gia <span className="font-semibold text-slate-900 dark:text-slate-100">Box Giao Dịch</span> (đã có Chủ Sàn)</li>
                 <li>Thỏa thuận giá với người bán trong box</li>
-                <li>Chủ Shop giữ tiền & xác nhận acc trước khi chuyển</li>
+                <li>Chủ Sàn giữ tiền & xác nhận acc trước khi chuyển</li>
               </ol>
             </div>
 
@@ -79,7 +79,7 @@ export function BuyNowButton({
             <div className="mt-3 flex items-start gap-2 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2.5 dark:border-amber-500/20 dark:bg-amber-500/10">
               <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-600 dark:text-amber-400" />
               <p className="text-[11px] leading-relaxed font-medium text-amber-700 dark:text-amber-300">
-                Chủ shop <span className="font-bold">không chịu trách nhiệm</span> nếu giao dịch không thông qua chủ shop làm trung gian.
+                Chủ sàn <span className="font-bold">không chịu trách nhiệm</span> nếu giao dịch không thông qua chủ sàn làm trung gian.
               </p>
             </div>
 

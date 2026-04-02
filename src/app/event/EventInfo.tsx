@@ -37,7 +37,7 @@ const turnRules = [
   {
     icon: UserPlus,
     label: "+1 Lượt",
-    description: "Đã kết bạn Facebook với Admin (Chủ shop).",
+    description: "Đã kết bạn Facebook với Admin (Chủ sàn).",
     color: "text-blue-400",
     bg: "bg-blue-500/10",
     border: "border-blue-500/20",

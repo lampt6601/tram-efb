@@ -73,7 +73,7 @@ export default function RequestPage() {
             </h1>
             <p className="mt-3 text-slate-600 dark:text-slate-400">
               Chúng tôi đã nhận yêu cầu tìm acc của bạn. Khi có acc phù hợp,
-              shop sẽ liên hệ bạn qua {contactPlatform}.
+              chủ sàn sẽ liên hệ bạn qua {contactPlatform}.
             </p>
             <div className="mt-6 flex flex-wrap justify-center gap-3">
               <a
@@ -219,7 +219,7 @@ export default function RequestPage() {
             </Button>
 
             <p className="mt-3 text-center text-xs text-slate-400 dark:text-slate-500">
-              Miễn phí · Shop sẽ liên hệ khi có acc phù hợp
+              Miễn phí · Chủ sàn sẽ liên hệ khi có acc phù hợp
             </p>
           </form>
         </div>
