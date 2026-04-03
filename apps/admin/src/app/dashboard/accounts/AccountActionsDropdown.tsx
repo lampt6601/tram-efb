@@ -584,6 +584,7 @@ export function AccountActionsDropdown({
       {/* ── Edit sheet ──────────────────────────────────────────────────── */}
       <AccountEditSheet
         accountId={id}
+        initialAccount={account as any}
         open={editSheetOpen}
         onOpenChange={setEditSheetOpen}
       />

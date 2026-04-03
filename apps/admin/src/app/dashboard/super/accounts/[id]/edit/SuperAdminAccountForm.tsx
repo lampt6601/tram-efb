@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, X, UploadCloud, Star, Copy, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
+import { ArrowLeft, X, UploadCloud, Star, Copy, CheckCircle2, AlertCircle, Loader2, ChevronRight, ImageIcon } from "lucide-react";
 import Link from "next/link";
 import type { Account, Email, AccountStatus } from "@thc-efb/supabase/types";
 import { useForm, Controller } from "react-hook-form";
@@ -63,6 +63,8 @@ export function SuperAdminAccountForm({ account, availableEmails, embedded, onSu
   const [previews, setPreviews] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [imageError, setImageError] = useState("");
+  /** Image section collapsed by default for performance — click to expand */
+  const [showImages, setShowImages] = useState(false);
   const {
     files: uploadFilesState,
     overallProgress,
@@ -543,6 +545,39 @@ export function SuperAdminAccountForm({ account, availableEmails, embedded, onSu
             </div>
           </div>
 
+          {!showImages ? (
+            <button
+              type="button"
+              onClick={() => setShowImages(true)}
+              className="flex w-full items-center gap-3 rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-3 text-left transition-colors hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-800/50 dark:hover:bg-slate-800"
+            >
+              <ImageIcon className="h-5 w-5 shrink-0 text-slate-400" />
+              <div className="min-w-0 flex-1">
+                <span className="text-sm font-medium text-slate-700 dark:text-slate-200">
+                  Hình ảnh ({images.length} ảnh)
+                </span>
+                {images.length > 0 && (
+                  <div className="mt-1.5 flex gap-1.5 overflow-hidden">
+                    {images.slice(0, 5).map((img, i) => (
+                      /* eslint-disable-next-line @next/next/no-img-element */
+                      <img
+                        key={i}
+                        src={adminThumb(img)}
+                        alt=""
+                        className="h-10 w-16 shrink-0 rounded-md object-cover border border-slate-200 dark:border-slate-600"
+                      />
+                    ))}
+                    {images.length > 5 && (
+                      <span className="flex h-10 w-16 shrink-0 items-center justify-center rounded-md border border-slate-200 bg-slate-100 text-xs font-medium text-slate-500 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-400">
+                        +{images.length - 5}
+                      </span>
+                    )}
+                  </div>
+                )}
+              </div>
+              <ChevronRight className="h-4 w-4 shrink-0 text-slate-400" />
+            </button>
+          ) : (
           <div>
             <Label className="mb-1.5 text-slate-700 dark:text-slate-200">
               Hình Ảnh <span className="text-red-500">*</span>
@@ -715,6 +750,7 @@ export function SuperAdminAccountForm({ account, availableEmails, embedded, onSu
               </div>
             )}
           </div>
+          )}
 
           <div className="flex gap-3 border-t border-slate-100 pt-6 dark:border-slate-700">
             <Button

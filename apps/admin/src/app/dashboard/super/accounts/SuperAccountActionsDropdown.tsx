@@ -940,6 +940,7 @@ export function SuperAccountActionsDropdown({
       {/* ── Edit sheet ──────────────────────────────────────────────────── */}
       <SuperAccountEditSheet
         accountId={id}
+        initialAccount={account as any}
         open={editSheetOpen}
         onOpenChange={setEditSheetOpen}
       />

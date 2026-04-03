@@ -12,6 +12,8 @@ import {
   CheckCircle2,
   AlertCircle,
   Loader2,
+  ChevronRight,
+  ImageIcon,
 } from "lucide-react";
 import {
   AndroidCoinIcon,
@@ -89,6 +91,8 @@ export function AccountForm({ account, duplicating, availableEmails, embedded, o
   const [loading, setLoading] = useState(false);
   const [imageError, setImageError] = useState("");
   const [quickMode] = useState(false);
+  /** In edit mode, image section is collapsed by default for performance */
+  const [showImages, setShowImages] = useState(!isEditing);
   /** True if admin is restricted (non-super, no auto_approve) — updates need re-approval */
   const [isRestricted, setIsRestricted] = useState(false);
   const {
@@ -934,6 +938,40 @@ export function AccountForm({ account, duplicating, availableEmails, embedded, o
           )}
 
           {/* ── Hình ảnh ── */}
+          {isEditing && !showImages ? (
+            <button
+              type="button"
+              onClick={() => setShowImages(true)}
+              className="flex w-full items-center gap-3 rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-3 text-left transition-colors hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-800/50 dark:hover:bg-slate-800"
+            >
+              <ImageIcon className="h-5 w-5 shrink-0 text-slate-400" />
+              <div className="min-w-0 flex-1">
+                <span className="text-sm font-medium text-slate-700 dark:text-slate-200">
+                  Hình ảnh ({images.length} ảnh)
+                </span>
+                {images.length > 0 && (
+                  <div className="mt-1.5 flex gap-1.5 overflow-hidden">
+                    {images.slice(0, 5).map((img, i) => (
+                      /* eslint-disable-next-line @next/next/no-img-element */
+                      <img
+                        key={i}
+                        src={adminThumb(img)}
+                        alt=""
+                        className="h-10 w-16 shrink-0 rounded-md object-cover border border-slate-200 dark:border-slate-600"
+                      />
+                    ))}
+                    {images.length > 5 && (
+                      <span className="flex h-10 w-16 shrink-0 items-center justify-center rounded-md border border-slate-200 bg-slate-100 text-xs font-medium text-slate-500 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-400">
+                        +{images.length - 5}
+                      </span>
+                    )}
+                  </div>
+                )}
+              </div>
+              <ChevronRight className="h-4 w-4 shrink-0 text-slate-400" />
+            </button>
+          ) : (
+          <>
           <SectionHeader label="Hình ảnh" />
 
           <div>
@@ -1132,6 +1170,8 @@ export function AccountForm({ account, duplicating, availableEmails, embedded, o
               </div>
             )}
           </div>
+          </>
+          )}
 
           {/* ── Submit ── */}
           <div className="flex gap-3 border-t border-slate-100 pt-5 dark:border-slate-700">

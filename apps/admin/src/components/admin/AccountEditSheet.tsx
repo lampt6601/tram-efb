@@ -17,26 +17,30 @@ import type { Account, Email } from "@thc-efb/supabase/types";
 
 interface AccountEditSheetProps {
   accountId: string;
+  /** Pre-loaded account from the table — renders form instantly while fetching emails */
+  initialAccount?: Account | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
-export function AccountEditSheet({ accountId, open, onOpenChange }: AccountEditSheetProps) {
-  const [account, setAccount] = useState<Account | null>(null);
+export function AccountEditSheet({ accountId, initialAccount, open, onOpenChange }: AccountEditSheetProps) {
+  const [account, setAccount] = useState<Account | null>(initialAccount ?? null);
   const [availableEmails, setAvailableEmails] = useState<Email[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!initialAccount);
 
   useEffect(() => {
     if (!open) {
-      setAccount(null);
-      setLoading(true);
+      setAccount(initialAccount ?? null);
+      setAvailableEmails([]);
+      setLoading(!initialAccount);
       return;
     }
 
     const supabase = createSupabaseBrowserClient();
 
     async function fetchData() {
-      setLoading(true);
+      if (!initialAccount) setLoading(true);
+
       const [{ data: acc }, { data: allEmails }, { data: linkedAccounts }] =
         await Promise.all([
           supabase
@@ -54,19 +58,20 @@ export function AccountEditSheet({ accountId, open, onOpenChange }: AccountEditS
             .neq("id", accountId),
         ]);
 
-      if (acc) {
-        setAccount(acc as Account);
+      const finalAccount = (acc as Account) ?? initialAccount;
+
+      if (finalAccount) {
+        setAccount(finalAccount);
 
         const linkedIds = new Set(
-          (linkedAccounts ?? []).map((a) => a.email_id)
+          (linkedAccounts ?? []).map((a: { email_id: string }) => a.email_id)
         );
         const available = (allEmails ?? []).filter(
           (e: Email) => !linkedIds.has(e.id)
         );
-        // Ensure current email is included
-        if (acc.email_id) {
+        if (finalAccount.email_id) {
           const current = (allEmails ?? []).find(
-            (e: Email) => e.id === acc.email_id
+            (e: Email) => e.id === finalAccount.email_id
           );
           if (current && !available.find((e: Email) => e.id === current.id)) {
             available.unshift(current);

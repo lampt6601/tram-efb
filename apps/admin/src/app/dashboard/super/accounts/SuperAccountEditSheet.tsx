@@ -17,24 +17,28 @@ import type { Account, Email } from "@thc-efb/supabase/types";
 
 interface SuperAccountEditSheetProps {
   accountId: string;
+  /** Pre-loaded account from the table — renders form instantly while fetching emails */
+  initialAccount?: Account | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
-export function SuperAccountEditSheet({ accountId, open, onOpenChange }: SuperAccountEditSheetProps) {
-  const [account, setAccount] = useState<Account | null>(null);
+export function SuperAccountEditSheet({ accountId, initialAccount, open, onOpenChange }: SuperAccountEditSheetProps) {
+  const [account, setAccount] = useState<Account | null>(initialAccount ?? null);
   const [availableEmails, setAvailableEmails] = useState<Email[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!initialAccount);
 
   useEffect(() => {
     if (!open) {
-      setAccount(null);
-      setLoading(true);
+      setAccount(initialAccount ?? null);
+      setAvailableEmails([]);
+      setLoading(!initialAccount);
       return;
     }
 
     async function fetchData() {
-      setLoading(true);
+      if (!initialAccount) setLoading(true);
+
       const result = await getSuperAccountForEdit(accountId);
       if (result) {
         setAccount(result.account as Account);
