@@ -52,17 +52,17 @@ const adminOverflowItems: NavItem[] = [
 
 const superAdminPrimaryItems: NavItem[] = [
   { href: "/dashboard", label: "Trang Chủ", icon: LayoutDashboard },
-  { href: "/dashboard/super/revenue", label: "Doanh Thu", icon: ClipboardCheck },
+  { href: "/dashboard/accounts", label: "Tài Khoản", icon: Gamepad2 },
+  { href: "/dashboard/emails", label: "Email", icon: Mail },
   { href: "/dashboard/super/accounts", label: "Tất Cả", icon: Globe },
-  { href: "/dashboard/super/admins", label: "Admins", icon: Users },
 ];
 
 const superAdminOverflowItems: NavItem[] = [
   { href: "/dashboard", label: "Trang Chủ", icon: LayoutDashboard },
-  { href: "/dashboard/accounts", label: "Tài Khoản", icon: Gamepad2 },
+  { href: "/dashboard/super/revenue", label: "Doanh Thu", icon: ClipboardCheck },
+  { href: "/dashboard/super/admins", label: "Admins", icon: Users },
   { href: "/dashboard/requests", label: "Tìm Acc", icon: SearchCheck },
   { href: "/dashboard/sell-requests", label: "Thu Mua", icon: Tag },
-  { href: "/dashboard/emails", label: "Email", icon: Mail },
   { href: "/dashboard/profile", label: "Hồ Sơ", icon: UserCircle },
   { href: "/dashboard/guide", label: "Hướng Dẫn", icon: BookOpen },
   { href: "/dashboard/super/applications", label: "Đơn Đăng Ký", icon: UserPlus, superAdmin: true },
