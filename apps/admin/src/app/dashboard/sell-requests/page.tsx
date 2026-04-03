@@ -3,7 +3,6 @@
 import { formatDateTimeVN } from "@thc-efb/shared/constants";
 import { useEffect, useRef, useState, useTransition } from "react";
 import { useSearchParams } from "next/navigation";
-import Image from "next/image";
 import { getSellRequests, updateSellRequestStatus } from "@/app/actions/sell-request-actions";
 import {
   Clock,
@@ -14,6 +13,7 @@ import {
   X,
   Banknote,
 } from "lucide-react";
+import { ImageGallery } from "@thc-efb/ui/image-gallery";
 import { Button } from "@thc-efb/ui/button";
 import { toast } from "sonner";
 import type { SellRequest } from "@thc-efb/supabase/types";
@@ -207,7 +207,6 @@ function SellRequestCard({
 }) {
   const status = statusConfig[item.status];
   const StatusIcon = status.icon;
-  const [showImages, setShowImages] = useState(false);
   const [showRing, setShowRing] = useState(highlighted);
   const cardRef = useRef<HTMLDivElement>(null);
 
@@ -261,54 +260,10 @@ function SellRequestCard({
             </p>
           )}
 
-          {/* Images — thumbnail preview + collapsible full view */}
+          {/* Images — gallery */}
           {item.images.length > 0 && (
             <div className="mt-3">
-              <button
-                onClick={() => setShowImages(!showImages)}
-                className="flex items-center gap-2"
-              >
-                {/* Always show first thumbnail */}
-                <div className="relative h-16 w-28 shrink-0 overflow-hidden rounded-lg bg-slate-100 dark:bg-slate-700">
-                  <Image
-                    src={item.images[0]}
-                    alt="Ảnh 1"
-                    fill
-                    className="object-cover"
-                    sizes="112px"
-                  />
-                  {item.images.length > 1 && !showImages && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-black/40 text-xs font-semibold text-white">
-                      +{item.images.length - 1} ảnh
-                    </div>
-                  )}
-                </div>
-                <span className="text-xs font-medium text-indigo-600 hover:underline dark:text-indigo-400">
-                  {showImages ? "Thu gọn" : `Xem ${item.images.length} ảnh`}
-                </span>
-              </button>
-
-              {showImages && (
-                <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
-                  {item.images.map((url, i) => (
-                    <a
-                      key={i}
-                      href={url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="relative aspect-video overflow-hidden rounded-lg bg-slate-100 dark:bg-slate-700"
-                    >
-                      <Image
-                        src={url}
-                        alt={`Ảnh ${i + 1}`}
-                        fill
-                        className="object-cover"
-                        sizes="200px"
-                      />
-                    </a>
-                  ))}
-                </div>
-              )}
+              <ImageGallery images={item.images} title={item.seller_name} />
             </div>
           )}
 

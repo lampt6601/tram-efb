@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import Image from "next/image";
 import {
   ChevronLeft,
@@ -48,6 +49,9 @@ export function ImageGallery({ images, title }: ImageGalleryProps) {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => setMounted(true), []);
 
   const goTo = useCallback(
     (index: number) => {
@@ -239,10 +243,10 @@ export function ImageGallery({ images, title }: ImageGalleryProps) {
         </div>
       )}
 
-      {/* Fullscreen Lightbox — swipeable */}
-      {isFullscreen && (
+      {/* Fullscreen Lightbox — rendered via portal to escape stacking context */}
+      {mounted && isFullscreen && createPortal(
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-xl"
+          className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/95 backdrop-blur-xl"
           onTouchStart={fullscreenSwipe.onTouchStart}
           onTouchEnd={fullscreenSwipe.onTouchEnd}
         >
@@ -291,7 +295,8 @@ export function ImageGallery({ images, title }: ImageGalleryProps) {
               {selectedIndex + 1} / {images.length}
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );
