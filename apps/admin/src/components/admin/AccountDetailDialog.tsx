@@ -23,13 +23,16 @@ import {
   ResponsiveDialogHeader,
   ResponsiveDialogTitle,
   ResponsiveDialogDescription,
+  ResponsiveDialogFooter,
 } from "@thc-efb/ui/responsive-dialog";
+import { ApproveButton } from "@/app/dashboard/super/pending/ApproveButton";
 
 interface AccountDetailDialogProps {
   account: AccountWithEmail;
   adminName: string;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  showApproveButton?: boolean;
 }
 
 function fmtDate(d: string) {
@@ -65,7 +68,10 @@ export function AccountDetailDialog({
   adminName,
   open,
   onOpenChange,
+  showApproveButton = false,
 }: AccountDetailDialogProps) {
+  console.log({ showApproveButton, account });
+
   const galleryImages = account.primary_image_url
     ? [
         account.primary_image_url,
@@ -262,6 +268,18 @@ export function AccountDetailDialog({
             </div>
           </div>
         </div>
+
+        {showApproveButton && !account.is_approved && account.status !== "Sold" && (
+          <ResponsiveDialogFooter className="shrink-0 px-5 pb-5 pt-3">
+            <ApproveButton
+              accountId={account.id}
+              accountTitle={account.title}
+              sellingPrice={account.selling_price}
+              onApproved={() => onOpenChange(false)}
+              fullWidth
+            />
+          </ResponsiveDialogFooter>
+        )}
       </ResponsiveDialogContent>
     </ResponsiveDialog>
   );

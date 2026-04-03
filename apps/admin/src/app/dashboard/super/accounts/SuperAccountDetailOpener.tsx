@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import { PendingAccountDrawer } from "../pending/PendingAccountDrawer";
+import { AccountDetailDialog } from "@/components/admin/AccountDetailDialog";
 import type { AccountWithEmail } from "@thc-efb/supabase/types";
 
 interface SuperAccountDetailOpenerProps {
@@ -22,20 +22,22 @@ export function SuperAccountDetailOpener({
   const account = accounts.find((a) => a.id === accountId);
   if (!account) return null;
 
-  const handleClose = () => {
-    const params = new URLSearchParams(searchParams.toString());
-    params.delete("detail");
-    const qs = params.toString();
-    router.replace(`${pathname}${qs ? `?${qs}` : ""}`, { scroll: false });
+  const handleOpenChange = (open: boolean) => {
+    if (!open) {
+      const params = new URLSearchParams(searchParams.toString());
+      params.delete("detail");
+      const qs = params.toString();
+      router.replace(`${pathname}${qs ? `?${qs}` : ""}`, { scroll: false });
+    }
   };
 
   return (
-    <PendingAccountDrawer
+    <AccountDetailDialog
       account={account}
-      adminEmail={adminEmailMap[account.user_id] ?? account.user_id}
-      showApproveButton={!account.is_approved && account.status !== "Sold"}
-      controlledOpen
-      onControlledClose={handleClose}
+      adminName={adminEmailMap[account.user_id] ?? account.user_id}
+      open
+      onOpenChange={handleOpenChange}
+      showApproveButton
     />
   );
 }

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Eye } from "lucide-react";
-import { PendingAccountDrawer } from "@/app/dashboard/super/pending/PendingAccountDrawer";
+import { AccountDetailDialog } from "@/components/admin/AccountDetailDialog";
 import type { AccountWithEmail } from "@thc-efb/supabase/types";
 
 interface AccountDetailButtonProps {
@@ -22,11 +22,12 @@ export function AccountDetailButton({ account, adminName }: AccountDetailButtonP
         <Eye className="h-3.5 w-3.5" />
         Chi tiết
       </button>
-      <PendingAccountDrawer
+      <AccountDetailDialog
         account={account}
-        adminEmail={adminName}
-        controlledOpen={open}
-        onControlledClose={() => setOpen(false)}
+        adminName={adminName}
+        open={open}
+        onOpenChange={setOpen}
+        showApproveButton
       />
     </>
   );

@@ -950,6 +950,7 @@ export function SuperAccountActionsDropdown({
         adminName={adminEmail}
         open={drawerOpen}
         onOpenChange={setDrawerOpen}
+        showApproveButton
       />
     </>
   );
