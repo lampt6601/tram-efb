@@ -27,6 +27,7 @@ function navigateTo(url: string, onClose: () => void) {
   }
 }
 
+
 function timeAgo(dateStr: string): string {
   const diff = Date.now() - new Date(dateStr).getTime();
   const mins = Math.floor(diff / 60_000);
@@ -43,6 +44,8 @@ interface NotificationPanelProps {
   onMarkAsRead: (ids: string[]) => void;
   onMarkAllAsRead: () => void;
   onClose: () => void;
+  /** If provided, called for account notifications (accountId in data) instead of navigating */
+  onNotificationClick?: (notifId: string, accountId: string, url: string) => void;
 }
 
 export function NotificationPanel({
@@ -50,6 +53,7 @@ export function NotificationPanel({
   onMarkAsRead,
   onMarkAllAsRead,
   onClose,
+  onNotificationClick,
 }: NotificationPanelProps) {
   const hasUnread = notifications.some((n) => !n.is_read);
 
@@ -58,6 +62,12 @@ export function NotificationPanel({
       onMarkAsRead([notification.id]);
     }
     const url = notification.data?.url as string | undefined;
+    const accountId = notification.data?.accountId as string | undefined;
+    if (accountId && url && onNotificationClick) {
+      onClose();
+      onNotificationClick(notification.id, accountId, url);
+      return;
+    }
     if (url) {
       navigateTo(url, onClose);
     }

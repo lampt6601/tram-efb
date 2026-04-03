@@ -36,12 +36,12 @@ export function AdminShell({ children, isSuperAdmin = false, adminName = "", adm
         >
           <Menu className="h-5 w-5" />
         </button>
-        <NotificationBell />
+        <NotificationBell isSuperAdmin={isSuperAdmin} />
       </div>
 
       {/* Desktop notification bell */}
       <div className="fixed right-6 top-5 z-30 hidden lg:block">
-        <NotificationBell />
+        <NotificationBell isSuperAdmin={isSuperAdmin} />
       </div>
 
       {/* Main content — offset by sidebar width on desktop */}
