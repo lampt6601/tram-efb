@@ -12,9 +12,11 @@ import {
 } from "lucide-react";
 import { galleryMain, galleryThumb, galleryFull } from "@thc-efb/shared/image-utils";
 
+
 interface ImageGalleryProps {
   images: string[];
   title: string;
+  disableFullscreen?: boolean;
 }
 
 function useSwipe(onSwipeLeft: () => void, onSwipeRight: () => void) {
@@ -45,7 +47,7 @@ function useSwipe(onSwipeLeft: () => void, onSwipeRight: () => void) {
   return { onTouchStart, onTouchEnd };
 }
 
-export function ImageGallery({ images, title }: ImageGalleryProps) {
+export function ImageGallery({ images, title, disableFullscreen = false }: ImageGalleryProps) {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -143,8 +145,8 @@ export function ImageGallery({ images, title }: ImageGalleryProps) {
 
       {/* Main Image — swipeable on mobile */}
       <div
-        className="group relative aspect-16/7 cursor-pointer overflow-hidden rounded-xl bg-slate-100 shadow-sm transition-all hover:shadow-md"
-        onClick={() => setIsFullscreen(true)}
+        className={`group relative aspect-16/7 overflow-hidden rounded-xl bg-slate-100 shadow-sm transition-all hover:shadow-md ${!disableFullscreen ? "cursor-pointer" : ""}`}
+        onClick={() => !disableFullscreen && setIsFullscreen(true)}
         onTouchStart={mainSwipe.onTouchStart}
         onTouchEnd={mainSwipe.onTouchEnd}
       >
@@ -167,11 +169,13 @@ export function ImageGallery({ images, title }: ImageGalleryProps) {
 
         {/* Overlay hover hints */}
         <div className="absolute inset-0 bg-black/0 transition-colors duration-300 group-hover:bg-black/10" />
-        <div className="absolute top-4 right-4 translate-y-2 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
-          <div className="flex items-center gap-1.5 rounded-full bg-black/60 px-3 py-1.5 text-xs font-medium text-white backdrop-blur-md">
-            <Maximize2 className="h-3.5 w-3.5" /> Phóng to
+        {!disableFullscreen && (
+          <div className="absolute top-4 right-4 translate-y-2 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+            <div className="flex items-center gap-1.5 rounded-full bg-black/60 px-3 py-1.5 text-xs font-medium text-white backdrop-blur-md">
+              <Maximize2 className="h-3.5 w-3.5" /> Phóng to
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Inline Navigation — hidden on mobile (use swipe) */}
         {images.length > 1 && (
@@ -209,9 +213,9 @@ export function ImageGallery({ images, title }: ImageGalleryProps) {
           </div>
         )}
 
-        {/* Image counter */}
+        {/* Image counter — always on mobile when >7 images (no dots), desktop on hover */}
         {images.length > 1 && (
-          <div className="absolute bottom-3 right-3 rounded-full bg-black/50 px-2.5 py-1 text-xs font-medium text-white backdrop-blur-md">
+          <div className={`absolute bottom-3 right-3 rounded-full bg-black/50 px-2.5 py-1 text-xs font-medium text-white backdrop-blur-md transition-opacity duration-300 ${images.length > 7 ? "block sm:opacity-0 sm:group-hover:opacity-100" : "hidden sm:block sm:opacity-0 sm:group-hover:opacity-100"}`}>
             {selectedIndex + 1} / {images.length}
           </div>
         )}

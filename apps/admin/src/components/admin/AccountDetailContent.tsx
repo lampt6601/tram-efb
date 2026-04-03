@@ -51,7 +51,7 @@ export function AccountDetailContent({ account, adminName }: AccountDetailConten
       {/* Images */}
       {galleryImages.length > 0 ? (
         <div className="px-4">
-          <ImageGallery images={galleryImages} title={account.title} />
+          <ImageGallery images={galleryImages} title={account.title} disableFullscreen />
         </div>
       ) : (
         <div className="mx-4 flex aspect-video items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-700">
