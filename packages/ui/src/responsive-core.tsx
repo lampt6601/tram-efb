@@ -158,13 +158,13 @@ export function createResponsiveComponents(
   }: React.ComponentProps<typeof desktop.Content>) {
     const { isMobile, open, onOpenChange } = React.useContext(ResponsiveContext)
     if (isMobile) {
-      return open ? (
-        <Drawer open onOpenChange={onOpenChange}>
+      return (
+        <Drawer open={!!open} onOpenChange={onOpenChange}>
           <DrawerContent className={typeof className === "function" ? undefined : className}>
             {children}
           </DrawerContent>
         </Drawer>
-      ) : null
+      )
     }
     return (
       <desktop.Content className={className} {...props}>

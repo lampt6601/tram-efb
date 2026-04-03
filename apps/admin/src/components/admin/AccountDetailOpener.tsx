@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { AccountDetailDialog } from "@/components/admin/AccountDetailDialog";
 import type { AccountWithEmail } from "@thc-efb/supabase/types";
@@ -21,6 +22,7 @@ export function AccountDetailOpener({
   adminNameMap,
   showApproveButton,
 }: AccountDetailOpenerProps) {
+  const [open, setOpen] = useState(true);
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -31,12 +33,16 @@ export function AccountDetailOpener({
   const resolvedAdminName =
     adminName ?? adminNameMap?.[account.user_id] ?? account.user_id;
 
-  const handleOpenChange = (open: boolean) => {
-    if (!open) {
-      const params = new URLSearchParams(searchParams.toString());
-      params.delete("detail");
-      const qs = params.toString();
-      router.replace(`${pathname}${qs ? `?${qs}` : ""}`, { scroll: false });
+  const handleOpenChange = (newOpen: boolean) => {
+    setOpen(false);
+    if (!newOpen) {
+      // Close animation runs immediately; navigate after it completes
+      setTimeout(() => {
+        const params = new URLSearchParams(searchParams.toString());
+        params.delete("detail");
+        const qs = params.toString();
+        router.replace(`${pathname}${qs ? `?${qs}` : ""}`, { scroll: false });
+      }, 350);
     }
   };
 
@@ -44,7 +50,7 @@ export function AccountDetailOpener({
     <AccountDetailDialog
       account={account}
       adminName={resolvedAdminName}
-      open
+      open={open}
       onOpenChange={handleOpenChange}
       showApproveButton={showApproveButton}
     />
