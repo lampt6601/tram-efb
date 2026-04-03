@@ -18,7 +18,6 @@ import {
   Copy,
   Tag,
   ShoppingCart,
-  Share2,
   Banknote,
 } from "lucide-react";
 import {
@@ -28,7 +27,6 @@ import {
   superAdminUpdateAccount,
   buybackAccount,
 } from "@/app/actions/super-admin-actions";
-import { openFacebookShare } from "@/lib/facebook-share";
 import { Button } from "@thc-efb/ui/button";
 import { Input } from "@thc-efb/ui/input";
 import { Label } from "@thc-efb/ui/label";
@@ -166,14 +164,7 @@ export function SuperAccountActionsDropdown({
     setApproving(true);
     try {
       await approveAccount(id);
-      toast.success(`Đã duyệt tài khoản "${title}"`, {
-        description: "Chia sẻ acc này lên Facebook của bạn?",
-        action: {
-          label: "📤 Đăng Facebook",
-          onClick: () => openFacebookShare(id, title, account.selling_price),
-        },
-        duration: 10000,
-      });
+      toast.success(`Đã duyệt tài khoản "${title}"`);
       router.refresh();
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Có lỗi xảy ra");
@@ -431,14 +422,6 @@ export function SuperAccountActionsDropdown({
               <LinkIcon className="h-4 w-4 text-slate-400" />
             )}
             {copied ? "Đã copy!" : "Copy link"}
-          </ResponsiveDropdownMenuItem>
-
-          <ResponsiveDropdownMenuItem
-            onClick={() => openFacebookShare(id, title, account.selling_price)}
-            className="gap-2"
-          >
-            <Share2 className="h-4 w-4 text-blue-500" />
-            Chia sẻ Facebook
           </ResponsiveDropdownMenuItem>
 
           <ResponsiveDropdownMenuSeparator />

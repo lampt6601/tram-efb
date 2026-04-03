@@ -7,11 +7,8 @@ import {
   CheckCircle,
   Plus,
   Bell,
-  Eye,
-  ExternalLink,
 } from "lucide-react";
-import { Button } from "@thc-efb/ui/button";
-import type { Notification, NavigateAction } from "@/hooks/useNotifications";
+import type { Notification } from "@/hooks/useNotifications";
 
 const TYPE_ICONS: Record<string, typeof Bell> = {
   sell_request: ShoppingCart,
@@ -21,22 +18,9 @@ const TYPE_ICONS: Record<string, typeof Bell> = {
   account_created: Plus,
 };
 
-/** Fallback actions for old notifications without navigateActions */
-const FALLBACK_ACTIONS: Record<string, NavigateAction[]> = {
-  sell_request: [{ id: "view", label: "Xem", url: "" }],
-  review: [{ id: "view", label: "Xem", url: "" }],
-  application: [{ id: "view", label: "Xem", url: "" }],
-  account_approved: [{ id: "view", label: "Xem", url: "" }],
-  account_created: [{ id: "view", label: "Xem", url: "" }],
-};
-
-function isExternalUrl(url: string): boolean {
-  return url.startsWith("http");
-}
-
 function navigateTo(url: string, onClose: () => void) {
   onClose();
-  if (isExternalUrl(url)) {
+  if (url.startsWith("http")) {
     window.open(url, "_blank");
   } else {
     window.location.href = url;
@@ -79,21 +63,6 @@ export function NotificationPanel({
     }
   };
 
-  const handleActionClick = (
-    e: React.MouseEvent,
-    notification: Notification,
-    action: NavigateAction,
-  ) => {
-    e.stopPropagation();
-    if (!notification.is_read) {
-      onMarkAsRead([notification.id]);
-    }
-    const url = action.url || (notification.data?.url as string);
-    if (url) {
-      navigateTo(url, onClose);
-    }
-  };
-
   return (
     <div className="absolute right-0 top-full z-50 mt-2 w-80 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xl dark:border-white/10 dark:bg-slate-900 sm:w-96">
       {/* Header */}
@@ -120,15 +89,6 @@ export function NotificationPanel({
         ) : (
           notifications.map((notification) => {
             const Icon = TYPE_ICONS[notification.type] || Bell;
-            const actions: NavigateAction[] =
-              notification.data?.navigateActions ??
-              FALLBACK_ACTIONS[notification.type] ??
-              [];
-            // For fallback actions without url, use the notification's main url
-            const resolvedActions = actions.map((a) => ({
-              ...a,
-              url: a.url || (notification.data?.url as string) || "",
-            }));
 
             return (
               <div
@@ -169,33 +129,9 @@ export function NotificationPanel({
                       {notification.body}
                     </p>
                   )}
-                  <div className="mt-1.5 flex items-center gap-2">
-                    <span className="text-xs text-slate-400 dark:text-slate-600">
-                      {timeAgo(notification.created_at)}
-                    </span>
-                    {resolvedActions.length > 0 && (
-                      <div className="flex gap-1">
-                        {resolvedActions.map((action) => (
-                          <Button
-                            key={action.id}
-                            size="xs"
-                            variant="ghost"
-                            onClick={(e) =>
-                              handleActionClick(e, notification, action)
-                            }
-                            className="h-5 gap-0.5 px-1.5 text-[10px] text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300"
-                          >
-                            {isExternalUrl(action.url) ? (
-                              <ExternalLink className="!size-2.5" />
-                            ) : (
-                              <Eye className="!size-2.5" />
-                            )}
-                            {action.label}
-                          </Button>
-                        ))}
-                      </div>
-                    )}
-                  </div>
+                  <span className="mt-1 block text-xs text-slate-400 dark:text-slate-600">
+                    {timeAgo(notification.created_at)}
+                  </span>
                 </div>
                 {!notification.is_read && (
                   <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-indigo-500" />
