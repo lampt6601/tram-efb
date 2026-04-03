@@ -61,7 +61,7 @@ export async function POST() {
 
   // 1. Account needs approval notification
   if (account) {
-    const accountUrl = `/dashboard/super/accounts?approval=pending&detail=${account.id}`;
+    const accountUrl = `/dashboard/noti?id=${account.id}`;
     notifications.push({
       user_id: null,
       type: "account_created",
@@ -72,14 +72,12 @@ export async function POST() {
         url: accountUrl,
         navigateActions: [
           { id: "view", label: "Xem chi tiết", url: accountUrl },
-          { id: "public", label: "Xem trang bán", url: `https://thc-efb.com/accounts/${account.id}` },
         ],
       },
       is_read: false,
     });
 
     // 2. Account update notification
-    const updateUrl = `/dashboard/super/accounts?detail=${account.id}`;
     notifications.push({
       user_id: null,
       type: "account_created",
@@ -87,10 +85,9 @@ export async function POST() {
       body: "Test Admin (test@example.com)",
       data: {
         accountId: account.id,
-        url: updateUrl,
+        url: accountUrl,
         navigateActions: [
-          { id: "view", label: "Xem chi tiết", url: updateUrl },
-          { id: "public", label: "Xem trang bán", url: `https://thc-efb.com/accounts/${account.id}` },
+          { id: "view", label: "Xem chi tiết", url: accountUrl },
         ],
       },
       is_read: false,

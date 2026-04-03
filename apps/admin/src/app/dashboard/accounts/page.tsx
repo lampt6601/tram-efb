@@ -48,6 +48,43 @@ export default async function AccountsPage({
   const { data: { user } } = await supabase.auth.getUser();
   const adminEmail = user?.user_metadata?.full_name ?? user?.email ?? user?.id ?? "";
 
+  // Fast path: deep-link from notification — only fetch the single account,
+  // skip the full list query. The list loads after the dialog is closed (URL param removed).
+  if (detailAccountId) {
+    const { data: singleAccount } = await supabase
+      .from("accounts")
+      .select(ACCOUNT_SELECT)
+      .eq("id", detailAccountId)
+      .single();
+
+    return (
+      <div>
+        <div className="mb-6 flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Tài Khoản</h1>
+          </div>
+          <Button
+            nativeButton={false}
+            render={<Link href="/dashboard/accounts/new" />}
+            className="bg-indigo-600 hover:bg-indigo-700 text-white"
+          >
+            <Plus className="h-4 w-4" /> Thêm Tài Khoản
+          </Button>
+        </div>
+        <div className="h-64 animate-pulse rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm" />
+        {singleAccount && (
+          <Suspense fallback={null}>
+            <AccountDetailOpener
+              accountId={detailAccountId}
+              accounts={[singleAccount as unknown as AccountWithEmail]}
+              adminName={adminEmail}
+            />
+          </Suspense>
+        )}
+      </div>
+    );
+  }
+
   let query = supabase.from("accounts").select(ACCOUNT_SELECT);
 
   if (statusFilter && statusFilter !== "all") {
@@ -204,15 +241,6 @@ export default async function AccountsPage({
         </div>
       </div>
 
-      {detailAccountId && (
-        <Suspense fallback={null}>
-          <AccountDetailOpener
-            accountId={detailAccountId}
-            accounts={items}
-            adminName={adminEmail}
-          />
-        </Suspense>
-      )}
     </div>
   );
 }

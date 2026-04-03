@@ -45,11 +45,47 @@ export default async function SuperAccountsPage({
 
   const service = createSupabaseServiceClient();
 
-  // Build admin email map from all users
+  // Build admin email map from all users (cached, fast)
   const allUsers = await getAdminUsers();
   const adminEmailMap = new Map<string, string>(
     (allUsers ?? []).map((u) => [u.id, u.user_metadata?.full_name ?? u.email ?? u.id])
   );
+
+  // Fast path: deep-link from notification — only fetch the single account,
+  // skip the full list + emails queries. The list loads after the dialog is closed (URL param removed).
+  if (detailAccountId) {
+    const { data: singleAccount } = await service
+      .from("accounts")
+      .select(ACCOUNT_SELECT)
+      .eq("id", detailAccountId)
+      .single();
+
+    return (
+      <div>
+        <div className="mb-6 flex items-center justify-between">
+          <div>
+            <div className="flex items-center gap-2">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-100 dark:bg-amber-500/20">
+                <Globe className="h-4 w-4 text-amber-600" />
+              </div>
+              <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Tất Cả Tài Khoản</h1>
+            </div>
+          </div>
+        </div>
+        <div className="h-64 animate-pulse rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm" />
+        {singleAccount && (
+          <Suspense fallback={null}>
+            <AccountDetailOpener
+              accountId={detailAccountId}
+              accounts={[singleAccount as unknown as AccountWithEmail]}
+              adminNameMap={Object.fromEntries(adminEmailMap)}
+              showApproveButton
+            />
+          </Suspense>
+        )}
+      </div>
+    );
+  }
 
   // Fetch available emails for buyback (not linked to any account)
   const [{ data: allEmails }, { data: linkedAccounts }] = await Promise.all([
@@ -213,16 +249,6 @@ export default async function SuperAccountsPage({
         </div>
       </div>
 
-      {detailAccountId && (
-        <Suspense fallback={null}>
-          <AccountDetailOpener
-            accountId={detailAccountId}
-            accounts={items}
-            adminNameMap={Object.fromEntries(adminEmailMap)}
-            showApproveButton
-          />
-        </Suspense>
-      )}
     </div>
   );
 }

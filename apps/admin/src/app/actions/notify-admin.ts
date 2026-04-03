@@ -102,13 +102,8 @@ export async function notifyAdminAction(
     };
     const notifType: NotificationType = notifTypeMap[actionType] || "account_created";
 
-    // Deep-link URL — always super accounts page since only super admin views these notifications
-    // (notifyAdminAction is skipped when super admin performs actions)
-    const notifUrl = accountId
-      ? needsApproval
-        ? `/dashboard/super/accounts?approval=pending&detail=${accountId}`
-        : `/dashboard/super/accounts?detail=${accountId}`
-      : "/dashboard";
+    // Deep-link URL — dedicated noti page so no heavy list query is triggered
+    const notifUrl = accountId ? `/dashboard/noti?id=${accountId}` : "/dashboard";
 
     // Run all notifications in parallel (non-blocking)
     await Promise.allSettled([
@@ -125,9 +120,6 @@ export async function notifyAdminAction(
           url: notifUrl,
           navigateActions: [
             { id: "view", label: "Xem chi tiết", url: notifUrl },
-            ...(accountId
-              ? [{ id: "public", label: "Xem trang bán", url: `${BASE_URL}/accounts/${accountId}` }]
-              : []),
           ],
         },
       }),
