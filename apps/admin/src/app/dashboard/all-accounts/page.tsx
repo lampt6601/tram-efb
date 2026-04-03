@@ -18,6 +18,7 @@ import {
 } from "@thc-efb/ui/table";
 import type { AccountWithEmail } from "@thc-efb/supabase/types";
 import { AccountDetailButton } from "./AccountDetailButton";
+import { ACCOUNT_SELECT, applySortToQuery } from "@/lib/account-queries";
 
 type SearchParams = { sort?: string; status?: string; q?: string };
 
@@ -46,18 +47,11 @@ export default async function AllAccountsPage({
     ])
   );
 
-  let query = service.from("accounts").select("id, title, description, selling_price, purchase_price, original_price, images, primary_image_url, status, total_gp, total_coins_android, total_coins_ios, team_strength, is_priority, is_clone, is_approved, server_region, monthly_log_quota, email_id, user_id, created_at, updated_at, emails(*)");
+  let query = service.from("accounts").select(ACCOUNT_SELECT);
   if (statusFilter && statusFilter !== "all") query = query.eq("status", statusFilter);
   if (searchQuery) query = query.ilike("title", `%${searchQuery}%`);
 
-  switch (sort) {
-    case "oldest": query = query.order("created_at", { ascending: true }); break;
-    case "price_asc": query = query.order("selling_price", { ascending: true }); break;
-    case "price_desc": query = query.order("selling_price", { ascending: false }); break;
-    case "gp_desc": query = query.order("total_gp", { ascending: false }); break;
-    case "strength_desc": query = query.order("team_strength", { ascending: false }); break;
-    default: query = query.order("created_at", { ascending: false });
-  }
+  query = applySortToQuery(query, sort);
 
   const { data: accounts } = await query;
   const items = (accounts ?? []) as unknown as AccountWithEmail[];

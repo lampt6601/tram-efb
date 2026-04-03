@@ -44,3 +44,36 @@ export const formatNumber = (num: number): string => {
   if (num >= 1_000) return `${(num / 1_000).toFixed(1)}K`;
   return num.toString();
 };
+
+/** Format date Vietnamese style: dd/MM/yyyy */
+export const formatDateVN = (d: string | null): string => {
+  if (!d) return "—";
+  return new Date(d).toLocaleDateString("vi-VN", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
+};
+
+/** Format date+time Vietnamese style: dd/MM/yyyy HH:mm */
+export const formatDateTimeVN = (d: string | null): string => {
+  if (!d) return "—";
+  return new Date(d).toLocaleString("vi-VN", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+};
+
+/** Compact price with Vietnamese suffixes: 1.500.000 → 1.5tr, 220.000 → 220k */
+export const formatCompactPriceVN = (price: number): string => {
+  if (price >= 1_000_000) {
+    return `${(price / 1_000_000).toFixed(price % 1_000_000 === 0 ? 0 : 1)}tr`;
+  }
+  if (price >= 1_000) {
+    return `${(price / 1_000).toFixed(price % 1_000 === 0 ? 0 : 1)}k`;
+  }
+  return price.toString();
+};

@@ -27,7 +27,7 @@ import {
   ResponsiveDialogFooter,
 } from "@thc-efb/ui/responsive-dialog";
 import { toast } from "sonner";
-import { formatCurrency } from "@thc-efb/shared/constants";
+import { formatCurrency, formatDateTimeVN } from "@thc-efb/shared/constants";
 import type { SellerCollateralHistory } from "@thc-efb/supabase/types";
 
 interface CollateralManageModalProps {
@@ -44,16 +44,6 @@ const CHANGE_TYPES = [
   { value: "decrease" as const, label: "Rút bớt", icon: ArrowDownCircle },
   { value: "refund" as const, label: "Hoàn trả", icon: RotateCcw },
 ];
-
-function formatDate(d: string) {
-  return new Date(d).toLocaleString("vi-VN", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-}
 
 function changeTypeLabel(type: string) {
   const found = CHANGE_TYPES.find((t) => t.value === type);
@@ -249,7 +239,7 @@ export function CollateralManageModal({
                       )}
                     </div>
                     <div className="shrink-0 text-right">
-                      <p className="text-[10px] text-slate-400">{formatDate(h.created_at)}</p>
+                      <p className="text-[10px] text-slate-400">{formatDateTimeVN(h.created_at)}</p>
                       <p className="text-[10px] font-medium text-slate-500 dark:text-slate-400">
                         → {formatCurrency(h.new_total)}
                       </p>

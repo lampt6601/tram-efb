@@ -1,5 +1,6 @@
 "use client";
 
+import { formatDateTimeVN } from "@thc-efb/shared/constants";
 import { useEffect, useRef, useState, useTransition } from "react";
 import { useSearchParams } from "next/navigation";
 import { createSupabaseBrowserClient } from "@thc-efb/supabase/browser";
@@ -182,13 +183,7 @@ function ApplicationCard({
           )}
 
           <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">
-            {new Date(app.created_at).toLocaleDateString("vi-VN", {
-              day: "2-digit",
-              month: "2-digit",
-              year: "numeric",
-              hour: "2-digit",
-              minute: "2-digit",
-            })}
+{formatDateTimeVN(app.created_at)}
           </p>
         </div>
 

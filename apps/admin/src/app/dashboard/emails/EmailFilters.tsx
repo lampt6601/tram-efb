@@ -1,7 +1,5 @@
 "use client";
 
-import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import { useCallback, useTransition, useState, useEffect } from "react";
 import { Search } from "lucide-react";
 import { Input } from "@thc-efb/ui/input";
 import { Button } from "@thc-efb/ui/button";
@@ -12,6 +10,7 @@ import {
   SelectContent,
   SelectItem,
 } from "@thc-efb/ui/select";
+import { useUrlFilters } from "@/hooks/use-url-filters";
 
 const LINK_OPTIONS = [
   { value: "all", label: "Tất cả" },
@@ -19,46 +18,22 @@ const LINK_OPTIONS = [
   { value: "unlinked", label: "Chưa liên kết" },
 ];
 
+const FILTER_FIELDS = [
+  { key: "q", defaultValue: "" },
+  { key: "link", defaultValue: "all" },
+];
+
 export function EmailFilters({ totalCount }: { totalCount: number }) {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const [isPending, startTransition] = useTransition();
-
-  const currentSearch = searchParams.get("q") ?? "";
-  const currentLink = searchParams.get("link") ?? "all";
-
-  const [localSearch, setLocalSearch] = useState(currentSearch);
-  const [localLink, setLocalLink] = useState(currentLink);
-
-  useEffect(() => { setLocalSearch(currentSearch); }, [currentSearch]);
-  useEffect(() => { setLocalLink(currentLink); }, [currentLink]);
-
-  const applyFilters = useCallback(() => {
-    const params = new URLSearchParams();
-    if (localSearch) params.set("q", localSearch);
-    if (localLink !== "all") params.set("link", localLink);
-
-    const qs = params.toString();
-    startTransition(() => {
-      router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
-    });
-  }, [router, pathname, localSearch, localLink]);
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") applyFilters();
-  };
-
-  const hasActiveFilters = currentSearch !== "" || currentLink !== "all";
-  const hasUnsavedChanges = localSearch !== currentSearch || localLink !== currentLink;
-
-  const clearAll = () => {
-    setLocalSearch("");
-    setLocalLink("all");
-    startTransition(() => {
-      router.replace(pathname, { scroll: false });
-    });
-  };
+  const {
+    values,
+    setValue,
+    applyFilters,
+    clearAll,
+    handleKeyDown,
+    hasActiveFilters,
+    hasUnsavedChanges,
+    isPending,
+  } = useUrlFilters(FILTER_FIELDS);
 
   return (
     <div
@@ -71,8 +46,8 @@ export function EmailFilters({ totalCount }: { totalCount: number }) {
           <Input
             type="text"
             placeholder="Tìm theo email..."
-            value={localSearch}
-            onChange={(e) => setLocalSearch(e.target.value)}
+            value={values.q}
+            onChange={(e) => setValue("q", e.target.value)}
             onKeyDown={handleKeyDown}
             className="h-10 w-full rounded-xl border-slate-200 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 pl-10 pr-4 text-sm text-slate-700 shadow-sm transition-all focus-visible:border-indigo-400 focus-visible:ring-4 focus-visible:ring-indigo-400/20"
           />
@@ -81,9 +56,9 @@ export function EmailFilters({ totalCount }: { totalCount: number }) {
         {/* Link status + Apply + Clear + Count */}
         <div className="flex items-center gap-2 w-full md:w-auto">
           <div className="flex flex-1 md:flex-none items-center gap-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-2.5 shadow-sm">
-            <Select value={localLink} onValueChange={(val) => { if (val !== null) setLocalLink(val) }}>
+            <Select value={values.link} onValueChange={(val) => { if (val !== null) setValue("link", val) }}>
               <SelectTrigger className="h-9 w-full border-0 bg-transparent text-sm text-slate-700 dark:text-slate-200 px-0 shadow-none">
-                <SelectValue>{LINK_OPTIONS.find((o) => o.value === localLink)?.label}</SelectValue>
+                <SelectValue>{LINK_OPTIONS.find((o) => o.value === values.link)?.label}</SelectValue>
               </SelectTrigger>
               <SelectContent>
                 {LINK_OPTIONS.map((o) => (

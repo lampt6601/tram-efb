@@ -1,5 +1,6 @@
 "use client";
 
+import { formatDateTimeVN } from "@thc-efb/shared/constants";
 import { useEffect, useRef, useState, useTransition } from "react";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
@@ -312,13 +313,7 @@ function SellRequestCard({
           )}
 
           <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">
-            {new Date(item.created_at).toLocaleDateString("vi-VN", {
-              day: "2-digit",
-              month: "2-digit",
-              year: "numeric",
-              hour: "2-digit",
-              minute: "2-digit",
-            })}
+{formatDateTimeVN(item.created_at)}
           </p>
         </div>
 

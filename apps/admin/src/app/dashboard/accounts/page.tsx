@@ -7,10 +7,11 @@ export const revalidate = 120; // 2 minutes
 export const metadata: Metadata = { title: "Tài Khoản" };
 import { Plus, Gamepad2, Star, Clock, CheckCircle2, ExternalLink } from "lucide-react";
 import { StatusBadge } from "@thc-efb/ui/badge";
-import { formatCurrency } from "@thc-efb/shared/constants";
+import { formatCurrency, formatCompactPriceVN } from "@thc-efb/shared/constants";
+import { ACCOUNT_SELECT, applySortToQuery } from "@/lib/account-queries";
 import { AdminAccountFilters } from "./AdminAccountFilters";
 import { AccountActionsDropdown } from "./AccountActionsDropdown";
-import { AccountDetailOpener } from "./AccountDetailOpener";
+import { AccountDetailOpener } from "@/components/admin/AccountDetailOpener";
 import { Suspense } from "react";
 import type { AccountWithEmail } from "@thc-efb/supabase/types";
 import { Button } from "@thc-efb/ui/button";
@@ -23,15 +24,6 @@ import {
   TableRow,
 } from "@thc-efb/ui/table";
 
-function formatCompactPrice(price: number): string {
-  if (price >= 1_000_000) {
-    return `${(price / 1_000_000).toFixed(price % 1_000_000 === 0 ? 0 : 1)}tr`;
-  }
-  if (price >= 1_000) {
-    return `${(price / 1_000).toFixed(price % 1_000 === 0 ? 0 : 1)}k`;
-  }
-  return price.toString();
-}
 
 type SearchParams = {
   sort?: string;
@@ -56,7 +48,7 @@ export default async function AccountsPage({
   const { data: { user } } = await supabase.auth.getUser();
   const adminEmail = user?.user_metadata?.full_name ?? user?.email ?? user?.id ?? "";
 
-  let query = supabase.from("accounts").select("id, title, description, selling_price, purchase_price, original_price, images, primary_image_url, status, total_gp, total_coins_android, total_coins_ios, team_strength, is_priority, is_clone, is_approved, server_region, monthly_log_quota, email_id, user_id, created_at, updated_at, emails(*)");
+  let query = supabase.from("accounts").select(ACCOUNT_SELECT);
 
   if (statusFilter && statusFilter !== "all") {
     query = query.eq("status", statusFilter);
@@ -66,31 +58,7 @@ export default async function AccountsPage({
     query = query.ilike("title", `%${searchQuery}%`);
   }
 
-  switch (sort) {
-    case "oldest":
-      query = query.order("created_at", { ascending: true });
-      break;
-    case "price_asc":
-      query = query.order("selling_price", { ascending: true });
-      break;
-    case "price_desc":
-      query = query.order("selling_price", { ascending: false });
-      break;
-    case "purchase_asc":
-      query = query.order("purchase_price", { ascending: true });
-      break;
-    case "purchase_desc":
-      query = query.order("purchase_price", { ascending: false });
-      break;
-    case "gp_desc":
-      query = query.order("total_gp", { ascending: false });
-      break;
-    case "strength_desc":
-      query = query.order("team_strength", { ascending: false });
-      break;
-    default:
-      query = query.order("created_at", { ascending: false });
-  }
+  query = applySortToQuery(query, sort);
 
   const { data: accounts } = await query;
   const items = (accounts ?? []) as unknown as AccountWithEmail[];
@@ -189,7 +157,7 @@ export default async function AccountsPage({
                       account.original_price > account.selling_price && (
                         <div className="text-xs text-slate-400 dark:text-slate-500 line-through font-normal">
                           <span className="sm:hidden">
-                            {formatCompactPrice(account.original_price)}
+                            {formatCompactPriceVN(account.original_price)}
                           </span>
                           <span className="hidden sm:inline">
                             {formatCurrency(account.original_price)}
@@ -197,7 +165,7 @@ export default async function AccountsPage({
                         </div>
                       )}
                     <span className="sm:hidden">
-                      {formatCompactPrice(account.selling_price)}
+                      {formatCompactPriceVN(account.selling_price)}
                     </span>
                     <span className="hidden sm:inline">
                       {formatCurrency(account.selling_price)}

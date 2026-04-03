@@ -9,7 +9,7 @@ import { Users, ShieldCheck, Gamepad2, Mail, Calendar, Clock, Wallet, User } fro
 export const revalidate = 120; // 2 minutes
 
 export const metadata: Metadata = { title: "Quản Lý Admin" };
-import { formatCurrency } from "@thc-efb/shared/constants";
+import { formatCurrency, formatDateVN, formatDateTimeVN } from "@thc-efb/shared/constants";
 import { CreateAdminModal } from "./CreateAdminModal";
 import { AutoApproveToggle } from "./AutoApproveToggle";
 import { DisableAdminToggle } from "./DisableAdminToggle";
@@ -20,14 +20,6 @@ import {
 import Image from "next/image";
 import type { AdminSettings } from "@thc-efb/supabase/types";
 
-function fmtDate(d: string | null) {
-  if (!d) return "—";
-  return new Date(d).toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" });
-}
-function fmtDateTime(d: string | null) {
-  if (!d) return "Chưa đăng nhập";
-  return new Date(d).toLocaleString("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" });
-}
 
 export default async function SuperAdminsPage() {
   const supabase = await createSupabaseServerClient();
@@ -110,7 +102,7 @@ export default async function SuperAdminsPage() {
                 <span className="shrink-0 rounded-full bg-amber-200 dark:bg-amber-500/20 px-2 py-0.5 text-xs font-semibold text-amber-800 dark:text-amber-300">Owner</span>
               </div>
               <div className="mt-1 flex flex-wrap gap-3 text-xs text-slate-500 dark:text-slate-400">
-                <span className="flex items-center gap-1"><Calendar className="h-3 w-3" /> Tạo: {fmtDate(owner.created_at)}</span>
+                <span className="flex items-center gap-1"><Calendar className="h-3 w-3" /> Tạo: {formatDateVN(owner.created_at)}</span>
                 <span className="flex items-center gap-1"><Gamepad2 className="h-3 w-3" /> {acctCount.get(owner.id) ?? 0} tài khoản</span>
                 <span className="flex items-center gap-1"><Mail className="h-3 w-3" /> {emailCount.get(owner.id) ?? 0} email</span>
               </div>
@@ -191,10 +183,10 @@ export default async function SuperAdminsPage() {
                     </div>
                   </TableCell>
                   <TableCell className="hidden text-sm text-slate-500 dark:text-slate-400 md:table-cell">
-                    <div className="flex items-center gap-1"><Calendar className="h-3.5 w-3.5 text-slate-400 dark:text-slate-500" /> {fmtDate(admin.created_at)}</div>
+                    <div className="flex items-center gap-1"><Calendar className="h-3.5 w-3.5 text-slate-400 dark:text-slate-500" /> {formatDateVN(admin.created_at)}</div>
                   </TableCell>
                   <TableCell className="hidden text-sm text-slate-500 dark:text-slate-400 lg:table-cell">
-                    <div className="flex items-center gap-1"><Clock className="h-3.5 w-3.5 text-slate-400 dark:text-slate-500" /> {fmtDateTime(admin.last_sign_in_at ?? null)}</div>
+                    <div className="flex items-center gap-1"><Clock className="h-3.5 w-3.5 text-slate-400 dark:text-slate-500" /> {formatDateTimeVN(admin.last_sign_in_at ?? null)}</div>
                   </TableCell>
                   <TableCell className="hidden md:table-cell">
                     <AutoApproveToggle

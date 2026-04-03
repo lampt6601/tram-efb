@@ -1,7 +1,5 @@
 "use client";
 
-import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import { useCallback, useTransition, useState, useEffect } from "react";
 import { Search } from "lucide-react";
 import { Input } from "@thc-efb/ui/input";
 import { Button } from "@thc-efb/ui/button";
@@ -12,6 +10,7 @@ import {
   SelectContent,
   SelectItem,
 } from "@thc-efb/ui/select";
+import { useUrlFilters } from "@/hooks/use-url-filters";
 
 const STATUS_OPTIONS = [
   { value: "all", label: "Tất cả" },
@@ -19,46 +18,22 @@ const STATUS_OPTIONS = [
   { value: "completed", label: "Đã hoàn tất" },
 ];
 
+const FILTER_FIELDS = [
+  { key: "q", defaultValue: "" },
+  { key: "status", defaultValue: "all" },
+];
+
 export function RequestFilters({ totalCount }: { totalCount: number }) {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const [isPending, startTransition] = useTransition();
-
-  const currentSearch = searchParams.get("q") ?? "";
-  const currentStatus = searchParams.get("status") ?? "all";
-
-  const [localSearch, setLocalSearch] = useState(currentSearch);
-  const [localStatus, setLocalStatus] = useState(currentStatus);
-
-  useEffect(() => { setLocalSearch(currentSearch); }, [currentSearch]);
-  useEffect(() => { setLocalStatus(currentStatus); }, [currentStatus]);
-
-  const applyFilters = useCallback(() => {
-    const params = new URLSearchParams();
-    if (localSearch) params.set("q", localSearch);
-    if (localStatus !== "all") params.set("status", localStatus);
-
-    const qs = params.toString();
-    startTransition(() => {
-      router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
-    });
-  }, [router, pathname, localSearch, localStatus]);
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") applyFilters();
-  };
-
-  const hasActiveFilters = currentSearch !== "" || currentStatus !== "all";
-  const hasUnsavedChanges = localSearch !== currentSearch || localStatus !== currentStatus;
-
-  const clearAll = () => {
-    setLocalSearch("");
-    setLocalStatus("all");
-    startTransition(() => {
-      router.replace(pathname, { scroll: false });
-    });
-  };
+  const {
+    values,
+    setValue,
+    applyFilters,
+    clearAll,
+    handleKeyDown,
+    hasActiveFilters,
+    hasUnsavedChanges,
+    isPending,
+  } = useUrlFilters(FILTER_FIELDS);
 
   return (
     <div
@@ -71,8 +46,8 @@ export function RequestFilters({ totalCount }: { totalCount: number }) {
           <Input
             type="text"
             placeholder="Tìm theo chi tiết, người yêu cầu..."
-            value={localSearch}
-            onChange={(e) => setLocalSearch(e.target.value)}
+            value={values.q}
+            onChange={(e) => setValue("q", e.target.value)}
             onKeyDown={handleKeyDown}
             className="h-10 w-full rounded-xl border-slate-200 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 pl-10 pr-4 text-sm text-slate-700 shadow-sm transition-all focus-visible:border-indigo-400 focus-visible:ring-4 focus-visible:ring-indigo-400/20"
           />
@@ -81,9 +56,9 @@ export function RequestFilters({ totalCount }: { totalCount: number }) {
         {/* Status + Apply + Clear + Count */}
         <div className="flex items-center gap-2 w-full md:w-auto">
           <div className="flex flex-1 md:flex-none items-center gap-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-2.5 shadow-sm">
-            <Select value={localStatus} onValueChange={(val) => { if (val !== null) setLocalStatus(val) }}>
+            <Select value={values.status} onValueChange={(val) => { if (val !== null) setValue("status", val) }}>
               <SelectTrigger className="h-9 w-full border-0 bg-transparent text-sm text-slate-700 dark:text-slate-200 px-0 shadow-none">
-                <SelectValue>{STATUS_OPTIONS.find((o) => o.value === localStatus)?.label}</SelectValue>
+                <SelectValue>{STATUS_OPTIONS.find((o) => o.value === values.status)?.label}</SelectValue>
               </SelectTrigger>
               <SelectContent>
                 {STATUS_OPTIONS.map((o) => (

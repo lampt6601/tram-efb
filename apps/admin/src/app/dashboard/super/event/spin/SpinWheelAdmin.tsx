@@ -31,15 +31,7 @@ const WHEEL_COLORS = [
 
 const SPIN_DURATION = 6000;
 
-function fmtDate(d: string) {
-  return new Date(d).toLocaleString("vi-VN", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-}
+import { formatDateTimeVN } from "@thc-efb/shared/constants";
 
 export function SpinWheelAdmin({ entries, results: initialResults }: SpinWheelAdminProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -469,7 +461,7 @@ export function SpinWheelAdmin({ entries, results: initialResults }: SpinWheelAd
                     </span>
                   )}
                 </div>
-                <span className="text-xs text-slate-400 dark:text-slate-500">{fmtDate(p.latest)}</span>
+                <span className="text-xs text-slate-400 dark:text-slate-500">{formatDateTimeVN(p.latest)}</span>
               </div>
               );
             })}
