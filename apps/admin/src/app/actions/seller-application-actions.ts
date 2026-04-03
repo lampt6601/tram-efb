@@ -72,13 +72,21 @@ export async function submitSellerApplication(input: ApplySellerInput) {
       type: "application",
       title: notifTitle,
       body: notifBody,
-      data: { url: notifUrl },
+      data: {
+        url: notifUrl,
+        navigateActions: [
+          { id: "view", label: "Xem đơn ứng tuyển", url: notifUrl },
+        ],
+      },
     }),
     sendPushToAllAdmins({
       title: notifTitle,
       body: notifBody,
       url: notifUrl,
       tag: "application-new",
+      actions: [
+        { action: "view", title: "Xem đơn ứng tuyển", url: notifUrl },
+      ],
     }),
   ]);
 

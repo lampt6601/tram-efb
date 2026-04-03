@@ -98,13 +98,21 @@ export async function submitSellRequest(formData: FormData) {
       type: "sell_request",
       title: notifTitle,
       body: notifBody,
-      data: { url: notifUrl },
+      data: {
+        url: notifUrl,
+        navigateActions: [
+          { id: "view", label: "Xem yêu cầu", url: notifUrl },
+        ],
+      },
     }),
     sendPushToAllAdmins({
       title: notifTitle,
       body: notifBody,
       url: notifUrl,
       tag: "sell-request-new",
+      actions: [
+        { action: "view", title: "Xem yêu cầu", url: notifUrl },
+      ],
     }),
   ]);
 

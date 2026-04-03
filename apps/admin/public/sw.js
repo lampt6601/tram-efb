@@ -1,4 +1,4 @@
-const CACHE_NAME = "thc-admin-v1";
+const CACHE_NAME = "thc-admin-v2";
 const PRECACHE_URLS = ["/", "/login"];
 
 // Install: precache app shell
@@ -69,9 +69,17 @@ self.addEventListener("push", (event) => {
     body: data.body || "",
     icon: "/icon-192x192.png",
     badge: "/icon-192x192.png",
-    data: { url: data.url || "/dashboard" },
+    data: {
+      url: data.url || "/dashboard",
+      actions: data.actions || [],
+    },
     tag: data.tag || "default",
     renotify: true,
+    // Web Push action buttons (max 2, ignored on Safari)
+    actions: (data.actions || []).slice(0, 2).map((a) => ({
+      action: a.action,
+      title: a.title,
+    })),
   };
 
   event.waitUntil(
@@ -84,26 +92,42 @@ self.addEventListener("push", (event) => {
   );
 });
 
-// Notification click: open the relevant page
+// Helper: open or focus an existing window
+function openOrFocusWindow(targetUrl) {
+  return self.clients
+    .matchAll({ type: "window", includeUncontrolled: true })
+    .then((clients) => {
+      // External URL — always open new tab
+      if (targetUrl.startsWith("http")) {
+        return self.clients.openWindow(targetUrl);
+      }
+      const target = new URL(targetUrl, self.location.origin);
+      for (const client of clients) {
+        const clientUrl = new URL(client.url);
+        if (clientUrl.pathname === target.pathname && "focus" in client) {
+          client.navigate(targetUrl);
+          return client.focus();
+        }
+      }
+      return self.clients.openWindow(targetUrl);
+    });
+}
+
+// Notification click: route to the relevant page based on action
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();
-  const targetUrl = event.notification.data?.url || "/dashboard";
+  const notifData = event.notification.data || {};
+  const clickedAction = event.action; // empty string if notification body clicked
 
-  event.waitUntil(
-    self.clients
-      .matchAll({ type: "window", includeUncontrolled: true })
-      .then((clients) => {
-        // Focus existing window and navigate to the deep-link URL
-        const target = new URL(targetUrl, self.location.origin);
-        for (const client of clients) {
-          const clientUrl = new URL(client.url);
-          if (clientUrl.pathname === target.pathname && "focus" in client) {
-            client.navigate(targetUrl);
-            return client.focus();
-          }
-        }
-        // Otherwise open new window
-        return self.clients.openWindow(targetUrl);
-      })
-  );
+  // If an action button was clicked, find its URL
+  if (clickedAction && notifData.actions) {
+    const actionDef = notifData.actions.find((a) => a.action === clickedAction);
+    if (actionDef && actionDef.url) {
+      event.waitUntil(openOrFocusWindow(actionDef.url));
+      return;
+    }
+  }
+
+  // Default: navigate to the main URL
+  event.waitUntil(openOrFocusWindow(notifData.url || "/dashboard"));
 });

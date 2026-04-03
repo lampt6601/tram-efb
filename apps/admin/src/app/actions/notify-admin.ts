@@ -123,6 +123,12 @@ export async function notifyAdminAction(
         data: {
           accountId,
           url: notifUrl,
+          navigateActions: [
+            { id: "view", label: "Xem chi tiết", url: notifUrl },
+            ...(accountId
+              ? [{ id: "public", label: "Xem trang bán", url: `${BASE_URL}/accounts/${accountId}` }]
+              : []),
+          ],
         },
       }),
 
@@ -132,6 +138,12 @@ export async function notifyAdminAction(
         body: accountTitle,
         url: notifUrl,
         tag: `admin-action-${accountId || Date.now()}`,
+        actions: [
+          { action: "view", title: "Xem chi tiết", url: notifUrl },
+          ...(accountId
+            ? [{ action: "public", title: "Xem trang bán", url: `${BASE_URL}/accounts/${accountId}` }]
+            : []),
+        ],
       }),
     ]);
   } catch (error) {

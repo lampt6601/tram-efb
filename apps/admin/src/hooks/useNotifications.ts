@@ -2,13 +2,22 @@
 
 import { useState, useEffect, useCallback } from "react";
 
-interface Notification {
+export interface NavigateAction {
+  id: string;
+  label: string;
+  url: string;
+}
+
+export interface Notification {
   id: string;
   user_id: string | null;
   type: string;
   title: string;
   body: string | null;
-  data: Record<string, unknown>;
+  data: Record<string, unknown> & {
+    url?: string;
+    navigateActions?: NavigateAction[];
+  };
   is_read: boolean;
   created_at: string;
 }

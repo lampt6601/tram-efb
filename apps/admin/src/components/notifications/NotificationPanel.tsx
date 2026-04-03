@@ -7,17 +7,11 @@ import {
   CheckCircle,
   Plus,
   Bell,
+  Eye,
+  ExternalLink,
 } from "lucide-react";
-
-interface Notification {
-  id: string;
-  type: string;
-  title: string;
-  body: string | null;
-  data: Record<string, unknown>;
-  is_read: boolean;
-  created_at: string;
-}
+import { Button } from "@thc-efb/ui/button";
+import type { Notification, NavigateAction } from "@/hooks/useNotifications";
 
 const TYPE_ICONS: Record<string, typeof Bell> = {
   sell_request: ShoppingCart,
@@ -26,6 +20,28 @@ const TYPE_ICONS: Record<string, typeof Bell> = {
   account_approved: CheckCircle,
   account_created: Plus,
 };
+
+/** Fallback actions for old notifications without navigateActions */
+const FALLBACK_ACTIONS: Record<string, NavigateAction[]> = {
+  sell_request: [{ id: "view", label: "Xem", url: "" }],
+  review: [{ id: "view", label: "Xem", url: "" }],
+  application: [{ id: "view", label: "Xem", url: "" }],
+  account_approved: [{ id: "view", label: "Xem", url: "" }],
+  account_created: [{ id: "view", label: "Xem", url: "" }],
+};
+
+function isExternalUrl(url: string): boolean {
+  return url.startsWith("http");
+}
+
+function navigateTo(url: string, onClose: () => void) {
+  onClose();
+  if (isExternalUrl(url)) {
+    window.open(url, "_blank");
+  } else {
+    window.location.href = url;
+  }
+}
 
 function timeAgo(dateStr: string): string {
   const diff = Date.now() - new Date(dateStr).getTime();
@@ -53,15 +69,28 @@ export function NotificationPanel({
 }: NotificationPanelProps) {
   const hasUnread = notifications.some((n) => !n.is_read);
 
-  const handleClick = (notification: Notification) => {
+  const handleRowClick = (notification: Notification) => {
     if (!notification.is_read) {
       onMarkAsRead([notification.id]);
     }
-    onClose();
-    // Hard navigation to ensure Server Components re-render with new searchParams
     const url = notification.data?.url as string | undefined;
     if (url) {
-      window.location.href = url;
+      navigateTo(url, onClose);
+    }
+  };
+
+  const handleActionClick = (
+    e: React.MouseEvent,
+    notification: Notification,
+    action: NavigateAction,
+  ) => {
+    e.stopPropagation();
+    if (!notification.is_read) {
+      onMarkAsRead([notification.id]);
+    }
+    const url = action.url || (notification.data?.url as string);
+    if (url) {
+      navigateTo(url, onClose);
     }
   };
 
@@ -91,11 +120,26 @@ export function NotificationPanel({
         ) : (
           notifications.map((notification) => {
             const Icon = TYPE_ICONS[notification.type] || Bell;
+            const actions: NavigateAction[] =
+              notification.data?.navigateActions ??
+              FALLBACK_ACTIONS[notification.type] ??
+              [];
+            // For fallback actions without url, use the notification's main url
+            const resolvedActions = actions.map((a) => ({
+              ...a,
+              url: a.url || (notification.data?.url as string) || "",
+            }));
+
             return (
-              <button
+              <div
                 key={notification.id}
-                onClick={() => handleClick(notification)}
-                className={`flex w-full items-start gap-3 px-4 py-3 text-left transition-colors hover:bg-slate-50 dark:hover:bg-white/5 ${
+                role="button"
+                tabIndex={0}
+                onClick={() => handleRowClick(notification)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") handleRowClick(notification);
+                }}
+                className={`flex w-full cursor-pointer items-start gap-3 px-4 py-3 text-left transition-colors hover:bg-slate-50 dark:hover:bg-white/5 ${
                   !notification.is_read
                     ? "bg-indigo-50/50 dark:bg-indigo-500/5"
                     : ""
@@ -125,14 +169,38 @@ export function NotificationPanel({
                       {notification.body}
                     </p>
                   )}
-                  <p className="mt-1 text-xs text-slate-400 dark:text-slate-600">
-                    {timeAgo(notification.created_at)}
-                  </p>
+                  <div className="mt-1.5 flex items-center gap-2">
+                    <span className="text-xs text-slate-400 dark:text-slate-600">
+                      {timeAgo(notification.created_at)}
+                    </span>
+                    {resolvedActions.length > 0 && (
+                      <div className="flex gap-1">
+                        {resolvedActions.map((action) => (
+                          <Button
+                            key={action.id}
+                            size="xs"
+                            variant="ghost"
+                            onClick={(e) =>
+                              handleActionClick(e, notification, action)
+                            }
+                            className="h-5 gap-0.5 px-1.5 text-[10px] text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300"
+                          >
+                            {isExternalUrl(action.url) ? (
+                              <ExternalLink className="!size-2.5" />
+                            ) : (
+                              <Eye className="!size-2.5" />
+                            )}
+                            {action.label}
+                          </Button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 </div>
                 {!notification.is_read && (
                   <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-indigo-500" />
                 )}
-              </button>
+              </div>
             );
           })
         )}

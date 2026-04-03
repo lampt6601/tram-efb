@@ -10,12 +10,12 @@ export async function DELETE() {
     return NextResponse.json({ error: "Dev only" }, { status: 403 });
   }
   const supabase = createSupabaseServiceClient();
-  const { count } = await supabase
+  const { data } = await supabase
     .from("admin_notifications")
     .delete()
     .gte("created_at", "2000-01-01")
-    .select("id", { count: "exact", head: true });
-  return NextResponse.json({ ok: true, deleted: count ?? 0 });
+    .select("id");
+  return NextResponse.json({ ok: true, deleted: data?.length ?? 0 });
 }
 
 /**
@@ -61,6 +61,7 @@ export async function POST() {
 
   // 1. Account needs approval notification
   if (account) {
+    const accountUrl = `/dashboard/super/accounts?approval=pending&detail=${account.id}`;
     notifications.push({
       user_id: null,
       type: "account_created",
@@ -68,12 +69,17 @@ export async function POST() {
       body: "Test Admin (test@example.com)",
       data: {
         accountId: account.id,
-        url: `/dashboard/super/accounts?approval=pending&detail=${account.id}`,
+        url: accountUrl,
+        navigateActions: [
+          { id: "view", label: "Xem chi tiết", url: accountUrl },
+          { id: "public", label: "Xem trang bán", url: `https://thc-efb.com/accounts/${account.id}` },
+        ],
       },
       is_read: false,
     });
 
     // 2. Account update notification
+    const updateUrl = `/dashboard/super/accounts?detail=${account.id}`;
     notifications.push({
       user_id: null,
       type: "account_created",
@@ -81,7 +87,11 @@ export async function POST() {
       body: "Test Admin (test@example.com)",
       data: {
         accountId: account.id,
-        url: `/dashboard/super/accounts?detail=${account.id}`,
+        url: updateUrl,
+        navigateActions: [
+          { id: "view", label: "Xem chi tiết", url: updateUrl },
+          { id: "public", label: "Xem trang bán", url: `https://thc-efb.com/accounts/${account.id}` },
+        ],
       },
       is_read: false,
     });
@@ -89,13 +99,17 @@ export async function POST() {
 
   // 3. Sell request notification
   if (sellRequest) {
+    const sellUrl = `/dashboard/sell-requests?highlight=${sellRequest.id}`;
     notifications.push({
       user_id: null,
       type: "sell_request",
       title: "🏷️ Yêu cầu bán acc mới",
       body: `${sellRequest.seller_name} - 500k`,
       data: {
-        url: `/dashboard/sell-requests?highlight=${sellRequest.id}`,
+        url: sellUrl,
+        navigateActions: [
+          { id: "view", label: "Xem yêu cầu", url: sellUrl },
+        ],
       },
       is_read: false,
     });
@@ -103,27 +117,54 @@ export async function POST() {
 
   // 4. Seller application notification
   if (application) {
+    const appUrl = `/dashboard/super/applications?highlight=${application.id}`;
     notifications.push({
       user_id: null,
       type: "application",
       title: "📋 Đơn đăng ký người bán mới",
       body: `${application.full_name} - test@example.com`,
       data: {
-        url: `/dashboard/super/applications?highlight=${application.id}`,
+        url: appUrl,
+        navigateActions: [
+          { id: "view", label: "Xem đơn ứng tuyển", url: appUrl },
+        ],
       },
       is_read: false,
     });
   }
 
-  // 5. Generic notification (no deep-link, for comparison)
-  notifications.push({
-    user_id: null,
-    type: "review",
-    title: "⭐ Đánh giá mới",
-    body: "Khách hàng vừa để lại đánh giá 5 sao",
-    data: { url: "/dashboard" },
-    is_read: false,
-  });
+  // 5. Review notification (with 2 actions)
+  if (account) {
+    notifications.push({
+      user_id: null,
+      type: "review",
+      title: "⭐ Đánh giá mới (5 sao)",
+      body: "Khách hàng vừa để lại đánh giá 5 sao",
+      data: {
+        accountId: account.id,
+        url: "/dashboard/super/reviews",
+        navigateActions: [
+          { id: "reviews", label: "Xem đánh giá", url: "/dashboard/super/reviews" },
+          { id: "account", label: "Xem tài khoản", url: `https://thc-efb.com/accounts/${account.id}` },
+        ],
+      },
+      is_read: false,
+    });
+  } else {
+    notifications.push({
+      user_id: null,
+      type: "review",
+      title: "⭐ Đánh giá mới",
+      body: "Khách hàng vừa để lại đánh giá 5 sao",
+      data: {
+        url: "/dashboard/super/reviews",
+        navigateActions: [
+          { id: "reviews", label: "Xem đánh giá", url: "/dashboard/super/reviews" },
+        ],
+      },
+      is_read: false,
+    });
+  }
 
   if (notifications.length === 0) {
     return NextResponse.json({ error: "No data in DB to create test notifications" }, { status: 404 });

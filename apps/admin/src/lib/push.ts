@@ -9,12 +9,19 @@ if (VAPID_PUBLIC_KEY && VAPID_PRIVATE_KEY) {
   webPush.setVapidDetails(VAPID_EMAIL, VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY);
 }
 
+export interface PushAction {
+  action: string;
+  title: string;
+  url?: string;
+}
+
 export interface PushPayload {
   title: string;
   body: string;
   url?: string;
   tag?: string;
   badgeCount?: number;
+  actions?: PushAction[];
 }
 
 /**

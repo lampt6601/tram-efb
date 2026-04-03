@@ -59,18 +59,30 @@ export async function submitReview(input: SubmitReviewInput) {
   // Notify admins about new review (non-blocking)
   const notifTitle = `⭐ Đánh giá mới (${input.rating} sao)`;
   const notifBody = `${input.reviewerName}: ${input.comment || "Không có nhận xét"}`;
+  const reviewsUrl = "/dashboard/super/reviews";
   Promise.allSettled([
     createNotification({
       type: "review",
       title: notifTitle,
       body: notifBody,
-      data: { accountId: input.accountId, url: "/dashboard/super/reviews" },
+      data: {
+        accountId: input.accountId,
+        url: reviewsUrl,
+        navigateActions: [
+          { id: "reviews", label: "Xem đánh giá", url: reviewsUrl },
+          { id: "account", label: "Xem tài khoản", url: `https://thc-efb.com/accounts/${input.accountId}` },
+        ],
+      },
     }),
     sendPushToAllAdmins({
       title: notifTitle,
       body: notifBody,
-      url: "/dashboard/super/reviews",
+      url: reviewsUrl,
       tag: `review-${input.accountId}`,
+      actions: [
+        { action: "reviews", title: "Xem đánh giá", url: reviewsUrl },
+        { action: "account", title: "Xem tài khoản", url: `https://thc-efb.com/accounts/${input.accountId}` },
+      ],
     }),
   ]);
 
