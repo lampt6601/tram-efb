@@ -2,7 +2,6 @@ import { createSupabaseServiceClient } from "@thc-efb/supabase/service";
 
 export type NotificationType =
   | "sell_request"
-  | "review"
   | "application"
   | "account_approved"
   | "account_created";

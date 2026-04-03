@@ -17,7 +17,6 @@ import {
   UserCircle,
   BookOpen,
   SearchCheck,
-  Star,
   UserPlus,
   Tag,
   Settings,
@@ -41,7 +40,6 @@ const superAdminNavItems = [
   { href: "/dashboard/super/revenue", label: "Doanh Thu Shop", icon: ClipboardCheck },
   { href: "/dashboard/super/accounts", label: "Tất Cả Tài Khoản", icon: Globe },
   { href: "/dashboard/super/admins", label: "Quản Lý Admin", icon: Users },
-  { href: "/dashboard/super/reviews", label: "Đánh Giá", icon: Star },
   { href: "/dashboard/super/applications", label: "Đơn Đăng Ký Bán Hàng", icon: UserPlus },
   { href: "/dashboard/super/settings", label: "Cài Đặt Chung", icon: Settings },
 ];

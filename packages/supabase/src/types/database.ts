@@ -97,25 +97,6 @@ export interface SellRequest {
   updated_at: string;
 }
 
-export interface Review {
-  id: string;
-  account_id: string;
-  reviewer_name: string;
-  rating: number;
-  comment: string | null;
-  is_approved: boolean;
-  created_at: string;
-}
-
-export interface PublicReview {
-  id: string;
-  account_id: string;
-  reviewer_name: string;
-  rating: number;
-  comment: string | null;
-  created_at: string;
-}
-
 export type ApplicationStatus = "pending" | "approved" | "rejected";
 
 export interface SellerApplication {

@@ -1,17 +1,14 @@
 import { createSupabaseAnonClient } from '@thc-efb/supabase/anon';
 import { getSellerCount } from "@/lib/cached-users";
-import { ShieldCheck, Star, Users } from "lucide-react";
+import { ShieldCheck, Users } from "lucide-react";
 
 export async function StatsBar() {
   const supabase = createSupabaseAnonClient();
 
-  const [{ count: soldCount }, { count: reviewCount }, sellerCount] =
+  const [{ count: soldCount }, sellerCount] =
     await Promise.all([
       supabase
         .from("public_sold_accounts")
-        .select("*", { count: "exact", head: true }),
-      supabase
-        .from("public_reviews")
         .select("*", { count: "exact", head: true }),
       getSellerCount(),
     ]);
@@ -23,16 +20,6 @@ export async function StatsBar() {
       label: "Giao dịch thành công",
       color: "text-emerald-400",
     },
-    ...((reviewCount ?? 0) >= 100
-      ? [
-          {
-            icon: Star,
-            value: `${reviewCount}+`,
-            label: "Đánh giá từ khách",
-            color: "text-amber-400",
-          },
-        ]
-      : []),
     {
       icon: Users,
       value: `${sellerCount > 0 ? sellerCount : 0}+`,

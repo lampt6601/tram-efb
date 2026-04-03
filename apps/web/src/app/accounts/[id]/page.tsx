@@ -28,9 +28,8 @@ import facebookIcon from "@/assets/icons/facebook.webp";
 import zaloIcon from "@/assets/icons/zalo.png";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import type { PublicAccount, PublicReview } from '@thc-efb/supabase/types';
+import type { PublicAccount } from '@thc-efb/supabase/types';
 import { ogImage } from '@thc-efb/shared/image-utils';
-import { ReviewSection } from "@/components/storefront/ReviewSection";
 import { RelatedAccounts } from "@/components/storefront/RelatedAccounts";
 import { ShareButtons } from "@/components/storefront/ShareButtons";
 import { BuyNowButton } from "@/components/storefront/BuyNowButton";
@@ -139,14 +138,6 @@ export default async function AccountDetailPage({
 
     if (!soldData) notFound();
 
-    const { data: reviewsData } = await supabase
-      .from("public_reviews")
-      .select("id, account_id, reviewer_name, rating, comment, created_at")
-      .eq("account_id", id)
-      .order("created_at", { ascending: false })
-      .limit(20);
-    const reviews = (reviewsData ?? []) as PublicReview[];
-
     const account = soldData as PublicAccount;
     const galleryImages = account.primary_image_url
       ? [
@@ -247,14 +238,6 @@ export default async function AccountDetailPage({
               </div>
             </div>
 
-            {/* Reviews */}
-            <div className="px-4 sm:px-0">
-              <ReviewSection
-                accountId={id}
-                reviews={reviews}
-                isSold={true}
-              />
-            </div>
           </div>
         </main>
         <Footer />

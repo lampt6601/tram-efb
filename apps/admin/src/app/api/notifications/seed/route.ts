@@ -130,39 +130,6 @@ export async function POST() {
     });
   }
 
-  // 5. Review notification (with 2 actions)
-  if (account) {
-    notifications.push({
-      user_id: null,
-      type: "review",
-      title: "⭐ Đánh giá mới (5 sao)",
-      body: "Khách hàng vừa để lại đánh giá 5 sao",
-      data: {
-        accountId: account.id,
-        url: "/dashboard/super/reviews",
-        navigateActions: [
-          { id: "reviews", label: "Xem đánh giá", url: "/dashboard/super/reviews" },
-          { id: "account", label: "Xem tài khoản", url: `https://thc-efb.com/accounts/${account.id}` },
-        ],
-      },
-      is_read: false,
-    });
-  } else {
-    notifications.push({
-      user_id: null,
-      type: "review",
-      title: "⭐ Đánh giá mới",
-      body: "Khách hàng vừa để lại đánh giá 5 sao",
-      data: {
-        url: "/dashboard/super/reviews",
-        navigateActions: [
-          { id: "reviews", label: "Xem đánh giá", url: "/dashboard/super/reviews" },
-        ],
-      },
-      is_read: false,
-    });
-  }
-
   if (notifications.length === 0) {
     return NextResponse.json({ error: "No data in DB to create test notifications" }, { status: 404 });
   }

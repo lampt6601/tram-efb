@@ -2,7 +2,6 @@
 
 import {
   ShoppingCart,
-  Star,
   UserPlus,
   CheckCircle,
   Plus,
@@ -12,7 +11,6 @@ import type { Notification } from "@/hooks/useNotifications";
 
 const TYPE_ICONS: Record<string, typeof Bell> = {
   sell_request: ShoppingCart,
-  review: Star,
   application: UserPlus,
   account_approved: CheckCircle,
   account_created: Plus,
