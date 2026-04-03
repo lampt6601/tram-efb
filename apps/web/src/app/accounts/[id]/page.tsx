@@ -529,11 +529,25 @@ export default async function AccountDetailPage({
                     <p className="mt-0.5 text-xs font-semibold text-slate-900 sm:text-sm dark:text-slate-100">
                       Trần Hữu Cảnh
                     </p>
+                    <p className="mt-0.5 hidden text-[10px] font-medium text-emerald-600 sm:block dark:text-emerald-400">
+                      Giao dịch an toàn qua trung gian
+                    </p>
                   </div>
-                  <p className="hidden text-[10px] font-medium text-emerald-600 sm:block dark:text-emerald-400">
-                    Giao dịch an toàn qua trung gian
-                  </p>
                 </div>
+
+                {/* Box Giao Dịch — only when owner is the seller */}
+                {account.seller_full_name === "Trần Hữu Cảnh" && account.seller_transaction_box_url && (
+                  <a
+                    href={`/api/contact/${id}?type=transaction_box`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-2.5 flex items-center justify-center gap-2 rounded-lg bg-emerald-600 px-3 py-2.5 text-xs font-semibold text-white transition-colors hover:bg-emerald-700 sm:mt-3"
+                  >
+                    <MessageCircle className="h-4 w-4" />
+                    Tham gia Box Giao Dịch
+                    <ExternalLink className="h-3 w-3 opacity-60" />
+                  </a>
+                )}
 
                 {/* Zalo boxes + contact — compact on mobile */}
                 <div className="mt-2 grid grid-cols-2 gap-1.5 sm:mt-3 sm:grid-cols-1 sm:gap-1.5">
