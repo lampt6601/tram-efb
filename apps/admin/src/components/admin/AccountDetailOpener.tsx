@@ -34,9 +34,9 @@ export function AccountDetailOpener({
     adminName ?? adminNameMap?.[account.user_id] ?? account.user_id;
 
   const handleOpenChange = (newOpen: boolean) => {
-    setOpen(false);
     if (!newOpen) {
       // Close animation runs immediately; navigate after it completes
+      setOpen(false);
       setTimeout(() => {
         const params = new URLSearchParams(searchParams.toString());
         params.delete("detail");
