@@ -40,6 +40,9 @@ export function AccountDetailOpener({
       setTimeout(() => {
         const params = new URLSearchParams(searchParams.toString());
         params.delete("detail");
+        // Also clean up deep-link filter params that were set alongside "detail"
+        // (e.g. notification links include ?approval=pending&detail=xxx)
+        params.delete("approval");
         const qs = params.toString();
         router.replace(`${pathname}${qs ? `?${qs}` : ""}`, { scroll: false });
       }, 350);
