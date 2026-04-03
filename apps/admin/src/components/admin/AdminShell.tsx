@@ -27,11 +27,8 @@ export function AdminShell({ children, isSuperAdmin = false, adminName = "", adm
         adminAvatarUrl={adminAvatarUrl}
       />
 
-      {/* Mobile top bar */}
-      <div className="fixed left-0 right-0 top-0 z-30 flex items-center justify-between px-4 py-3 lg:hidden">
-        <span className="text-sm font-bold text-slate-700 dark:text-slate-200">
-          THC <span className="text-indigo-600 dark:text-indigo-400">Admin</span>
-        </span>
+      {/* Mobile notification bell — top-safe clears iOS status bar */}
+      <div className="top-safe fixed right-4 top-4 z-30 lg:hidden">
         <NotificationBell isSuperAdmin={isSuperAdmin} />
       </div>
 
@@ -40,8 +37,8 @@ export function AdminShell({ children, isSuperAdmin = false, adminName = "", adm
         <NotificationBell isSuperAdmin={isSuperAdmin} />
       </div>
 
-      {/* Main content — offset by sidebar width on desktop, padded for bottom nav on mobile */}
-      <main className="p-4 pt-16 pb-24 lg:ml-64 lg:p-6 lg:pt-6 lg:pb-6">{children}</main>
+      {/* Main content — pt accounts for top bar height + safe area on mobile */}
+      <main className="pt-main-mobile p-4 pb-24 lg:ml-64 lg:p-6 lg:pt-6 lg:pb-6">{children}</main>
 
       {/* Mobile bottom navigation */}
       <MobileBottomNav

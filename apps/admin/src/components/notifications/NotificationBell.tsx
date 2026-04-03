@@ -63,7 +63,7 @@ export function NotificationBell({ isSuperAdmin = false }: NotificationBellProps
       <div ref={ref} className="relative">
         <button
           onClick={() => setOpen((v) => !v)}
-          className="relative flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 bg-white transition-colors hover:bg-slate-50 dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10"
+          className="relative flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200/80 bg-black/5 transition-colors hover:bg-black/10 dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10"
           aria-label="Thông báo"
         >
           <Bell className="h-4 w-4 text-slate-600 dark:text-slate-300" />

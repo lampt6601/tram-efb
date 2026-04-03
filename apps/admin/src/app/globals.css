@@ -129,6 +129,16 @@
     padding-bottom: env(safe-area-inset-bottom, 0px);
   }
 
+  /* Notification bell: clears iOS status bar */
+  .top-safe {
+    top: calc(env(safe-area-inset-top, 0px) + 0.75rem);
+  }
+
+  /* Main content: clears the notification bell + safe area */
+  .pt-main-mobile {
+    padding-top: calc(env(safe-area-inset-top, 0px) + 4rem);
+  }
+
   .gradient-bg {
     background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
   }
