@@ -19,7 +19,6 @@ import {
   ChevronDown,
   Check,
   X,
-  DollarSign,
   Trophy,
 } from "lucide-react";
 import { Suspense } from "react";
@@ -275,42 +274,6 @@ function SellerApplyFormInner({ leaderboard }: { leaderboard: SellerRank[] }) {
             </h1>
             <p className="mt-2 text-slate-600 dark:text-slate-400">
               Đăng ký để tự đăng và bán acc eFootball trên THC Shop
-            </p>
-          </div>
-
-          {/* Income example */}
-          <div className="mt-8 rounded-2xl border border-emerald-200 bg-gradient-to-br from-emerald-50 to-teal-50 p-5 sm:p-6 dark:border-emerald-500/20 dark:from-emerald-500/5 dark:to-teal-500/5">
-            <div className="flex items-center gap-2 mb-3">
-              <DollarSign className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
-              <h2 className="text-base font-bold text-emerald-800 dark:text-emerald-300">
-                Thu nhập mẫu
-              </h2>
-            </div>
-            <div className="grid gap-3 sm:grid-cols-3">
-              <div className="rounded-xl bg-white/70 p-4 text-center dark:bg-slate-800/50">
-                <p className="text-xs text-slate-500 dark:text-slate-400">Mới bắt đầu</p>
-                <p className="mt-1 text-lg font-bold text-emerald-700 dark:text-emerald-400">
-                  300K–500K
-                </p>
-                <p className="text-xs text-slate-500 dark:text-slate-400">~10 acc/tháng</p>
-              </div>
-              <div className="rounded-xl bg-white/70 p-4 text-center ring-2 ring-emerald-300 dark:bg-slate-800/50 dark:ring-emerald-500/30">
-                <p className="text-xs text-slate-500 dark:text-slate-400">Trung bình</p>
-                <p className="mt-1 text-lg font-bold text-emerald-700 dark:text-emerald-400">
-                  500K–1.5M
-                </p>
-                <p className="text-xs text-slate-500 dark:text-slate-400">~20 acc/tháng</p>
-              </div>
-              <div className="rounded-xl bg-white/70 p-4 text-center dark:bg-slate-800/50">
-                <p className="text-xs text-slate-500 dark:text-slate-400">Top seller</p>
-                <p className="mt-1 text-lg font-bold text-emerald-700 dark:text-emerald-400">
-                  2M–5M+
-                </p>
-                <p className="text-xs text-slate-500 dark:text-slate-400">40+ acc/tháng</p>
-              </div>
-            </div>
-            <p className="mt-3 text-center text-[11px] text-emerald-600/70 dark:text-emerald-400/60">
-              * Lợi nhuận thực tế tuỳ thuộc vào loại acc và giá thu mua. Không thu phí nền tảng.
             </p>
           </div>
 
