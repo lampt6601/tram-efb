@@ -6,6 +6,7 @@ import { resetAdminPassword } from "@/app/actions/super-admin-actions";
 import { Button } from "@thc-efb/ui/button";
 import { Input } from "@thc-efb/ui/input";
 import { Label } from "@thc-efb/ui/label";
+import { useAutoFocusDesktop } from "@thc-efb/ui/responsive-core";
 import {
   ResponsiveDialog,
   ResponsiveDialogContent,
@@ -17,6 +18,7 @@ import {
 import { toast } from "sonner";
 
 export function ResetPasswordModal({ adminId, adminEmail }: { adminId: string; adminEmail: string }) {
+  const autoFocusDesktop = useAutoFocusDesktop();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [password, setPassword] = useState("");
@@ -62,7 +64,7 @@ export function ResetPasswordModal({ adminId, adminEmail }: { adminId: string; a
                   <Input type={showPassword ? "text" : "password"} value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Tối thiểu 6 ký tự" disabled={loading}
-                    className="rounded-xl border-slate-300 pr-10 dark:bg-slate-800 dark:border-slate-600 dark:text-slate-100" autoFocus />
+                    className="rounded-xl border-slate-300 pr-10 dark:bg-slate-800 dark:border-slate-600 dark:text-slate-100" autoFocus={autoFocusDesktop} />
                   <button type="button" onClick={() => setShowPassword(!showPassword)} tabIndex={-1}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300">
                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}

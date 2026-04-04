@@ -7,6 +7,7 @@ import { createAdmin } from "@/app/actions/super-admin-actions";
 import { Button } from "@thc-efb/ui/button";
 import { Input } from "@thc-efb/ui/input";
 import { Label } from "@thc-efb/ui/label";
+import { useAutoFocusDesktop } from "@thc-efb/ui/responsive-core";
 import {
   ResponsiveDialog,
   ResponsiveDialogContent,
@@ -19,6 +20,7 @@ import { toast } from "sonner";
 
 export function CreateAdminModal() {
   const router = useRouter();
+  const autoFocusDesktop = useAutoFocusDesktop();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [name, setName] = useState("");
@@ -74,7 +76,7 @@ export function CreateAdminModal() {
                   <Label className="text-slate-700 dark:text-slate-200">Tên</Label>
                   <Input type="text" value={name} onChange={(e) => setName(e.target.value)}
                     placeholder="Nguyễn Văn A" disabled={loading}
-                    className="mt-1.5 rounded-xl border-slate-300 dark:bg-slate-800 dark:border-slate-600 dark:text-slate-100" autoFocus />
+                    className="mt-1.5 rounded-xl border-slate-300 dark:bg-slate-800 dark:border-slate-600 dark:text-slate-100" autoFocus={autoFocusDesktop} />
                 </div>
                 <div>
                   <Label className="text-slate-700 dark:text-slate-200">Email</Label>

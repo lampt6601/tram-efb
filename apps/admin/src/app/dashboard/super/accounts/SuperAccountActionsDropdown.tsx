@@ -30,6 +30,7 @@ import {
 import { Button } from "@thc-efb/ui/button";
 import { Input } from "@thc-efb/ui/input";
 import { Label } from "@thc-efb/ui/label";
+import { useAutoFocusDesktop } from "@thc-efb/ui/responsive-core";
 import { toast } from "sonner";
 import {
   ResponsiveDropdownMenu,
@@ -81,6 +82,7 @@ export function SuperAccountActionsDropdown({
   const id = account.id;
   const title = account.title;
   const router = useRouter();
+  const autoFocusDesktop = useAutoFocusDesktop();
   const [openDialog, setOpenDialog] = useState<OpenDialog>(null);
   const [loading, setLoading] = useState(false);
   const [approving, setApproving] = useState(false);
@@ -607,7 +609,7 @@ export function SuperAccountActionsDropdown({
               step={1}
               disabled={loading}
               className="mt-1.5 rounded-xl border-slate-300 dark:border-slate-600"
-              autoFocus
+              autoFocus={autoFocusDesktop}
             />
             {error && <p className="mt-1.5 text-xs text-red-600 dark:text-red-400">{error}</p>}
           </div>
@@ -712,7 +714,7 @@ export function SuperAccountActionsDropdown({
                   disabled={loading}
                   className="mt-1.5 rounded-xl border-slate-300 dark:border-slate-600"
                   placeholder="VD: Nguyễn Văn A"
-                  autoFocus
+                  autoFocus={autoFocusDesktop}
                 />
               </div>
               <div>
@@ -879,7 +881,7 @@ export function SuperAccountActionsDropdown({
                   step={1}
                   disabled={loading}
                   className="mt-1.5 rounded-xl border-emerald-300 bg-emerald-50/30 dark:border-emerald-500/30 dark:bg-emerald-500/10"
-                  autoFocus
+                  autoFocus={autoFocusDesktop}
                 />
               </div>
               <div>

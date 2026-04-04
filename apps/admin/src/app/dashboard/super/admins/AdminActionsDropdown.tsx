@@ -29,6 +29,7 @@ import {
 import { Button } from "@thc-efb/ui/button";
 import { Input } from "@thc-efb/ui/input";
 import { Label } from "@thc-efb/ui/label";
+import { useAutoFocusDesktop } from "@thc-efb/ui/responsive-core";
 import {
   ResponsiveDialog,
   ResponsiveDialogContent,
@@ -81,6 +82,7 @@ export function AdminActionsDropdown({
   transactionBoxUrl: initialTransactionBoxUrl,
 }: AdminActionsDropdownProps) {
   const router = useRouter();
+  const autoFocusDesktop = useAutoFocusDesktop();
   const [openDialog, setOpenDialog] = useState<OpenDialog>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -325,7 +327,7 @@ export function AdminActionsDropdown({
                     placeholder="Nguyễn Văn A"
                     disabled={loading}
                     className="mt-1.5 rounded-xl border-slate-300 dark:border-slate-600"
-                    autoFocus
+                    autoFocus={autoFocusDesktop}
                   />
                 </div>
                 <div>
@@ -379,7 +381,7 @@ export function AdminActionsDropdown({
                   placeholder="Tối thiểu 6 ký tự"
                   disabled={loading}
                   className="rounded-xl border-slate-300 pr-10 dark:border-slate-600"
-                  autoFocus
+                  autoFocus={autoFocusDesktop}
                 />
                 <button
                   type="button"
@@ -462,7 +464,7 @@ export function AdminActionsDropdown({
                 placeholder="https://zalo.me/g/..."
                 disabled={loading}
                 className="mt-1.5 rounded-xl border-slate-300 dark:border-slate-600"
-                autoFocus
+                autoFocus={autoFocusDesktop}
               />
               <p className="mt-1.5 text-xs text-slate-400 dark:text-slate-500">
                 Zalo group giữa Chủ Sàn và người bán. Khách mua sẽ join vào box này.

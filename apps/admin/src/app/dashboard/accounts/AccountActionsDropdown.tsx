@@ -26,6 +26,7 @@ import { Button } from "@thc-efb/ui/button";
 import { Input } from "@thc-efb/ui/input";
 import { CurrencyInput } from "@thc-efb/ui/currency-input";
 import { Label } from "@thc-efb/ui/label";
+import { useAutoFocusDesktop } from "@thc-efb/ui/responsive-core";
 import {
   ResponsiveDropdownMenu,
   ResponsiveDropdownMenuContent,
@@ -82,6 +83,7 @@ export function AccountActionsDropdown({
 }: AccountActionsDropdownProps) {
   const router = useRouter();
   const supabase = createSupabaseBrowserClient();
+  const autoFocusDesktop = useAutoFocusDesktop();
 
   const [openDialog, setOpenDialog] = useState<OpenDialog>(null);
   const [loading, setLoading] = useState(false);
@@ -618,7 +620,7 @@ export function AccountActionsDropdown({
               step={1}
               disabled={loading}
               className="mt-1.5 rounded-xl border-slate-300 dark:border-slate-600"
-              autoFocus
+              autoFocus={autoFocusDesktop}
             />
             {error && <p className="mt-1.5 text-xs text-red-600 dark:text-red-400">{error}</p>}
           </div>
@@ -756,7 +758,7 @@ export function AccountActionsDropdown({
                   disabled={loading}
                   className="mt-1.5 rounded-xl border-slate-300 dark:border-slate-600"
                   placeholder="VD: Nguyễn Văn A"
-                  autoFocus
+                  autoFocus={autoFocusDesktop}
                 />
               </div>
               <div>

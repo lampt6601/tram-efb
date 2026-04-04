@@ -159,7 +159,7 @@ export function createResponsiveComponents(
     const { isMobile, open, onOpenChange } = React.useContext(ResponsiveContext)
     if (isMobile) {
       return (
-        <Drawer open={!!open} onOpenChange={onOpenChange}>
+        <Drawer open={!!open} onOpenChange={onOpenChange} repositionInputs={false}>
           <DrawerContent className={typeof className === "function" ? undefined : className}>
             {children}
           </DrawerContent>
@@ -218,4 +218,11 @@ export function createResponsiveComponents(
   }
 
   return { Root, Trigger, Content, Header, Footer, Title, Description, Close }
+}
+
+// ─── Helper hook ─────────────────────────────────────────────────
+// Returns true on desktop (where autoFocus is safe), false on mobile (prevents iOS keyboard on drawer open)
+export function useAutoFocusDesktop() {
+  const { isMobile } = React.useContext(ResponsiveContext)
+  return !isMobile
 }

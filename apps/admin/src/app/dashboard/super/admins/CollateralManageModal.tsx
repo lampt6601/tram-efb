@@ -18,6 +18,7 @@ import {
 import { Button } from "@thc-efb/ui/button";
 import { Input } from "@thc-efb/ui/input";
 import { Label } from "@thc-efb/ui/label";
+import { useAutoFocusDesktop } from "@thc-efb/ui/responsive-core";
 import {
   ResponsiveDialog,
   ResponsiveDialogContent,
@@ -71,6 +72,7 @@ export function CollateralManageModal({
   currentAmount,
 }: CollateralManageModalProps) {
   const router = useRouter();
+  const autoFocusDesktop = useAutoFocusDesktop();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [changeType, setChangeType] = useState<"increase" | "decrease" | "refund" | "initial">(
@@ -182,7 +184,7 @@ export function CollateralManageModal({
                   placeholder="Ví dụ: 500000"
                   disabled={loading}
                   className="mt-1.5 rounded-xl border-slate-300 dark:border-slate-600"
-                  autoFocus
+                  autoFocus={autoFocusDesktop}
                 />
               </div>
 
