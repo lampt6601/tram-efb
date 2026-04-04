@@ -23,6 +23,7 @@ import {
   LogOut,
 } from "lucide-react";
 import { ThemeToggle } from "@/components/common/ThemeToggle";
+import { PushOptIn } from "@/components/notifications/PushOptIn";
 import {
   Drawer,
   DrawerContent,
@@ -172,6 +173,11 @@ export function MobileBottomNav({
                   </Link>
                 );
               })}
+            </div>
+
+            {/* Push notification opt-in */}
+            <div className="border-t border-slate-100 dark:border-slate-700 pt-3">
+              <PushOptIn />
             </div>
 
             <div className="border-t border-slate-100 dark:border-slate-700 pt-3 pb-4 space-y-3">

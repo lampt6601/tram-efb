@@ -640,7 +640,9 @@ export function AccountForm({ account, duplicating, availableEmails, embedded, o
                 render={({ field }) => (
                   <Select value={field.value} onValueChange={field.onChange}>
                     <SelectTrigger className="mt-1.5">
-                      <SelectValue />
+                      <SelectValue>
+                        {(value: string) => ({ Available: "Sẵn sàng", Pending: "Đang chờ", Deposited: "Đang cọc", Sold: "Đã bán" }[value] ?? value)}
+                      </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="Available">Sẵn sàng</SelectItem>
@@ -920,7 +922,9 @@ export function AccountForm({ account, duplicating, availableEmails, embedded, o
                         }
                       >
                         <SelectTrigger className="mt-1.5">
-                          <SelectValue />
+                          <SelectValue>
+                            {(value: string) => ({ __all__: "Chưa chọn", Japan: "Nhật (Japan)", Morocco: "Maroc (Morocco)", "Hong Kong": "Hong Kong", Other: "Khác" }[value] ?? value)}
+                          </SelectValue>
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="__all__">Chưa chọn</SelectItem>
