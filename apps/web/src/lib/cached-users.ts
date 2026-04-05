@@ -15,7 +15,11 @@ import type { User } from "@supabase/supabase-js";
 export const getAdminUsers = unstable_cache(
   async (): Promise<User[]> => {
     const service = createSupabaseServiceClient();
-    const { data } = await service.auth.admin.listUsers({ perPage: 1000 });
+    const { data, error } = await service.auth.admin.listUsers({ perPage: 1000 });
+    if (error) {
+      console.error("[getAdminUsers] listUsers failed:", error.message);
+      return [];
+    }
     return data?.users ?? [];
   },
   ["admin-users-list"],
@@ -24,13 +28,25 @@ export const getAdminUsers = unstable_cache(
 
 /**
  * Get the count of admin/seller users (excluding super admin).
- * Uses the same cached user list.
+ * Falls back to counting admin_settings rows if auth.admin.listUsers fails.
  */
 export const getSellerCount = unstable_cache(
   async (): Promise<number> => {
     const users = await getAdminUsers();
-    // Subtract 1 for super admin
-    return Math.max(users.length - 1, 0);
+    if (users.length > 0) {
+      // Subtract 1 for super admin
+      return Math.max(users.length - 1, 0);
+    }
+    // Fallback: count rows in admin_settings (each row = one seller account)
+    const service = createSupabaseServiceClient();
+    const { count, error } = await service
+      .from("admin_settings")
+      .select("*", { count: "exact", head: true });
+    if (error) {
+      console.error("[getSellerCount] fallback count failed:", error.message);
+      return 0;
+    }
+    return count ?? 0;
   },
   ["seller-count"],
   { revalidate: 300, tags: ["admin-users"] },

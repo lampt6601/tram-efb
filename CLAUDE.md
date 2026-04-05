@@ -37,6 +37,7 @@ No test framework is configured. Database migrations are applied via SQL files i
 ### Supabase Client Pattern
 
 Four Supabase clients used depending on context:
+
 - `supabase-browser.ts` — Browser client (cookie-based auth)
 - `supabase-server.ts` — Server Components/Actions client (reads cookies from request)
 - `supabase-service.ts` — Service role client (bypasses RLS, used for super-admin operations)
@@ -45,6 +46,7 @@ Four Supabase clients used depending on context:
 ### Authentication & Authorization
 
 Middleware (`src/middleware.ts`) protects routes:
+
 - `/admin/dashboard/*` requires an authenticated user
 - `/admin/dashboard/super/*` additionally requires the super-admin email
 - Super-admin check: `src/lib/super-admin.ts` verifies against `SUPER_ADMIN_EMAIL` env var
@@ -83,3 +85,13 @@ Middleware (`src/middleware.ts`) protects routes:
 ### Styling
 
 Tailwind CSS with CSS variables for theming. Dark mode via `next-themes` (class strategy). Custom aspect ratio `game-screenshot` (16/7). Shadcn/UI components use Class Variance Authority. `cn()` utility in `src/lib/utils.ts` merges Tailwind classes. Images use ImageKit CDN transformations instead of Next.js image optimization (`images.unoptimized: true`).
+
+## MCP & Context Optimization\*
+
+**Priority Tooling**: Always prioritize using the `serena` MCP server for context gathering, project indexing, and code search.
+**Token Efficiency**: Before reading multiple files manually with `ls` or `cat`, use `serena`'s search/indexing tools to identify and fetch only the relevant code snippets.
+**Workflow**:
+
+1. Use `serena` to get a high-level overview of the project structure.
+2. Use `serena` to locate specific logic or variable definitions instead of broad file reads.
+3. Only request full file content if summaries are insufficient.
