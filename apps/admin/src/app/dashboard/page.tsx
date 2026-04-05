@@ -23,6 +23,7 @@ import {
   ExternalLink,
   Timer,
   Banknote,
+  Wallet,
 } from "lucide-react";
 import Link from "next/link";
 import type { Account, AccountRequest } from "@thc-efb/supabase/types";
@@ -87,6 +88,12 @@ export default async function DashboardPage({
   const depositedAccounts = items.filter(
     (a) => a.status === "Deposited",
   ).length;
+
+  const unsoldItems = items.filter((a) => a.status !== "Sold");
+  const totalUnsoldCost = unsoldItems.reduce(
+    (sum, a) => sum + Number(a.purchase_price),
+    0,
+  );
 
   const soldItems = items.filter((a) => a.status === "Sold");
   const sinceISO =
@@ -235,6 +242,11 @@ export default async function DashboardPage({
           label="Đang Cọc"
           value={depositedAccounts.toString()}
           icon={<Banknote className="h-6 w-6" />}
+        />
+        <StatCard
+          label="Vốn Hàng Tồn"
+          value={formatCurrency(totalUnsoldCost)}
+          icon={<Wallet className="h-6 w-6" />}
         />
         <StatCard
           label={`Đã Bán${periodLabel}`}
