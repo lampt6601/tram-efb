@@ -203,28 +203,24 @@ export function SuperAccountActionsDropdown({
   const handleTogglePriority = async () => {
     const next = !priority;
     setToggling("priority");
-    try {
-      await superAdminUpdateAccount(id, account.user_id, { is_priority: next });
-      setPriority(next);
-      toast.success(next ? "Đã đánh dấu nổi bật" : "Đã bỏ nổi bật");
-      router.refresh();
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Có lỗi xảy ra");
-    } finally { setToggling(null); }
+    const result = await superAdminUpdateAccount(id, account.user_id, { is_priority: next });
+    setToggling(null);
+    if (result?.error) { toast.error(result.error); return; }
+    setPriority(next);
+    toast.success(next ? "Đã đánh dấu nổi bật" : "Đã bỏ nổi bật");
+    router.refresh();
   };
 
   // ── Toggle clone ──────────────────────────────────────────────────────────
   const handleToggleClone = async () => {
     const next = !clone;
     setToggling("clone");
-    try {
-      await superAdminUpdateAccount(id, account.user_id, { is_clone: next });
-      setClone(next);
-      toast.success(next ? "Đã đánh dấu Clone" : "Đã bỏ Clone");
-      router.refresh();
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Có lỗi xảy ra");
-    } finally { setToggling(null); }
+    const result = await superAdminUpdateAccount(id, account.user_id, { is_clone: next });
+    setToggling(null);
+    if (result?.error) { toast.error(result.error); return; }
+    setClone(next);
+    toast.success(next ? "Đã đánh dấu Clone" : "Đã bỏ Clone");
+    router.refresh();
   };
 
   // ── Sell ──────────────────────────────────────────────────────────────────
@@ -236,18 +232,16 @@ export function SuperAccountActionsDropdown({
     }
     setLoading(true);
     setError("");
-    try {
-      await superAdminUpdateAccount(id, account.user_id, {
-        status: "Sold",
-        selling_price: parsed,
-        email_id: null,
-      });
-      setOpenDialog(null);
-      toast.success("Đã đánh dấu đã bán");
-      router.refresh();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Đã có lỗi xảy ra");
-    } finally { setLoading(false); }
+    const result = await superAdminUpdateAccount(id, account.user_id, {
+      status: "Sold",
+      selling_price: parsed,
+      email_id: null,
+    });
+    setLoading(false);
+    if (result?.error) { setError(result.error); return; }
+    setOpenDialog(null);
+    toast.success("Đã đánh dấu đã bán");
+    router.refresh();
   };
 
   // ── Sale ──────────────────────────────────────────────────────────────────
@@ -265,30 +259,26 @@ export function SuperAccountActionsDropdown({
     const finalOriginal = saleOriginalPrice !== "" ? parsedOriginal : null;
     setLoading(true);
     setError("");
-    try {
-      await superAdminUpdateAccount(id, account.user_id, {
-        selling_price: parsedSale,
-        original_price: finalOriginal,
-      });
-      setOpenDialog(null);
-      toast.success("Đã cập nhật giá sale");
-      router.refresh();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Đã có lỗi xảy ra");
-    } finally { setLoading(false); }
+    const saleResult = await superAdminUpdateAccount(id, account.user_id, {
+      selling_price: parsedSale,
+      original_price: finalOriginal,
+    });
+    setLoading(false);
+    if (saleResult?.error) { setError(saleResult.error); return; }
+    setOpenDialog(null);
+    toast.success("Đã cập nhật giá sale");
+    router.refresh();
   };
 
   const handleRemoveSale = async () => {
     setLoading(true);
     setError("");
-    try {
-      await superAdminUpdateAccount(id, account.user_id, { original_price: null });
-      setOpenDialog(null);
-      toast.success("Đã hủy sale");
-      router.refresh();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Đã có lỗi xảy ra");
-    } finally { setLoading(false); }
+    const result = await superAdminUpdateAccount(id, account.user_id, { original_price: null });
+    setLoading(false);
+    if (result?.error) { setError(result.error); return; }
+    setOpenDialog(null);
+    toast.success("Đã hủy sale");
+    router.refresh();
   };
 
   // ── Deposit ──────────────────────────────────────────────────────────────
@@ -308,56 +298,50 @@ export function SuperAccountActionsDropdown({
     }
     setLoading(true);
     setError("");
-    try {
-      await superAdminUpdateAccount(id, account.user_id, {
-        status: "Deposited",
-        deposit_customer_name: depositCustomerName.trim(),
-        deposit_customer_contact: depositCustomerContact.trim() || null,
-        deposit_amount: parsedAmount,
-        deposit_hold_until: depositHoldUntil,
-        deposit_notes: depositNotes.trim() || null,
-      });
-      setOpenDialog(null);
-      toast.success("Đã đánh dấu cọc thành công");
-      router.refresh();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Đã có lỗi xảy ra");
-    } finally { setLoading(false); }
+    const result = await superAdminUpdateAccount(id, account.user_id, {
+      status: "Deposited",
+      deposit_customer_name: depositCustomerName.trim(),
+      deposit_customer_contact: depositCustomerContact.trim() || null,
+      deposit_amount: parsedAmount,
+      deposit_hold_until: depositHoldUntil,
+      deposit_notes: depositNotes.trim() || null,
+    });
+    setLoading(false);
+    if (result?.error) { setError(result.error); return; }
+    setOpenDialog(null);
+    toast.success("Đã đánh dấu cọc thành công");
+    router.refresh();
   };
 
   // ── Undeposit ───────────────────────────────────────────────────────────
   const handleUndeposit = async () => {
     setLoading(true);
     setError("");
-    try {
-      await superAdminUpdateAccount(id, account.user_id, {
-        status: "Available",
-        deposit_customer_name: null,
-        deposit_customer_contact: null,
-        deposit_amount: null,
-        deposit_hold_until: null,
-        deposit_notes: null,
-      });
-      setOpenDialog(null);
-      toast.success("Đã hủy cọc thành công");
-      router.refresh();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Đã có lỗi xảy ra");
-    } finally { setLoading(false); }
+    const result = await superAdminUpdateAccount(id, account.user_id, {
+      status: "Available",
+      deposit_customer_name: null,
+      deposit_customer_contact: null,
+      deposit_amount: null,
+      deposit_hold_until: null,
+      deposit_notes: null,
+    });
+    setLoading(false);
+    if (result?.error) { setError(result.error); return; }
+    setOpenDialog(null);
+    toast.success("Đã hủy cọc thành công");
+    router.refresh();
   };
 
   // ── Unmark sold ───────────────────────────────────────────────────────────
   const handleUnmarkSold = async () => {
     setLoading(true);
     setError("");
-    try {
-      await superAdminUpdateAccount(id, account.user_id, { status: "Available" });
-      setOpenDialog(null);
-      toast.success("Đã gỡ đánh dấu đã bán");
-      router.refresh();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Đã có lỗi xảy ra");
-    } finally { setLoading(false); }
+    const result = await superAdminUpdateAccount(id, account.user_id, { status: "Available" });
+    setLoading(false);
+    if (result?.error) { setError(result.error); return; }
+    setOpenDialog(null);
+    toast.success("Đã gỡ đánh dấu đã bán");
+    router.refresh();
   };
 
   // ── Buyback ──────────────────────────────────────────────────────────────

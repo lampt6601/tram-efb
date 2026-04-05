@@ -82,7 +82,7 @@ export async function superAdminUpdateAccount(
   accountId: string,
   originalUserId: string,
   payload: Record<string, unknown>
-) {
+): Promise<{ error: string } | void> {
   await verifySuperAdmin();
   const service = createSupabaseServiceClient();
 
@@ -93,16 +93,20 @@ export async function superAdminUpdateAccount(
     .single();
 
   if (fetchErr || !current) {
-    throw new Error(fetchErr?.message ?? "Không tìm thấy tài khoản");
+    return { error: fetchErr?.message ?? "Không tìm thấy tài khoản" };
   }
 
-  await assertAvailablePriorityLimit(service, accountId, current, payload);
+  try {
+    await assertAvailablePriorityLimit(service, accountId, current, payload);
+  } catch (e) {
+    return { error: e instanceof Error ? e.message : "Không thể cập nhật nổi bật." };
+  }
 
   const { error } = await service
     .from("accounts")
     .update({ ...payload, user_id: originalUserId })
     .eq("id", accountId);
-  if (error) throw new Error(error.message);
+  if (error) return { error: error.message };
   revalidatePath("/dashboard/super/accounts");
   revalidatePath(`/dashboard/super/accounts/${accountId}/edit`);
   revalidatePath("/dashboard/accounts");

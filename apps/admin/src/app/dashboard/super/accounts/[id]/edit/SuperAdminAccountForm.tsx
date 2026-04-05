@@ -177,7 +177,7 @@ export function SuperAdminAccountForm({ account, availableEmails, embedded, onSu
         finalPrimaryUrl = finalImages[0];
       else if (finalImages.length === 0) finalPrimaryUrl = null;
 
-      await superAdminUpdateAccount(account.id, account.user_id, {
+      const updateResult = await superAdminUpdateAccount(account.id, account.user_id, {
         title: values.title,
         purchase_price: parseInt(values.purchasePrice) || 0,
         selling_price: parseInt(values.sellingPrice) || 0,
@@ -215,6 +215,12 @@ export function SuperAdminAccountForm({ account, availableEmails, embedded, onSu
               deposit_notes: null,
             }),
       });
+
+      if (updateResult?.error) {
+        toast.error(updateResult.error);
+        setLoading(false);
+        return;
+      }
 
       resetUploadState();
       toast.success("Đã cập nhật tài khoản thành công");

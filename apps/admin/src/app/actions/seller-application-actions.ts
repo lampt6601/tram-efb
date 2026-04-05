@@ -6,7 +6,6 @@ import { createSupabaseServiceClient } from "@thc-efb/supabase/service";
 import { revalidatePath } from "next/cache";
 import { sendTelegramNotification, escapeHtml } from "@/lib/telegram-bot";
 import { createNotification } from "@/lib/notifications";
-import { sendPushToAllAdmins } from "@/lib/push";
 
 interface ApplySellerInput {
   fullName: string;
@@ -84,15 +83,6 @@ export async function submitSellerApplication(input: ApplySellerInput) {
           { id: "view", label: "Xem đơn ứng tuyển", url: notifUrl },
         ],
       },
-    }),
-    sendPushToAllAdmins({
-      title: notifTitle,
-      body: notifBody,
-      url: notifUrl,
-      tag: "application-new",
-      actions: [
-        { action: "view", title: "Xem đơn ứng tuyển", url: notifUrl },
-      ],
     }),
   ]);
 

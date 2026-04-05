@@ -5,7 +5,6 @@ import { sendTelegramNotification, escapeHtml } from "@/lib/telegram-bot";
 import { formatCurrency } from "@thc-efb/shared/constants";
 import { SUPER_ADMIN_EMAIL } from "@thc-efb/shared/super-admin";
 import { createNotification, type NotificationType } from "@/lib/notifications";
-import { sendPushToAllAdmins } from "@/lib/push";
 
 const actionTypeMap: Record<string, string> = {
   CREATE: "Tạo mới",
@@ -140,19 +139,6 @@ export async function notifyAdminAction(
         },
       }),
 
-      // 3. Push notification to all admins
-      sendPushToAllAdmins({
-        title: `${emoji} ${actionText}`,
-        body: accountTitle,
-        url: notifUrl,
-        tag: `admin-action-${accountId || Date.now()}`,
-        actions: [
-          { action: "view", title: "Xem chi tiết", url: notifUrl },
-          ...(accountId
-            ? [{ action: "public", title: "Xem trang bán", url: `${BASE_URL}/accounts/${accountId}` }]
-            : []),
-        ],
-      }),
     ]);
   } catch (error) {
     console.error("Failed to notify admin action:", error);

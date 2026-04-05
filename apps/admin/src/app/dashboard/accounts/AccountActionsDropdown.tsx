@@ -178,22 +178,18 @@ export function AccountActionsDropdown({
     }
   };
 
-  // ── Toggle nổi bật (server: giới hạn 2 acc Available + nổi bật / admin) ───
+  // ── Toggle nổi bật (server: giới hạn 1 acc Available + nổi bật / admin) ───
   const handleTogglePriority = async () => {
-    const next = !priority;
     setToggling("priority");
-    try {
-      await toggleAccountPriority(id);
-      setPriority(next);
-      toast.success(next ? "Đã đánh dấu nổi bật" : "Đã bỏ nổi bật");
-      router.refresh();
-    } catch (e) {
-      toast.error(
-        e instanceof Error ? e.message : "Không thể cập nhật nổi bật.",
-      );
-    } finally {
-      setToggling(null);
+    const result = await toggleAccountPriority(id);
+    setToggling(null);
+    if ("error" in result) {
+      toast.error(result.error);
+      return;
     }
+    setPriority(result.next);
+    toast.success(result.next ? "Đã đánh dấu nổi bật" : "Đã bỏ nổi bật");
+    router.refresh();
   };
 
   // ── Unmark sold ───────────────────────────────────────────────────────────

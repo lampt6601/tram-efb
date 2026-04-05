@@ -24,7 +24,6 @@ import {
 import { Button } from "@thc-efb/ui/button";
 import { ThemeToggle } from "@/components/common/ThemeToggle";
 import { SidebarStats } from "./SidebarStats";
-import { PushOptIn } from "@/components/notifications/PushOptIn";
 
 const navItems = [
   { href: "/dashboard", label: "Bảng Điều Khiển", icon: LayoutDashboard },
@@ -158,9 +157,6 @@ export function Sidebar({ open, onClose, isSuperAdmin = false, adminName = "", a
             </div>
           )}
         </nav>
-
-        {/* Push notification opt-in */}
-        <PushOptIn />
 
         {/* Stats */}
         <div className="border-t border-slate-200 py-2 dark:border-slate-700">

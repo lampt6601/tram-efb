@@ -23,7 +23,6 @@ import {
   LogOut,
 } from "lucide-react";
 import { ThemeToggle } from "@/components/common/ThemeToggle";
-import { PushOptIn } from "@/components/notifications/PushOptIn";
 import {
   Drawer,
   DrawerContent,
@@ -191,13 +190,6 @@ export function MobileBottomNav({
                 );
               })}
             </div>
-
-            {/* Push notification opt-in — not shown in TMA (Telegram handles notifications) */}
-            {!isTma && (
-              <div className="border-t border-slate-100 dark:border-slate-700 pt-3">
-                <PushOptIn />
-              </div>
-            )}
 
             <div className="border-t border-slate-100 dark:border-slate-700 pt-3 pb-4 space-y-3">
               {/* User info */}

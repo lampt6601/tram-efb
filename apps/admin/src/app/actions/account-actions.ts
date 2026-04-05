@@ -7,14 +7,16 @@ import { assertAvailablePriorityLimit } from "@thc-efb/shared/account-priority";
 import { revalidatePath } from "next/cache";
 
 /**
- * Admin đổi trạng thái nổi bật cho acc của chính mình (giới hạn 2 acc Available + nổi bật).
+ * Admin đổi trạng thái nổi bật cho acc của chính mình (giới hạn 1 acc Available + nổi bật).
  */
-export async function toggleAccountPriority(accountId: string) {
+export async function toggleAccountPriority(
+  accountId: string,
+): Promise<{ success: true; next: boolean } | { error: string }> {
   const supabase = await createSupabaseServerClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) throw new Error("Unauthorized");
+  if (!user) return { error: "Unauthorized" };
 
   const { data: row, error: fetchErr } = await supabase
     .from("accounts")
@@ -22,14 +24,18 @@ export async function toggleAccountPriority(accountId: string) {
     .eq("id", accountId)
     .single();
 
-  if (fetchErr || !row) throw new Error(fetchErr?.message ?? "Không tìm thấy tài khoản");
-  if (row.user_id !== user.id) throw new Error("Unauthorized");
+  if (fetchErr || !row) return { error: fetchErr?.message ?? "Không tìm thấy tài khoản" };
+  if (row.user_id !== user.id) return { error: "Unauthorized" };
 
   const next = !row.is_priority;
 
-  await assertAvailablePriorityLimit(supabase, accountId, row, {
-    is_priority: next,
-  });
+  try {
+    await assertAvailablePriorityLimit(supabase, accountId, row, {
+      is_priority: next,
+    });
+  } catch (e) {
+    return { error: e instanceof Error ? e.message : "Không thể cập nhật nổi bật." };
+  }
 
   const { error } = await supabase
     .from("accounts")
@@ -37,10 +43,11 @@ export async function toggleAccountPriority(accountId: string) {
     .eq("id", accountId)
     .eq("user_id", user.id);
 
-  if (error) throw new Error(error.message);
+  if (error) return { error: error.message };
 
   revalidatePath("/dashboard/accounts");
   revalidatePath("/"); // slider acc nổi bật trang chủ
+  return { success: true, next };
 }
 
 /**

@@ -5,7 +5,6 @@ import { createSupabaseServerClient } from "@thc-efb/supabase/server";
 import { uploadFileToImageKit } from "@/lib/imagekit";
 import { sendTelegramNotification, escapeHtml } from "@/lib/telegram-bot";
 import { createNotification } from "@/lib/notifications";
-import { sendPushToAllAdmins } from "@/lib/push";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { rateLimit, getClientIp } from "@thc-efb/shared/rate-limit";
@@ -109,15 +108,6 @@ export async function submitSellRequest(formData: FormData) {
           { id: "view", label: "Xem yêu cầu", url: notifUrl },
         ],
       },
-    }),
-    sendPushToAllAdmins({
-      title: notifTitle,
-      body: notifBody,
-      url: notifUrl,
-      tag: "sell-request-new",
-      actions: [
-        { action: "view", title: "Xem yêu cầu", url: notifUrl },
-      ],
     }),
   ]);
 
