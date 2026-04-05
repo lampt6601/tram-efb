@@ -13,9 +13,18 @@ function TmaAuthContent() {
   useEffect(() => {
     async function authenticate() {
       try {
-        const initData = window.Telegram?.WebApp?.initData;
+        // Wait briefly for Telegram WebApp to initialize (handles redirect timing)
+        let initData = window.Telegram?.WebApp?.initData;
+        if (!initData) {
+          await new Promise((r) => setTimeout(r, 500));
+          initData = window.Telegram?.WebApp?.initData;
+        }
 
         if (!initData) {
+          // Dev mode: show debug info instead of silent redirect
+          if (process.env.NODE_ENV === "development") {
+            console.warn("TMA: no initData. window.Telegram =", window.Telegram);
+          }
           router.replace("/tma/auth-error?reason=no_init_data");
           return;
         }
