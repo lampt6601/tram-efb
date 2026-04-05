@@ -63,7 +63,12 @@ export async function submitSellerApplication(input: ApplySellerInput) {
   await sendTelegramNotification(
     appText,
     null,
-    [[{ text: "👉 Duyệt đơn", url: "https://admin.thc-efb.com/dashboard/super/applications" }]],
+    [
+    [
+      { text: "👉 Duyệt đơn", url: "https://admin.thc-efb.com/dashboard/super/applications" },
+      { text: "📱 Mở Admin App", web_app: { url: "https://admin.thc-efb.com/tma/dashboard/super/applications" } },
+    ],
+  ],
   );
 
   return { success: true, message: "Đơn đăng ký đã được gửi! Chúng tôi sẽ liên hệ sớm nhất." };

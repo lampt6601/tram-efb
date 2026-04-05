@@ -95,7 +95,7 @@ export async function notifyAdminAction(
         { text: "🔗 Xem tài khoản", url: `${BASE_URL}/accounts/${accountId}` },
         {
           text: "📱 Mở Admin App",
-          web_app: { url: `${ADMIN_URL}/tma/dashboard/accounts?detail=${accountId}` },
+          web_app: { url: `${ADMIN_URL}/tma/dashboard/noti?id=${accountId}` },
         },
       ]);
     }

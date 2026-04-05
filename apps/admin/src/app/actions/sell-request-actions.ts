@@ -91,7 +91,10 @@ export async function submitSellRequest(formData: FormData) {
     (description ? `📝 <b>Mô tả:</b> ${escapeHtml(description)}\n` : "") +
     `📸 ${imageUrls.length} ảnh`;
   const sellRequestButtons = [
-    [{ text: "👉 Xem yêu cầu", url: `https://admin.thc-efb.com/dashboard/sell-requests?highlight=${inserted.id}` }],
+    [
+      { text: "👉 Xem yêu cầu", url: `https://admin.thc-efb.com/dashboard/sell-requests?highlight=${inserted.id}` },
+      { text: "📱 Mở Admin App", web_app: { url: `https://admin.thc-efb.com/tma/dashboard/sell-requests?highlight=${inserted.id}` } },
+    ],
   ];
 
   await Promise.allSettled([

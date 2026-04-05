@@ -88,7 +88,12 @@ export async function submitSellRequest(formData: FormData) {
   await sendTelegramNotification(
     sellRequestText,
     imageUrls,
-    [[{ text: "👉 Xem yêu cầu", url: "https://admin.thc-efb.com/dashboard/sell-requests" }]],
+    [
+    [
+      { text: "👉 Xem yêu cầu", url: "https://admin.thc-efb.com/dashboard/sell-requests" },
+      { text: "📱 Mở Admin App", web_app: { url: "https://admin.thc-efb.com/tma/dashboard/sell-requests" } },
+    ],
+  ],
   );
 
   return { success: true };

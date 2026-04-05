@@ -66,7 +66,10 @@ export async function submitSellerApplication(input: ApplySellerInput) {
     `📱 <b>Zalo:</b> ${escapeHtml(zaloPhone)}\n` +
     (input.reason ? `💬 <b>Lý do:</b> ${escapeHtml(input.reason.trim())}\n` : "");
   const appButtons = [
-    [{ text: "👉 Duyệt đơn", url: `https://admin.thc-efb.com/dashboard/super/applications?highlight=${inserted.id}` }],
+    [
+      { text: "👉 Duyệt đơn", url: `https://admin.thc-efb.com/dashboard/super/applications?highlight=${inserted.id}` },
+      { text: "📱 Mở Admin App", web_app: { url: `https://admin.thc-efb.com/tma/dashboard/super/applications?highlight=${inserted.id}` } },
+    ],
   ];
 
   await Promise.allSettled([

@@ -3,15 +3,26 @@
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 
-## MCP & Context Optimization\*
+## MCP & Serena — BẮT BUỘC
 
-**Priority Tooling**: Always prioritize using the `serena` MCP server for context gathering, project indexing, and code search.
-**Token Efficiency**: Before reading multiple files manually with `ls` or `cat`, use `serena`'s search/indexing tools to identify and fetch only the relevant code snippets.
-**Workflow**:
+**Ở đầu MỖI conversation, Claude PHẢI gọi theo thứ tự:**
 
-1. Use `serena` to get a high-level overview of the project structure.
-2. Use `serena` to locate specific logic or variable definitions instead of broad file reads.
-3. Only request full file content if summaries are insufficient.
+1. `mcp__serena__initial_instructions` — đọc Serena manual
+2. `mcp__serena__check_onboarding_performed` — kiểm tra project đã index chưa
+
+**Ưu tiên Serena tools cho mọi thao tác code (KHÔNG dùng Read/Glob/Grep để explore):**
+
+- `find_symbol` — tìm function/class/component theo tên
+- `get_symbols_overview` — xem cấu trúc symbols trong một file
+- `search_for_pattern` — tìm pattern khi chưa biết tên symbol
+- `list_dir` — duyệt thư mục
+- Chỉ dùng `Read` khi cần đọc file non-code hoặc Serena không đủ
+
+**Monorepo paths** (KHÔNG dùng `src/` trực tiếp):
+- `apps/web/src/` — Public storefront
+- `apps/admin/src/` — Admin dashboard
+- `packages/supabase/src/` — Shared Supabase clients & types
+- `packages/ui/src/` — Shared UI components
 
 
 ## Build & Development Commands
