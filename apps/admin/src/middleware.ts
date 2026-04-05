@@ -3,11 +3,20 @@ import { NextResponse, type NextRequest } from 'next/server';
 import { checkIsSuperAdmin } from '@thc-efb/shared/super-admin';
 
 export async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+  const isDashboard = pathname.startsWith('/dashboard');
+  const isTmaDashboard = pathname.startsWith('/tma/dashboard');
+  const isProtected = isDashboard || isTmaDashboard;
+
   const hasAuthCookies = request.cookies.getAll().some(({ name }) => name.startsWith('sb-'));
 
   if (!hasAuthCookies) {
-    if (request.nextUrl.pathname.startsWith('/dashboard')) {
+    if (isDashboard) {
       return NextResponse.redirect(new URL('/login', request.url));
+    }
+    if (isTmaDashboard) {
+      const from = encodeURIComponent(pathname + request.nextUrl.search);
+      return NextResponse.redirect(new URL(`/tma/loading?from=${from}`, request.url));
     }
     return NextResponse.next();
   }
@@ -38,33 +47,46 @@ export async function middleware(request: NextRequest) {
   const { data: { user }, error } = await supabase.auth.getUser();
 
   if (error) {
-    const response = request.nextUrl.pathname.startsWith('/dashboard')
-      ? NextResponse.redirect(new URL('/login', request.url))
-      : NextResponse.next({ request });
+    const clearCookies = (response: NextResponse) => {
+      request.cookies.getAll().forEach(({ name }) => {
+        if (name.startsWith('sb-')) response.cookies.delete(name);
+      });
+      return response;
+    };
 
-    request.cookies.getAll().forEach(({ name }) => {
-      if (name.startsWith('sb-')) {
-        response.cookies.delete(name);
-      }
-    });
-    return response;
+    if (isDashboard) {
+      return clearCookies(NextResponse.redirect(new URL('/login', request.url)));
+    }
+    if (isTmaDashboard) {
+      const from = encodeURIComponent(pathname + request.nextUrl.search);
+      return clearCookies(NextResponse.redirect(new URL(`/tma/loading?from=${from}`, request.url)));
+    }
+    return NextResponse.next({ request });
   }
 
-  // Protect dashboard routes
-  if (request.nextUrl.pathname.startsWith('/dashboard') && !user) {
+  // Protect /dashboard routes
+  if (isDashboard && !user) {
     return NextResponse.redirect(new URL('/login', request.url));
   }
 
-  // Protect super admin routes
+  // Protect /tma/dashboard routes
+  if (isTmaDashboard && !user) {
+    const from = encodeURIComponent(pathname + request.nextUrl.search);
+    return NextResponse.redirect(new URL(`/tma/loading?from=${from}`, request.url));
+  }
+
+  // Protect super admin routes (both /dashboard/super and /tma/dashboard/super)
   if (
-    request.nextUrl.pathname.startsWith('/dashboard/super') &&
+    (pathname.startsWith('/dashboard/super') || pathname.startsWith('/tma/dashboard/super')) &&
     !checkIsSuperAdmin(user?.email)
   ) {
-    return NextResponse.redirect(new URL('/dashboard', request.url));
+    return NextResponse.redirect(
+      new URL(isDashboard ? '/dashboard' : '/tma/dashboard', request.url)
+    );
   }
 
   // Redirect logged-in users away from login page
-  if (request.nextUrl.pathname === '/login' && user) {
+  if (pathname === '/login' && user) {
     return NextResponse.redirect(new URL('/dashboard', request.url));
   }
 
@@ -72,5 +94,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/dashboard/:path*', '/login'],
+  matcher: ['/dashboard/:path*', '/tma/dashboard/:path*', '/login'],
 };

@@ -35,46 +35,54 @@ interface NavItem {
   href: string;
   label: string;
   icon: React.ElementType;
-  superAdmin?: boolean;
+  superAdmin?: boolean | undefined;
 }
 
-const adminPrimaryItems: NavItem[] = [
-  { href: "/dashboard", label: "Trang Chủ", icon: LayoutDashboard },
-  { href: "/dashboard/accounts", label: "Tài Khoản", icon: Gamepad2 },
-  { href: "/dashboard/requests", label: "Tìm Acc", icon: SearchCheck },
-  { href: "/dashboard/sell-requests", label: "Thu Mua", icon: Tag },
-];
-
-const adminOverflowItems: NavItem[] = [
-  { href: "/dashboard/emails", label: "Email", icon: Mail },
-  { href: "/dashboard/profile", label: "Hồ Sơ", icon: UserCircle },
-  { href: "/dashboard/guide", label: "Hướng Dẫn", icon: BookOpen },
-];
-
-const superAdminPrimaryItems: NavItem[] = [
-  { href: "/dashboard", label: "Trang Chủ", icon: LayoutDashboard },
-  { href: "/dashboard/accounts", label: "Tài Khoản", icon: Gamepad2 },
-  { href: "/dashboard/emails", label: "Email", icon: Mail },
-  { href: "/dashboard/super/accounts", label: "Tất Cả", icon: Globe },
-];
-
-const superAdminOverflowItems: NavItem[] = [
-  { href: "/dashboard", label: "Trang Chủ", icon: LayoutDashboard },
-  { href: "/dashboard/super/revenue", label: "Doanh Thu", icon: ClipboardCheck },
-  { href: "/dashboard/super/admins", label: "Admins", icon: Users },
-  { href: "/dashboard/requests", label: "Tìm Acc", icon: SearchCheck },
-  { href: "/dashboard/sell-requests", label: "Thu Mua", icon: Tag },
-  { href: "/dashboard/profile", label: "Hồ Sơ", icon: UserCircle },
-  { href: "/dashboard/guide", label: "Hướng Dẫn", icon: BookOpen },
-  { href: "/dashboard/super/applications", label: "Đơn Đăng Ký", icon: UserPlus, superAdmin: true },
-  { href: "/dashboard/super/settings", label: "Cài Đặt", icon: Settings, superAdmin: true },
-];
+function buildNavItems(base: string): {
+  adminPrimaryItems: NavItem[];
+  adminOverflowItems: NavItem[];
+  superAdminPrimaryItems: NavItem[];
+  superAdminOverflowItems: NavItem[];
+} {
+  return {
+    adminPrimaryItems: [
+      { href: `${base}`, label: "Trang Chủ", icon: LayoutDashboard },
+      { href: `${base}/accounts`, label: "Tài Khoản", icon: Gamepad2 },
+      { href: `${base}/requests`, label: "Tìm Acc", icon: SearchCheck },
+      { href: `${base}/sell-requests`, label: "Thu Mua", icon: Tag },
+    ],
+    adminOverflowItems: [
+      { href: `${base}/emails`, label: "Email", icon: Mail },
+      { href: `${base}/profile`, label: "Hồ Sơ", icon: UserCircle },
+      { href: `${base}/guide`, label: "Hướng Dẫn", icon: BookOpen },
+    ],
+    superAdminPrimaryItems: [
+      { href: `${base}`, label: "Trang Chủ", icon: LayoutDashboard },
+      { href: `${base}/accounts`, label: "Tài Khoản", icon: Gamepad2 },
+      { href: `${base}/emails`, label: "Email", icon: Mail },
+      { href: `${base}/super/accounts`, label: "Tất Cả", icon: Globe },
+    ],
+    superAdminOverflowItems: [
+      { href: `${base}`, label: "Trang Chủ", icon: LayoutDashboard },
+      { href: `${base}/super/revenue`, label: "Doanh Thu", icon: ClipboardCheck },
+      { href: `${base}/super/admins`, label: "Admins", icon: Users },
+      { href: `${base}/requests`, label: "Tìm Acc", icon: SearchCheck },
+      { href: `${base}/sell-requests`, label: "Thu Mua", icon: Tag },
+      { href: `${base}/profile`, label: "Hồ Sơ", icon: UserCircle },
+      { href: `${base}/guide`, label: "Hướng Dẫn", icon: BookOpen },
+      { href: `${base}/super/applications`, label: "Đơn Đăng Ký", icon: UserPlus, superAdmin: true },
+      { href: `${base}/super/settings`, label: "Cài Đặt", icon: Settings, superAdmin: true },
+    ],
+  };
+}
 
 interface MobileBottomNavProps {
   isSuperAdmin?: boolean;
   adminName?: string;
   adminEmail?: string;
   adminAvatarUrl?: string;
+  /** When true, uses /tma/dashboard/* hrefs and hides logout + push opt-in */
+  isTma?: boolean;
 }
 
 export function MobileBottomNav({
@@ -82,17 +90,26 @@ export function MobileBottomNav({
   adminName = "",
   adminEmail = "",
   adminAvatarUrl = "",
+  isTma = false,
 }: MobileBottomNavProps) {
   const pathname = usePathname();
   const router = useRouter();
   const supabase = createSupabaseBrowserClient();
   const [moreOpen, setMoreOpen] = useState(false);
 
+  const base = isTma ? "/tma/dashboard" : "/dashboard";
+  const {
+    adminPrimaryItems,
+    adminOverflowItems,
+    superAdminPrimaryItems,
+    superAdminOverflowItems,
+  } = buildNavItems(base);
+
   const primaryItems = isSuperAdmin ? superAdminPrimaryItems : adminPrimaryItems;
   const overflowItems = isSuperAdmin ? superAdminOverflowItems : adminOverflowItems;
 
   const isActive = (href: string) =>
-    pathname === href || (href !== "/dashboard" && pathname.startsWith(href));
+    pathname === href || (href !== base && pathname.startsWith(href));
 
   const isMoreActive = overflowItems.some((item) => isActive(item.href)) &&
     !primaryItems.some((item) => isActive(item.href));
@@ -108,7 +125,7 @@ export function MobileBottomNav({
 
   return (
     <>
-      <nav className="fixed bottom-0 left-0 right-0 z-40 lg:hidden border-t border-slate-200 bg-white/95 backdrop-blur-md dark:border-slate-700 dark:bg-slate-900/95 pb-safe">
+      <nav className={`fixed bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/95 backdrop-blur-md dark:border-slate-700 dark:bg-slate-900/95 pb-safe ${isTma ? "" : "lg:hidden"}`}>
         <div className="flex items-stretch">
           {primaryItems.map((item) => {
             const active = isActive(item.href);
@@ -175,10 +192,12 @@ export function MobileBottomNav({
               })}
             </div>
 
-            {/* Push notification opt-in */}
-            <div className="border-t border-slate-100 dark:border-slate-700 pt-3">
-              <PushOptIn />
-            </div>
+            {/* Push notification opt-in — not shown in TMA (Telegram handles notifications) */}
+            {!isTma && (
+              <div className="border-t border-slate-100 dark:border-slate-700 pt-3">
+                <PushOptIn />
+              </div>
+            )}
 
             <div className="border-t border-slate-100 dark:border-slate-700 pt-3 pb-4 space-y-3">
               {/* User info */}
@@ -213,14 +232,16 @@ export function MobileBottomNav({
                 <ThemeToggle className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-slate-200 bg-slate-100 text-slate-500 transition-colors hover:bg-slate-200 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-400 dark:hover:bg-slate-600" />
               </div>
 
-              {/* Logout */}
-              <button
-                onClick={handleLogout}
-                className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:bg-red-50 hover:text-red-700 dark:text-slate-300 dark:hover:bg-red-500/10 dark:hover:text-red-400"
-              >
-                <LogOut className="h-5 w-5 text-slate-400 dark:text-slate-500" />
-                Đăng Xuất
-              </button>
+              {/* Logout — hidden in TMA (Telegram handles session) */}
+              {!isTma && (
+                <button
+                  onClick={handleLogout}
+                  className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:bg-red-50 hover:text-red-700 dark:text-slate-300 dark:hover:bg-red-500/10 dark:hover:text-red-400"
+                >
+                  <LogOut className="h-5 w-5 text-slate-400 dark:text-slate-500" />
+                  Đăng Xuất
+                </button>
+              )}
             </div>
           </div>
         </DrawerContent>

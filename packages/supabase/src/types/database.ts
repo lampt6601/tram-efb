@@ -124,6 +124,7 @@ export interface AdminSettings {
   transaction_box_url?: string | null;
   collateral_amount: number;
   collateral_updated_at?: string | null;
+  telegram_user_id?: number | null;
   created_at: string;
 }
 

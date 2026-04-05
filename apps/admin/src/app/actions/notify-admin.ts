@@ -89,12 +89,15 @@ export async function notifyAdminAction(
     const caption = lines.join("\n");
 
     // Inline keyboard buttons
-    const buttons: Array<Array<{ text: string; url: string }>> = [];
+    const buttons: Array<Array<{ text: string; url: string } | { text: string; web_app: { url: string } }>> = [];
     if (accountId) {
-      const viewRow: Array<{ text: string; url: string }> = [
+      buttons.push([
         { text: "🔗 Xem tài khoản", url: `${BASE_URL}/accounts/${accountId}` },
-      ];
-      buttons.push(viewRow);
+        {
+          text: "📱 Mở Admin App",
+          web_app: { url: `${ADMIN_URL}/tma/dashboard/accounts?detail=${accountId}` },
+        },
+      ]);
     }
     if (needsApproval && accountId) {
       const approveSecret = process.env.APPROVE_SECRET_TOKEN;

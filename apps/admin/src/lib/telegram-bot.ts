@@ -8,10 +8,9 @@ function escapeHtml(str: string): string {
     .replace(/>/g, "&gt;");
 }
 
-export interface InlineButton {
-  text: string;
-  url: string;
-}
+export type InlineButton =
+  | { text: string; url: string }
+  | { text: string; web_app: { url: string } };
 
 /**
  * Send a Telegram Bot notification with optional photos and inline keyboard buttons.
@@ -50,7 +49,11 @@ export async function sendTelegramNotification(
     buttons?.length
       ? {
           inline_keyboard: buttons.map((row) =>
-            row.map((b) => ({ text: b.text, url: b.url })),
+            row.map((b) =>
+              "url" in b
+                ? { text: b.text, url: b.url }
+                : { text: b.text, web_app: b.web_app },
+            ),
           ),
         }
       : undefined;
