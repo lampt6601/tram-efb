@@ -27,6 +27,7 @@ export default function TmaLayout({
     <html lang="vi" className={cn("font-sans", inter.variable)} suppressHydrationWarning>
       <head>
         <meta name="telegram-mini-app" content="true" />
+        <script src="https://telegram.org/js/telegram-web-app.js" />
       </head>
       <body className="font-sans antialiased" suppressHydrationWarning>
         <TmaSDKProvider>
