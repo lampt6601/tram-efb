@@ -207,7 +207,7 @@ export function AccountActionsDropdown({
         .eq("id", id);
       if (err) throw err;
       try {
-        await notifyAdminAction("UPDATE", title, undefined, id, account.primary_image_url);
+        await notifyAdminAction("UPDATE", title, undefined, id, account.images);
       } catch {
         /* ignore */
       }
@@ -241,7 +241,7 @@ export function AccountActionsDropdown({
         await notifyAdminAction("SELL", title, {
           purchasePrice,
           sellingPrice: finalPrice,
-        }, id, account.primary_image_url);
+        }, id, account.images);
       } catch {
         /* ignore */
       }
@@ -285,7 +285,7 @@ export function AccountActionsDropdown({
           purchasePrice,
           sellingPrice: finalSale,
           originalPrice: finalOriginal,
-        }, id, account.primary_image_url);
+        }, id, account.images);
       } catch {
         /* ignore */
       }
@@ -309,7 +309,7 @@ export function AccountActionsDropdown({
         .eq("id", id);
       if (err) throw err;
       try {
-        await notifyAdminAction("UPDATE_SALE", title, undefined, id, account.primary_image_url);
+        await notifyAdminAction("UPDATE_SALE", title, undefined, id, account.images);
       } catch {
         /* ignore */
       }
@@ -329,7 +329,7 @@ export function AccountActionsDropdown({
     try {
       await supabase.from("accounts").delete().eq("id", id);
       try {
-        await notifyAdminAction("DELETE", title, undefined, id, account.primary_image_url);
+        await notifyAdminAction("DELETE", title, undefined, id, account.images);
       } catch {
         /* ignore */
       }
@@ -374,7 +374,7 @@ export function AccountActionsDropdown({
         .eq("id", id);
       if (err) throw err;
       try {
-        await notifyAdminAction("UPDATE", title, undefined, id, account.primary_image_url);
+        await notifyAdminAction("UPDATE", title, undefined, id, account.images);
       } catch { /* ignore */ }
       toast.success("Đã đánh dấu cọc thành công");
       setOpenDialog(null);
@@ -404,7 +404,7 @@ export function AccountActionsDropdown({
         .eq("id", id);
       if (err) throw err;
       try {
-        await notifyAdminAction("UPDATE", title, undefined, id, account.primary_image_url);
+        await notifyAdminAction("UPDATE", title, undefined, id, account.images);
       } catch { /* ignore */ }
       toast.success("Đã hủy cọc thành công");
       setOpenDialog(null);
@@ -448,7 +448,7 @@ export function AccountActionsDropdown({
           <ResponsiveDropdownMenuItem
             render={
               <Link
-                href={`/accounts/${id}`}
+                href={`https://thc-efb.com/accounts/${id}`}
                 target="_blank"
                 className="flex items-center gap-2"
               />

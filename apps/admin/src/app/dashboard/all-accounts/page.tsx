@@ -100,7 +100,7 @@ export default async function AllAccountsPage({
                           <Gamepad2 className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
                         </div>
                         <Link
-                          href={`/accounts/${account.id}`}
+                          href={`https://thc-efb.com/accounts/${account.id}`}
                           target="_blank"
                           className="group flex items-center gap-1.5 max-w-[140px] sm:max-w-[220px] truncate font-medium text-slate-900 dark:text-slate-100 hover:text-indigo-600 dark:hover:text-indigo-400"
                         >

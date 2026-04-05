@@ -401,7 +401,7 @@ export function SuperAccountActionsDropdown({
             <ResponsiveDropdownMenuItem
               render={
                 <Link
-                  href={`/accounts/${id}`}
+                  href={`https://thc-efb.com/accounts/${id}`}
                   target="_blank"
                   className="flex items-center gap-2"
                 />

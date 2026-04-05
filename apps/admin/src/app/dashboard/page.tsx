@@ -330,7 +330,7 @@ export default async function DashboardPage({
                     >
                       <TableCell className="px-4 py-3">
                         <Link
-                          href={`/accounts/${account.id}`}
+                          href={`https://thc-efb.com/accounts/${account.id}`}
                           target="_blank"
                           className="group inline-flex items-center gap-1.5 max-w-[150px] sm:max-w-xs truncate font-medium text-slate-900 dark:text-slate-100 hover:text-indigo-600 dark:hover:text-indigo-400"
                         >

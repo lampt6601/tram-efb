@@ -41,7 +41,7 @@ export async function notifyAdminAction(
     originalPrice?: number | null;
   },
   accountId?: string,
-  primaryImageUrl?: string | null,
+  imageUrls?: string[] | null,
   needsApproval?: boolean,
 ) {
   try {
@@ -121,7 +121,7 @@ export async function notifyAdminAction(
     // Run all notifications in parallel (non-blocking)
     await Promise.allSettled([
       // 1. Telegram bot
-      sendTelegramNotification(caption, primaryImageUrl, buttons.length ? buttons : null),
+      sendTelegramNotification(caption, imageUrls, buttons.length ? buttons : null),
 
       // 2. In-app notification
       createNotification({
