@@ -1,7 +1,7 @@
 "use server";
 
 import { createSupabaseServerClient } from "@thc-efb/supabase/server";
-import { sendZaloBotNotification } from "@/lib/zalo-bot";
+import { sendTelegramNotification, escapeHtml } from "@/lib/telegram-bot";
 import { formatCurrency } from "@thc-efb/shared/constants";
 import { SUPER_ADMIN_EMAIL } from "@thc-efb/shared/super-admin";
 import { createNotification, type NotificationType } from "@/lib/notifications";
@@ -29,7 +29,7 @@ const BASE_URL = "https://thc-efb.com";
 const ADMIN_URL = "https://admin.thc-efb.com";
 
 /**
- * Notifies the owner via Zalo Bot when a different admin performs an action.
+ * Notifies the owner via Telegram Bot when a different admin performs an action.
  * Non-blocking: never throws — errors are logged silently.
  */
 export async function notifyAdminAction(
@@ -63,9 +63,14 @@ export async function notifyAdminAction(
       timeZone: "Asia/Ho_Chi_Minh",
     });
 
+    const safeTitle = escapeHtml(accountTitle);
+    const safeName = escapeHtml(adminName);
+    const safeEmail = escapeHtml(adminEmail);
+
     const lines: string[] = [
-      `${emoji} ${actionText}: ${accountTitle}`,
-      `👤 Admin: ${adminName ? `${adminName} (${adminEmail})` : adminEmail}`,
+      `<b>${emoji} ${actionText}: ${safeTitle}</b>`,
+      "",
+      `👤 <b>Admin:</b> ${safeName ? `${safeName} (${safeEmail})` : safeEmail}`,
     ];
 
     if (priceDetails) {
@@ -76,24 +81,32 @@ export async function notifyAdminAction(
         parts.push(`Bán: ${formatCurrency(priceDetails.sellingPrice)}`);
       if (priceDetails.originalPrice != null)
         parts.push(`Gốc: ${formatCurrency(priceDetails.originalPrice)}`);
-      if (parts.length > 0) lines.push(`💵 ${parts.join(" | ")}`);
-    }
-
-    if (accountId) {
-      lines.push(`🔗 ${BASE_URL}/accounts/${accountId}`);
-    }
-
-    if (needsApproval && accountId) {
-      const approveSecret = process.env.APPROVE_SECRET_TOKEN;
-      if (approveSecret) {
-        lines.push("");
-        lines.push(`✅ Duyệt ngay: ${ADMIN_URL}/api/approve/${accountId}?token=${approveSecret}`);
-      }
+      if (parts.length > 0) lines.push(`💵 <b>Giá:</b> ${parts.join(" | ")}`);
     }
 
     lines.push(`🕐 ${timestamp}`);
 
     const caption = lines.join("\n");
+
+    // Inline keyboard buttons
+    const buttons: Array<Array<{ text: string; url: string }>> = [];
+    if (accountId) {
+      const viewRow: Array<{ text: string; url: string }> = [
+        { text: "🔗 Xem tài khoản", url: `${BASE_URL}/accounts/${accountId}` },
+      ];
+      buttons.push(viewRow);
+    }
+    if (needsApproval && accountId) {
+      const approveSecret = process.env.APPROVE_SECRET_TOKEN;
+      if (approveSecret) {
+        buttons.push([
+          {
+            text: "✅ Duyệt ngay",
+            url: `${ADMIN_URL}/api/approve/${accountId}?token=${approveSecret}`,
+          },
+        ]);
+      }
+    }
 
     // Map action type to notification type
     const notifTypeMap: Record<string, NotificationType> = {
@@ -107,8 +120,8 @@ export async function notifyAdminAction(
 
     // Run all notifications in parallel (non-blocking)
     await Promise.allSettled([
-      // 1. Zalo bot (existing)
-      sendZaloBotNotification(caption, primaryImageUrl),
+      // 1. Telegram bot
+      sendTelegramNotification(caption, primaryImageUrl, buttons.length ? buttons : null),
 
       // 2. In-app notification
       createNotification({

@@ -4,7 +4,7 @@ import { createSupabaseAnonClient } from '@thc-efb/supabase/anon';
 import { createSupabaseServerClient } from '@thc-efb/supabase/server';
 import { createSupabaseServiceClient } from '@thc-efb/supabase/service';
 import { revalidatePath } from "next/cache";
-import { sendZaloBotNotification } from "@/lib/zalo-bot";
+import { sendTelegramNotification, escapeHtml } from "@/lib/telegram-bot";
 
 interface ApplySellerInput {
   fullName: string;
@@ -52,20 +52,19 @@ export async function submitSellerApplication(input: ApplySellerInput) {
     return { error: "Không thể gửi đơn đăng ký. Vui lòng thử lại." };
   }
 
-  // Notify super admin via Zalo Bot (non-blocking)
-  try {
-    const zaloPhone = input.zaloLink.replace(/^https?:\/\/zalo\.me\//, "");
-    await sendZaloBotNotification(
-      `📋 Đơn đăng ký người bán mới\n\n` +
-      `👤 ${input.fullName.trim()}\n` +
-      `📧 ${input.email.trim()}\n` +
-      `📱 Zalo: ${zaloPhone}\n` +
-      (input.reason ? `💬 Lý do: ${input.reason.trim()}\n` : "") +
-      `\n👉 Duyệt tại: https://thc-efb.com/admin/dashboard/super/applications`,
-    );
-  } catch {
-    // ignore — notification is best-effort
-  }
+  // Notify super admin via Telegram Bot (non-blocking)
+  const zaloPhone = input.zaloLink.replace(/^https?:\/\/zalo\.me\//, "");
+  const appText =
+    `<b>📋 Đơn đăng ký người bán mới</b>\n\n` +
+    `👤 <b>Họ tên:</b> ${escapeHtml(input.fullName.trim())}\n` +
+    `📧 <b>Email:</b> ${escapeHtml(input.email.trim())}\n` +
+    `📱 <b>Zalo:</b> ${escapeHtml(zaloPhone)}\n` +
+    (input.reason ? `💬 <b>Lý do:</b> ${escapeHtml(input.reason.trim())}\n` : "");
+  await sendTelegramNotification(
+    appText,
+    null,
+    [[{ text: "👉 Duyệt đơn", url: "https://admin.thc-efb.com/dashboard/super/applications" }]],
+  );
 
   return { success: true, message: "Đơn đăng ký đã được gửi! Chúng tôi sẽ liên hệ sớm nhất." };
 }

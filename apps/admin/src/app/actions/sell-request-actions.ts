@@ -3,7 +3,7 @@
 import { createSupabaseServiceClient } from "@thc-efb/supabase/service";
 import { createSupabaseServerClient } from "@thc-efb/supabase/server";
 import { uploadFileToImageKit } from "@/lib/imagekit";
-import { sendZaloBotNotification } from "@/lib/zalo-bot";
+import { sendTelegramNotification, escapeHtml } from "@/lib/telegram-bot";
 import { createNotification } from "@/lib/notifications";
 import { sendPushToAllAdmins } from "@/lib/push";
 import { revalidatePath } from "next/cache";
@@ -83,17 +83,19 @@ export async function submitSellRequest(formData: FormData) {
   const notifTitle = `🏷️ Yêu cầu bán acc mới`;
   const notifBody = `${sellerName} - ${priceExpectation}`;
   const notifUrl = `/dashboard/sell-requests?highlight=${inserted.id}`;
+  const sellRequestText =
+    `<b>🏷️ Yêu cầu bán acc mới</b>\n\n` +
+    `👤 <b>Người bán:</b> ${escapeHtml(sellerName)}\n` +
+    `📱 <b>Zalo:</b> ${escapeHtml(zaloPhone)}\n` +
+    `💰 <b>Giá:</b> ${escapeHtml(priceExpectation)}\n` +
+    (description ? `📝 <b>Mô tả:</b> ${escapeHtml(description)}\n` : "") +
+    `📸 ${imageUrls.length} ảnh`;
+  const sellRequestButtons = [
+    [{ text: "👉 Xem yêu cầu", url: `https://admin.thc-efb.com/dashboard/sell-requests?highlight=${inserted.id}` }],
+  ];
+
   await Promise.allSettled([
-    sendZaloBotNotification(
-      `${notifTitle}\n\n` +
-      `👤 ${sellerName}\n` +
-      `📱 Zalo: ${zaloPhone}\n` +
-      `💰 Giá: ${priceExpectation}\n` +
-      (description ? `📝 Mô tả: ${description}\n` : "") +
-      `📸 ${imageUrls.length} ảnh\n` +
-      `\n👉 Xem tại: https://admin.thc-efb.com/dashboard/sell-requests?highlight=${inserted.id}`,
-      imageUrls[0],
-    ),
+    sendTelegramNotification(sellRequestText, imageUrls, sellRequestButtons),
     createNotification({
       type: "sell_request",
       title: notifTitle,

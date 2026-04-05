@@ -4,7 +4,7 @@ import { createSupabaseAnonClient } from "@thc-efb/supabase/anon";
 import { createSupabaseServerClient } from "@thc-efb/supabase/server";
 import { createSupabaseServiceClient } from "@thc-efb/supabase/service";
 import { revalidatePath } from "next/cache";
-import { sendZaloBotNotification } from "@/lib/zalo-bot";
+import { sendTelegramNotification, escapeHtml } from "@/lib/telegram-bot";
 import { createNotification } from "@/lib/notifications";
 import { sendPushToAllAdmins } from "@/lib/push";
 
@@ -59,15 +59,18 @@ export async function submitSellerApplication(input: ApplySellerInput) {
   const notifTitle = `📋 Đơn đăng ký người bán mới`;
   const notifBody = `${input.fullName.trim()} - ${input.email.trim()}`;
   const notifUrl = `/dashboard/super/applications?highlight=${inserted.id}`;
+  const appText =
+    `<b>📋 Đơn đăng ký người bán mới</b>\n\n` +
+    `👤 <b>Họ tên:</b> ${escapeHtml(input.fullName.trim())}\n` +
+    `📧 <b>Email:</b> ${escapeHtml(input.email.trim())}\n` +
+    `📱 <b>Zalo:</b> ${escapeHtml(zaloPhone)}\n` +
+    (input.reason ? `💬 <b>Lý do:</b> ${escapeHtml(input.reason.trim())}\n` : "");
+  const appButtons = [
+    [{ text: "👉 Duyệt đơn", url: `https://admin.thc-efb.com/dashboard/super/applications?highlight=${inserted.id}` }],
+  ];
+
   await Promise.allSettled([
-    sendZaloBotNotification(
-      `${notifTitle}\n\n` +
-      `👤 ${input.fullName.trim()}\n` +
-      `📧 ${input.email.trim()}\n` +
-      `📱 Zalo: ${zaloPhone}\n` +
-      (input.reason ? `💬 Lý do: ${input.reason.trim()}\n` : "") +
-      `\n👉 Duyệt tại: https://admin.thc-efb.com/dashboard/super/applications?highlight=${inserted.id}`,
-    ),
+    sendTelegramNotification(appText, null, appButtons),
     createNotification({
       type: "application",
       title: notifTitle,
