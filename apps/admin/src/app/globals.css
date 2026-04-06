@@ -6,6 +6,51 @@
   html {
     transition: background-color 0.3s ease, color 0.3s ease;
     color-scheme: light;
+    /* iOS PWA: prevent pull-to-refresh and overscroll bounce */
+    overscroll-behavior-y: none;
+  }
+
+  /* ─── iOS PWA Native Feel ─── */
+  /* Disable long-press callout (save image, etc.) */
+  html,
+  body {
+    -webkit-touch-callout: none;
+  }
+
+  /* Remove tap highlight color on iOS */
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Prevent text selection on interactive elements (native app behavior) */
+  button,
+  a,
+  nav,
+  [role="button"],
+  [role="tab"],
+  [role="navigation"] {
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  /* Allow text selection on actual content */
+  p, span, h1, h2, h3, h4, h5, h6, li, td, th, label, input, textarea {
+    -webkit-user-select: auto;
+    user-select: auto;
+  }
+
+  /* iOS PWA standalone: prevent overscroll on body, enable on scrollable children */
+  body.is-ios-pwa {
+    overflow: hidden;
+    height: 100dvh;
+    width: 100dvw;
+  }
+
+  body.is-ios-pwa > div {
+    height: 100dvh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: contain;
   }
 
   :root {
@@ -125,13 +170,26 @@
 }
 
 @layer utilities {
+  /* ─── Safe Area Utilities ─── */
+  .pt-safe {
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+
   .pb-safe {
     padding-bottom: env(safe-area-inset-bottom, 0px);
   }
 
-  /* Notification bell: clears iOS status bar */
-  .top-safe {
-    top: calc(env(safe-area-inset-top, 0px) + 0.75rem);
+  .pl-safe {
+    padding-left: env(safe-area-inset-left, 0px);
+  }
+
+  .pr-safe {
+    padding-right: env(safe-area-inset-right, 0px);
+  }
+
+  /* Notification bell: clears iOS status bar — uses margin to avoid conflict with Tailwind top-* */
+  .mt-safe {
+    margin-top: env(safe-area-inset-top, 0px);
   }
 
   /* Main content: clears the notification bell + safe area */
@@ -142,6 +200,17 @@
   /* Main content bottom: clears bottom nav (~64px) + iOS safe area */
   .pb-nav-mobile {
     padding-bottom: calc(4.5rem + env(safe-area-inset-bottom, 0px));
+  }
+
+  /* Status bar background overlay for iOS PWA */
+  .bg-status-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: env(safe-area-inset-top, 0px);
+    z-index: 9999;
+    pointer-events: none;
   }
 
   .gradient-bg {

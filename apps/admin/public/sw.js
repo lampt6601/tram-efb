@@ -1,5 +1,5 @@
-const CACHE_NAME = "thc-admin-v2";
-const PRECACHE_URLS = ["/", "/login"];
+const CACHE_NAME = "thc-admin-v3";
+const PRECACHE_URLS = ["/dashboard", "/login"];
 
 // Install: precache app shell
 self.addEventListener("install", (event) => {

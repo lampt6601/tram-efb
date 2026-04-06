@@ -7,8 +7,9 @@ import { PriceInput } from "@thc-efb/ui/price-input";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@thc-efb/ui/select";
 import { useUrlFilters } from "@/hooks/use-url-filters";
 import { ACCOUNT_SORT_OPTIONS, ACCOUNT_STATUS_OPTIONS } from "@/lib/filter-options";
+import { useMemo } from "react";
 
-const FILTER_FIELDS = [
+const BASE_FILTER_FIELDS = [
   { key: "q", defaultValue: "" },
   { key: "minPrice", defaultValue: "" },
   { key: "maxPrice", defaultValue: "" },
@@ -17,7 +18,24 @@ const FILTER_FIELDS = [
   { key: "approval", defaultValue: "all" },
 ];
 
-export function SuperAccountFilters({ totalCount }: { totalCount: number }) {
+type AdminOption = { id: string; name: string };
+
+export function SuperAccountFilters({
+  totalCount,
+  admins,
+}: {
+  totalCount: number;
+  admins?: AdminOption[];
+}) {
+  const filterFields = useMemo(
+    () =>
+      admins
+        ? [...BASE_FILTER_FIELDS, { key: "admin", defaultValue: "all" }]
+        : BASE_FILTER_FIELDS,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [!!admins],
+  );
+
   const {
     values,
     setValue,
@@ -27,7 +45,7 @@ export function SuperAccountFilters({ totalCount }: { totalCount: number }) {
     hasActiveFilters,
     hasUnsavedChanges,
     isPending,
-  } = useUrlFilters(FILTER_FIELDS);
+  } = useUrlFilters(filterFields);
 
   return (
     <div className={`transition-opacity duration-200 ${isPending ? "pointer-events-none opacity-60" : "opacity-100"}`}>
@@ -61,8 +79,28 @@ export function SuperAccountFilters({ totalCount }: { totalCount: number }) {
           </Button>
         </div>
 
-        {/* Mobile row 2: Status + Sort + Price | Desktop: inline */}
+        {/* Mobile row 2: Admin (conditional) + Status + Sort + Price | Desktop: inline */}
         <div className="flex w-full items-center gap-1.5 md:contents">
+          {admins && (
+            <div className="shrink-0">
+              <Select value={values.admin ?? "all"} onValueChange={(val) => { if (val !== null) setValue("admin", val) }}>
+                <SelectTrigger className="h-8 rounded-lg border-slate-200 bg-white text-xs text-slate-700 shadow-sm md:h-9 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200">
+                  <SelectValue>
+                    {values.admin && values.admin !== "all"
+                      ? admins.find((a) => a.id === values.admin)?.name ?? "Admin"
+                      : "Tất cả admin"}
+                  </SelectValue>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Tất cả admin</SelectItem>
+                  {admins.map((a) => (
+                    <SelectItem key={a.id} value={a.id}>{a.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+
           <div className="shrink-0">
             <Select value={values.status} onValueChange={(val) => { if (val !== null) setValue("status", val) }}>
               <SelectTrigger className="h-8 rounded-lg border-slate-200 bg-white text-xs text-slate-700 shadow-sm md:h-9 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200">
@@ -92,7 +130,7 @@ export function SuperAccountFilters({ totalCount }: { totalCount: number }) {
             </Select>
           </div>
 
-          <div className="flex h-8 min-w-0 flex-1 items-center gap-1 rounded-lg border border-slate-200 bg-white px-2 shadow-sm md:h-9 md:w-56 md:flex-none md:px-2.5 dark:border-slate-700 dark:bg-slate-800">
+          <div className="hidden sm:flex h-8 min-w-0 flex-1 items-center gap-1 rounded-lg border border-slate-200 bg-white px-2 shadow-sm md:h-9 md:w-56 md:flex-none md:px-2.5 dark:border-slate-700 dark:bg-slate-800">
             <PriceInput
               placeholder="Giá từ"
               value={values.minPrice}

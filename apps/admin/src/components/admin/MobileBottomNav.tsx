@@ -124,7 +124,7 @@ export function MobileBottomNav({
 
   return (
     <>
-      <nav className={`fixed bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/95 backdrop-blur-md dark:border-slate-700 dark:bg-slate-900/95 pb-safe ${isTma ? "" : "lg:hidden"}`}>
+      <nav className={`fixed bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/95 backdrop-blur-md dark:border-slate-700 dark:bg-slate-900/95 ${isTma ? "" : "lg:hidden"}`}>
         <div className="flex items-stretch">
           {primaryItems.map((item) => {
             const active = isActive(item.href);
@@ -132,7 +132,7 @@ export function MobileBottomNav({
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex flex-1 flex-col items-center justify-center gap-0.5 py-2.5 text-[10px] font-medium transition-colors ${
+                className={`flex flex-1 flex-col items-center justify-center gap-0.5 py-2.5 text-[10px] font-medium transition-colors active:scale-95 ${
                   active
                     ? "text-indigo-600 dark:text-indigo-400"
                     : "text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300"
@@ -147,7 +147,7 @@ export function MobileBottomNav({
           {/* More tab */}
           <button
             onClick={() => setMoreOpen(true)}
-            className={`flex flex-1 flex-col items-center justify-center gap-0.5 py-2.5 text-[10px] font-medium transition-colors ${
+            className={`flex flex-1 flex-col items-center justify-center gap-0.5 py-2.5 text-[10px] font-medium transition-colors active:scale-95 ${
               isMoreActive
                 ? "text-indigo-600 dark:text-indigo-400"
                 : "text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300"
@@ -157,6 +157,8 @@ export function MobileBottomNav({
             <span>Thêm</span>
           </button>
         </div>
+        {/* iOS safe area spacer — fills the home indicator area with matching bg */}
+        <div className="pb-safe bg-white/95 dark:bg-slate-900/95" />
       </nav>
 
       {/* More Drawer */}

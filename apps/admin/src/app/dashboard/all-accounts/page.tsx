@@ -21,7 +21,7 @@ import type { AccountWithEmail } from "@thc-efb/supabase/types";
 import { AccountDetailButton } from "./AccountDetailButton";
 import { ACCOUNT_SELECT, applySortToQuery } from "@/lib/account-queries";
 
-type SearchParams = { sort?: string; status?: string; q?: string };
+type SearchParams = { sort?: string; status?: string; q?: string; admin?: string };
 
 export default async function AllAccountsPage({
   searchParams,
@@ -37,6 +37,7 @@ export default async function AllAccountsPage({
   const sort = params.sort ?? "newest";
   const statusFilter = params.status ?? "all";
   const searchQuery = params.q ?? "";
+  const adminFilter = params.admin ?? "all";
 
   const service = createSupabaseServiceClient();
 
@@ -48,9 +49,15 @@ export default async function AllAccountsPage({
     ])
   );
 
+  const adminOptions = (allUsers ?? []).map((u) => ({
+    id: u.id,
+    name: u.user_metadata?.full_name ?? u.email ?? u.id,
+  }));
+
   let query = service.from("accounts").select(ACCOUNT_SELECT);
   if (statusFilter && statusFilter !== "all") query = query.eq("status", statusFilter);
   if (searchQuery) query = query.ilike("title", `%${searchQuery}%`);
+  if (adminFilter && adminFilter !== "all") query = query.eq("user_id", adminFilter);
 
   query = applySortToQuery(query, sort);
 
@@ -75,7 +82,7 @@ export default async function AllAccountsPage({
 
       <div className="mb-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4 shadow-sm">
         <Suspense fallback={null}>
-          <SuperAccountFilters totalCount={items.length} />
+          <SuperAccountFilters totalCount={items.length} admins={adminOptions} />
         </Suspense>
       </div>
 

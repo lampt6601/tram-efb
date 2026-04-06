@@ -25,7 +25,7 @@ import Link from "next/link";
 import type { AccountWithEmail, Email } from "@thc-efb/supabase/types";
 import { SUPER_ADMIN_EMAIL } from "@thc-efb/shared/super-admin";
 
-type SearchParams = { sort?: string; status?: string; approval?: string; q?: string; detail?: string };
+type SearchParams = { sort?: string; status?: string; approval?: string; q?: string; detail?: string; admin?: string };
 
 
 export default async function SuperAccountsPage({
@@ -44,6 +44,7 @@ export default async function SuperAccountsPage({
   const statusFilter = detailAccountId ? (params.status ?? "all") : (params.status ?? "Available");
   const approvalFilter = params.approval ?? "all";
   const searchQuery = params.q ?? "";
+  const adminFilter = params.admin ?? "all";
 
   const service = createSupabaseServiceClient();
 
@@ -52,6 +53,10 @@ export default async function SuperAccountsPage({
   const adminEmailMap = new Map<string, string>(
     (allUsers ?? []).map((u) => [u.id, u.user_metadata?.full_name ?? u.email ?? u.id])
   );
+  const adminOptions = (allUsers ?? []).map((u) => ({
+    id: u.id,
+    name: u.user_metadata?.full_name ?? u.email ?? u.id,
+  }));
 
   // Fast path: deep-link from notification — only fetch the single account,
   // skip the full list + emails queries. The list loads after the dialog is closed (URL param removed).
@@ -111,6 +116,7 @@ export default async function SuperAccountsPage({
     if (approvalFilter === "approved") query = query.eq("is_approved", true);
   }
   if (searchQuery) query = query.ilike("title", `%${searchQuery}%`);
+  if (adminFilter && adminFilter !== "all") query = query.eq("user_id", adminFilter);
 
   query = applySortToQuery(query, sort);
 
@@ -141,7 +147,7 @@ export default async function SuperAccountsPage({
 
       <div className="mb-4 rounded-xl border border-amber-100 dark:border-amber-500/20 bg-white dark:bg-slate-800 p-4 shadow-sm">
         <Suspense fallback={null}>
-          <SuperAccountFilters totalCount={items.length} />
+          <SuperAccountFilters totalCount={items.length} admins={adminOptions} />
         </Suspense>
       </div>
 

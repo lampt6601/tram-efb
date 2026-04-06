@@ -34,8 +34,11 @@ export function AdminShell({ children, isSuperAdmin = false, adminName = "", adm
       {/* Notification bell — super admin only, hidden in TMA */}
       {!isTma && isSuperAdmin && (
         <>
-          {/* Mobile notification bell — top-safe clears iOS status bar */}
-          <div className="top-safe fixed right-4 top-4 z-30 lg:hidden">
+          {/* Mobile notification bell — top accounts for iOS safe area */}
+          <div
+            className="fixed right-4 z-30 lg:hidden"
+            style={{ top: "calc(env(safe-area-inset-top, 0px) + 0.75rem)" }}
+          >
             <NotificationBell isSuperAdmin={isSuperAdmin} />
           </div>
           {/* Desktop notification bell */}
