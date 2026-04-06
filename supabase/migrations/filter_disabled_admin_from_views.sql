@@ -1,0 +1,74 @@
+-- Hide accounts of disabled admins from public views
+-- When an admin is disabled (is_disabled = true), their accounts should not
+-- appear on the storefront or in any public-facing queries.
+
+DROP VIEW IF EXISTS public.public_accounts;
+DROP VIEW IF EXISTS public.public_sold_accounts;
+
+-- public_accounts: Available/Deposited accounts, excluding disabled admins
+CREATE VIEW public.public_accounts AS
+SELECT
+  a.id,
+  a.title,
+  a.description,
+  a.selling_price,
+  a.images,
+  a.primary_image_url,
+  a.status,
+  a.total_gp,
+  a.total_coins_android,
+  a.total_coins_ios,
+  a.team_strength,
+  a.is_priority,
+  a.is_clone,
+  a.original_price,
+  a.server_region,
+  a.monthly_log_quota,
+  a.created_at,
+  public.get_user_full_name(a.user_id) AS seller_full_name,
+  s.avatar_url AS seller_avatar_url,
+  s.transaction_box_url AS seller_transaction_box_url,
+  s.collateral_amount AS seller_collateral_amount,
+  (SELECT COUNT(*) FROM public.accounts sold WHERE sold.user_id = a.user_id AND sold.status = 'Sold')::int AS seller_sold_count
+FROM public.accounts a
+LEFT JOIN public.admin_settings s ON a.user_id = s.user_id
+WHERE a.status IN ('Available', 'Deposited')
+  AND a.is_approved = true
+  AND (s.is_disabled IS NULL OR s.is_disabled = false);
+
+GRANT SELECT ON public.public_accounts TO anon;
+GRANT SELECT ON public.public_accounts TO authenticated;
+
+-- public_sold_accounts: Sold accounts, excluding disabled admins
+CREATE VIEW public.public_sold_accounts AS
+SELECT
+  a.id,
+  a.title,
+  a.description,
+  a.selling_price,
+  a.images,
+  a.primary_image_url,
+  a.status,
+  a.total_gp,
+  a.total_coins_android,
+  a.total_coins_ios,
+  a.team_strength,
+  a.is_priority,
+  a.is_clone,
+  a.original_price,
+  a.server_region,
+  a.monthly_log_quota,
+  a.created_at,
+  public.get_user_full_name(a.user_id) AS seller_full_name,
+  s.avatar_url AS seller_avatar_url,
+  s.transaction_box_url AS seller_transaction_box_url,
+  s.collateral_amount AS seller_collateral_amount,
+  (SELECT COUNT(*) FROM public.accounts sold WHERE sold.user_id = a.user_id AND sold.status = 'Sold')::int AS seller_sold_count
+FROM public.accounts a
+LEFT JOIN public.admin_settings s ON a.user_id = s.user_id
+WHERE a.status = 'Sold'
+  AND a.is_approved = true
+  AND (s.is_disabled IS NULL OR s.is_disabled = false);
+
+GRANT SELECT ON public.public_sold_accounts TO anon;
+GRANT SELECT ON public.public_sold_accounts TO authenticated;

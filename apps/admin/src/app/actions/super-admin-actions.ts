@@ -250,12 +250,10 @@ export async function deleteAdmin(adminId: string) {
   await verifySuperAdmin();
   const service = createSupabaseServiceClient();
 
-  // Unassign accounts and emails (set user_id = null) before deleting admin.
-  // The FK ON DELETE SET NULL would handle this automatically, but we do it
-  // explicitly to also unapprove orphaned accounts.
+  // Delete all accounts belonging to this admin.
   const { error: e1 } = await service
     .from("accounts")
-    .update({ user_id: null, is_approved: false, email_id: null })
+    .delete()
     .eq("user_id", adminId);
   if (e1) throw new Error(e1.message);
 

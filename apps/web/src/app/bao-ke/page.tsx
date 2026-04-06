@@ -56,6 +56,7 @@ async function getGuaranteedSellers(): Promise<SellerWithCollateral[]> {
       "user_id, zalo_name, avatar_url, collateral_amount, transaction_box_url"
     )
     .gt("collateral_amount", 0)
+    .eq("is_disabled", false)
     .order("collateral_amount", { ascending: false });
 
   if (!sellers || sellers.length === 0) return [];
