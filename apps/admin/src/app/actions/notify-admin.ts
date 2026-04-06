@@ -5,6 +5,7 @@ import { sendZaloNotification, escapeHtml } from "@/lib/zalo-bot";
 import { formatCurrency } from "@thc-efb/shared/constants";
 import { SUPER_ADMIN_EMAIL } from "@thc-efb/shared/super-admin";
 import { createNotification, type NotificationType } from "@/lib/notifications";
+import { sendPushToSuperAdmin } from "@/lib/web-push";
 
 const actionTypeMap: Record<string, string> = {
   CREATE: "Tạo mới",
@@ -118,6 +119,13 @@ export async function notifyAdminAction(
     // Deep-link URL — dedicated noti page so no heavy list query is triggered
     const notifUrl = accountId ? `/dashboard/noti?id=${accountId}` : "/dashboard";
 
+    // Push notification payload for super admin
+    const pushTitle = `${emoji} ${actionText}`;
+    const pushBody = `${accountTitle}${adminName ? ` — ${adminName}` : ""}`;
+    const pushUrl = accountId
+      ? `${ADMIN_URL}/dashboard/noti?id=${accountId}`
+      : `${ADMIN_URL}/dashboard`;
+
     // Run all notifications in parallel (non-blocking)
     await Promise.allSettled([
       // 1. Zalo Bot
@@ -137,6 +145,16 @@ export async function notifyAdminAction(
         },
       }),
 
+      // 3. Web Push to super admin (all devices)
+      sendPushToSuperAdmin({
+        title: pushTitle,
+        body: pushBody,
+        url: pushUrl,
+        tag: accountId ? `account-${accountId}` : "admin-action",
+        actions: accountId
+          ? [{ action: "view", title: "Xem chi tiết", url: pushUrl }]
+          : undefined,
+      }),
     ]);
   } catch (error) {
     console.error("Failed to notify admin action:", error);

@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { Bell } from "lucide-react";
-import { useNotifications } from "@/hooks/useNotifications";
-import { NotificationPanel } from "./NotificationPanel";
+import { usePendingApprovals } from "@/hooks/usePendingApprovals";
+import { PendingApprovalsPanel } from "./PendingApprovalsPanel";
 import { AccountDetailDialog } from "@/components/admin/AccountDetailDialog";
 import type { AccountWithEmail } from "@thc-efb/supabase/types";
 
@@ -18,12 +18,28 @@ interface NotificationBellProps {
 }
 
 export function NotificationBell({ isSuperAdmin = false }: NotificationBellProps) {
-  const { notifications, unreadCount, markAsRead, markAllAsRead } =
-    useNotifications();
+  const { accounts, count, loading, refresh, removeAccount } =
+    usePendingApprovals();
   const [open, setOpen] = useState(false);
   const [dialog, setDialog] = useState<DialogState | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+
+  // Fetch pending approvals on mount + every 60s for badge count
+  useEffect(() => {
+    refresh();
+    const interval = setInterval(refresh, 60_000);
+    return () => clearInterval(interval);
+  }, [refresh]);
+
+  // Refresh data every time the panel opens
+  const handleToggle = useCallback(() => {
+    setOpen((prev) => {
+      const next = !prev;
+      if (next) refresh(); // fresh data on open
+      return next;
+    });
+  }, [refresh]);
 
   // Close panel on outside click
   useEffect(() => {
@@ -36,9 +52,8 @@ export function NotificationBell({ isSuperAdmin = false }: NotificationBellProps
     return () => document.removeEventListener("mousedown", handleClick);
   }, [open]);
 
-  const handleNotificationClick = async (notifId: string, accountId: string, url: string) => {
+  const handleViewAccount = async (accountId: string) => {
     setOpen(false);
-    // Try to open inline dialog for account notifications
     try {
       const res = await fetch(`/api/account/${accountId}`);
       if (res.ok) {
@@ -52,35 +67,38 @@ export function NotificationBell({ isSuperAdmin = false }: NotificationBellProps
         return;
       }
     } catch {
-      // fallback below
+      // fallback
     }
-    // Fallback: navigate to /noti page (e.g. non-account notifications)
-    window.location.href = url;
+    window.location.href = `/dashboard/super/accounts?highlight=${accountId}`;
+  };
+
+  const handleApproved = (accountId: string) => {
+    removeAccount(accountId);
   };
 
   return (
     <>
       <div ref={ref} className="relative">
         <button
-          onClick={() => setOpen((v) => !v)}
+          onClick={handleToggle}
           className="relative flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200/80 bg-black/5 transition-colors hover:bg-black/10 dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10"
-          aria-label="Thông báo"
+          aria-label={`${count} tài khoản chờ duyệt`}
         >
           <Bell className="h-4 w-4 text-slate-600 dark:text-slate-300" />
-          {unreadCount > 0 && (
-            <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white">
-              {unreadCount > 99 ? "99+" : unreadCount}
+          {count > 0 && (
+            <span className="absolute -right-1.5 -top-1.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white shadow-sm">
+              {count > 99 ? "99+" : count}
             </span>
           )}
         </button>
 
         {open && (
-          <NotificationPanel
-            notifications={notifications}
-            onMarkAsRead={markAsRead}
-            onMarkAllAsRead={markAllAsRead}
+          <PendingApprovalsPanel
+            accounts={accounts}
+            loading={loading}
             onClose={() => setOpen(false)}
-            onNotificationClick={handleNotificationClick}
+            onViewAccount={handleViewAccount}
+            onApproved={handleApproved}
           />
         )}
       </div>

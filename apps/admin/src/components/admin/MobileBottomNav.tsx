@@ -23,6 +23,7 @@ import {
   LogOut,
 } from "lucide-react";
 import { ThemeToggle } from "@/components/common/ThemeToggle";
+import { PushNotificationToggle } from "@/components/common/PushNotificationToggle";
 import {
   Drawer,
   DrawerContent,
@@ -225,6 +226,9 @@ export function MobileBottomNav({
                 </div>
                 <ThemeToggle className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-slate-200 bg-slate-100 text-slate-500 transition-colors hover:bg-slate-200 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-400 dark:hover:bg-slate-600" />
               </div>
+
+              {/* Push notification toggle — hidden in TMA */}
+              {!isTma && <PushNotificationToggle />}
 
               {/* Logout — hidden in TMA (Telegram handles session) */}
               {!isTma && (
