@@ -1,9 +1,8 @@
 import { redirect } from "next/navigation";
-import { createSupabaseServiceClient } from "@thc-efb/supabase/service";
 
 /**
- * /go/[shortId] — short redirect to /dashboard/noti?id=<full-uuid>
- * shortId = first 8 hex chars of account UUID (e.g. "3be83c1b")
+ * /go/[shortId] — decode base64url UUID and redirect to /dashboard/noti
+ * shortId = base64url(uuid_bytes) → 22 chars instead of 36-char UUID string
  */
 export default async function GoPage({
   params,
@@ -12,19 +11,24 @@ export default async function GoPage({
 }) {
   const { shortId } = await params;
 
-  if (!shortId || !/^[0-9a-f]{8}$/i.test(shortId)) {
-    redirect("/dashboard");
+  const uuid = shortIdToUuid(shortId);
+  if (!uuid) redirect("/dashboard");
+
+  redirect(`/dashboard/noti?id=${uuid}`);
+}
+
+function shortIdToUuid(shortId: string): string | null {
+  try {
+    const hex = Buffer.from(shortId, "base64url").toString("hex");
+    if (hex.length !== 32) return null;
+    return [
+      hex.slice(0, 8),
+      hex.slice(8, 12),
+      hex.slice(12, 16),
+      hex.slice(16, 20),
+      hex.slice(20),
+    ].join("-");
+  } catch {
+    return null;
   }
-
-  const service = createSupabaseServiceClient();
-  const { data } = await service
-    .from("accounts")
-    .select("id")
-    .ilike("id", `${shortId}%`)
-    .limit(1)
-    .single();
-
-  if (!data) redirect("/dashboard");
-
-  redirect(`/dashboard/noti?id=${data.id}`);
 }

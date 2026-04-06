@@ -141,19 +141,11 @@ export async function GET(
   try {
     const service = createSupabaseServiceClient();
 
-    // Support 8-char short ID (prefix of UUID) or full UUID
-    const isShortId = /^[0-9a-f]{8}$/i.test(id);
-    const accountQuery = service
+    const { data: account, error: fetchErr } = await service
       .from("accounts")
       .select("id, title, is_approved")
-      .limit(1);
-    if (isShortId) {
-      accountQuery.ilike("id", `${id}%`);
-    } else {
-      accountQuery.eq("id", id);
-    }
-
-    const { data: account, error: fetchErr } = await accountQuery.single();
+      .eq("id", id)
+      .single();
 
     if (fetchErr || !account) {
       return htmlResponse(
@@ -162,7 +154,7 @@ export async function GET(
       );
     }
 
-    const accountUrl = `${BASE_URL}/accounts/${account.id}`;
+    const accountUrl = `${BASE_URL}/accounts/${id}`;
 
     if (account.is_approved) {
       return htmlResponse(
@@ -178,7 +170,7 @@ export async function GET(
     const { error } = await service
       .from("accounts")
       .update({ is_approved: true })
-      .eq("id", account.id);
+      .eq("id", id);
 
     if (error) {
       return htmlResponse(

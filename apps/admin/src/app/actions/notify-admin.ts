@@ -90,8 +90,8 @@ export async function notifyAdminAction(
     // Inline keyboard buttons
     const buttons: Array<Array<{ text: string; url: string }>> = [];
     if (accountId) {
-      // Use first 8 hex chars of UUID as short ID → shorter URLs in Zalo Bot
-      const shortId = accountId.replace(/-/g, "").slice(0, 8);
+      // Encode UUID as base64url (22 chars) for shorter URLs in Zalo Bot
+      const shortId = Buffer.from(accountId.replace(/-/g, ""), "hex").toString("base64url");
       buttons.push([
         { text: "🔍 Xem chi tiết", url: `${ADMIN_URL}/go/${shortId}` },
       ]);
@@ -101,7 +101,7 @@ export async function notifyAdminAction(
           buttons.push([
             {
               text: "✅ Duyệt ngay",
-              url: `${ADMIN_URL}/api/approve/${shortId}?token=${approveSecret}`,
+              url: `${ADMIN_URL}/api/approve/${accountId}?token=${approveSecret}`,
             },
           ]);
         }
