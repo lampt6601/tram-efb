@@ -18,7 +18,6 @@ import {
   Shield,
   MessageCircle,
   CheckCircle2,
-  Star,
   ShieldCheck,
   ExternalLink,
   Search,
@@ -279,8 +278,7 @@ export default async function AccountDetailPage({
     (account.total_gp ?? 0) > 0 ||
     (account.total_coins_android ?? 0) > 0 ||
     (account.total_coins_ios ?? 0) > 0 ||
-    (account.team_strength ?? 0) > 0 ||
-    account.monthly_log_quota != null;
+    (account.team_strength ?? 0) > 0;
 
   return (
     <div className="flex min-h-screen flex-col bg-slate-50 dark:bg-slate-900">
@@ -314,43 +312,47 @@ export default async function AccountDetailPage({
             {/* Right — Info card (sticky on desktop) */}
             <div className="min-w-0 overflow-hidden rounded-2xl bg-white p-3.5 shadow-sm sm:p-6 lg:col-span-2 lg:sticky lg:top-4 lg:self-start dark:bg-slate-800">
               {/* Title */}
-              <h1 className="flex items-start gap-2 text-lg font-bold leading-snug text-slate-900 sm:text-2xl dark:text-slate-100">
-                <span>{account.title}</span>
+              <div className="flex items-start gap-2">
+                <h1 className="text-lg font-bold leading-snug text-slate-900 sm:text-2xl dark:text-slate-100">
+                  {account.title}
+                </h1>
                 {account.is_priority && (
-                  <Star className="mt-0.5 h-5 w-5 shrink-0 fill-amber-500 text-amber-500" />
+                  <span className="mt-0.5 inline-flex shrink-0 items-center gap-1 rounded-md bg-amber-100 px-2 py-0.5 text-[11px] font-bold text-amber-700 dark:bg-amber-500/20 dark:text-amber-400">
+                    ★ Nổi Bật
+                  </span>
                 )}
-              </h1>
+              </div>
 
               {/* Tags */}
-              {account.server_region && (
-                <div className="mt-1.5 flex flex-wrap gap-2">
-                  <span className="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-600 dark:bg-slate-700 dark:text-slate-300">
-                    Server: {account.server_region}
-                  </span>
+              {(account.server_region || account.monthly_log_quota != null) && (
+                <div className="mt-1.5 flex flex-wrap gap-1.5">
+                  {account.server_region && (
+                    <span className="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-600 dark:bg-slate-700 dark:text-slate-300">
+                      Server: {account.server_region}
+                    </span>
+                  )}
+                  {account.monthly_log_quota != null && (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-2.5 py-0.5 text-xs font-medium text-indigo-600 dark:bg-indigo-500/15 dark:text-indigo-400">
+                      <MessageCircle className="h-3 w-3" />
+                      Log: {account.monthly_log_quota}
+                    </span>
+                  )}
                 </div>
               )}
 
               {/* Price + Buy now */}
-              <div className="mt-2 sm:mt-4">
-                <p className="text-[10px] font-medium uppercase tracking-wide text-slate-400 sm:text-xs dark:text-slate-500">
-                  Giá Bán
-                </p>
-                <div className="mt-0.5 flex items-center justify-between gap-3 sm:mt-1">
-                  <div className="flex items-end gap-3">
+              <div className="mt-3 sm:mt-4">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-baseline gap-2">
                     <p
                       className={`text-2xl font-extrabold sm:text-3xl ${isSale ? "text-rose-600 dark:text-rose-400" : "text-indigo-600 dark:text-indigo-400"}`}
                     >
                       {formatCompactCurrency(account.selling_price)}
                     </p>
                     {isSale && (
-                      <div className="mb-0.5 flex flex-col">
-                        <span className="text-sm font-medium text-slate-400 line-through dark:text-slate-500">
-                          {formatCompactCurrency(account.original_price!)}
-                        </span>
-                        <span className="inline-flex w-fit items-center rounded-md bg-rose-100 px-1.5 py-0.5 text-xs font-bold text-rose-600 dark:bg-rose-500/15 dark:text-rose-400">
-                          -{discount}% GIẢM
-                        </span>
-                      </div>
+                      <span className="text-sm font-medium text-slate-400 line-through dark:text-slate-500">
+                        {formatCompactCurrency(account.original_price!)}
+                      </span>
                     )}
                   </div>
                   {isDeposited ? (
@@ -459,19 +461,6 @@ export default async function AccountDetailPage({
                         </p>
                         <p className="truncate text-xs font-bold text-slate-900 sm:text-sm dark:text-slate-100">
                           {account.team_strength}
-                        </p>
-                      </div>
-                    </div>
-                  )}
-                  {account.monthly_log_quota != null && (
-                    <div className="flex items-center gap-2 rounded-lg border border-indigo-100 bg-indigo-50 px-2 py-1.5 sm:rounded-xl sm:px-3 sm:py-2.5 dark:border-indigo-500/20 dark:bg-indigo-500/10">
-                      <MessageCircle className="h-3.5 w-3.5 shrink-0 text-indigo-500 sm:h-4 sm:w-4" />
-                      <div className="min-w-0">
-                        <p className="text-[9px] font-medium uppercase tracking-wide text-indigo-600/70 sm:text-[10px] dark:text-indigo-400/70">
-                          Số lượng log
-                        </p>
-                        <p className="truncate text-xs font-bold text-slate-900 sm:text-sm dark:text-slate-100">
-                          {account.monthly_log_quota}
                         </p>
                       </div>
                     </div>
