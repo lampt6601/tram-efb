@@ -3,7 +3,7 @@
 import { createSupabaseServiceClient } from '@thc-efb/supabase/service';
 import { createSupabaseServerClient } from '@thc-efb/supabase/server';
 import { uploadFileToImageKit } from "@/lib/imagekit";
-import { sendTelegramNotification, escapeHtml } from "@/lib/telegram-bot";
+import { sendZaloNotification, escapeHtml } from "@/lib/zalo-bot";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { rateLimit, getClientIp } from '@thc-efb/shared/rate-limit';
@@ -85,15 +85,10 @@ export async function submitSellRequest(formData: FormData) {
     `💰 <b>Giá:</b> ${escapeHtml(priceExpectation)}\n` +
     (description ? `📝 <b>Mô tả:</b> ${escapeHtml(description)}\n` : "") +
     `📸 ${imageUrls.length} ảnh`;
-  await sendTelegramNotification(
+  await sendZaloNotification(
     sellRequestText,
     imageUrls,
-    [
-    [
-      { text: "👉 Xem yêu cầu", url: "https://admin.thc-efb.com/dashboard/sell-requests" },
-      { text: "📱 Mở Admin App", web_app: { url: "https://admin.thc-efb.com/tma/dashboard/sell-requests" } },
-    ],
-  ],
+    [[{ text: "👉 Xem yêu cầu", url: "https://admin.thc-efb.com/dashboard/sell-requests" }]],
   );
 
   return { success: true };

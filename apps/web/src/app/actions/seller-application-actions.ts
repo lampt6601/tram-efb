@@ -4,7 +4,7 @@ import { createSupabaseAnonClient } from '@thc-efb/supabase/anon';
 import { createSupabaseServerClient } from '@thc-efb/supabase/server';
 import { createSupabaseServiceClient } from '@thc-efb/supabase/service';
 import { revalidatePath } from "next/cache";
-import { sendTelegramNotification, escapeHtml } from "@/lib/telegram-bot";
+import { sendZaloNotification, escapeHtml } from "@/lib/zalo-bot";
 
 interface ApplySellerInput {
   fullName: string;
@@ -60,15 +60,10 @@ export async function submitSellerApplication(input: ApplySellerInput) {
     `📧 <b>Email:</b> ${escapeHtml(input.email.trim())}\n` +
     `📱 <b>Zalo:</b> ${escapeHtml(zaloPhone)}\n` +
     (input.reason ? `💬 <b>Lý do:</b> ${escapeHtml(input.reason.trim())}\n` : "");
-  await sendTelegramNotification(
+  await sendZaloNotification(
     appText,
     null,
-    [
-    [
-      { text: "👉 Duyệt đơn", url: "https://admin.thc-efb.com/dashboard/super/applications" },
-      { text: "📱 Mở Admin App", web_app: { url: "https://admin.thc-efb.com/tma/dashboard/super/applications" } },
-    ],
-  ],
+    [[{ text: "👉 Duyệt đơn", url: "https://admin.thc-efb.com/dashboard/super/applications" }]],
   );
 
   return { success: true, message: "Đơn đăng ký đã được gửi! Chúng tôi sẽ liên hệ sớm nhất." };

@@ -1,7 +1,7 @@
 "use server";
 
 import { createSupabaseServerClient } from "@thc-efb/supabase/server";
-import { sendTelegramNotification, escapeHtml } from "@/lib/telegram-bot";
+import { sendZaloNotification, escapeHtml } from "@/lib/zalo-bot";
 import { formatCurrency } from "@thc-efb/shared/constants";
 import { SUPER_ADMIN_EMAIL } from "@thc-efb/shared/super-admin";
 import { createNotification, type NotificationType } from "@/lib/notifications";
@@ -28,7 +28,7 @@ const BASE_URL = "https://thc-efb.com";
 const ADMIN_URL = "https://admin.thc-efb.com";
 
 /**
- * Notifies the owner via Telegram Bot when a different admin performs an action.
+ * Notifies the Super Admin via Zalo Bot when an admin performs an action.
  * Non-blocking: never throws — errors are logged silently.
  */
 export async function notifyAdminAction(
@@ -40,7 +40,7 @@ export async function notifyAdminAction(
     originalPrice?: number | null;
   },
   accountId?: string,
-  imageUrls?: string[] | null,
+  imageUrl?: string | null,
   needsApproval?: boolean,
 ) {
   try {
@@ -88,14 +88,10 @@ export async function notifyAdminAction(
     const caption = lines.join("\n");
 
     // Inline keyboard buttons
-    const buttons: Array<Array<{ text: string; url: string } | { text: string; web_app: { url: string } }>> = [];
+    const buttons: Array<Array<{ text: string; url: string }>> = [];
     if (accountId) {
       buttons.push([
         { text: "🔗 Xem tài khoản", url: `${BASE_URL}/accounts/${accountId}` },
-        {
-          text: "📱 Mở Admin App",
-          web_app: { url: `${ADMIN_URL}/tma/dashboard/noti?id=${accountId}` },
-        },
       ]);
     }
     if (needsApproval && accountId) {
@@ -122,8 +118,8 @@ export async function notifyAdminAction(
 
     // Run all notifications in parallel (non-blocking)
     await Promise.allSettled([
-      // 1. Telegram bot
-      sendTelegramNotification(caption, imageUrls, buttons.length ? buttons : null),
+      // 1. Zalo Bot
+      sendZaloNotification(caption, imageUrl, buttons.length ? buttons : null),
 
       // 2. In-app notification
       createNotification({

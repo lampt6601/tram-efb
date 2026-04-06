@@ -432,7 +432,7 @@ export function AccountForm({ account, duplicating, availableEmails, embedded, o
             originalPrice: payload.original_price,
           },
           accountId,
-          finalImages.length ? finalImages : null,
+          finalPrimaryUrl ?? null,
           needsApproval,
         );
       } catch (notifyErr) {

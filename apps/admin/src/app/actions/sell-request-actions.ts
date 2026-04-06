@@ -3,7 +3,7 @@
 import { createSupabaseServiceClient } from "@thc-efb/supabase/service";
 import { createSupabaseServerClient } from "@thc-efb/supabase/server";
 import { uploadFileToImageKit } from "@/lib/imagekit";
-import { sendTelegramNotification, escapeHtml } from "@/lib/telegram-bot";
+import { sendZaloNotification, escapeHtml } from "@/lib/zalo-bot";
 import { createNotification } from "@/lib/notifications";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
@@ -92,12 +92,11 @@ export async function submitSellRequest(formData: FormData) {
   const sellRequestButtons = [
     [
       { text: "👉 Xem yêu cầu", url: `https://admin.thc-efb.com/dashboard/sell-requests?highlight=${inserted.id}` },
-      { text: "📱 Mở Admin App", web_app: { url: `https://admin.thc-efb.com/tma/dashboard/sell-requests?highlight=${inserted.id}` } },
     ],
   ];
 
   await Promise.allSettled([
-    sendTelegramNotification(sellRequestText, imageUrls, sellRequestButtons),
+    sendZaloNotification(sellRequestText, imageUrls, sellRequestButtons),
     createNotification({
       type: "sell_request",
       title: notifTitle,

@@ -203,7 +203,7 @@ export function AccountActionsDropdown({
         .eq("id", id);
       if (err) throw err;
       try {
-        await notifyAdminAction("UPDATE", title, undefined, id, account.images);
+        await notifyAdminAction("UPDATE", title, undefined, id, account.primary_image_url);
       } catch {
         /* ignore */
       }
@@ -237,7 +237,7 @@ export function AccountActionsDropdown({
         await notifyAdminAction("SELL", title, {
           purchasePrice,
           sellingPrice: finalPrice,
-        }, id, account.images);
+        }, id, account.primary_image_url);
       } catch {
         /* ignore */
       }
@@ -281,7 +281,7 @@ export function AccountActionsDropdown({
           purchasePrice,
           sellingPrice: finalSale,
           originalPrice: finalOriginal,
-        }, id, account.images);
+        }, id, account.primary_image_url);
       } catch {
         /* ignore */
       }
@@ -305,7 +305,7 @@ export function AccountActionsDropdown({
         .eq("id", id);
       if (err) throw err;
       try {
-        await notifyAdminAction("UPDATE_SALE", title, undefined, id, account.images);
+        await notifyAdminAction("UPDATE_SALE", title, undefined, id, account.primary_image_url);
       } catch {
         /* ignore */
       }
@@ -325,7 +325,7 @@ export function AccountActionsDropdown({
     try {
       await supabase.from("accounts").delete().eq("id", id);
       try {
-        await notifyAdminAction("DELETE", title, undefined, id, account.images);
+        await notifyAdminAction("DELETE", title, undefined, id, account.primary_image_url);
       } catch {
         /* ignore */
       }
@@ -370,7 +370,7 @@ export function AccountActionsDropdown({
         .eq("id", id);
       if (err) throw err;
       try {
-        await notifyAdminAction("UPDATE", title, undefined, id, account.images);
+        await notifyAdminAction("UPDATE", title, undefined, id, account.primary_image_url);
       } catch { /* ignore */ }
       toast.success("Đã đánh dấu cọc thành công");
       setOpenDialog(null);
@@ -400,7 +400,7 @@ export function AccountActionsDropdown({
         .eq("id", id);
       if (err) throw err;
       try {
-        await notifyAdminAction("UPDATE", title, undefined, id, account.images);
+        await notifyAdminAction("UPDATE", title, undefined, id, account.primary_image_url);
       } catch { /* ignore */ }
       toast.success("Đã hủy cọc thành công");
       setOpenDialog(null);
