@@ -31,6 +31,7 @@ export interface Account {
   is_priority?: boolean;
   is_clone?: boolean;
   is_approved: boolean;
+  is_rejected: boolean;
   deposit_amount?: number | null;
   deposit_customer_name?: string | null;
   deposit_customer_contact?: string | null;

@@ -5,7 +5,7 @@ import Link from "next/link";
 export const revalidate = 120; // 2 minutes
 
 export const metadata: Metadata = { title: "Tài Khoản" };
-import { Plus, Gamepad2, Star, Clock, CheckCircle2, ExternalLink } from "lucide-react";
+import { Plus, Gamepad2, Star, Clock, CheckCircle2, ExternalLink, XCircle } from "lucide-react";
 import { StatusBadge } from "@thc-efb/ui/badge";
 import { formatCurrency, formatCompactPriceVN } from "@thc-efb/shared/constants";
 import { ACCOUNT_SELECT, applySortToQuery } from "@/lib/account-queries";
@@ -180,6 +180,11 @@ export default async function AccountsPage({
                       <span className="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 dark:bg-emerald-500/10 px-2 py-0.5 text-xs font-medium text-emerald-700 dark:text-emerald-400">
                         <CheckCircle2 className="h-3 w-3" />
                         Đã duyệt
+                      </span>
+                    ) : account.is_rejected ? (
+                      <span className="inline-flex items-center gap-1 rounded-full border border-rose-200 bg-rose-50 dark:bg-rose-500/10 px-2 py-0.5 text-xs font-medium text-rose-700 dark:text-rose-400">
+                        <XCircle className="h-3 w-3" />
+                        Từ chối
                       </span>
                     ) : (
                       <span className="inline-flex items-center gap-1 rounded-full border border-amber-200 bg-amber-50 dark:bg-amber-500/10 px-2 py-0.5 text-xs font-medium text-amber-700 dark:text-amber-400">

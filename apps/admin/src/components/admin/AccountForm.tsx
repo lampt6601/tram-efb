@@ -396,6 +396,7 @@ export function AccountForm({ account, duplicating, availableEmails, embedded, o
 
         if (!skipReApproval) {
           (payload as Record<string, unknown>).is_approved = false;
+          (payload as Record<string, unknown>).is_rejected = false;
           needsApproval = true;
         }
       }

@@ -4,7 +4,7 @@ import { createSupabaseServiceClient } from "@thc-efb/supabase/service";
 import { checkIsSuperAdmin } from "@thc-efb/shared/super-admin";
 import { getAdminUsers } from "@/lib/cached-users";
 import { redirect } from "next/navigation";
-import { Globe, Gamepad2, Star, ExternalLink } from "lucide-react";
+import { Globe, Gamepad2, Star, ExternalLink, XCircle } from "lucide-react";
 
 export const revalidate = 120; // 2 minutes
 
@@ -111,9 +111,10 @@ export default async function SuperAccountsPage({
   // When deep-linking to a specific account, skip approval filter so the account is always findable
   if (!detailAccountId) {
     if (approvalFilter === "pending") {
-      query = query.eq("is_approved", false).neq("status", "Sold");
+      query = query.eq("is_approved", false).eq("is_rejected", false).neq("status", "Sold");
     }
     if (approvalFilter === "approved") query = query.eq("is_approved", true);
+    if (approvalFilter === "rejected") query = query.eq("is_rejected", true);
   }
   if (searchQuery) query = query.ilike("title", `%${searchQuery}%`);
   if (adminFilter && adminFilter !== "all") query = query.eq("user_id", adminFilter);
@@ -123,7 +124,7 @@ export default async function SuperAccountsPage({
   const { data: accounts } = await query;
   const items = (accounts ?? []) as unknown as AccountWithEmail[];
   const pendingApprovalCount = items.filter(
-    (a) => !a.is_approved && a.status !== "Sold",
+    (a) => !a.is_approved && !a.is_rejected && a.status !== "Sold",
   ).length;
 
   return (
@@ -203,6 +204,11 @@ export default async function SuperAccountsPage({
                     {account.is_approved ? (
                       <span className="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 dark:bg-emerald-500/10 px-2 py-0.5 text-xs font-medium text-emerald-700 dark:text-emerald-400">
                         Đã duyệt
+                      </span>
+                    ) : account.is_rejected ? (
+                      <span className="inline-flex items-center gap-1 rounded-full border border-rose-200 bg-rose-50 dark:bg-rose-500/10 px-2 py-0.5 text-xs font-medium text-rose-700 dark:text-rose-400">
+                        <XCircle className="h-3 w-3" />
+                        Từ chối
                       </span>
                     ) : account.status === "Sold" ? (
                       <span className="inline-flex items-center gap-1 rounded-full border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-xs font-medium text-slate-600 dark:text-slate-300">
@@ -289,6 +295,11 @@ export default async function SuperAccountsPage({
                   <span className="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 dark:bg-emerald-500/10 px-2 py-0.5 text-xs font-medium text-emerald-700 dark:text-emerald-400">
                     <CheckCircle2 className="h-3 w-3" />
                     Đã duyệt
+                  </span>
+                ) : account.is_rejected ? (
+                  <span className="inline-flex items-center gap-1 rounded-full border border-rose-200 bg-rose-50 dark:bg-rose-500/10 px-2 py-0.5 text-xs font-medium text-rose-700 dark:text-rose-400">
+                    <XCircle className="h-3 w-3" />
+                    Từ chối
                   </span>
                 ) : account.status === "Sold" ? (
                   <span className="inline-flex items-center gap-1 rounded-full border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-xs font-medium text-slate-600 dark:text-slate-300">

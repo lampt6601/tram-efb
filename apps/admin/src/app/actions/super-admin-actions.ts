@@ -44,7 +44,7 @@ export async function approveAccount(accountId: string) {
   const service = createSupabaseServiceClient();
   const { error } = await service
     .from("accounts")
-    .update({ is_approved: true })
+    .update({ is_approved: true, is_rejected: false })
     .eq("id", accountId);
   if (error) throw new Error(error.message);
   revalidatePath("/dashboard/super/pending");
@@ -58,7 +58,7 @@ export async function unapproveAccount(accountId: string) {
   const service = createSupabaseServiceClient();
   const { error } = await service
     .from("accounts")
-    .update({ is_approved: false })
+    .update({ is_approved: false, is_rejected: false })
     .eq("id", accountId);
   if (error) throw new Error(error.message);
   revalidatePath("/dashboard/super/pending");
@@ -66,6 +66,19 @@ export async function unapproveAccount(accountId: string) {
   revalidatePath("/dashboard/accounts");
   revalidatePath(`/accounts/${accountId}`);
   revalidatePath("/");
+}
+
+export async function rejectAccount(accountId: string) {
+  await verifySuperAdmin();
+  const service = createSupabaseServiceClient();
+  const { error } = await service
+    .from("accounts")
+    .update({ is_rejected: true })
+    .eq("id", accountId);
+  if (error) throw new Error(error.message);
+  revalidatePath("/dashboard/super/pending");
+  revalidatePath("/dashboard/super/accounts");
+  revalidatePath("/dashboard/accounts");
 }
 
 export async function superAdminDeleteAccount(accountId: string) {
@@ -145,6 +158,7 @@ export async function copyAccountToAdmin(accountId: string, targetAdminId: strin
     is_priority: false,
     is_clone: source.is_clone ?? false,
     is_approved: false,
+    is_rejected: false,
   };
 
   const { error: insertErr } = await service.from("accounts").insert(copyPayload);
@@ -367,7 +381,7 @@ export async function getSuperAccountForEdit(accountId: string) {
     await Promise.all([
       service
         .from("accounts")
-        .select("id, title, description, selling_price, purchase_price, original_price, images, primary_image_url, status, total_gp, total_coins_android, total_coins_ios, team_strength, is_priority, is_clone, is_approved, server_region, monthly_log_quota, email_id, user_id, created_at, updated_at, deposit_customer_name, deposit_customer_contact, deposit_amount, deposit_hold_until, deposit_notes")
+        .select("id, title, description, selling_price, purchase_price, original_price, images, primary_image_url, status, total_gp, total_coins_android, total_coins_ios, team_strength, is_priority, is_clone, is_approved, is_rejected, server_region, monthly_log_quota, email_id, user_id, created_at, updated_at, deposit_customer_name, deposit_customer_contact, deposit_amount, deposit_hold_until, deposit_notes")
         .eq("id", accountId)
         .single(),
       service.from("emails").select("id, email_address, password, recovery_info, user_id, created_at, updated_at").order("email_address"),

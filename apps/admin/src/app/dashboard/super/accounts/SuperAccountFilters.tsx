@@ -77,6 +77,18 @@ export function SuperAccountFilters({
           >
             Cần duyệt
           </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setValue("approval", values.approval === "rejected" ? "all" : "rejected")}
+            className={`h-9 shrink-0 rounded-lg px-2.5 text-xs font-medium shadow-sm transition-all md:px-3 ${
+              values.approval === "rejected"
+                ? "border-rose-400 bg-rose-500 text-white hover:border-rose-500 hover:bg-rose-600"
+                : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 dark:hover:text-slate-100"
+            }`}
+          >
+            Từ chối
+          </Button>
         </div>
 
         {/* Mobile row 2: Admin (conditional) + Status + Sort + Price | Desktop: inline */}

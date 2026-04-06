@@ -2,9 +2,9 @@
 
 import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { ChevronDown, CheckCircle, Eye, Loader2, Trash2 } from "lucide-react";
+import { ChevronDown, CheckCircle, Eye, Loader2, Trash2, XCircle } from "lucide-react";
 import { toast } from "sonner";
-import { approveAccount, superAdminDeleteAccount } from "@/app/actions/super-admin-actions";
+import { approveAccount, rejectAccount, superAdminDeleteAccount } from "@/app/actions/super-admin-actions";
 import { PendingAccountDrawer } from "./PendingAccountDrawer";
 import { Button } from "@thc-efb/ui/button";
 import {
@@ -35,10 +35,16 @@ export function PendingActionsDropdown({ account, adminEmail }: PendingActionsDr
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [rejectOpen, setRejectOpen] = useState(false);
+  const [rejecting, setRejecting] = useState(false);
 
   const closeDelete = useCallback(() => {
     if (!deleting) setDeleteOpen(false);
   }, [deleting]);
+
+  const closeReject = useCallback(() => {
+    if (!rejecting) setRejectOpen(false);
+  }, [rejecting]);
 
   const handleApprove = async () => {
     setApproving(true);
@@ -50,6 +56,20 @@ export function PendingActionsDropdown({ account, adminEmail }: PendingActionsDr
       toast.error(err instanceof Error ? err.message : "Có lỗi xảy ra");
     } finally {
       setApproving(false);
+    }
+  };
+
+  const handleReject = async () => {
+    setRejecting(true);
+    try {
+      await rejectAccount(account.id);
+      toast.success(`Đã từ chối tài khoản "${account.title}"`);
+      setRejectOpen(false);
+      router.refresh();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Có lỗi xảy ra");
+    } finally {
+      setRejecting(false);
     }
   };
 
@@ -91,6 +111,13 @@ export function PendingActionsDropdown({ account, adminEmail }: PendingActionsDr
             )}
             {approving ? "Đang duyệt..." : "Duyệt tài khoản"}
           </ResponsiveDropdownMenuItem>
+          <ResponsiveDropdownMenuItem
+            onClick={() => setRejectOpen(true)}
+            className="gap-2 text-rose-600 dark:text-rose-400"
+          >
+            <XCircle className="h-4 w-4" />
+            Từ chối
+          </ResponsiveDropdownMenuItem>
           <ResponsiveDropdownMenuItem onClick={() => setDrawerOpen(true)} className="gap-2">
             <Eye className="h-4 w-4 text-indigo-400" />
             Xem chi tiết
@@ -114,6 +141,32 @@ export function PendingActionsDropdown({ account, adminEmail }: PendingActionsDr
         controlledOpen={drawerOpen}
         onControlledClose={() => setDrawerOpen(false)}
       />
+
+      {/* Reject confirmation */}
+      <ResponsiveAlertDialog open={rejectOpen} onOpenChange={(v) => !rejecting && !v && closeReject()}>
+        <ResponsiveAlertDialogContent>
+          <ResponsiveAlertDialogHeader>
+            <div className="mb-4 flex h-10 w-10 shrink-0 place-items-center items-center justify-center mx-auto rounded-xl bg-rose-50 dark:bg-rose-500/10">
+              <XCircle className="h-5 w-5 text-rose-600 dark:text-rose-400" />
+            </div>
+            <ResponsiveAlertDialogTitle>Từ chối tài khoản</ResponsiveAlertDialogTitle>
+            <ResponsiveAlertDialogDescription>
+              Từ chối duyệt <span className="font-semibold text-slate-900 dark:text-slate-100">&quot;{account.title}&quot;</span>? Người bán vẫn có thể chỉnh sửa lại để gửi duyệt.
+            </ResponsiveAlertDialogDescription>
+          </ResponsiveAlertDialogHeader>
+          <ResponsiveAlertDialogFooter>
+            <Button variant="outline" onClick={closeReject} disabled={rejecting}>Hủy</Button>
+            <Button
+              onClick={handleReject}
+              loading={rejecting}
+              loadingLabel="Đang từ chối..."
+              className="min-w-[7rem] bg-rose-600 text-white hover:bg-rose-700"
+            >
+              Từ chối
+            </Button>
+          </ResponsiveAlertDialogFooter>
+        </ResponsiveAlertDialogContent>
+      </ResponsiveAlertDialog>
 
       {/* Delete confirmation */}
       <ResponsiveAlertDialog open={deleteOpen} onOpenChange={(v) => !deleting && !v && closeDelete()}>

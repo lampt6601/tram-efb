@@ -1,5 +1,6 @@
 import webpush from "web-push";
 import { createSupabaseServiceClient } from "@thc-efb/supabase/service";
+import { SUPER_ADMIN_EMAIL } from "@thc-efb/shared/super-admin";
 
 // Configure VAPID credentials once
 webpush.setVapidDetails(
@@ -51,6 +52,7 @@ export async function sendPushToUser(
         );
       } catch (err: unknown) {
         const statusCode = (err as { statusCode?: number })?.statusCode;
+        console.error(`[web-push] Failed to send to ${sub.endpoint.slice(0, 50)}...`, { statusCode, err });
         // 404 or 410 = subscription expired/unsubscribed
         if (statusCode === 404 || statusCode === 410) {
           expiredIds.push(sub.id);
@@ -70,22 +72,29 @@ export async function sendPushToUser(
 
 /**
  * Send push notification to the super admin (all devices).
+ * Uses SUPER_ADMIN_EMAIL from shared module (has fallback).
  */
 export async function sendPushToSuperAdmin(
   payload: PushPayload
 ): Promise<void> {
-  const supabase = createSupabaseServiceClient();
-  const superAdminEmail = process.env.SUPER_ADMIN_EMAIL;
-  if (!superAdminEmail) return;
+  try {
+    const supabase = createSupabaseServiceClient();
 
-  // Find super admin user ID
-  const { data: usersData } = await supabase.auth.admin.listUsers({
-    perPage: 100,
-  });
-  const superAdmin = usersData?.users?.find(
-    (u) => u.email === superAdminEmail
-  );
-  if (!superAdmin) return;
+    // Look up super admin's push subscriptions directly via email → user ID
+    const { data: usersData } = await supabase.auth.admin.listUsers({
+      perPage: 100,
+    });
+    const superAdmin = usersData?.users?.find(
+      (u) => u.email === SUPER_ADMIN_EMAIL
+    );
 
-  await sendPushToUser(superAdmin.id, payload);
+    if (!superAdmin) {
+      console.warn("[web-push] Super admin not found:", SUPER_ADMIN_EMAIL);
+      return;
+    }
+
+    await sendPushToUser(superAdmin.id, payload);
+  } catch (err) {
+    console.error("[web-push] sendPushToSuperAdmin failed:", err);
+  }
 }

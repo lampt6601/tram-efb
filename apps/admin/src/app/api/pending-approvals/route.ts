@@ -30,6 +30,7 @@ export async function GET() {
       "id, title, selling_price, primary_image_url, status, user_id, created_at"
     )
     .eq("is_approved", false)
+    .eq("is_rejected", false)
     .neq("status", "Sold")
     .order("created_at", { ascending: false });
 

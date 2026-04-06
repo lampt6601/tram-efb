@@ -76,6 +76,10 @@ export function NotificationBell({ isSuperAdmin = false }: NotificationBellProps
     removeAccount(accountId);
   };
 
+  const handleRejected = (accountId: string) => {
+    removeAccount(accountId);
+  };
+
   return (
     <>
       <div ref={ref} className="relative">
@@ -99,6 +103,7 @@ export function NotificationBell({ isSuperAdmin = false }: NotificationBellProps
             onClose={() => setOpen(false)}
             onViewAccount={handleViewAccount}
             onApproved={handleApproved}
+            onRejected={handleRejected}
           />
         )}
       </div>

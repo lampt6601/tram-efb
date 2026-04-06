@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { CheckCircle, Loader2, Eye, Clock, User } from "lucide-react";
+import { CheckCircle, Loader2, Eye, Clock, User, XCircle } from "lucide-react";
 import { toast } from "sonner";
-import { approveAccount } from "@/app/actions/super-admin-actions";
+import { approveAccount, rejectAccount } from "@/app/actions/super-admin-actions";
 import type { PendingAccount } from "@/hooks/usePendingApprovals";
 
 function timeAgo(dateStr: string): string {
@@ -29,6 +29,7 @@ interface PendingApprovalsPanelProps {
   onClose: () => void;
   onViewAccount: (accountId: string) => void;
   onApproved: (accountId: string) => void;
+  onRejected: (accountId: string) => void;
 }
 
 export function PendingApprovalsPanel({
@@ -37,6 +38,7 @@ export function PendingApprovalsPanel({
   onClose,
   onViewAccount,
   onApproved,
+  onRejected,
 }: PendingApprovalsPanelProps) {
   return (
     <div className="absolute right-0 top-full z-50 mt-2 w-80 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xl dark:border-white/10 dark:bg-slate-900 sm:w-96">
@@ -79,6 +81,7 @@ export function PendingApprovalsPanel({
                 onViewAccount(account.id);
               }}
               onApproved={() => onApproved(account.id)}
+              onRejected={() => onRejected(account.id)}
             />
           ))
         )}
@@ -93,12 +96,15 @@ function PendingAccountRow({
   account,
   onView,
   onApproved,
+  onRejected,
 }: {
   account: PendingAccount;
   onView: () => void;
   onApproved: () => void;
+  onRejected: () => void;
 }) {
   const [approving, setApproving] = useState(false);
+  const [rejecting, setRejecting] = useState(false);
 
   const handleApprove = async (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -110,6 +116,19 @@ function PendingAccountRow({
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Có lỗi xảy ra");
       setApproving(false);
+    }
+  };
+
+  const handleReject = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setRejecting(true);
+    try {
+      await rejectAccount(account.id);
+      toast.success(`Đã từ chối "${account.title}"`);
+      onRejected();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Có lỗi xảy ra");
+      setRejecting(false);
     }
   };
 
@@ -160,19 +179,33 @@ function PendingAccountRow({
         </button>
       </div>
 
-      {/* Approve button */}
-      <button
-        onClick={handleApprove}
-        disabled={approving}
-        className="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600 transition-colors hover:bg-emerald-100 disabled:opacity-50 dark:bg-emerald-500/10 dark:text-emerald-400 dark:hover:bg-emerald-500/20"
-        title="Duyệt"
-      >
-        {approving ? (
-          <Loader2 className="h-4 w-4 animate-spin" />
-        ) : (
-          <CheckCircle className="h-4 w-4" />
-        )}
-      </button>
+      {/* Action buttons */}
+      <div className="mt-1 flex shrink-0 items-center gap-1">
+        <button
+          onClick={handleReject}
+          disabled={rejecting || approving}
+          className="flex h-8 w-8 items-center justify-center rounded-lg bg-rose-50 text-rose-600 transition-colors hover:bg-rose-100 disabled:opacity-50 dark:bg-rose-500/10 dark:text-rose-400 dark:hover:bg-rose-500/20"
+          title="Từ chối"
+        >
+          {rejecting ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : (
+            <XCircle className="h-4 w-4" />
+          )}
+        </button>
+        <button
+          onClick={handleApprove}
+          disabled={approving || rejecting}
+          className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600 transition-colors hover:bg-emerald-100 disabled:opacity-50 dark:bg-emerald-500/10 dark:text-emerald-400 dark:hover:bg-emerald-500/20"
+          title="Duyệt"
+        >
+          {approving ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : (
+            <CheckCircle className="h-4 w-4" />
+          )}
+        </button>
+      </div>
     </div>
   );
 }

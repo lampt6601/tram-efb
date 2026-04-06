@@ -1,6 +1,6 @@
 /** Shared select clause for account listing queries */
 export const ACCOUNT_SELECT =
-  "id, title, description, selling_price, purchase_price, original_price, images, primary_image_url, status, total_gp, total_coins_android, total_coins_ios, team_strength, is_priority, is_clone, is_approved, server_region, monthly_log_quota, email_id, user_id, created_at, updated_at, emails(*)" as const;
+  "id, title, description, selling_price, purchase_price, original_price, images, primary_image_url, status, total_gp, total_coins_android, total_coins_ios, team_strength, is_priority, is_clone, is_approved, is_rejected, server_region, monthly_log_quota, email_id, user_id, created_at, updated_at, emails(*)" as const;
 
 /**
  * Apply sort to a Supabase query builder.

@@ -19,11 +19,13 @@ import {
   Tag,
   ShoppingCart,
   Banknote,
+  XCircle,
 } from "lucide-react";
 import {
   unapproveAccount,
   superAdminDeleteAccount,
   approveAccount,
+  rejectAccount,
   superAdminUpdateAccount,
   buybackAccount,
 } from "@/app/actions/super-admin-actions";
@@ -70,7 +72,7 @@ interface SuperAccountActionsDropdownProps {
   availableEmails: Email[];
 }
 
-type OpenDialog = "sell" | "sale" | "unapprove" | "delete" | "unmark-sold" | "deposit" | "undeposit" | "buyback" | null;
+type OpenDialog = "sell" | "sale" | "unapprove" | "delete" | "unmark-sold" | "deposit" | "undeposit" | "buyback" | "reject" | null;
 
 export function SuperAccountActionsDropdown({
   account,
@@ -179,6 +181,19 @@ export function SuperAccountActionsDropdown({
     try {
       await unapproveAccount(id);
       toast.success(`Đã chuyển "${title}" về chờ duyệt`);
+      setOpenDialog(null);
+      router.refresh();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Có lỗi xảy ra");
+    } finally { setLoading(false); }
+  };
+
+  // ── Reject ────────────────────────────────────────────────────────────────
+  const handleReject = async () => {
+    setLoading(true);
+    try {
+      await rejectAccount(id);
+      toast.success(`Đã từ chối tài khoản "${title}"`);
       setOpenDialog(null);
       router.refresh();
     } catch (err) {
@@ -493,6 +508,15 @@ export function SuperAccountActionsDropdown({
                 )}
                 {approving ? "Đang duyệt..." : "Duyệt tài khoản"}
               </ResponsiveDropdownMenuItem>
+              {!account.is_rejected && (
+                <ResponsiveDropdownMenuItem
+                  onClick={() => openWith("reject")}
+                  className="gap-2 text-rose-600 dark:text-rose-400"
+                >
+                  <XCircle className="h-4 w-4" />
+                  Từ chối
+                </ResponsiveDropdownMenuItem>
+              )}
             </>
           )}
 
@@ -539,6 +563,32 @@ export function SuperAccountActionsDropdown({
               className="min-w-[8rem] bg-amber-600 text-white hover:bg-amber-700"
             >
               Xác nhận
+            </Button>
+          </ResponsiveAlertDialogFooter>
+        </ResponsiveAlertDialogContent>
+      </ResponsiveAlertDialog>
+
+      {/* ── Reject dialog ──────────────────────────────────────────────────── */}
+      <ResponsiveAlertDialog open={openDialog === "reject"} onOpenChange={(v) => !loading && !v && closeDialog()}>
+        <ResponsiveAlertDialogContent>
+          <ResponsiveAlertDialogHeader>
+            <div className="mb-4 flex h-10 w-10 shrink-0 place-items-center items-center justify-center mx-auto rounded-xl bg-rose-50 dark:bg-rose-500/10">
+              <XCircle className="h-5 w-5 text-rose-600 dark:text-rose-400" />
+            </div>
+            <ResponsiveAlertDialogTitle>Từ chối tài khoản</ResponsiveAlertDialogTitle>
+            <ResponsiveAlertDialogDescription>
+              Từ chối duyệt <span className="font-semibold text-slate-900 dark:text-slate-100">&quot;{title}&quot;</span>? Người bán vẫn có thể chỉnh sửa lại để gửi duyệt.
+            </ResponsiveAlertDialogDescription>
+          </ResponsiveAlertDialogHeader>
+          <ResponsiveAlertDialogFooter>
+            <Button variant="outline" onClick={closeDialog} disabled={loading}>Hủy</Button>
+            <Button
+              onClick={handleReject}
+              loading={loading}
+              loadingLabel="Đang từ chối..."
+              className="min-w-[7rem] bg-rose-600 text-white hover:bg-rose-700"
+            >
+              Từ chối
             </Button>
           </ResponsiveAlertDialogFooter>
         </ResponsiveAlertDialogContent>
