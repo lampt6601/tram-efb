@@ -132,6 +132,14 @@ export function getTierForPath(pathname: string): RateLimitTier | null {
   // Skip static assets
   if (SKIP_PATTERNS.some((p) => p.test(pathname))) return null;
 
+  // Admin dashboard pages — no rate limit (authenticated users only)
+  if (
+    pathname.startsWith('/dashboard') ||
+    pathname.startsWith('/tma/dashboard')
+  ) {
+    return null;
+  }
+
   // Auth endpoints — strictest
   if (pathname === '/login' || pathname.startsWith('/api/auth')) return 'auth';
 
@@ -146,7 +154,7 @@ export function getTierForPath(pathname: string): RateLimitTier | null {
   // General API routes
   if (pathname.startsWith('/api/')) return 'api';
 
-  // Everything else (pages)
+  // Everything else (public pages)
   return 'general';
 }
 
