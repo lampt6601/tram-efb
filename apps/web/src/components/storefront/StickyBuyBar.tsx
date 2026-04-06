@@ -69,7 +69,7 @@ export function StickyBuyBar({
             </p>
             <p className="flex items-center gap-1 text-[10px] text-emerald-600 dark:text-emerald-400">
               <ShieldCheck className="h-3 w-3" />
-              Qua trung gian
+              Qua trung gian Chủ Sàn
             </p>
           </div>
 

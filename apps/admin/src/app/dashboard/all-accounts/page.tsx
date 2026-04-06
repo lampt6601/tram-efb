@@ -16,6 +16,7 @@ import Link from "next/link";
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@thc-efb/ui/table";
+import { Card, CardContent } from "@thc-efb/ui/card";
 import type { AccountWithEmail } from "@thc-efb/supabase/types";
 import { AccountDetailButton } from "./AccountDetailButton";
 import { ACCOUNT_SELECT, applySortToQuery } from "@/lib/account-queries";
@@ -78,14 +79,15 @@ export default async function AllAccountsPage({
         </Suspense>
       </div>
 
-      <div className="overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm">
+      {/* Desktop table */}
+      <div className="hidden overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm sm:block">
         <div className="overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow className="bg-slate-50 dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800">
                 <TableHead className="text-slate-500 dark:text-slate-400">Tài Khoản</TableHead>
                 <TableHead className="text-slate-500 dark:text-slate-400">Trạng Thái</TableHead>
-                <TableHead className="hidden text-slate-500 dark:text-slate-400 lg:table-cell">Admin</TableHead>
+                <TableHead className="text-slate-500 dark:text-slate-400">Admin</TableHead>
                 <TableHead className="text-slate-500 dark:text-slate-400">Chi tiết</TableHead>
               </TableRow>
             </TableHeader>
@@ -96,13 +98,13 @@ export default async function AllAccountsPage({
                   <TableRow key={account.id} className="hover:bg-slate-50 dark:hover:bg-slate-700">
                     <TableCell>
                       <div className="flex items-center gap-3">
-                        <div className="hidden h-9 w-9 items-center justify-center rounded-lg bg-indigo-50 dark:bg-indigo-500/10 sm:flex">
+                        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-50 dark:bg-indigo-500/10">
                           <Gamepad2 className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
                         </div>
                         <Link
                           href={`https://thc-efb.com/accounts/${account.id}`}
                           target="_blank"
-                          className="group flex items-center gap-1.5 max-w-[140px] sm:max-w-[220px] truncate font-medium text-slate-900 dark:text-slate-100 hover:text-indigo-600 dark:hover:text-indigo-400"
+                          className="group flex items-center gap-1.5 truncate font-medium text-slate-900 dark:text-slate-100 hover:text-indigo-600 dark:hover:text-indigo-400"
                         >
                           {account.is_priority && <Star className="h-4 w-4 shrink-0 fill-amber-500 text-amber-500" />}
                           <span className="truncate group-hover:underline">{account.title}</span>
@@ -113,7 +115,7 @@ export default async function AllAccountsPage({
                     <TableCell>
                       <StatusBadge status={account.status} />
                     </TableCell>
-                    <TableCell className="hidden lg:table-cell">
+                    <TableCell>
                       <span className="rounded-full bg-indigo-50 dark:bg-indigo-500/10 px-2 py-0.5 text-xs font-medium text-indigo-700 dark:text-indigo-400 w-fit">
                         {adminName}
                       </span>
@@ -134,6 +136,42 @@ export default async function AllAccountsPage({
             </TableBody>
           </Table>
         </div>
+      </div>
+
+      {/* Mobile card list */}
+      <div className="flex flex-col gap-3 sm:hidden">
+        {items.map((account) => {
+          const adminName = adminNameMap.get(account.user_id) ?? account.user_id;
+          return (
+            <Card key={account.id} size="sm">
+              <CardContent>
+                <div className="flex items-start justify-between gap-2">
+                  <Link
+                    href={`https://thc-efb.com/accounts/${account.id}`}
+                    target="_blank"
+                    className="group inline-flex items-center gap-1.5 font-medium text-slate-900 dark:text-slate-100 hover:text-indigo-600 dark:hover:text-indigo-400"
+                  >
+                    {account.is_priority && <Star className="h-4 w-4 shrink-0 fill-amber-500 text-amber-500" />}
+                    <span className="group-hover:underline">{account.title}</span>
+                    <ExternalLink className="h-3.5 w-3.5 shrink-0 opacity-0 group-hover:opacity-60 transition-opacity" />
+                  </Link>
+                  <AccountDetailButton account={account} adminName={adminName} />
+                </div>
+                <div className="mt-2 flex flex-wrap items-center gap-2">
+                  <StatusBadge status={account.status} />
+                  <span className="rounded-full bg-indigo-50 dark:bg-indigo-500/10 px-2 py-0.5 text-xs font-medium text-indigo-700 dark:text-indigo-400">
+                    {adminName}
+                  </span>
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })}
+        {items.length === 0 && (
+          <p className="py-12 text-center text-sm text-slate-400 dark:text-slate-500">
+            Không tìm thấy tài khoản nào phù hợp với bộ lọc.
+          </p>
+        )}
       </div>
     </div>
   );

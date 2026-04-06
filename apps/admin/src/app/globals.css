@@ -139,6 +139,11 @@
     padding-top: calc(env(safe-area-inset-top, 0px) + 4rem);
   }
 
+  /* Main content bottom: clears bottom nav (~64px) + iOS safe area */
+  .pb-nav-mobile {
+    padding-bottom: calc(4.5rem + env(safe-area-inset-bottom, 0px));
+  }
+
   .gradient-bg {
     background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
   }

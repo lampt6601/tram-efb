@@ -19,6 +19,8 @@ import { Suspense } from "react";
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@thc-efb/ui/table";
+import { Card, CardHeader, CardTitle, CardAction, CardContent } from "@thc-efb/ui/card";
+import { CheckCircle2, Clock } from "lucide-react";
 import Link from "next/link";
 import type { AccountWithEmail, Email } from "@thc-efb/supabase/types";
 import { SUPER_ADMIN_EMAIL } from "@thc-efb/shared/super-admin";
@@ -143,14 +145,15 @@ export default async function SuperAccountsPage({
         </Suspense>
       </div>
 
-      <div className="overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm">
+      {/* Desktop table */}
+      <div className="hidden overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm sm:block">
         <div className="overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow className="bg-slate-50 dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800">
                 <TableHead className="text-slate-500 dark:text-slate-400">Tài Khoản</TableHead>
                 <TableHead className="text-slate-500 dark:text-slate-400">Trạng Thái</TableHead>
-                <TableHead className="hidden text-slate-500 dark:text-slate-400 sm:table-cell">Phê Duyệt</TableHead>
+                <TableHead className="text-slate-500 dark:text-slate-400">Phê Duyệt</TableHead>
                 <TableHead className="hidden text-slate-500 dark:text-slate-400 md:table-cell">Giá Nhập</TableHead>
                 <TableHead className="text-slate-500 dark:text-slate-400">Giá Bán</TableHead>
                 <TableHead className="hidden text-slate-500 dark:text-slate-400 lg:table-cell">Admin</TableHead>
@@ -163,13 +166,13 @@ export default async function SuperAccountsPage({
                 <TableRow key={account.id} className="hover:bg-slate-50 dark:hover:bg-slate-700">
                   <TableCell>
                     <div className="flex items-center gap-3">
-                      <div className="hidden h-9 w-9 items-center justify-center rounded-lg bg-indigo-50 dark:bg-indigo-500/10 sm:flex">
+                      <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-50 dark:bg-indigo-500/10">
                         <Gamepad2 className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
                       </div>
                       <Link
                         href={`https://thc-efb.com/accounts/${account.id}`}
                         target="_blank"
-                        className="group flex items-center gap-1.5 max-w-[120px] truncate font-medium text-slate-900 dark:text-slate-100 hover:text-indigo-600 dark:hover:text-indigo-400 sm:max-w-none"
+                        className="group flex items-center gap-1.5 font-medium text-slate-900 dark:text-slate-100 hover:text-indigo-600 dark:hover:text-indigo-400"
                       >
                         {account.is_priority && <Star className="h-4 w-4 shrink-0 fill-amber-500 text-amber-500" />}
                         <span className="truncate group-hover:underline">{account.title}</span>
@@ -190,7 +193,7 @@ export default async function SuperAccountsPage({
                       </div>
                     )}
                   </TableCell>
-                  <TableCell className="hidden sm:table-cell">
+                  <TableCell>
                     {account.is_approved ? (
                       <span className="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 dark:bg-emerald-500/10 px-2 py-0.5 text-xs font-medium text-emerald-700 dark:text-emerald-400">
                         Đã duyệt
@@ -211,12 +214,10 @@ export default async function SuperAccountsPage({
                   <TableCell className="font-medium text-indigo-600 dark:text-indigo-400">
                     {account.original_price && account.original_price > account.selling_price && (
                       <div className="text-xs text-slate-400 dark:text-slate-500 line-through font-normal">
-                        <span className="sm:hidden">{formatCompactPriceVN(account.original_price)}</span>
-                        <span className="hidden sm:inline">{formatCurrency(account.original_price)}</span>
+                        {formatCurrency(account.original_price)}
                       </div>
                     )}
-                    <span className="sm:hidden">{formatCompactPriceVN(account.selling_price)}</span>
-                    <span className="hidden sm:inline">{formatCurrency(account.selling_price)}</span>
+                    {formatCurrency(account.selling_price)}
                   </TableCell>
                   <TableCell className="hidden lg:table-cell">
                     <span className="rounded-full bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-xs text-slate-600 dark:text-slate-300">
@@ -247,6 +248,92 @@ export default async function SuperAccountsPage({
             </TableBody>
           </Table>
         </div>
+      </div>
+
+      {/* Mobile card list */}
+      <div className="flex flex-col gap-3 sm:hidden">
+        {items.map((account) => (
+          <Card key={account.id} size="sm">
+            <CardHeader>
+              <CardTitle>
+                <Link
+                  href={`https://thc-efb.com/accounts/${account.id}`}
+                  target="_blank"
+                  className="group inline-flex items-center gap-1.5 font-medium text-slate-900 dark:text-slate-100 hover:text-indigo-600 dark:hover:text-indigo-400"
+                >
+                  {account.is_priority && <Star className="h-4 w-4 shrink-0 fill-amber-500 text-amber-500" />}
+                  <span className="group-hover:underline">{account.title}</span>
+                  <ExternalLink className="h-3.5 w-3.5 shrink-0 opacity-0 group-hover:opacity-60 transition-opacity" />
+                </Link>
+              </CardTitle>
+              <CardAction>
+                <SuperAccountActionsDropdown
+                  account={account}
+                  adminEmail={adminEmailMap.get(account.user_id) ?? account.user_id}
+                  isApproved={account.is_approved}
+                  isSold={account.status === "Sold"}
+                  availableEmails={availableEmails}
+                />
+              </CardAction>
+            </CardHeader>
+            <CardContent className="grid gap-y-2 text-sm">
+              <div className="flex flex-wrap items-center gap-2">
+                <StatusBadge status={account.status} />
+                {account.is_approved ? (
+                  <span className="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 dark:bg-emerald-500/10 px-2 py-0.5 text-xs font-medium text-emerald-700 dark:text-emerald-400">
+                    <CheckCircle2 className="h-3 w-3" />
+                    Đã duyệt
+                  </span>
+                ) : account.status === "Sold" ? (
+                  <span className="inline-flex items-center gap-1 rounded-full border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-xs font-medium text-slate-600 dark:text-slate-300">
+                    Không cần duyệt
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center gap-1 rounded-full border border-amber-200 dark:border-amber-500/20 bg-amber-50 dark:bg-amber-500/10 px-2 py-0.5 text-xs font-medium text-amber-700 dark:text-amber-400">
+                    <Clock className="h-3 w-3" />
+                    Chờ duyệt
+                  </span>
+                )}
+              </div>
+              {account.status === "Deposited" && account.deposit_customer_name && (
+                <div className="text-xs text-blue-600 dark:text-blue-400">
+                  <span className="font-medium">{account.deposit_customer_name}</span>
+                  {account.deposit_hold_until && (
+                    <span className={new Date(account.deposit_hold_until) < new Date() ? " text-red-500" : ""}>
+                      {" "}· đến {new Date(account.deposit_hold_until).toLocaleDateString("vi-VN")}
+                    </span>
+                  )}
+                </div>
+              )}
+              <div className="grid grid-cols-2 gap-x-4 gap-y-1">
+                <div>
+                  <span className="text-xs text-slate-500 dark:text-slate-400">Giá nhập</span>
+                  <p className="font-medium text-slate-700 dark:text-slate-300">{formatCurrency(account.purchase_price)}</p>
+                </div>
+                <div>
+                  <span className="text-xs text-slate-500 dark:text-slate-400">Giá bán</span>
+                  {account.original_price && account.original_price > account.selling_price && (
+                    <p className="text-xs text-slate-400 dark:text-slate-500 line-through">{formatCurrency(account.original_price)}</p>
+                  )}
+                  <p className="font-semibold text-indigo-600 dark:text-indigo-400">{formatCurrency(account.selling_price)}</p>
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-2 text-xs text-slate-500 dark:text-slate-400">
+                <span className="rounded-full bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-slate-600 dark:text-slate-300">
+                  {adminEmailMap.get(account.user_id) ?? account.user_id}
+                </span>
+                {account.emails?.email_address && (
+                  <span className="truncate">{account.emails.email_address}</span>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+        {items.length === 0 && (
+          <p className="py-12 text-center text-sm text-slate-400 dark:text-slate-500">
+            Không tìm thấy tài khoản nào phù hợp với bộ lọc.
+          </p>
+        )}
       </div>
 
     </div>

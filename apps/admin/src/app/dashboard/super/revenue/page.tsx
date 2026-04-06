@@ -30,6 +30,7 @@ import {
   TableHeader,
   TableRow,
 } from "@thc-efb/ui/table";
+import { Card, CardContent } from "@thc-efb/ui/card";
 
 /** Start of current day (00:00 UTC) as ISO string */
 function getStartOfDayISO(): string {
@@ -315,14 +316,15 @@ export default async function SuperRevenuePage({
       {/* ── Per-admin section ── */}
       <AdminRevenueFilter admins={adminOptions} />
 
-      <div className="mt-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm">
+      {/* Desktop table */}
+      <div className="mt-4 hidden rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm sm:block">
         <Table>
           <TableHeader className="bg-slate-50 dark:bg-slate-800 text-xs font-semibold uppercase text-slate-500 dark:text-slate-400">
             <TableRow>
               <TableHead className="px-4 py-3">Admin</TableHead>
-              <TableHead className="hidden px-4 py-3 text-center sm:table-cell">Đã Thêm</TableHead>
-              <TableHead className="hidden px-4 py-3 text-center sm:table-cell">Sẵn Sàng</TableHead>
-              <TableHead className="hidden px-4 py-3 text-center md:table-cell">Đã Bán{periodLabel}</TableHead>
+              <TableHead className="px-4 py-3 text-center">Đã Thêm</TableHead>
+              <TableHead className="px-4 py-3 text-center">Sẵn Sàng</TableHead>
+              <TableHead className="px-4 py-3 text-center">Đã Bán{periodLabel}</TableHead>
               <TableHead className="hidden px-4 py-3 text-right lg:table-cell">Doanh Thu{periodLabel}</TableHead>
               <TableHead className="hidden px-4 py-3 text-right lg:table-cell">Chi Phí{periodLabel}</TableHead>
               <TableHead className="px-4 py-3 text-right">Lợi Nhuận{periodLabel}</TableHead>
@@ -340,18 +342,18 @@ export default async function SuperRevenuePage({
                 <TableRow key={s.id} className="text-slate-700 dark:text-slate-200">
                   <TableCell className="px-4 py-3">
                     <div className="flex items-center gap-2">
-                      <div className="hidden h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-indigo-100 dark:bg-indigo-500/10 text-xs font-bold text-indigo-700 dark:text-indigo-400 sm:flex">
+                      <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-indigo-100 dark:bg-indigo-500/10 text-xs font-bold text-indigo-700 dark:text-indigo-400">
                         {(s.name || s.email)[0].toUpperCase()}
                       </div>
-                      <div className="min-w-0 max-w-[100px] sm:max-w-[180px]">
+                      <div className="min-w-0 max-w-[180px]">
                         {s.name && <p className="truncate text-sm font-semibold text-slate-900 dark:text-slate-100">{s.name}</p>}
                         <p className="truncate text-xs text-slate-400 dark:text-slate-500">{s.email}</p>
                       </div>
                     </div>
                   </TableCell>
-                  <TableCell className="hidden px-4 py-3 text-center font-semibold text-indigo-600 dark:text-indigo-400 sm:table-cell">{s.added}</TableCell>
-                  <TableCell className="hidden px-4 py-3 text-center font-semibold text-amber-600 sm:table-cell">{s.available}</TableCell>
-                  <TableCell className="hidden px-4 py-3 text-center font-semibold text-emerald-600 md:table-cell">{s.sold}</TableCell>
+                  <TableCell className="px-4 py-3 text-center font-semibold text-indigo-600 dark:text-indigo-400">{s.added}</TableCell>
+                  <TableCell className="px-4 py-3 text-center font-semibold text-amber-600">{s.available}</TableCell>
+                  <TableCell className="px-4 py-3 text-center font-semibold text-emerald-600">{s.sold}</TableCell>
                   <TableCell className="hidden px-4 py-3 text-right text-slate-700 dark:text-slate-200 lg:table-cell">{formatCurrency(s.revenue)}</TableCell>
                   <TableCell className="hidden px-4 py-3 text-right text-slate-700 dark:text-slate-200 lg:table-cell">{formatCurrency(s.cost)}</TableCell>
                   <TableCell className={`px-4 py-3 text-right font-semibold ${s.profit >= 0 ? "text-emerald-600" : "text-red-500"}`}>
@@ -364,18 +366,70 @@ export default async function SuperRevenuePage({
         </Table>
       </div>
 
+      {/* Mobile admin revenue cards */}
+      <div className="mt-4 flex flex-col gap-3 sm:hidden">
+        {filteredAdminStats.length === 0 ? (
+          <p className="py-8 text-center text-sm text-slate-500 dark:text-slate-400">Không có dữ liệu</p>
+        ) : (
+          filteredAdminStats.map((s) => (
+            <Card key={s.id} size="sm">
+              <CardContent>
+                <div className="flex items-center gap-2">
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-indigo-100 dark:bg-indigo-500/10 text-sm font-bold text-indigo-700 dark:text-indigo-400">
+                    {(s.name || s.email)[0].toUpperCase()}
+                  </div>
+                  <div className="min-w-0">
+                    {s.name && <p className="truncate text-sm font-semibold text-slate-900 dark:text-slate-100">{s.name}</p>}
+                    <p className="truncate text-xs text-slate-400 dark:text-slate-500">{s.email}</p>
+                  </div>
+                </div>
+                <div className="mt-3 grid grid-cols-3 gap-2 text-center text-xs">
+                  <div className="rounded-lg bg-slate-50 dark:bg-slate-700/50 px-2 py-1.5">
+                    <p className="text-slate-500 dark:text-slate-400">Thêm</p>
+                    <p className="font-semibold text-indigo-600 dark:text-indigo-400">{s.added}</p>
+                  </div>
+                  <div className="rounded-lg bg-slate-50 dark:bg-slate-700/50 px-2 py-1.5">
+                    <p className="text-slate-500 dark:text-slate-400">Sẵn sàng</p>
+                    <p className="font-semibold text-amber-600">{s.available}</p>
+                  </div>
+                  <div className="rounded-lg bg-slate-50 dark:bg-slate-700/50 px-2 py-1.5">
+                    <p className="text-slate-500 dark:text-slate-400">Đã bán</p>
+                    <p className="font-semibold text-emerald-600">{s.sold}</p>
+                  </div>
+                </div>
+                <div className="mt-2 grid gap-y-1 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-slate-500 dark:text-slate-400">Doanh thu{periodLabel}:</span>
+                    <span className="font-medium text-slate-700 dark:text-slate-200">{formatCurrency(s.revenue)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-500 dark:text-slate-400">Chi phí:</span>
+                    <span className="font-medium text-slate-700 dark:text-slate-200">{formatCurrency(s.cost)}</span>
+                  </div>
+                  <div className="flex justify-between border-t border-slate-100 dark:border-slate-700 pt-1.5">
+                    <span className="font-medium text-slate-700 dark:text-slate-200">Lợi nhuận:</span>
+                    <span className={`font-semibold ${s.profit >= 0 ? "text-emerald-600" : "text-red-500"}`}>{formatCurrency(s.profit)}</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))
+        )}
+      </div>
+
       {/* ── Daily breakdown ── */}
       <div className="mt-8">
         <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
           Chi tiết doanh thu theo ngày{periodLabel}
         </h2>
-        <div className="mt-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm">
+        {/* Desktop daily table */}
+        <div className="mt-4 hidden rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm sm:block">
           <Table>
             <TableHeader className="bg-slate-50 dark:bg-slate-800 text-xs font-semibold uppercase text-slate-500 dark:text-slate-400">
               <TableRow>
                 <TableHead className="px-4 py-3">Ngày</TableHead>
-                <TableHead className="hidden px-4 py-3 text-center sm:table-cell">Đã Thêm</TableHead>
-                <TableHead className="hidden px-4 py-3 text-center sm:table-cell">Sẵn Sàng</TableHead>
+                <TableHead className="px-4 py-3 text-center">Đã Thêm</TableHead>
+                <TableHead className="px-4 py-3 text-center">Sẵn Sàng</TableHead>
                 <TableHead className="px-4 py-3 text-center">Đã Bán</TableHead>
                 <TableHead className="px-4 py-3 text-right">Lợi Nhuận</TableHead>
               </TableRow>
@@ -393,8 +447,8 @@ export default async function SuperRevenuePage({
                     <TableCell className="px-4 py-3 font-medium text-slate-900 dark:text-slate-100">
                       {stat.dateStr.split("-").reverse().join("/")}
                     </TableCell>
-                    <TableCell className="hidden px-4 py-3 text-center text-indigo-600 dark:text-indigo-400 font-semibold sm:table-cell">{stat.added}</TableCell>
-                    <TableCell className="hidden px-4 py-3 text-center text-amber-600 font-semibold sm:table-cell">{stat.available}</TableCell>
+                    <TableCell className="px-4 py-3 text-center text-indigo-600 dark:text-indigo-400 font-semibold">{stat.added}</TableCell>
+                    <TableCell className="px-4 py-3 text-center text-amber-600 font-semibold">{stat.available}</TableCell>
                     <TableCell className="px-4 py-3 text-center text-emerald-600 font-semibold">{stat.sold}</TableCell>
                     <TableCell className="px-4 py-3 text-right font-semibold text-slate-900 dark:text-slate-100">
                       {formatCurrency(stat.profit)}
@@ -404,6 +458,41 @@ export default async function SuperRevenuePage({
               )}
             </TableBody>
           </Table>
+        </div>
+
+        {/* Mobile daily cards */}
+        <div className="mt-4 flex flex-col gap-2 sm:hidden">
+          {displayStats.length === 0 ? (
+            <p className="py-8 text-center text-sm text-slate-500 dark:text-slate-400">Không có dữ liệu trong khoảng thời gian này</p>
+          ) : (
+            displayStats.map((stat) => (
+              <Card key={stat.dateStr} size="sm">
+                <CardContent className="flex items-center justify-between gap-3 py-0">
+                  <span className="font-medium text-slate-900 dark:text-slate-100 text-sm">
+                    {stat.dateStr.split("-").reverse().join("/")}
+                  </span>
+                  <div className="flex items-center gap-4 text-xs">
+                    <span className="flex flex-col items-center">
+                      <span className="text-slate-400 dark:text-slate-500">Thêm</span>
+                      <span className="font-semibold text-indigo-600 dark:text-indigo-400">{stat.added}</span>
+                    </span>
+                    <span className="flex flex-col items-center">
+                      <span className="text-slate-400 dark:text-slate-500">Còn</span>
+                      <span className="font-semibold text-amber-600">{stat.available}</span>
+                    </span>
+                    <span className="flex flex-col items-center">
+                      <span className="text-slate-400 dark:text-slate-500">Bán</span>
+                      <span className="font-semibold text-emerald-600">{stat.sold}</span>
+                    </span>
+                    <span className="flex flex-col items-center">
+                      <span className="text-slate-400 dark:text-slate-500">Lợi nhuận</span>
+                      <span className="font-semibold text-slate-900 dark:text-slate-100">{formatCurrency(stat.profit)}</span>
+                    </span>
+                  </div>
+                </CardContent>
+              </Card>
+            ))
+          )}
         </div>
       </div>
     </div>

@@ -24,6 +24,24 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `packages/supabase/src/` — Shared Supabase clients & types
 - `packages/ui/src/` — Shared UI components
 
+### Subagents & Planning — BẮT BUỘC
+
+Khi spawn bất kỳ subagent nào (Plan, Explore, general-purpose), **PHẢI** include đoạn sau vào cuối prompt:
+
+```
+IMPORTANT — Use Serena MCP tools instead of Grep/Read/Glob/Bash for all code exploration:
+- mcp__serena__initial_instructions — call this FIRST before doing anything
+- mcp__serena__check_onboarding_performed — call this SECOND
+- mcp__serena__find_symbol — find functions/classes/components by name
+- mcp__serena__search_for_pattern — search when symbol name is unknown
+- mcp__serena__get_symbols_overview — get symbols overview for a specific file
+- mcp__serena__list_dir — browse directories
+Only use Read for non-code files or when Serena tools are insufficient.
+Monorepo paths (NEVER use src/ directly): apps/web/src/, apps/admin/src/, packages/supabase/src/, packages/ui/src/
+```
+
+Lý do: subagents không tự đọc CLAUDE.md — nếu không truyền instructions vào prompt, chúng sẽ dùng Grep/Read/Glob và tốn token không cần thiết.
+
 
 ## Build & Development Commands
 

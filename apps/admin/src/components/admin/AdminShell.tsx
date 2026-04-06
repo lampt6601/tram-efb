@@ -31,8 +31,8 @@ export function AdminShell({ children, isSuperAdmin = false, adminName = "", adm
         />
       )}
 
-      {/* Notification bell — hidden in TMA (Telegram handles notifications) */}
-      {!isTma && (
+      {/* Notification bell — super admin only, hidden in TMA */}
+      {!isTma && isSuperAdmin && (
         <>
           {/* Mobile notification bell — top-safe clears iOS status bar */}
           <div className="top-safe fixed right-4 top-4 z-30 lg:hidden">
@@ -47,8 +47,8 @@ export function AdminShell({ children, isSuperAdmin = false, adminName = "", adm
 
       {/* Main content */}
       <main className={isTma
-        ? "p-4 pb-24"
-        : "pt-main-mobile p-4 pb-24 lg:ml-64 lg:p-6 lg:pt-6 lg:pb-6"
+        ? "p-4 pb-nav-mobile"
+        : "pt-main-mobile p-4 pb-nav-mobile lg:ml-64 lg:p-6 lg:pt-6 lg:pb-6"
       }>
         {children}
       </main>

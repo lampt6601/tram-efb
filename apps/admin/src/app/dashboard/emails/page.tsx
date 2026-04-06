@@ -20,6 +20,7 @@ import {
   TableHeader,
   TableRow,
 } from "@thc-efb/ui/table";
+import { Card, CardHeader, CardTitle, CardAction, CardContent } from "@thc-efb/ui/card";
 
 interface EmailWithAccount extends Email {
   accounts: AccountWithEmail | null;
@@ -84,14 +85,15 @@ export default async function EmailsPage({
         </Suspense>
       </div>
 
-      <div className="overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm">
+      {/* Desktop table */}
+      <div className="hidden overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm sm:block">
         <div className="overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow className="bg-slate-50 dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800">
                 <TableHead className="text-slate-500 dark:text-slate-400">Địa chỉ Email</TableHead>
-                <TableHead className="hidden sm:table-cell text-slate-500 dark:text-slate-400">Mật khẩu</TableHead>
-                <TableHead className="hidden sm:table-cell text-slate-500 dark:text-slate-400">Thông tin khôi phục</TableHead>
+                <TableHead className="text-slate-500 dark:text-slate-400">Mật khẩu</TableHead>
+                <TableHead className="text-slate-500 dark:text-slate-400">Thông tin khôi phục</TableHead>
                 <TableHead className="text-slate-500 dark:text-slate-400">Trạng Thái Liên Kết</TableHead>
                 <TableHead className="text-slate-500 dark:text-slate-400">Hành Động</TableHead>
               </TableRow>
@@ -102,15 +104,15 @@ export default async function EmailsPage({
                   <TableCell>
                     <div className="flex items-center gap-2">
                       <Mail className="h-4 w-4 shrink-0 text-slate-400 dark:text-slate-500" />
-                      <span className="max-w-[140px] truncate font-medium text-slate-900 dark:text-slate-100 sm:max-w-none">
+                      <span className="font-medium text-slate-900 dark:text-slate-100">
                         {email.email_address}
                       </span>
                     </div>
                   </TableCell>
-                  <TableCell className="hidden sm:table-cell font-mono text-xs text-slate-600 dark:text-slate-300">
+                  <TableCell className="font-mono text-xs text-slate-600 dark:text-slate-300">
                     {email.password}
                   </TableCell>
-                  <TableCell className="hidden sm:table-cell text-slate-600 dark:text-slate-300">
+                  <TableCell className="text-slate-600 dark:text-slate-300">
                     {email.recovery_info || "—"}
                   </TableCell>
                   <TableCell>
@@ -155,6 +157,66 @@ export default async function EmailsPage({
             </TableBody>
           </Table>
         </div>
+      </div>
+
+      {/* Mobile card list */}
+      <div className="flex flex-col gap-3 sm:hidden">
+        {items.map((email) => (
+          <Card key={email.id} size="sm">
+            <CardHeader>
+              <CardTitle>
+                <div className="flex items-center gap-2">
+                  <Mail className="h-4 w-4 shrink-0 text-slate-400 dark:text-slate-500" />
+                  <span className="break-all font-medium text-slate-900 dark:text-slate-100 text-sm">
+                    {email.email_address}
+                  </span>
+                </div>
+              </CardTitle>
+              <CardAction>
+                <div className="flex items-center gap-1">
+                  <Link
+                    href={`/dashboard/emails/${email.id}/edit`}
+                    className="rounded-lg p-1.5 text-slate-400 dark:text-slate-500 transition-colors hover:bg-indigo-50 dark:hover:bg-indigo-500/10 hover:text-indigo-600 dark:hover:text-indigo-400"
+                  >
+                    <Pencil className="h-4 w-4" />
+                  </Link>
+                  <DeleteEmailButton id={email.id} />
+                </div>
+              </CardAction>
+            </CardHeader>
+            <CardContent className="grid gap-y-1.5 text-sm">
+              <div className="flex gap-2">
+                <span className="shrink-0 text-slate-500 dark:text-slate-400">Mật khẩu:</span>
+                <span className="font-mono text-xs text-slate-700 dark:text-slate-300 break-all">{email.password || "—"}</span>
+              </div>
+              <div className="flex gap-2">
+                <span className="shrink-0 text-slate-500 dark:text-slate-400">Khôi phục:</span>
+                <span className="text-slate-700 dark:text-slate-300">{email.recovery_info || "—"}</span>
+              </div>
+              <div className="mt-1">
+                {email.accounts ? (
+                  <div className="flex flex-col gap-1">
+                    <span className="inline-flex w-fit items-center gap-1.5 rounded-full bg-emerald-50 dark:bg-emerald-500/10 px-2.5 py-1 text-xs font-semibold text-emerald-700 dark:text-emerald-400">
+                      <Link2 className="h-3 w-3" />
+                      Đã liên kết
+                    </span>
+                    <LinkedAccountDetailButton account={email.accounts} />
+                  </div>
+                ) : (
+                  <span className="inline-flex w-fit items-center gap-1.5 rounded-full bg-slate-100 dark:bg-slate-700 px-2.5 py-1 text-xs font-semibold text-slate-500 dark:text-slate-400">
+                    <Link2Off className="h-3 w-3" />
+                    Chưa liên kết
+                  </span>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+        {items.length === 0 && (
+          <p className="py-12 text-center text-sm text-slate-400 dark:text-slate-500">
+            Không tìm thấy email nào phù hợp với bộ lọc.
+          </p>
+        )}
       </div>
     </div>
   );

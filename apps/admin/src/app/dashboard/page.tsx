@@ -35,6 +35,7 @@ import {
   TableHeader,
   TableRow,
 } from "@thc-efb/ui/table";
+import { Card, CardContent } from "@thc-efb/ui/card";
 
 /** Start of current week (Monday 00:00 UTC) as ISO string */
 function getStartOfWeekISO(): string {
@@ -305,13 +306,14 @@ export default async function DashboardPage({
             thể xem lại giá, mô tả hoặc bật ưu tiên để tăng khả năng bán.
           </p>
 
-          <div className="mt-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
+          {/* Desktop table */}
+          <div className="mt-4 hidden rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 sm:block">
             <Table>
               <TableHeader className="bg-slate-50 dark:bg-slate-800 text-xs font-semibold uppercase text-slate-500 dark:text-slate-400">
                 <TableRow>
                   <TableHead className="px-4 py-3">Tài khoản</TableHead>
                   <TableHead className="px-4 py-3">Trạng thái</TableHead>
-                  <TableHead className="hidden px-4 py-3 sm:table-cell">Ngày đăng</TableHead>
+                  <TableHead className="px-4 py-3">Ngày đăng</TableHead>
                   <TableHead className="px-4 py-3 text-right">Số ngày</TableHead>
                 </TableRow>
               </TableHeader>
@@ -332,7 +334,7 @@ export default async function DashboardPage({
                         <Link
                           href={`https://thc-efb.com/accounts/${account.id}`}
                           target="_blank"
-                          className="group inline-flex items-center gap-1.5 max-w-[150px] sm:max-w-xs truncate font-medium text-slate-900 dark:text-slate-100 hover:text-indigo-600 dark:hover:text-indigo-400"
+                          className="group inline-flex items-center gap-1.5 max-w-xs truncate font-medium text-slate-900 dark:text-slate-100 hover:text-indigo-600 dark:hover:text-indigo-400"
                         >
                           <span className="truncate group-hover:underline">{account.title}</span>
                           <ExternalLink className="h-3.5 w-3.5 shrink-0 opacity-0 group-hover:opacity-60 transition-opacity" />
@@ -341,7 +343,7 @@ export default async function DashboardPage({
                       <TableCell className="px-4 py-3">
                         <StatusBadge status={account.status} />
                       </TableCell>
-                      <TableCell className="hidden px-4 py-3 text-slate-500 dark:text-slate-400 sm:table-cell">
+                      <TableCell className="px-4 py-3 text-slate-500 dark:text-slate-400">
                         {created.toLocaleDateString("vi-VN")}
                       </TableCell>
                       <TableCell className="px-4 py-3 text-right text-slate-800 dark:text-slate-200">
@@ -352,6 +354,39 @@ export default async function DashboardPage({
                 })}
               </TableBody>
             </Table>
+          </div>
+
+          {/* Mobile card list */}
+          <div className="mt-4 flex flex-col gap-2 sm:hidden">
+            {staleAccounts.map((account) => {
+              const created = new Date(account.created_at);
+              const days =
+                Math.floor(
+                  (now.getTime() - created.getTime()) /
+                    (1000 * 60 * 60 * 24),
+                ) || 0;
+              return (
+                <Card key={account.id} size="sm">
+                  <CardContent className="flex items-start justify-between gap-3 py-0">
+                    <div className="min-w-0 flex-1">
+                      <Link
+                        href={`https://thc-efb.com/accounts/${account.id}`}
+                        target="_blank"
+                        className="group inline-flex items-center gap-1 font-medium text-slate-900 dark:text-slate-100 hover:text-indigo-600 dark:hover:text-indigo-400"
+                      >
+                        <span className="group-hover:underline">{account.title}</span>
+                        <ExternalLink className="h-3 w-3 shrink-0 opacity-0 group-hover:opacity-60 transition-opacity" />
+                      </Link>
+                      <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-500 dark:text-slate-400">
+                        <StatusBadge status={account.status} />
+                        <span>{created.toLocaleDateString("vi-VN")}</span>
+                        <span className="font-medium text-amber-600 dark:text-amber-400">{days} ngày</span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
         </div>
       )}

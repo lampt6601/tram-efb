@@ -17,6 +17,7 @@ import { AdminActionsDropdown } from "./AdminActionsDropdown";
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@thc-efb/ui/table";
+import { Card, CardHeader, CardContent, CardAction, CardFooter } from "@thc-efb/ui/card";
 import Image from "next/image";
 import type { AdminSettings } from "@thc-efb/supabase/types";
 
@@ -115,13 +116,15 @@ export default async function SuperAdminsPage() {
         <div className="border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 px-5 py-3">
           <h2 className="text-sm font-semibold text-slate-700 dark:text-slate-200">Danh Sách Admin ({admins.length})</h2>
         </div>
-        <div className="overflow-x-auto">
+
+        {/* Desktop table */}
+        <div className="hidden overflow-x-auto sm:block">
           <Table>
             <TableHeader>
               <TableRow className="bg-slate-50 dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800">
                 <TableHead className="text-slate-500 dark:text-slate-400">Admin</TableHead>
-                <TableHead className="hidden text-slate-500 dark:text-slate-400 sm:table-cell">Tài Khoản</TableHead>
-                <TableHead className="hidden text-slate-500 dark:text-slate-400 sm:table-cell">Email</TableHead>
+                <TableHead className="text-slate-500 dark:text-slate-400">Tài Khoản</TableHead>
+                <TableHead className="text-slate-500 dark:text-slate-400">Email</TableHead>
                 <TableHead className="hidden text-slate-500 dark:text-slate-400 md:table-cell">Ngày Tạo</TableHead>
                 <TableHead className="hidden text-slate-500 dark:text-slate-400 lg:table-cell">Đăng Nhập Cuối</TableHead>
                 <TableHead className="hidden text-slate-500 dark:text-slate-400 md:table-cell">Duyệt TK</TableHead>
@@ -172,12 +175,12 @@ export default async function SuperAdminsPage() {
                       </div>
                     </div>
                   </TableCell>
-                  <TableCell className="hidden sm:table-cell">
+                  <TableCell>
                     <div className="flex items-center gap-1 text-sm text-slate-600 dark:text-slate-300">
                       <Gamepad2 className="h-3.5 w-3.5 text-indigo-400" /> {acctCount.get(admin.id) ?? 0}
                     </div>
                   </TableCell>
-                  <TableCell className="hidden sm:table-cell">
+                  <TableCell>
                     <div className="flex items-center gap-1 text-sm text-slate-600 dark:text-slate-300">
                       <Mail className="h-3.5 w-3.5 text-slate-400 dark:text-slate-500" /> {emailCount.get(admin.id) ?? 0}
                     </div>
@@ -236,6 +239,114 @@ export default async function SuperAdminsPage() {
               )}
             </TableBody>
           </Table>
+        </div>
+
+        {/* Mobile card list */}
+        <div className="flex flex-col divide-y divide-slate-100 dark:divide-slate-800 sm:hidden">
+          {admins.map((admin) => {
+            const isDisabled = isDisabledMap.get(admin.id) ?? false;
+            const collateral = collateralMap.get(admin.id) ?? 0;
+            return (
+              <Card key={admin.id} size="sm" className="rounded-none ring-0 shadow-none border-0 py-4">
+                <CardHeader>
+                  <div className="flex items-center gap-2.5">
+                    {avatarMap.get(admin.id) ? (
+                      <Image
+                        src={avatarMap.get(admin.id)!}
+                        alt={admin.user_metadata?.full_name ?? admin.email ?? ""}
+                        width={36}
+                        height={36}
+                        className={`h-9 w-9 shrink-0 rounded-lg object-cover ${isDisabled ? "opacity-50 grayscale" : ""}`}
+                      />
+                    ) : (
+                      <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-sm font-semibold ${
+                        isDisabled
+                          ? "bg-red-100 text-red-600 dark:bg-red-500/20 dark:text-red-400"
+                          : "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300"
+                      }`}>
+                        {(admin.user_metadata?.full_name ?? admin.email ?? "?")[0].toUpperCase()}
+                      </div>
+                    )}
+                    <div className="min-w-0">
+                      {admin.user_metadata?.full_name ? (
+                        <>
+                          <p className={`text-sm font-semibold ${isDisabled ? "text-slate-400 line-through dark:text-slate-500" : "text-slate-900 dark:text-slate-100"}`}>
+                            {admin.user_metadata.full_name}
+                          </p>
+                          <p className="truncate text-xs text-slate-400 dark:text-slate-500">{admin.email ?? "—"}</p>
+                        </>
+                      ) : (
+                        <p className={`text-sm font-medium ${isDisabled ? "text-slate-400 line-through dark:text-slate-500" : "text-slate-900 dark:text-slate-100"}`}>
+                          {admin.email ?? "—"}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                  <CardAction>
+                    <AdminActionsDropdown
+                      adminId={admin.id}
+                      adminEmail={admin.email ?? ""}
+                      currentName={admin.user_metadata?.full_name ?? ""}
+                      currentZaloName={zaloNameMap.get(admin.id) ?? ""}
+                      accountCount={acctCount.get(admin.id) ?? 0}
+                      autoApprove={autoApproveMap.get(admin.id) ?? false}
+                      isDisabled={isDisabled}
+                      collateralAmount={collateral}
+                      transactionBoxUrl={txBoxMap.get(admin.id) ?? ""}
+                    />
+                  </CardAction>
+                </CardHeader>
+                <CardContent className="grid gap-y-2 text-sm">
+                  <div className="flex flex-wrap gap-x-4 gap-y-1 text-slate-500 dark:text-slate-400">
+                    <span className="flex items-center gap-1">
+                      <Gamepad2 className="h-3.5 w-3.5 text-indigo-400" />
+                      <span className="text-slate-700 dark:text-slate-300">{acctCount.get(admin.id) ?? 0} tài khoản</span>
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <Mail className="h-3.5 w-3.5 text-slate-400 dark:text-slate-500" />
+                      <span className="text-slate-700 dark:text-slate-300">{emailCount.get(admin.id) ?? 0} email</span>
+                    </span>
+                  </div>
+                  <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-500 dark:text-slate-400">
+                    <span className="flex items-center gap-1">
+                      <Calendar className="h-3 w-3" /> Tạo: {formatDateVN(admin.created_at)}
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <Clock className="h-3 w-3" /> Login: {formatDateTimeVN(admin.last_sign_in_at ?? null)}
+                    </span>
+                    {collateral > 0 && (
+                      <span className="flex items-center gap-1 font-medium text-amber-700 dark:text-amber-400">
+                        <Wallet className="h-3 w-3" /> {formatCurrency(collateral)}
+                      </span>
+                    )}
+                  </div>
+                </CardContent>
+                <CardFooter className="gap-4 text-sm">
+                  <div className="flex items-center gap-2">
+                    <span className="text-slate-500 dark:text-slate-400">Duyệt TK:</span>
+                    <AutoApproveToggle
+                      adminId={admin.id}
+                      adminEmail={admin.email ?? ""}
+                      enabled={autoApproveMap.get(admin.id) ?? false}
+                    />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-slate-500 dark:text-slate-400">Trạng thái:</span>
+                    <DisableAdminToggle
+                      adminId={admin.id}
+                      adminEmail={admin.email ?? ""}
+                      disabled={isDisabled}
+                    />
+                  </div>
+                </CardFooter>
+              </Card>
+            );
+          })}
+          {admins.length === 0 && (
+            <p className="py-12 text-center text-sm text-slate-400 dark:text-slate-500">
+              Chưa có admin nào. Nhấn &quot;Thêm Admin&quot; để tạo mới.
+            </p>
+          )}
         </div>
       </div>
     </div>
