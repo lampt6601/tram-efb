@@ -22,12 +22,15 @@ function cleanText(str: string): string {
 }
 
 /**
- * Send a Zalo Bot notification with optional photos and inline keyboard buttons.
+ * Send a Zalo Bot notification with optional photo and action links.
+ *
+ * Zalo Bot does not support reply_markup / inline keyboard — buttons are
+ * appended as plain-text URLs at the bottom of the message instead.
  *
  * Routing:
- *   - No photos  → sendMessage (text + buttons)
- *   - 1+ photos  → sendPhoto with first photo (caption + buttons)
- *                  Falls back to sendMessage if sendPhoto fails.
+ *   - Photo provided → sendPhoto (caption = text + button links)
+ *                      Falls back to sendMessage if sendPhoto fails.
+ *   - No photo       → sendMessage (text + button links)
  *
  * Accepts a single URL string or an array (first photo is used; Zalo Bot
  * does not support media groups).
@@ -58,29 +61,19 @@ export async function sendZaloNotification(
   const photos = (Array.isArray(photoUrl) ? photoUrl : photoUrl ? [photoUrl] : []).filter(Boolean);
   const firstPhoto = photos[0] ?? null;
 
-  // Build inline keyboard — flat rows of URL buttons
-  const replyMarkup =
-    buttons?.length
-      ? {
-          inline_keyboard: buttons.map((row) =>
-            row.map((b) => ({ text: b.text, url: b.url })),
-          ),
-        }
-      : undefined;
+  // Append button URLs as plain text — Zalo renders https:// as tappable links
+  const flatButtons = buttons?.flat() ?? [];
+  const buttonLines = flatButtons.map((b) => `${b.text}: ${b.url}`).join("\n");
+  const fullText = buttonLines ? `${plainText}\n\n${buttonLines}` : plainText;
 
   try {
-    // ── Photo: sendPhoto with caption + buttons ───────────────────────────────
+    // ── Photo: sendPhoto with full caption ────────────────────────────────────
     if (firstPhoto) {
-      const caption = plainText.length > 1024 ? plainText.slice(0, 1021) + "..." : plainText;
+      const caption = fullText.length > 1024 ? fullText.slice(0, 1021) + "..." : fullText;
       const res = await fetch(`${baseUrl}/sendPhoto`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          chat_id: chatId,
-          photo: firstPhoto,
-          caption,
-          ...(replyMarkup && { reply_markup: replyMarkup }),
-        }),
+        body: JSON.stringify({ chat_id: chatId, photo: firstPhoto, caption }),
       });
 
       const data = (await res.json()) as { ok: boolean; description?: string };
@@ -92,16 +85,12 @@ export async function sendZaloNotification(
       );
     }
 
-    // ── Fallback / no photo: sendMessage with text + buttons ─────────────────
-    const truncated = plainText.length > 4096 ? plainText.slice(0, 4093) + "..." : plainText;
+    // ── Fallback / no photo: sendMessage ─────────────────────────────────────
+    const truncated = fullText.length > 4096 ? fullText.slice(0, 4093) + "..." : fullText;
     const res = await fetch(`${baseUrl}/sendMessage`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        chat_id: chatId,
-        text: truncated,
-        ...(replyMarkup && { reply_markup: replyMarkup }),
-      }),
+      body: JSON.stringify({ chat_id: chatId, text: truncated }),
     });
 
     const data = (await res.json()) as { ok: boolean; description?: string };

@@ -91,7 +91,7 @@ export async function notifyAdminAction(
     const buttons: Array<Array<{ text: string; url: string }>> = [];
     if (accountId) {
       buttons.push([
-        { text: "🔗 Xem tài khoản", url: `${BASE_URL}/accounts/${accountId}` },
+        { text: "🔍 Xem chi tiết", url: `${ADMIN_URL}/dashboard/noti?id=${accountId}` },
       ]);
     }
     if (needsApproval && accountId) {
