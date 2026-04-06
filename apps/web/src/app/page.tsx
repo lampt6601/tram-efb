@@ -18,7 +18,7 @@ import type { Metadata } from "next";
 import type { PublicAccount } from '@thc-efb/supabase/types';
 import { FiltersSkeleton } from "@/components/storefront/AccountCardSkeleton";
 
-export const revalidate = 60; // 1 minute — balances freshness with bandwidth
+export const revalidate = 300; // 5 minutes — balances freshness with Vercel edge requests
 
 export const metadata: Metadata = {
   title:

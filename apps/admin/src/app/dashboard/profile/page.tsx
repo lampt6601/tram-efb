@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 import Image from "next/image";
 import { UserCircle, ShieldCheck } from "lucide-react";
 
-export const revalidate = 0; // always fresh for profile
+export const revalidate = 3600; // 1 hour
 
 export const metadata: Metadata = { title: "Hồ Sơ Cá Nhân" };
 import { ProfileForm } from "./ProfileForm";

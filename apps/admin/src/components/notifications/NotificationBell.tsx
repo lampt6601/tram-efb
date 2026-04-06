@@ -25,10 +25,10 @@ export function NotificationBell({ isSuperAdmin = false }: NotificationBellProps
   const [dialogOpen, setDialogOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
-  // Fetch pending approvals on mount + every 60s for badge count
+  // Fetch pending approvals on mount + every 5 minutes (reduced from 60s to save edge requests)
   useEffect(() => {
     refresh();
-    const interval = setInterval(refresh, 60_000);
+    const interval = setInterval(refresh, 300_000);
     return () => clearInterval(interval);
   }, [refresh]);
 

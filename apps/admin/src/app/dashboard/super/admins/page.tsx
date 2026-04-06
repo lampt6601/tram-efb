@@ -6,7 +6,7 @@ import { getAdminUsers } from "@/lib/cached-users";
 import { redirect } from "next/navigation";
 import { Users, ShieldCheck, Gamepad2, Mail, Calendar, Clock, Wallet, User } from "lucide-react";
 
-export const revalidate = 120; // 2 minutes
+export const revalidate = 600; // 10 minutes
 
 export const metadata: Metadata = { title: "Quản Lý Admin" };
 import { formatCurrency, formatDateVN, formatDateTimeVN } from "@thc-efb/shared/constants";

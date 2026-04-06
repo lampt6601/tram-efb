@@ -3,7 +3,7 @@ import { createSupabaseServerClient } from "@thc-efb/supabase/server";
 import Link from "next/link";
 import { Plus, SearchCheck, User, Banknote, MessageCircle } from "lucide-react";
 
-export const revalidate = 120; // 2 minutes
+export const revalidate = 600; // 10 minutes
 
 export const metadata: Metadata = { title: "Yêu Cầu Tìm Acc" };
 import { Button } from "@thc-efb/ui/button";

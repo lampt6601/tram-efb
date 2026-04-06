@@ -4,7 +4,7 @@ import { createSupabaseServiceClient } from "@thc-efb/supabase/service";
 import { checkIsSuperAdmin } from "@thc-efb/shared/super-admin";
 import { getAdminUsers } from "@/lib/cached-users";
 
-export const revalidate = 120; // 2 minutes
+export const revalidate = 600; // 10 minutes
 
 export const metadata: Metadata = { title: "Tất Cả Tài Khoản" };
 import { redirect } from "next/navigation";

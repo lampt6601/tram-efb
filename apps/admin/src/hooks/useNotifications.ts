@@ -85,10 +85,10 @@ export function useNotifications() {
     }
   }, []);
 
-  // Initial fetch + poll every 30s
+  // Initial fetch + poll every 5 minutes (reduced from 30s to save edge requests)
   useEffect(() => {
     fetchNotifications();
-    const interval = setInterval(fetchNotifications, 30_000);
+    const interval = setInterval(fetchNotifications, 300_000);
     return () => clearInterval(interval);
   }, [fetchNotifications]);
 

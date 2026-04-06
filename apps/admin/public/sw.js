@@ -49,15 +49,16 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // Pages: network-first with cache fallback
+  // Pages: stale-while-revalidate — serve cache immediately, update in background
   event.respondWith(
-    fetch(request)
-      .then((response) => {
+    caches.match(request).then((cached) => {
+      const networkFetch = fetch(request).then((response) => {
         const clone = response.clone();
         caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
         return response;
-      })
-      .catch(() => caches.match(request))
+      });
+      return cached || networkFetch;
+    })
   );
 });
 

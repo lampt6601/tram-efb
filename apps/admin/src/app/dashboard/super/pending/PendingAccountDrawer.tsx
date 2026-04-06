@@ -124,24 +124,22 @@ export function PendingAccountDrawer({
 
           {/* Footer with approve/reject buttons */}
           {canShowApproveButton && (
-            <DrawerFooter className="flex-row gap-2">
+            <DrawerFooter className="flex-col gap-2">
+              <ApproveButton
+                accountId={account.id}
+                accountTitle={account.title}
+                sellingPrice={account.selling_price}
+                onApproved={onClose}
+                fullWidth
+              />
               <Button
                 variant="outline"
-                className="flex-1 border-rose-200 text-rose-600 hover:bg-rose-50 hover:border-rose-300 dark:border-rose-500/30 dark:text-rose-400 dark:hover:bg-rose-500/10"
+                className="w-full border-rose-200 text-rose-600 hover:bg-rose-50 hover:border-rose-300 dark:border-rose-500/30 dark:text-rose-400 dark:hover:bg-rose-500/10"
                 onClick={() => setRejectOpen(true)}
               >
                 <XCircle className="h-4 w-4 mr-1.5" />
                 Từ chối
               </Button>
-              <div className="flex-1">
-                <ApproveButton
-                  accountId={account.id}
-                  accountTitle={account.title}
-                  sellingPrice={account.selling_price}
-                  onApproved={onClose}
-                  fullWidth
-                />
-              </div>
             </DrawerFooter>
           )}
           </DrawerPrimitive.Content>

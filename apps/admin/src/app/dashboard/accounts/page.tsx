@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { createSupabaseServerClient } from "@thc-efb/supabase/server";
 import Link from "next/link";
 
-export const revalidate = 120; // 2 minutes
+export const revalidate = 600; // 10 minutes
 
 export const metadata: Metadata = { title: "Tài Khoản" };
 import { Plus, Gamepad2, Star, Clock, CheckCircle2, ExternalLink, XCircle } from "lucide-react";

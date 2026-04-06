@@ -6,7 +6,7 @@ import { getAllSiteSettings } from "@/lib/site-settings";
 import { Settings } from "lucide-react";
 import { SiteSettingsForm } from "./SiteSettingsForm";
 
-export const revalidate = 0;
+export const revalidate = 3600; // 1 hour
 
 export const metadata: Metadata = { title: "Cài Đặt Chung" };
 
