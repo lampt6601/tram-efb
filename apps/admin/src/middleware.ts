@@ -1,12 +1,61 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 import { checkIsSuperAdmin } from '@thc-efb/shared/super-admin';
+import {
+  edgeRateLimit,
+  edgeRateLimitHeaders,
+  getEdgeClientIp,
+  getTierForPath,
+} from '@thc-efb/shared/edge-rate-limit';
+
+// ─── Rate limiting ──────────────────────────────────────────────────
+
+async function checkRateLimit(request: NextRequest): Promise<NextResponse | null> {
+  const { pathname } = request.nextUrl;
+  const tier = getTierForPath(pathname);
+  if (!tier) return null; // Static asset — skip
+
+  const ip = getEdgeClientIp(request);
+  const result = await edgeRateLimit(ip, tier);
+  if (!result) return null; // Redis not configured — graceful pass-through
+
+  if (!result.success) {
+    // Return 429 with rate limit headers
+    return new NextResponse(
+      JSON.stringify({
+        error: 'Too Many Requests',
+        message: 'Bạn đã gửi quá nhiều yêu cầu. Vui lòng thử lại sau.',
+        retryAfter: Math.ceil((result.reset - Date.now()) / 1000),
+      }),
+      {
+        status: 429,
+        headers: {
+          'Content-Type': 'application/json',
+          ...edgeRateLimitHeaders(result),
+        },
+      },
+    );
+  }
+
+  // Pass through — headers will be added to final response
+  return null;
+}
+
+// ─── Auth middleware ─────────────────────────────────────────────────
 
 export async function middleware(request: NextRequest) {
+  // 1. Rate limit check FIRST (before any Supabase call)
+  const rateLimitResponse = await checkRateLimit(request);
+  if (rateLimitResponse) return rateLimitResponse;
+
   const { pathname } = request.nextUrl;
   const isDashboard = pathname.startsWith('/dashboard');
   const isTmaDashboard = pathname.startsWith('/tma/dashboard');
-  const isProtected = isDashboard || isTmaDashboard;
+
+  // API routes don't need auth middleware — only rate limiting
+  if (pathname.startsWith('/api/')) {
+    return NextResponse.next();
+  }
 
   const hasAuthCookies = request.cookies.getAll().some(({ name }) => name.startsWith('sb-'));
 
@@ -94,5 +143,15 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/dashboard/:path*', '/tma/dashboard/:path*', '/login'],
+  matcher: [
+    /*
+     * Match all request paths EXCEPT:
+     * - _next/static (static files)
+     * - _next/image (image optimization)
+     * - favicon.ico
+     * - sw.js, manifest files
+     * - Static assets (images, fonts, etc.)
+     */
+    '/((?!_next/static|_next/image|favicon\\.ico|sw\\.js|manifest\\.webmanifest|icons/|images/).*)',
+  ],
 };

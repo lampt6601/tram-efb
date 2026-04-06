@@ -9,9 +9,12 @@
     "./account-priority": "./src/account-priority.ts",
     "./buyback": "./src/buyback.ts",
     "./image-utils": "./src/image-utils.ts",
-    "./rate-limit": "./src/rate-limit.ts"
+    "./rate-limit": "./src/rate-limit.ts",
+    "./edge-rate-limit": "./src/edge-rate-limit.ts"
   },
   "dependencies": {
+    "@upstash/ratelimit": "^2.0.5",
+    "@upstash/redis": "^1.34.3",
     "clsx": "^2.1.1",
     "tailwind-merge": "^3.5.0"
   },
