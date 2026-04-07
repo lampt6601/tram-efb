@@ -25,7 +25,16 @@ import Link from "next/link";
 import type { AccountWithEmail, Email } from "@thc-efb/supabase/types";
 import { SUPER_ADMIN_EMAIL } from "@thc-efb/shared/super-admin";
 
-type SearchParams = { sort?: string; status?: string; approval?: string; q?: string; detail?: string; admin?: string };
+type SearchParams = {
+  sort?: string;
+  status?: string;
+  approval?: string;
+  q?: string;
+  detail?: string;
+  admin?: string;
+  minPrice?: string;
+  maxPrice?: string;
+};
 
 
 export default async function SuperAccountsPage({
@@ -45,6 +54,10 @@ export default async function SuperAccountsPage({
   const approvalFilter = params.approval ?? "all";
   const searchQuery = params.q ?? "";
   const adminFilter = params.admin ?? "all";
+  const minPrice = params.minPrice ? Number(params.minPrice) : null;
+  const maxPrice = params.maxPrice ? Number(params.maxPrice) : null;
+  const hasValidMinPrice = minPrice !== null && Number.isFinite(minPrice) && minPrice >= 0;
+  const hasValidMaxPrice = maxPrice !== null && Number.isFinite(maxPrice) && maxPrice >= 0;
 
   const service = createSupabaseServiceClient();
 
@@ -118,6 +131,8 @@ export default async function SuperAccountsPage({
   }
   if (searchQuery) query = query.ilike("title", `%${searchQuery}%`);
   if (adminFilter && adminFilter !== "all") query = query.eq("user_id", adminFilter);
+  if (hasValidMinPrice) query = query.gte("selling_price", minPrice);
+  if (hasValidMaxPrice) query = query.lte("selling_price", maxPrice);
 
   query = applySortToQuery(query, sort);
 
