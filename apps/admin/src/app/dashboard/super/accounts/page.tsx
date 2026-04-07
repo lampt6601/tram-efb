@@ -6,7 +6,7 @@ import { getAdminUsers } from "@/lib/cached-users";
 import { redirect } from "next/navigation";
 import { Globe, Gamepad2, Star, ExternalLink, XCircle } from "lucide-react";
 
-export const revalidate = 600; // 10 minutes
+export const revalidate = 0; // always fresh
 
 export const metadata: Metadata = { title: "Tất Cả Tài Khoản (Super)" };
 import { StatusBadge } from "@thc-efb/ui/badge";

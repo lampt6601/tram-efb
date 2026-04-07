@@ -6,7 +6,7 @@ import { getAdminUsers } from "@/lib/cached-users";
 import { redirect } from "next/navigation";
 import { formatCurrency } from "@thc-efb/shared/constants";
 
-export const revalidate = 600; // 10 minutes
+export const revalidate = 0; // always fresh
 
 export const metadata: Metadata = { title: "Doanh Thu Toàn Shop" };
 import { StatCard } from "@thc-efb/ui/stat-card";

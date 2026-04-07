@@ -1,2 +1,2 @@
-export const revalidate = 3600; // 1 hour
+export const revalidate = 0; // always fresh
 export { default } from "@/app/dashboard/profile/page";

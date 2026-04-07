@@ -3,7 +3,7 @@ import { createSupabaseServerClient } from "@thc-efb/supabase/server";
 import Link from "next/link";
 import { Plus, Mail, Pencil, Link2, Link2Off } from "lucide-react";
 
-export const revalidate = 600; // 10 minutes
+export const revalidate = 0; // always fresh
 
 export const metadata: Metadata = { title: "Email" };
 import { DeleteEmailButton } from "./DeleteButton";
