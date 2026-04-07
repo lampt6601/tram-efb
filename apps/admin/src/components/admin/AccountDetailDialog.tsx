@@ -86,10 +86,9 @@ export function AccountDetailDialog({
         </div>
 
         {showApproveButton && !account.is_approved && account.status !== "Sold" && (
-          <ResponsiveDialogFooter className="shrink-0 px-5 pb-5 pt-3 flex-row gap-2">
+          <ResponsiveDialogFooter>
             <Button
               variant="outline"
-              className="flex-1 border-rose-200 text-rose-600 hover:bg-rose-50 hover:border-rose-300 dark:border-rose-500/30 dark:text-rose-400 dark:hover:bg-rose-500/10"
               onClick={() => setRejectOpen(true)}
             >
               <XCircle className="h-4 w-4 mr-1.5" />

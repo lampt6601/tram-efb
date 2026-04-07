@@ -133,6 +133,7 @@ export function MobileBottomNav({
               <Link
                 key={item.href}
                 href={item.href}
+                prefetch={false}
                 className={`flex flex-1 flex-col items-center justify-center gap-0.5 py-2.5 text-[10px] font-medium transition-colors active:scale-95 ${
                   active
                     ? "text-indigo-600 dark:text-indigo-400"
@@ -178,6 +179,7 @@ export function MobileBottomNav({
                   <Link
                     key={item.href}
                     href={item.href}
+                    prefetch={false}
                     onClick={handleNavClick}
                     className={`flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors ${
                       active

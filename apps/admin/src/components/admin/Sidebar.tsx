@@ -85,7 +85,7 @@ export function Sidebar({ open, onClose, isSuperAdmin = false, adminName = "", a
       >
         {/* Logo + close button */}
         <div className="flex h-14 shrink-0 items-center justify-between border-b border-slate-200 px-6 dark:border-slate-700">
-          <Link href="/dashboard" className="flex items-center gap-2.5">
+          <Link href="/dashboard" prefetch={false} className="flex items-center gap-2.5">
             <Image
               src="/avatar-owner.jpeg"
               alt="THC eFootball Shop"
@@ -113,6 +113,7 @@ export function Sidebar({ open, onClose, isSuperAdmin = false, adminName = "", a
             <Link
               key={item.href}
               href={item.href}
+              prefetch={false}
               onClick={onClose}
               className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors ${
                 isActive(item.href)
@@ -140,6 +141,7 @@ export function Sidebar({ open, onClose, isSuperAdmin = false, adminName = "", a
                   <Link
                     key={item.href}
                     href={item.href}
+                    prefetch={false}
                     onClick={onClose}
                     className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
                       isActive(item.href)

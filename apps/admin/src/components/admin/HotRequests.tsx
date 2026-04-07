@@ -23,6 +23,7 @@ export function HotRequests({ requests }: HotRequestsProps) {
         </div>
         <Link
           href="/dashboard/requests"
+          prefetch={false}
           className="inline-flex items-center gap-1 text-xs font-medium text-orange-600 hover:text-orange-700 dark:text-orange-400 dark:hover:text-orange-300"
         >
           Xem tất cả <ArrowRight className="h-3 w-3" />
