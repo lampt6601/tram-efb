@@ -44,20 +44,23 @@ async function checkRateLimit(request: NextRequest): Promise<NextResponse | null
 // ─── Auth middleware ─────────────────────────────────────────────────
 
 export async function middleware(request: NextRequest) {
-  // 1. Rate limit check FIRST (before any Supabase call)
-  const rateLimitResponse = await checkRateLimit(request);
-  if (rateLimitResponse) return rateLimitResponse;
-
   const { pathname } = request.nextUrl;
   const isDashboard = pathname.startsWith('/dashboard');
   const isTmaDashboard = pathname.startsWith('/tma/dashboard');
 
-  // API routes don't need auth middleware — only rate limiting
+  const hasAuthCookies = request.cookies.getAll().some(({ name }) => name.startsWith('sb-'));
+
+  // Rate limit ONLY unauthenticated requests (anonymous visitors, bots, attackers).
+  // Authenticated admins are trusted — no rate limit to avoid blocking batch operations.
+  if (!hasAuthCookies) {
+    const rateLimitResponse = await checkRateLimit(request);
+    if (rateLimitResponse) return rateLimitResponse;
+  }
+
+  // API routes don't need auth middleware — only rate limiting above
   if (pathname.startsWith('/api/')) {
     return NextResponse.next();
   }
-
-  const hasAuthCookies = request.cookies.getAll().some(({ name }) => name.startsWith('sb-'));
 
   if (!hasAuthCookies) {
     if (isDashboard) {
