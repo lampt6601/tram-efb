@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { Eye, X, CheckCircle2, XCircle, Loader2 } from "lucide-react";
+import { Eye, X, CheckCircle2, XCircle, Loader2, Maximize2, Minimize2 } from "lucide-react";
 import { StatusBadge } from "@thc-efb/ui/badge";
 import { Button } from "@thc-efb/ui/button";
 import { reviewerApproveAccount, reviewerRejectAccount } from "@/app/actions/reviewer-actions";
@@ -27,23 +27,47 @@ import {
 import { Drawer as DrawerPrimitive } from "vaul";
 import { AccountDetailContent } from "@/components/admin/AccountDetailContent";
 
-type PendingAccount = Pick<Account,
+export type PendingAccount = Pick<Account,
   "id" | "title" | "selling_price" | "primary_image_url" | "status" | "user_id" | "created_at" | "images"
-  | "total_gp" | "team_strength" | "server_region"
+  | "total_gp" | "team_strength" | "server_region" | "total_coins_android" | "total_coins_ios"
+  | "monthly_log_quota" | "description"
 > & { seller_name?: string };
 
 interface ReviewAccountDrawerProps {
   account: PendingAccount;
+  /** When provided, renders no trigger — controlled externally */
+  controlledOpen?: boolean;
+  onControlledClose?: () => void;
   onReviewed?: () => void;
 }
 
-export function ReviewAccountDrawer({ account, onReviewed }: ReviewAccountDrawerProps) {
-  const [open, setOpen] = useState(false);
+export function ReviewAccountDrawer({
+  account,
+  controlledOpen,
+  onControlledClose,
+  onReviewed,
+}: ReviewAccountDrawerProps) {
+  const isControlled = controlledOpen !== undefined;
+  const [internalOpen, setInternalOpen] = useState(false);
+  const open = isControlled ? controlledOpen : internalOpen;
+
+  const [expanded, setExpanded] = useState(false);
   const [approveOpen, setApproveOpen] = useState(false);
   const [rejectOpen, setRejectOpen] = useState(false);
   const [rejectReason, setRejectReason] = useState("");
   const [approving, setApproving] = useState(false);
   const [rejecting, setRejecting] = useState(false);
+
+  const onOpenChange = (value: boolean) => {
+    if (isControlled) {
+      if (!value) onControlledClose?.();
+    } else {
+      setInternalOpen(value);
+    }
+    if (!value) setExpanded(false);
+  };
+
+  const onClose = () => onOpenChange(false);
 
   const closeReject = useCallback(() => {
     if (!rejecting) { setRejectOpen(false); setRejectReason(""); }
@@ -55,7 +79,7 @@ export function ReviewAccountDrawer({ account, onReviewed }: ReviewAccountDrawer
       await reviewerApproveAccount(account.id);
       toast.success(`Đã duyệt tài khoản "${account.title}"`);
       setApproveOpen(false);
-      setOpen(false);
+      onClose();
       onReviewed?.();
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Có lỗi xảy ra");
@@ -75,7 +99,7 @@ export function ReviewAccountDrawer({ account, onReviewed }: ReviewAccountDrawer
       toast.success(`Đã từ chối tài khoản "${account.title}"`);
       setRejectReason("");
       setRejectOpen(false);
-      setOpen(false);
+      onClose();
       onReviewed?.();
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Có lỗi xảy ra");
@@ -89,8 +113,10 @@ export function ReviewAccountDrawer({ account, onReviewed }: ReviewAccountDrawer
     ...account,
     purchase_price: 0,
     original_price: null,
-    total_coins_android: 0,
-    total_coins_ios: 0,
+    total_coins_android: account.total_coins_android ?? 0,
+    total_coins_ios: account.total_coins_ios ?? 0,
+    monthly_log_quota: account.monthly_log_quota ?? null,
+    description: account.description ?? null,
     email_id: null,
     is_approved: false,
     is_rejected: false,
@@ -102,21 +128,27 @@ export function ReviewAccountDrawer({ account, onReviewed }: ReviewAccountDrawer
 
   return (
     <>
-      <button
-        onClick={() => setOpen(true)}
-        className="inline-flex items-center gap-1.5 rounded-lg border border-indigo-200 bg-indigo-50 px-2.5 py-1.5 text-xs font-medium text-indigo-700 hover:bg-indigo-100 transition-colors dark:border-indigo-500/30 dark:bg-indigo-500/10 dark:text-indigo-400 dark:hover:bg-indigo-500/20"
-      >
-        <Eye className="h-3.5 w-3.5" />
-        Xem & Duyệt
-      </button>
+      {/* Trigger — only rendered when not controlled externally */}
+      {!isControlled && (
+        <button
+          onClick={() => setInternalOpen(true)}
+          className="inline-flex items-center gap-1.5 rounded-lg border border-indigo-200 bg-indigo-50 px-2.5 py-1.5 text-xs font-medium text-indigo-700 hover:bg-indigo-100 transition-colors dark:border-indigo-500/30 dark:bg-indigo-500/10 dark:text-indigo-400 dark:hover:bg-indigo-500/20"
+        >
+          <Eye className="h-3.5 w-3.5" />
+          Chi tiết
+        </button>
+      )}
 
-      <Drawer open={open} onOpenChange={setOpen} direction="right">
+      <Drawer open={open} onOpenChange={onOpenChange} direction="right">
         <DrawerPortal>
           <DrawerOverlay />
           <DrawerPrimitive.Content
             data-slot="drawer-content"
-            className="fixed inset-y-0 right-0 z-[200] flex h-full w-full max-w-lg flex-col rounded-l-2xl bg-white shadow-2xl outline-none dark:bg-slate-800"
+            className={`fixed inset-y-0 right-0 z-[200] flex h-full flex-col rounded-l-2xl bg-white shadow-2xl outline-none dark:bg-slate-800 transition-[width,max-width] duration-200 ${
+              expanded ? "w-full max-w-full rounded-none" : "w-full max-w-lg"
+            }`}
           >
+            {/* Header */}
             <DrawerHeader className="justify-between">
               <div className="min-w-0">
                 <div className="flex items-center gap-2">
@@ -128,15 +160,27 @@ export function ReviewAccountDrawer({ account, onReviewed }: ReviewAccountDrawer
                   ID: {account.id.slice(0, 8)}…
                 </p>
               </div>
-              <DrawerClose className="shrink-0 rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600 dark:text-slate-500 dark:hover:bg-slate-700 dark:hover:text-slate-300">
-                <X className="h-5 w-5" />
-              </DrawerClose>
+              <div className="flex shrink-0 items-center gap-1">
+                {/* Expand / collapse toggle */}
+                <button
+                  onClick={() => setExpanded((v) => !v)}
+                  title={expanded ? "Thu nhỏ" : "Mở rộng"}
+                  className="hidden rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600 dark:text-slate-500 dark:hover:bg-slate-700 dark:hover:text-slate-300 lg:flex"
+                >
+                  {expanded ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
+                </button>
+                <DrawerClose className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600 dark:text-slate-500 dark:hover:bg-slate-700 dark:hover:text-slate-300">
+                  <X className="h-5 w-5" />
+                </DrawerClose>
+              </div>
             </DrawerHeader>
 
+            {/* Scrollable body */}
             <div className="flex-1 overflow-y-auto">
               <AccountDetailContent account={accountForDetail} adminName={account.seller_name ?? ""} />
             </div>
 
+            {/* Footer: approve / reject */}
             <DrawerFooter className="flex-col gap-2">
               <Button
                 className="w-full bg-emerald-600 hover:bg-emerald-700 text-white"
@@ -168,7 +212,7 @@ export function ReviewAccountDrawer({ account, onReviewed }: ReviewAccountDrawer
             <ResponsiveAlertDialogTitle>Duyệt tài khoản</ResponsiveAlertDialogTitle>
             <ResponsiveAlertDialogDescription>
               Duyệt <span className="font-semibold text-slate-900 dark:text-slate-100">&quot;{account.title}&quot;</span>?
-              Tài khoản sẽ hiển thị công khai trên shop và người bán sẽ nhận được email thông báo.
+              Tài khoản sẽ hiển thị công khai và người bán nhận email thông báo.
             </ResponsiveAlertDialogDescription>
           </ResponsiveAlertDialogHeader>
           <ResponsiveAlertDialogFooter>
@@ -194,7 +238,7 @@ export function ReviewAccountDrawer({ account, onReviewed }: ReviewAccountDrawer
             <ResponsiveAlertDialogTitle>Từ chối tài khoản</ResponsiveAlertDialogTitle>
             <ResponsiveAlertDialogDescription>
               Từ chối duyệt <span className="font-semibold text-slate-900 dark:text-slate-100">&quot;{account.title}&quot;</span>.
-              Người bán sẽ nhận email thông báo và có thể gửi lại sau khi chỉnh sửa.
+              Người bán sẽ nhận email và có thể gửi lại sau khi chỉnh sửa.
             </ResponsiveAlertDialogDescription>
           </ResponsiveAlertDialogHeader>
           <div className="px-4 pb-2">

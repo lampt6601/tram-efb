@@ -15,7 +15,6 @@ const BASE_FILTER_FIELDS = [
   { key: "maxPrice", defaultValue: "" },
   { key: "sort", defaultValue: "newest" },
   { key: "status", defaultValue: "Available" },
-  { key: "approval", defaultValue: "all" },
 ];
 
 type AdminOption = { id: string; name: string };
@@ -51,7 +50,7 @@ export function SuperAccountFilters({
     <div className={`transition-opacity duration-200 ${isPending ? "pointer-events-none opacity-60" : "opacity-100"}`}>
       {/* Single flex-wrap container — row wrappers dissolve on desktop via md:contents */}
       <div className="flex flex-wrap items-center gap-1.5 md:flex-nowrap md:gap-2">
-        {/* Mobile row 1: Search + Cần duyệt | Desktop: inline */}
+        {/* Mobile row 1: Search | Desktop: inline */}
         <div className="flex w-full items-center gap-1.5 md:contents">
           <div className="relative min-w-0 flex-1 md:min-w-48">
             <Search className="pointer-events-none absolute left-3 top-1/2 z-10 h-4 w-4 -translate-y-1/2 text-slate-400" />
@@ -65,30 +64,6 @@ export function SuperAccountFilters({
               className="h-9 w-full rounded-lg border-slate-200 pr-3 text-sm text-slate-700 shadow-sm transition-all focus-visible:border-amber-400 focus-visible:ring-4 focus-visible:ring-amber-400/20 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
             />
           </div>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setValue("approval", values.approval === "pending" ? "all" : "pending")}
-            className={`h-9 shrink-0 rounded-lg px-2.5 text-xs font-medium shadow-sm transition-all md:px-3 ${
-              values.approval === "pending"
-                ? "border-amber-400 bg-amber-500 text-white hover:border-amber-500 hover:bg-amber-600"
-                : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 dark:hover:text-slate-100"
-            }`}
-          >
-            Cần duyệt
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setValue("approval", values.approval === "rejected" ? "all" : "rejected")}
-            className={`h-9 shrink-0 rounded-lg px-2.5 text-xs font-medium shadow-sm transition-all md:px-3 ${
-              values.approval === "rejected"
-                ? "border-rose-400 bg-rose-500 text-white hover:border-rose-500 hover:bg-rose-600"
-                : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 dark:hover:text-slate-100"
-            }`}
-          >
-            Từ chối
-          </Button>
         </div>
 
         {/* Mobile row 2: Admin (conditional) + Status + Sort + Price | Desktop: inline */}

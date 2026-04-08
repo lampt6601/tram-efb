@@ -19,9 +19,10 @@ import { StatBox } from "./StatBox";
 interface AccountDetailContentProps {
   account: AccountWithEmail;
   adminName: string;
+  hidePurchasePrice?: boolean;
 }
 
-export function AccountDetailContent({ account, adminName }: AccountDetailContentProps) {
+export function AccountDetailContent({ account, adminName, hidePurchasePrice = false }: AccountDetailContentProps) {
   const galleryImages = account.primary_image_url
     ? [
         account.primary_image_url,
@@ -123,12 +124,14 @@ export function AccountDetailContent({ account, adminName }: AccountDetailConten
             Giá
           </p>
           <div className="rounded-xl border border-slate-100 bg-slate-50 px-4 py-3 dark:border-slate-800 dark:bg-slate-800">
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-slate-500 dark:text-slate-400">Giá nhập</span>
-              <span className="font-medium text-slate-700 dark:text-slate-200">
-                {formatCurrency(account.purchase_price)}
-              </span>
-            </div>
+            {!hidePurchasePrice && (
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-slate-500 dark:text-slate-400">Giá nhập</span>
+                <span className="font-medium text-slate-700 dark:text-slate-200">
+                  {formatCurrency(account.purchase_price)}
+                </span>
+              </div>
+            )}
             <div className="mt-2 flex items-center justify-between">
               <span className="text-sm text-slate-500 dark:text-slate-400">Giá bán</span>
               <div className="flex items-center gap-2">

@@ -22,19 +22,18 @@ function cleanText(str: string): string {
 }
 
 /**
- * Core implementation — send to an explicit chatId.
+ * Core implementation — send to an explicit chatId using an explicit token.
  * Non-blocking: never throws — logs errors and returns false.
  */
 async function sendZaloNotificationTo(
+  token: string,
   chatId: string,
   text: string,
   photoUrl?: string | string[] | null,
   buttons?: ZaloButton[][] | null,
 ): Promise<boolean> {
-  const token = process.env.ZALO_BOT_TOKEN;
-
   if (!token || !chatId) {
-    console.error("ZALO_BOT_TOKEN or chatId is missing.");
+    console.error("Zalo Bot token or chatId is missing.");
     return false;
   }
 
@@ -100,17 +99,19 @@ export async function sendZaloNotification(
   photoUrl?: string | string[] | null,
   buttons?: ZaloButton[][] | null,
 ): Promise<boolean> {
+  const token = process.env.ZALO_BOT_TOKEN;
   const chatId = process.env.ZALO_BOT_CHAT_ID;
-  if (!chatId) {
-    console.error("ZALO_BOT_CHAT_ID is missing.");
+  if (!token || !chatId) {
+    console.error("ZALO_BOT_TOKEN or ZALO_BOT_CHAT_ID is missing.");
     return false;
   }
-  return sendZaloNotificationTo(chatId, text, photoUrl, buttons);
+  return sendZaloNotificationTo(token, chatId, text, photoUrl, buttons);
 }
 
 /**
  * Send a Zalo Bot notification to the reviewer group chat.
- * Uses ZALO_REVIEWER_CHAT_ID env var.
+ * Uses ZALO_REVIEWER_BOT_TOKEN + ZALO_REVIEWER_CHAT_ID env vars
+ * (the reviewer bot is a separate bot with its own token).
  * Non-blocking: never throws — logs errors and returns false.
  */
 export async function sendZaloReviewerNotification(
@@ -118,10 +119,11 @@ export async function sendZaloReviewerNotification(
   photoUrl?: string | string[] | null,
   buttons?: ZaloButton[][] | null,
 ): Promise<boolean> {
+  const token = process.env.ZALO_REVIEWER_BOT_TOKEN;
   const chatId = process.env.ZALO_REVIEWER_CHAT_ID;
-  if (!chatId) {
-    console.error("ZALO_REVIEWER_CHAT_ID is missing.");
+  if (!token || !chatId) {
+    console.error("ZALO_REVIEWER_BOT_TOKEN or ZALO_REVIEWER_CHAT_ID is missing.");
     return false;
   }
-  return sendZaloNotificationTo(chatId, text, photoUrl, buttons);
+  return sendZaloNotificationTo(token, chatId, text, photoUrl, buttons);
 }

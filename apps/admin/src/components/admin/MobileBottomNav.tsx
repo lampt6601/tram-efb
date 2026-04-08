@@ -59,7 +59,7 @@ function buildNavItems(base: string): {
     superAdminPrimaryItems: [
       { href: `${base}`, label: "Trang Chủ", icon: LayoutDashboard },
       { href: `${base}/accounts`, label: "Tài Khoản", icon: Gamepad2 },
-      { href: `${base}/emails`, label: "Email", icon: Mail },
+      { href: `${base}/pending-review`, label: "Chờ Duyệt", icon: ClipboardCheck },
       { href: `${base}/super/accounts`, label: "Tất Cả", icon: Globe },
     ],
     superAdminOverflowItems: [

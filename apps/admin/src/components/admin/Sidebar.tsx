@@ -36,6 +36,7 @@ const navItems = [
 ];
 
 const superAdminNavItems = [
+  { href: "/dashboard/pending-review", label: "Chờ Duyệt", icon: ClipboardCheck },
   { href: "/dashboard/super/revenue", label: "Doanh Thu Shop", icon: ClipboardCheck },
   { href: "/dashboard/super/accounts", label: "Tất Cả Tài Khoản", icon: Globe },
   { href: "/dashboard/super/admins", label: "Quản Lý Admin", icon: Users },

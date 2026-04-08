@@ -28,7 +28,6 @@ import { SUPER_ADMIN_EMAIL } from "@thc-efb/shared/super-admin";
 type SearchParams = {
   sort?: string;
   status?: string;
-  approval?: string;
   q?: string;
   detail?: string;
   admin?: string;
@@ -51,7 +50,6 @@ export default async function SuperAccountsPage({
   const detailAccountId = params.detail ?? null;
   // When deep-linking to a specific account, show all statuses so the account is always findable
   const statusFilter = detailAccountId ? (params.status ?? "all") : (params.status ?? "Available");
-  const approvalFilter = params.approval ?? "all";
   const searchQuery = params.q ?? "";
   const adminFilter = params.admin ?? "all";
   const minPrice = params.minPrice ? Number(params.minPrice) : null;
@@ -121,14 +119,6 @@ export default async function SuperAccountsPage({
 
   let query = service.from("accounts").select(ACCOUNT_SELECT);
   if (statusFilter && statusFilter !== "all") query = query.eq("status", statusFilter);
-  // When deep-linking to a specific account, skip approval filter so the account is always findable
-  if (!detailAccountId) {
-    if (approvalFilter === "pending") {
-      query = query.eq("is_approved", false).eq("is_rejected", false).neq("status", "Sold");
-    }
-    if (approvalFilter === "approved") query = query.eq("is_approved", true);
-    if (approvalFilter === "rejected") query = query.eq("is_rejected", true);
-  }
   if (searchQuery) query = query.ilike("title", `%${searchQuery}%`);
   if (adminFilter && adminFilter !== "all") query = query.eq("user_id", adminFilter);
   if (hasValidMinPrice) query = query.gte("selling_price", minPrice);

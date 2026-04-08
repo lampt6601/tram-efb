@@ -50,7 +50,7 @@ export async function getPendingAccountsForReview() {
   const { data: accounts, error } = await service
     .from("accounts")
     .select(
-      "id, title, selling_price, primary_image_url, status, user_id, created_at, images, total_gp, team_strength, server_region"
+      "id, title, description, selling_price, purchase_price, primary_image_url, status, user_id, created_at, images, total_gp, total_coins_android, total_coins_ios, team_strength, server_region, monthly_log_quota"
     )
     .eq("is_approved", false)
     .eq("is_rejected", false)
