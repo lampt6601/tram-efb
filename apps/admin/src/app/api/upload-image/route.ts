@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createSupabaseServerClient } from "@thc-efb/supabase/server";
-import { uploadFileToImageKit } from "@/lib/imagekit";
+import { uploadFileToImageKit } from "@thc-efb/shared/imagekit";
 import { rateLimit, getClientIp, rateLimitHeaders } from "@thc-efb/shared/rate-limit";
 
 export async function POST(request: NextRequest) {

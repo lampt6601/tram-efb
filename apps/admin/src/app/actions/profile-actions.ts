@@ -4,7 +4,7 @@ import { createSupabaseServerClient } from "@thc-efb/supabase/server";
 import { createSupabaseAnonClient } from "@thc-efb/supabase/anon";
 import { createSupabaseServiceClient } from "@thc-efb/supabase/service";
 import { revalidatePath } from "next/cache";
-import { uploadFileToImageKit } from "@/lib/imagekit";
+import { uploadFileToImageKit } from "@thc-efb/shared/imagekit";
 
 export async function updateMyProfile(name: string) {
   const supabase = await createSupabaseServerClient();

@@ -2,8 +2,8 @@
 
 import { createSupabaseServiceClient } from "@thc-efb/supabase/service";
 import { createSupabaseServerClient } from "@thc-efb/supabase/server";
-import { uploadFileToImageKit } from "@/lib/imagekit";
-import { sendZaloNotification, escapeHtml } from "@/lib/zalo-bot";
+import { uploadFileToImageKit } from "@thc-efb/shared/imagekit";
+import { sendZaloNotification, escapeHtml } from "@thc-efb/shared/zalo-bot";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { rateLimit, getClientIp } from "@thc-efb/shared/rate-limit";

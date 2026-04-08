@@ -38,7 +38,7 @@ import {
 } from '@thc-efb/ui/platform-coin-icons';
 import { BuybackPolicy } from "@/components/storefront/BuybackPolicy";
 import { StickyBuyBar } from "@/components/storefront/StickyBuyBar";
-import { getSiteSettings } from "@/lib/site-settings";
+import { getSiteSettings } from "@thc-efb/shared/site-settings";
 
 export const revalidate = 3600; // 1 hour — revalidated on account update via revalidatePath
 

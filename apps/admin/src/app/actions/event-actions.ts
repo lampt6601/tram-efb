@@ -38,7 +38,6 @@ export async function submitEventEntry(
     return { error: error.message };
   }
 
-  revalidatePath("/event");
   revalidatePath("/dashboard/super/event");
   return { success: true };
 }
@@ -82,7 +81,6 @@ export async function submitMultipleEventEntries(
     return { error: error.message };
   }
 
-  revalidatePath("/event");
   revalidatePath("/dashboard/super/event");
   revalidatePath("/dashboard/super/event/spin");
   return { success: true };
@@ -107,7 +105,6 @@ export async function deleteEventEntry(id: string) {
   const service = createSupabaseServiceClient();
   const { error } = await service.from("event_entries").delete().eq("id", id);
   if (error) throw new Error(error.message);
-  revalidatePath("/event");
   revalidatePath("/dashboard/super/event");
 }
 
@@ -146,7 +143,6 @@ export async function confirmPrize(
     );
 
   if (error) throw new Error(error.message);
-  revalidatePath("/event");
   revalidatePath("/dashboard/super/event");
   revalidatePath("/dashboard/super/event/spin");
 }
@@ -159,7 +155,6 @@ export async function clearPrize(prizeType: "grand" | "consolation") {
     .delete()
     .eq("prize_type", prizeType);
   if (error) throw new Error(error.message);
-  revalidatePath("/event");
   revalidatePath("/dashboard/super/event");
   revalidatePath("/dashboard/super/event/spin");
 }

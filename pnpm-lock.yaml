@@ -184,6 +184,9 @@ importers:
       '@supabase/supabase-js':
         specifier: '>=2'
         version: 2.101.1
+      '@thc-efb/supabase':
+        specifier: workspace:*
+        version: link:../supabase
       clsx:
         specifier: ^2.1.1
         version: 2.1.1

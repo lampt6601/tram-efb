@@ -1,6 +1,6 @@
 "use server";
 
-import { uploadFileToImageKit } from "@/lib/imagekit";
+import { uploadFileToImageKit } from "@thc-efb/shared/imagekit";
 
 /**
  * Server Action: uploads one image file to ImageKit.

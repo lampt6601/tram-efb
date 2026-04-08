@@ -10,9 +10,13 @@
     "./buyback": "./src/buyback.ts",
     "./image-utils": "./src/image-utils.ts",
     "./rate-limit": "./src/rate-limit.ts",
-    "./approval-board": "./src/approval-board.ts"
+    "./approval-board": "./src/approval-board.ts",
+    "./zalo-bot": "./src/zalo-bot.ts",
+    "./imagekit": "./src/imagekit.ts",
+    "./site-settings": "./src/site-settings.ts"
   },
   "dependencies": {
+    "@thc-efb/supabase": "workspace:*",
     "clsx": "^2.1.1",
     "tailwind-merge": "^3.5.0"
   },

@@ -1,7 +1,7 @@
 "use server";
 
 import { createSupabaseServerClient } from "@thc-efb/supabase/server";
-import { sendZaloNotification, sendZaloReviewerNotification, escapeHtml } from "@/lib/zalo-bot";
+import { sendZaloNotification, sendZaloReviewerNotification, escapeHtml } from "@thc-efb/shared/zalo-bot";
 import { formatCurrency } from "@thc-efb/shared/constants";
 import { SUPER_ADMIN_EMAIL } from "@thc-efb/shared/super-admin";
 

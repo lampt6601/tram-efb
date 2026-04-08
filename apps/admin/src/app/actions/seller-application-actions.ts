@@ -4,7 +4,7 @@ import { createSupabaseAnonClient } from "@thc-efb/supabase/anon";
 import { createSupabaseServerClient } from "@thc-efb/supabase/server";
 import { createSupabaseServiceClient } from "@thc-efb/supabase/service";
 import { revalidatePath } from "next/cache";
-import { sendZaloNotification, escapeHtml } from "@/lib/zalo-bot";
+import { sendZaloNotification, escapeHtml } from "@thc-efb/shared/zalo-bot";
 
 interface ApplySellerInput {
   fullName: string;

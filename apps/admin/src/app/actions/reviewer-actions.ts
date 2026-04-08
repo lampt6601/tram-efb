@@ -6,7 +6,7 @@ import { checkIsSuperAdmin } from "@thc-efb/shared/super-admin";
 import { checkIsBoardMember } from "@thc-efb/shared/approval-board";
 import { revalidatePath } from "next/cache";
 import { sendApprovalEmail, sendRejectionEmail } from "@/lib/email";
-import { sendZaloReviewerNotification } from "@/lib/zalo-bot";
+import { sendZaloReviewerNotification } from "@thc-efb/shared/zalo-bot";
 
 const ADMIN_URL = "https://admin.thc-efb.com";
 const BASE_URL = "https://thc-efb.com";

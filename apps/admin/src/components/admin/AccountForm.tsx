@@ -368,6 +368,17 @@ export function AccountForm({ account, duplicating, availableEmails, embedded, o
 
       let accountId = account?.id;
       let needsApproval = false;
+      let isResubmitting = false;
+
+      // Auto-resubmit when editing a rejected account
+      if (isEditing && account.is_rejected) {
+        (payload as Record<string, unknown>).is_rejected = false;
+        (payload as Record<string, unknown>).rejection_reason = null;
+        (payload as Record<string, unknown>).reviewed_by = null;
+        (payload as Record<string, unknown>).reviewed_at = null;
+        needsApproval = true;
+        isResubmitting = true;
+      }
 
       // Re-approval check for restricted admins editing approved accounts
       if (isEditing && isRestricted && account.is_approved) {
@@ -445,7 +456,7 @@ export function AccountForm({ account, duplicating, availableEmails, embedded, o
 
       resetUploadState();
       if (isEditing && needsApproval) {
-        toast.info("Tài khoản đã chuyển về chờ duyệt do có thay đổi nội dung.");
+        toast.info(isResubmitting ? "Đã cập nhật và gửi lại để duyệt." : "Tài khoản đã chuyển về chờ duyệt do có thay đổi nội dung.");
       } else {
         toast.success(
           isEditing ? "Đã cập nhật tài khoản" : "Đã tạo tài khoản mới",

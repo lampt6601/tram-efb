@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { createSupabaseServerClient } from "@thc-efb/supabase/server";
 import { checkIsSuperAdmin } from "@thc-efb/shared/super-admin";
 import { redirect } from "next/navigation";
-import { getAllSiteSettings } from "@/lib/site-settings";
+import { getAllSiteSettings } from "@thc-efb/shared/site-settings";
 import { Settings } from "lucide-react";
 import { SiteSettingsForm } from "./SiteSettingsForm";
 
