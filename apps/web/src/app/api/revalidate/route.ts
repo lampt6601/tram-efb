@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { revalidatePath, revalidateTag } from "next/cache";
+import { revalidatePath } from "next/cache";
 
 /**
  * On-demand revalidation endpoint for cross-app cache invalidation.
@@ -38,18 +38,12 @@ export async function POST(request: NextRequest) {
       revalidatePath(path);
     }
 
-    // Revalidate tags
-    for (const tag of tags) {
-      revalidateTag(tag);
-    }
-
     return NextResponse.json({
       revalidated: true,
       paths,
-      tags,
       now: Date.now(),
     });
-  } catch {
+  } catch (_error) {
     return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
   }
 }
