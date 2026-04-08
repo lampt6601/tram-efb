@@ -12,6 +12,7 @@ import { ACCOUNT_SELECT, applySortToQuery } from "@/lib/account-queries";
 import { AdminAccountFilters } from "./AdminAccountFilters";
 import { AccountActionsDropdown } from "./AccountActionsDropdown";
 import { AccountDetailOpener } from "@/components/admin/AccountDetailOpener";
+import { RejectionDetailDialog } from "./RejectionDetailDialog";
 import { Suspense } from "react";
 import type { AccountWithEmail } from "@thc-efb/supabase/types";
 import { Button } from "@thc-efb/ui/button";
@@ -182,10 +183,12 @@ export default async function AccountsPage({
                         Đã duyệt
                       </span>
                     ) : account.is_rejected ? (
-                      <span className="inline-flex items-center gap-1 rounded-full border border-rose-200 bg-rose-50 dark:bg-rose-500/10 px-2 py-0.5 text-xs font-medium text-rose-700 dark:text-rose-400">
-                        <XCircle className="h-3 w-3" />
-                        Từ chối
-                      </span>
+                      <RejectionDetailDialog
+                        accountId={account.id}
+                        accountTitle={account.title}
+                        rejectionReason={account.rejection_reason}
+                        reviewedAt={account.reviewed_at}
+                      />
                     ) : (
                       <span className="inline-flex items-center gap-1 rounded-full border border-amber-200 bg-amber-50 dark:bg-amber-500/10 px-2 py-0.5 text-xs font-medium text-amber-700 dark:text-amber-400">
                         <Clock className="h-3 w-3" />
@@ -278,6 +281,13 @@ export default async function AccountsPage({
                     <CheckCircle2 className="h-3 w-3" />
                     Đã duyệt
                   </span>
+                ) : account.is_rejected ? (
+                  <RejectionDetailDialog
+                    accountId={account.id}
+                    accountTitle={account.title}
+                    rejectionReason={account.rejection_reason}
+                    reviewedAt={account.reviewed_at}
+                  />
                 ) : (
                   <span className="inline-flex items-center gap-1 rounded-full border border-amber-200 bg-amber-50 dark:bg-amber-500/10 px-2 py-0.5 text-xs font-medium text-amber-700 dark:text-amber-400">
                     <Clock className="h-3 w-3" />

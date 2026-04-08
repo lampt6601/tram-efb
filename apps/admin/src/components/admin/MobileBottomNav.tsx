@@ -78,6 +78,7 @@ function buildNavItems(base: string): {
 
 interface MobileBottomNavProps {
   isSuperAdmin?: boolean;
+  isBoardMember?: boolean;
   adminName?: string;
   adminEmail?: string;
   adminAvatarUrl?: string;
@@ -87,6 +88,7 @@ interface MobileBottomNavProps {
 
 export function MobileBottomNav({
   isSuperAdmin = false,
+  isBoardMember = false,
   adminName = "",
   adminEmail = "",
   adminAvatarUrl = "",
@@ -105,7 +107,14 @@ export function MobileBottomNav({
     superAdminOverflowItems,
   } = buildNavItems(base);
 
-  const primaryItems = isSuperAdmin ? superAdminPrimaryItems : adminPrimaryItems;
+  const primaryItems = isSuperAdmin
+    ? superAdminPrimaryItems
+    : isBoardMember
+      ? [
+          ...adminPrimaryItems.slice(0, 3),
+          { href: `${base}/pending-review`, label: "Chờ Duyệt", icon: ClipboardCheck },
+        ]
+      : adminPrimaryItems;
   const overflowItems = isSuperAdmin ? superAdminOverflowItems : adminOverflowItems;
 
   const isActive = (href: string) =>

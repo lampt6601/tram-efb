@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { createSupabaseServerClient } from "@thc-efb/supabase/server";
 import { createSupabaseServiceClient } from "@thc-efb/supabase/service";
 import { checkIsSuperAdmin } from "@thc-efb/shared/super-admin";
+import { checkIsBoardMember } from "@thc-efb/shared/approval-board";
 
 /**
  * GET /api/pending-approvals
@@ -17,11 +18,14 @@ export async function GET() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user || !checkIsSuperAdmin(user.email)) {
+  const service = createSupabaseServiceClient();
+
+  const isSuperAdmin = checkIsSuperAdmin(user?.email);
+  const isBoardMember = user && !isSuperAdmin ? await checkIsBoardMember(service, user.id) : false;
+
+  if (!user || (!isSuperAdmin && !isBoardMember)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-
-  const service = createSupabaseServiceClient();
 
   // Fetch pending accounts (not approved, not sold)
   const { data: accounts, error } = await service

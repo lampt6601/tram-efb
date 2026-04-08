@@ -169,7 +169,13 @@ export async function GET(
 
     const { error } = await service
       .from("accounts")
-      .update({ is_approved: true })
+      .update({
+        is_approved: true,
+        is_rejected: false,
+        rejection_reason: null,
+        reviewed_at: new Date().toISOString(),
+        // reviewed_by is null for token-based approvals (no auth user context)
+      })
       .eq("id", id);
 
     if (error) {

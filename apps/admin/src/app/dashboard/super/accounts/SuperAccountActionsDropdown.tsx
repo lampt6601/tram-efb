@@ -88,6 +88,7 @@ export function SuperAccountActionsDropdown({
   const [openDialog, setOpenDialog] = useState<OpenDialog>(null);
   const [loading, setLoading] = useState(false);
   const [approving, setApproving] = useState(false);
+  const [rejectReason, setRejectReason] = useState("");
   const [copied, setCopied] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [editSheetOpen, setEditSheetOpen] = useState(false);
@@ -190,10 +191,15 @@ export function SuperAccountActionsDropdown({
 
   // ── Reject ────────────────────────────────────────────────────────────────
   const handleReject = async () => {
+    if (!rejectReason.trim()) {
+      toast.error("Vui lòng nhập lý do từ chối");
+      return;
+    }
     setLoading(true);
     try {
-      await rejectAccount(id);
+      await rejectAccount(id, rejectReason.trim());
       toast.success(`Đã từ chối tài khoản "${title}"`);
+      setRejectReason("");
       setOpenDialog(null);
       router.refresh();
     } catch (err) {
@@ -580,12 +586,23 @@ export function SuperAccountActionsDropdown({
               Từ chối duyệt <span className="font-semibold text-slate-900 dark:text-slate-100">&quot;{title}&quot;</span>? Người bán vẫn có thể chỉnh sửa lại để gửi duyệt.
             </ResponsiveAlertDialogDescription>
           </ResponsiveAlertDialogHeader>
+          <div className="px-4 pb-2">
+            <textarea
+              placeholder="Nhập lý do từ chối (bắt buộc)..."
+              value={rejectReason}
+              onChange={(e) => setRejectReason(e.target.value)}
+              disabled={loading}
+              rows={3}
+              className="w-full resize-none rounded-md border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-1 disabled:opacity-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
+            />
+          </div>
           <ResponsiveAlertDialogFooter>
             <Button variant="outline" onClick={closeDialog} disabled={loading}>Hủy</Button>
             <Button
               onClick={handleReject}
               loading={loading}
               loadingLabel="Đang từ chối..."
+              disabled={loading || !rejectReason.trim()}
               className="min-w-[7rem] bg-rose-600 text-white hover:bg-rose-700"
             >
               Từ chối

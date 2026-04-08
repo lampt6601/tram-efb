@@ -8,6 +8,7 @@ import { NotificationBell } from "@/components/notifications/NotificationBell";
 interface AdminShellProps {
   children: ReactNode;
   isSuperAdmin?: boolean;
+  isBoardMember?: boolean;
   adminName?: string;
   adminEmail?: string;
   adminAvatarUrl?: string;
@@ -15,8 +16,9 @@ interface AdminShellProps {
   isTma?: boolean;
 }
 
-export function AdminShell({ children, isSuperAdmin = false, adminName = "", adminEmail = "", adminAvatarUrl = "", isTma = false }: AdminShellProps) {
+export function AdminShell({ children, isSuperAdmin = false, isBoardMember = false, adminName = "", adminEmail = "", adminAvatarUrl = "", isTma = false }: AdminShellProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const showNotificationBell = isSuperAdmin || isBoardMember;
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
@@ -25,14 +27,15 @@ export function AdminShell({ children, isSuperAdmin = false, adminName = "", adm
           open={sidebarOpen}
           onClose={() => setSidebarOpen(false)}
           isSuperAdmin={isSuperAdmin}
+          isBoardMember={isBoardMember}
           adminName={adminName}
           adminEmail={adminEmail}
           adminAvatarUrl={adminAvatarUrl}
         />
       )}
 
-      {/* Notification bell — super admin only, hidden in TMA */}
-      {!isTma && isSuperAdmin && (
+      {/* Notification bell — super admin and board members, hidden in TMA */}
+      {!isTma && showNotificationBell && (
         <>
           {/* Mobile notification bell — top accounts for iOS safe area */}
           <div
@@ -59,6 +62,7 @@ export function AdminShell({ children, isSuperAdmin = false, adminName = "", adm
       {/* Bottom navigation */}
       <MobileBottomNav
         isSuperAdmin={isSuperAdmin}
+        isBoardMember={isBoardMember}
         adminName={adminName}
         adminEmail={adminEmail}
         adminAvatarUrl={adminAvatarUrl}

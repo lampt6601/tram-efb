@@ -37,6 +37,7 @@ export function PendingActionsDropdown({ account, adminEmail }: PendingActionsDr
   const [deleting, setDeleting] = useState(false);
   const [rejectOpen, setRejectOpen] = useState(false);
   const [rejecting, setRejecting] = useState(false);
+  const [rejectReason, setRejectReason] = useState("");
 
   const closeDelete = useCallback(() => {
     if (!deleting) setDeleteOpen(false);
@@ -60,10 +61,15 @@ export function PendingActionsDropdown({ account, adminEmail }: PendingActionsDr
   };
 
   const handleReject = async () => {
+    if (!rejectReason.trim()) {
+      toast.error("Vui lòng nhập lý do từ chối");
+      return;
+    }
     setRejecting(true);
     try {
-      await rejectAccount(account.id);
+      await rejectAccount(account.id, rejectReason.trim());
       toast.success(`Đã từ chối tài khoản "${account.title}"`);
+      setRejectReason("");
       setRejectOpen(false);
       router.refresh();
     } catch (err) {
@@ -154,12 +160,23 @@ export function PendingActionsDropdown({ account, adminEmail }: PendingActionsDr
               Từ chối duyệt <span className="font-semibold text-slate-900 dark:text-slate-100">&quot;{account.title}&quot;</span>? Người bán vẫn có thể chỉnh sửa lại để gửi duyệt.
             </ResponsiveAlertDialogDescription>
           </ResponsiveAlertDialogHeader>
+          <div className="px-4 pb-2">
+            <textarea
+              placeholder="Nhập lý do từ chối (bắt buộc)..."
+              value={rejectReason}
+              onChange={(e) => setRejectReason(e.target.value)}
+              disabled={rejecting}
+              rows={3}
+              className="w-full resize-none rounded-md border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-1 disabled:opacity-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
+            />
+          </div>
           <ResponsiveAlertDialogFooter>
             <Button variant="outline" onClick={closeReject} disabled={rejecting}>Hủy</Button>
             <Button
               onClick={handleReject}
               loading={rejecting}
               loadingLabel="Đang từ chối..."
+              disabled={rejecting || !rejectReason.trim()}
               className="min-w-[7rem] bg-rose-600 text-white hover:bg-rose-700"
             >
               Từ chối

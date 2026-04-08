@@ -1,7 +1,7 @@
 "use server";
 
 import { createSupabaseServerClient } from "@thc-efb/supabase/server";
-import { sendZaloNotification, escapeHtml } from "@/lib/zalo-bot";
+import { sendZaloNotification, sendZaloReviewerNotification, escapeHtml } from "@/lib/zalo-bot";
 import { formatCurrency } from "@thc-efb/shared/constants";
 import { SUPER_ADMIN_EMAIL } from "@thc-efb/shared/super-admin";
 import { createNotification, type NotificationType } from "@/lib/notifications";
@@ -128,8 +128,13 @@ export async function notifyAdminAction(
 
     // Run all notifications in parallel (non-blocking)
     await Promise.allSettled([
-      // 1. Zalo Bot
+      // 1. Zalo Bot — super admin chat
       sendZaloNotification(caption, imageUrl, buttons.length ? buttons : null),
+
+      // 1b. Zalo Bot — reviewer group (only when approval needed)
+      ...(needsApproval
+        ? [sendZaloReviewerNotification(caption, imageUrl, buttons.length ? buttons : null)]
+        : []),
 
       // 2. In-app notification
       createNotification({

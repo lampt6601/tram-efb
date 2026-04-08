@@ -32,6 +32,9 @@ export interface Account {
   is_clone?: boolean;
   is_approved: boolean;
   is_rejected: boolean;
+  rejection_reason?: string | null;
+  reviewed_by?: string | null;
+  reviewed_at?: string | null;
   deposit_amount?: number | null;
   deposit_customer_name?: string | null;
   deposit_customer_contact?: string | null;
@@ -137,6 +140,13 @@ export interface SellerCollateralHistory {
   new_total: number;
   notes: string | null;
   created_by: string;
+  created_at: string;
+}
+
+export interface ApprovalBoardMember {
+  id: string;
+  user_id: string;
+  added_by: string;
   created_at: string;
 }
 

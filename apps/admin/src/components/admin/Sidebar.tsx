@@ -40,6 +40,7 @@ const superAdminNavItems = [
   { href: "/dashboard/super/accounts", label: "Tất Cả Tài Khoản", icon: Globe },
   { href: "/dashboard/super/admins", label: "Quản Lý Admin", icon: Users },
   { href: "/dashboard/super/applications", label: "Đơn Đăng Ký Bán Hàng", icon: UserPlus },
+  { href: "/dashboard/super/approval-board", label: "Ban Duyệt", icon: ShieldCheck },
   { href: "/dashboard/super/settings", label: "Cài Đặt Chung", icon: Settings },
 ];
 
@@ -47,12 +48,13 @@ interface SidebarProps {
   open: boolean;
   onClose: () => void;
   isSuperAdmin?: boolean;
+  isBoardMember?: boolean;
   adminName?: string;
   adminEmail?: string;
   adminAvatarUrl?: string;
 }
 
-export function Sidebar({ open, onClose, isSuperAdmin = false, adminName = "", adminEmail = "", adminAvatarUrl = "" }: SidebarProps) {
+export function Sidebar({ open, onClose, isSuperAdmin = false, isBoardMember = false, adminName = "", adminEmail = "", adminAvatarUrl = "" }: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
   const supabase = createSupabaseBrowserClient();
@@ -127,6 +129,32 @@ export function Sidebar({ open, onClose, isSuperAdmin = false, adminName = "", a
               {item.label}
             </Link>
           ))}
+
+          {isBoardMember && !isSuperAdmin && (
+            <div className="mt-4">
+              <div className="mb-2 flex items-center gap-2 px-3">
+                <ClipboardCheck className="h-3.5 w-3.5 text-emerald-500" />
+                <span className="text-xs font-semibold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
+                  Ban Duyệt
+                </span>
+              </div>
+              <div className="space-y-1 rounded-xl border border-emerald-100 bg-emerald-50/50 p-1.5 dark:border-emerald-500/20 dark:bg-emerald-500/10">
+                <Link
+                  href="/dashboard/pending-review"
+                  prefetch={false}
+                  onClick={onClose}
+                  className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
+                    isActive("/dashboard/pending-review")
+                      ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-500/20 dark:text-emerald-300"
+                      : "text-emerald-700 hover:bg-emerald-100 hover:text-emerald-900 dark:text-emerald-400 dark:hover:bg-emerald-500/20 dark:hover:text-emerald-300"
+                  }`}
+                >
+                  <ClipboardCheck className={`h-5 w-5 ${isActive("/dashboard/pending-review") ? "text-emerald-600 dark:text-emerald-400" : "text-emerald-400 dark:text-emerald-500"}`} />
+                  Chờ Duyệt
+                </Link>
+              </div>
+            </div>
+          )}
 
           {isSuperAdmin && (
             <div className="mt-4">

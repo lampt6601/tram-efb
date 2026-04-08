@@ -5,6 +5,7 @@ import { createSupabaseServiceClient } from "@thc-efb/supabase/service";
 import { checkIsSuperAdmin } from "@thc-efb/shared/super-admin";
 import { assertAvailablePriorityLimit } from "@thc-efb/shared/account-priority";
 import { revalidatePath } from "next/cache";
+import { reviewerApproveAccount, reviewerRejectAccount } from "./reviewer-actions";
 
 async function verifySuperAdmin() {
   const supabase = await createSupabaseServerClient();
@@ -41,16 +42,8 @@ export async function setAdminDisabled(adminId: string, disabled: boolean) {
 
 export async function approveAccount(accountId: string) {
   await verifySuperAdmin();
-  const service = createSupabaseServiceClient();
-  const { error } = await service
-    .from("accounts")
-    .update({ is_approved: true, is_rejected: false })
-    .eq("id", accountId);
-  if (error) throw new Error(error.message);
-  revalidatePath("/dashboard/super/pending");
-  revalidatePath("/dashboard/super/accounts");
-  revalidatePath(`/accounts/${accountId}`);
-  revalidatePath("/");
+  // Delegate to reviewer flow (handles notifications + reviewed_by/reviewed_at)
+  await reviewerApproveAccount(accountId);
 }
 
 export async function unapproveAccount(accountId: string) {
@@ -58,7 +51,13 @@ export async function unapproveAccount(accountId: string) {
   const service = createSupabaseServiceClient();
   const { error } = await service
     .from("accounts")
-    .update({ is_approved: false, is_rejected: false })
+    .update({
+      is_approved: false,
+      is_rejected: false,
+      rejection_reason: null,
+      reviewed_by: null,
+      reviewed_at: null,
+    })
     .eq("id", accountId);
   if (error) throw new Error(error.message);
   revalidatePath("/dashboard/super/pending");
@@ -68,17 +67,10 @@ export async function unapproveAccount(accountId: string) {
   revalidatePath("/");
 }
 
-export async function rejectAccount(accountId: string) {
+export async function rejectAccount(accountId: string, reason: string = "") {
   await verifySuperAdmin();
-  const service = createSupabaseServiceClient();
-  const { error } = await service
-    .from("accounts")
-    .update({ is_rejected: true })
-    .eq("id", accountId);
-  if (error) throw new Error(error.message);
-  revalidatePath("/dashboard/super/pending");
-  revalidatePath("/dashboard/super/accounts");
-  revalidatePath("/dashboard/accounts");
+  // Delegate to reviewer flow (handles notifications + reviewed_by/reviewed_at)
+  await reviewerRejectAccount(accountId, reason || "Không đáp ứng yêu cầu");
 }
 
 export async function superAdminDeleteAccount(accountId: string) {

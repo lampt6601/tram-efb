@@ -10,7 +10,8 @@
     "./buyback": "./src/buyback.ts",
     "./image-utils": "./src/image-utils.ts",
     "./rate-limit": "./src/rate-limit.ts",
-    "./edge-rate-limit": "./src/edge-rate-limit.ts"
+    "./edge-rate-limit": "./src/edge-rate-limit.ts",
+    "./approval-board": "./src/approval-board.ts"
   },
   "dependencies": {
     "@upstash/ratelimit": "^2.0.5",
