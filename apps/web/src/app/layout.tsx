@@ -77,7 +77,7 @@ export const metadata: Metadata = {
     url: "https://thc-efb.com",
     images: [
       {
-        url: "/thc-shop.png",
+        url: "/thc-shop.jpg",
         width: 1200,
         height: 630,
         alt: "THC eFootball Shop - Shop Acc eFootball Mobile Uy Tín",
@@ -89,7 +89,7 @@ export const metadata: Metadata = {
     title: "Shop Acc eFootball Mobile Uy Tín | THC eFootball Shop",
     description:
       "Mua bán acc eFootball mobile giá rẻ, uy tín. Acc clone chất lượng, giao dịch an toàn, bảo hành đổi trả.",
-    images: ["/thc-shop.png"],
+    images: ["/thc-shop.jpg"],
   },
 };
 
@@ -143,7 +143,7 @@ export default function RootLayout({
               name: "THC eFootball Shop",
               alternateName: "Shop Acc eFootball THC EFB",
               url: "https://thc-efb.com",
-              logo: "https://thc-efb.com/thc-shop.png",
+              logo: "https://thc-efb.com/thc-shop.jpg",
               description:
                 "Shop mua bán tài khoản eFootball mobile uy tín. Acc clone chất lượng, giao dịch an toàn, bảo hành đổi trả.",
               founder: {

@@ -14,26 +14,32 @@ export async function middleware(request: NextRequest) {
   if (!tier) return NextResponse.next();
 
   const ip = getEdgeClientIp(request);
-  const result = await edgeRateLimit(ip, tier);
 
-  // Redis not configured — graceful pass-through
-  if (!result) return NextResponse.next();
+  try {
+    const result = await edgeRateLimit(ip, tier);
 
-  if (!result.success) {
-    return new NextResponse(
-      JSON.stringify({
-        error: 'Too Many Requests',
-        message: 'Bạn đã gửi quá nhiều yêu cầu. Vui lòng thử lại sau.',
-        retryAfter: Math.ceil((result.reset - Date.now()) / 1000),
-      }),
-      {
-        status: 429,
-        headers: {
-          'Content-Type': 'application/json',
-          ...edgeRateLimitHeaders(result),
+    // Redis not configured — graceful pass-through
+    if (!result) return NextResponse.next();
+
+    if (!result.success) {
+      return new NextResponse(
+        JSON.stringify({
+          error: 'Too Many Requests',
+          message: 'Bạn đã gửi quá nhiều yêu cầu. Vui lòng thử lại sau.',
+          retryAfter: Math.ceil((result.reset - Date.now()) / 1000),
+        }),
+        {
+          status: 429,
+          headers: {
+            'Content-Type': 'application/json',
+            ...edgeRateLimitHeaders(result),
+          },
         },
-      },
-    );
+      );
+    }
+  } catch {
+    // Upstash quota exceeded or Redis unavailable — allow request through
+    // rather than crashing the entire site with 500
   }
 
   return NextResponse.next();

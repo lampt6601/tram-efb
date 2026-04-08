@@ -16,28 +16,31 @@ async function checkRateLimit(request: NextRequest): Promise<NextResponse | null
   if (!tier) return null; // Static asset — skip
 
   const ip = getEdgeClientIp(request);
-  const result = await edgeRateLimit(ip, tier);
-  if (!result) return null; // Redis not configured — graceful pass-through
 
-  if (!result.success) {
-    // Return 429 with rate limit headers
-    return new NextResponse(
-      JSON.stringify({
-        error: 'Too Many Requests',
-        message: 'Bạn đã gửi quá nhiều yêu cầu. Vui lòng thử lại sau.',
-        retryAfter: Math.ceil((result.reset - Date.now()) / 1000),
-      }),
-      {
-        status: 429,
-        headers: {
-          'Content-Type': 'application/json',
-          ...edgeRateLimitHeaders(result),
+  try {
+    const result = await edgeRateLimit(ip, tier);
+    if (!result) return null; // Redis not configured — graceful pass-through
+
+    if (!result.success) {
+      return new NextResponse(
+        JSON.stringify({
+          error: 'Too Many Requests',
+          message: 'Bạn đã gửi quá nhiều yêu cầu. Vui lòng thử lại sau.',
+          retryAfter: Math.ceil((result.reset - Date.now()) / 1000),
+        }),
+        {
+          status: 429,
+          headers: {
+            'Content-Type': 'application/json',
+            ...edgeRateLimitHeaders(result),
+          },
         },
-      },
-    );
+      );
+    }
+  } catch {
+    // Upstash quota exceeded or Redis unavailable — allow request through
   }
 
-  // Pass through — headers will be added to final response
   return null;
 }
 
