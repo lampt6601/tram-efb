@@ -13,7 +13,8 @@
     "./approval-board": "./src/approval-board.ts",
     "./zalo-bot": "./src/zalo-bot.ts",
     "./imagekit": "./src/imagekit.ts",
-    "./site-settings": "./src/site-settings.ts"
+    "./site-settings": "./src/site-settings.ts",
+    "./revalidate-web": "./src/revalidate-web.ts"
   },
   "dependencies": {
     "@thc-efb/supabase": "workspace:*",

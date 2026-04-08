@@ -7,6 +7,7 @@ import { checkIsBoardMember } from "@thc-efb/shared/approval-board";
 import { revalidatePath } from "next/cache";
 import { sendApprovalEmail, sendRejectionEmail } from "@/lib/email";
 import { sendZaloReviewerNotification } from "@thc-efb/shared/zalo-bot";
+import { revalidateAccountApproval } from "@thc-efb/shared/revalidate-web";
 
 const ADMIN_URL = "https://admin.thc-efb.com";
 const BASE_URL = "https://thc-efb.com";
@@ -113,6 +114,9 @@ export async function reviewerApproveAccount(accountId: string) {
   revalidatePath("/dashboard/super/accounts");
   revalidatePath("/dashboard/accounts");
 
+  // Cross-app: approved account now visible on storefront (non-blocking)
+  revalidateAccountApproval(accountId);
+
   // Send notifications non-blocking
   const reviewerName = getReviewerName(user);
   await Promise.allSettled([
@@ -172,6 +176,9 @@ export async function reviewerRejectAccount(accountId: string, reason: string) {
   revalidatePath("/dashboard/super/pending");
   revalidatePath("/dashboard/super/accounts");
   revalidatePath("/dashboard/accounts");
+
+  // Cross-app: rejected account removed from storefront (non-blocking)
+  revalidateAccountApproval(accountId);
 
   // Send notifications non-blocking
   const reviewerName = getReviewerName(user);

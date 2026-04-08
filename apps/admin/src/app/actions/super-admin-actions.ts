@@ -5,6 +5,7 @@ import { createSupabaseServiceClient } from "@thc-efb/supabase/service";
 import { checkIsSuperAdmin } from "@thc-efb/shared/super-admin";
 import { assertAvailablePriorityLimit } from "@thc-efb/shared/account-priority";
 import { revalidatePath } from "next/cache";
+import { revalidateAccount, revalidateSeller, revalidateSiteSettings, revalidateWeb } from "@thc-efb/shared/revalidate-web";
 import { reviewerApproveAccount, reviewerRejectAccount } from "./reviewer-actions";
 
 async function verifySuperAdmin() {
@@ -63,6 +64,7 @@ export async function unapproveAccount(accountId: string) {
   revalidatePath("/dashboard/super/pending");
   revalidatePath("/dashboard/super/accounts");
   revalidatePath("/dashboard/accounts");
+  revalidateAccount(accountId);
 }
 
 export async function rejectAccount(accountId: string, reason: string = "") {
@@ -77,6 +79,7 @@ export async function superAdminDeleteAccount(accountId: string) {
   const { error } = await service.from("accounts").delete().eq("id", accountId);
   if (error) throw new Error(error.message);
   revalidatePath("/dashboard/super/accounts");
+  revalidateAccount(accountId);
 }
 
 export async function superAdminUpdateAccount(
@@ -111,6 +114,7 @@ export async function superAdminUpdateAccount(
   revalidatePath("/dashboard/super/accounts");
   revalidatePath(`/dashboard/super/accounts/${accountId}/edit`);
   revalidatePath("/dashboard/accounts");
+  revalidateAccount(accountId);
 }
 
 export async function copyAccountToAdmin(accountId: string, targetAdminId: string) {
@@ -153,6 +157,7 @@ export async function copyAccountToAdmin(accountId: string, targetAdminId: strin
   revalidatePath("/dashboard/super/accounts");
   revalidatePath("/dashboard/super/pending");
   revalidatePath("/dashboard/accounts");
+  // copyAccountToAdmin creates unapproved account — no web revalidation needed
 }
 
 export async function buybackAccount(
@@ -197,6 +202,7 @@ export async function buybackAccount(
 
   revalidatePath("/dashboard/super/accounts");
   revalidatePath("/dashboard/accounts");
+  revalidateAccount();
 }
 
 export async function createAdmin(email: string, password: string, name?: string) {
@@ -242,6 +248,7 @@ export async function updateAdminProfile(
     );
 
   revalidatePath("/dashboard/super/admins");
+  revalidateSeller();
 }
 
 export async function deleteAdmin(adminId: string) {
@@ -266,6 +273,8 @@ export async function deleteAdmin(adminId: string) {
 
   revalidatePath("/dashboard/super/admins");
   revalidatePath("/dashboard/super/accounts");
+  // Cascade delete removes all seller's accounts from storefront
+  revalidateWeb(["/", "/bao-ke"]);
 }
 
 export async function updateTransactionBoxUrl(
@@ -407,4 +416,5 @@ export async function updateSiteSetting(key: string, value: string) {
     .upsert({ key, value, updated_at: new Date().toISOString() }, { onConflict: "key" });
   if (error) throw new Error(error.message);
   revalidatePath("/dashboard/super/settings");
+  revalidateSiteSettings();
 }

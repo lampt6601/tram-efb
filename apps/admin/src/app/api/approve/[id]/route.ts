@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createSupabaseServiceClient } from "@thc-efb/supabase/service";
 import { revalidatePath } from "next/cache";
 import { rateLimit, getClientIp } from "@thc-efb/shared/rate-limit";
+import { revalidateAccountApproval } from "@thc-efb/shared/revalidate-web";
 
 const BASE_URL = "https://thc-efb.com";
 
@@ -188,6 +189,8 @@ export async function GET(
     revalidatePath("/dashboard/super/pending");
     revalidatePath("/dashboard/super/accounts");
     revalidatePath("/dashboard/accounts");
+    // Cross-app: approved account now visible on storefront
+    revalidateAccountApproval(id);
 
     return htmlResponse(
       buildPage(

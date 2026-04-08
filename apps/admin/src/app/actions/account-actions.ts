@@ -5,6 +5,7 @@ import { createSupabaseServiceClient } from "@thc-efb/supabase/service";
 import { checkIsSuperAdmin } from "@thc-efb/shared/super-admin";
 import { assertAvailablePriorityLimit } from "@thc-efb/shared/account-priority";
 import { revalidatePath } from "next/cache";
+import { revalidateAccount } from "@thc-efb/shared/revalidate-web";
 
 /**
  * Admin đổi trạng thái nổi bật cho acc của chính mình (giới hạn 1 acc Available + nổi bật).
@@ -47,6 +48,8 @@ export async function toggleAccountPriority(
 
   revalidatePath("/dashboard/accounts");
   revalidatePath("/dashboard");
+  // Cross-app: update storefront (non-blocking)
+  revalidateAccount(accountId);
   return { success: true, next };
 }
 
