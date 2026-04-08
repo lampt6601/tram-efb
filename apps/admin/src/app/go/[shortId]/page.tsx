@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 
 /**
- * /go/[shortId] — decode base64url UUID and redirect to /dashboard/noti
+ * /go/[shortId] — decode base64url UUID and redirect to /dashboard/pending-review
  * shortId = base64url(uuid_bytes) → 22 chars instead of 36-char UUID string
  */
 export default async function GoPage({
@@ -14,7 +14,7 @@ export default async function GoPage({
   const uuid = shortIdToUuid(shortId);
   if (!uuid) redirect("/dashboard");
 
-  redirect(`/dashboard/noti?id=${uuid}`);
+  redirect(`/dashboard/pending-review`);
 }
 
 function shortIdToUuid(shortId: string): string | null {

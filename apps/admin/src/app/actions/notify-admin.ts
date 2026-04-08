@@ -4,8 +4,6 @@ import { createSupabaseServerClient } from "@thc-efb/supabase/server";
 import { sendZaloNotification, sendZaloReviewerNotification, escapeHtml } from "@/lib/zalo-bot";
 import { formatCurrency } from "@thc-efb/shared/constants";
 import { SUPER_ADMIN_EMAIL } from "@thc-efb/shared/super-admin";
-import { createNotification, type NotificationType } from "@/lib/notifications";
-import { sendPushToSuperAdmin } from "@/lib/web-push";
 
 const actionTypeMap: Record<string, string> = {
   CREATE: "Tạo mới",
@@ -67,26 +65,47 @@ export async function notifyAdminAction(
     const safeName = escapeHtml(adminName);
     const safeEmail = escapeHtml(adminEmail);
 
-    const lines: string[] = [
-      `<b>${emoji} ${actionText}: ${safeTitle}</b>`,
-      "",
-      `👤 <b>Admin:</b> ${safeName ? `${safeName} (${safeEmail})` : safeEmail}`,
-    ];
+    // Base lines
+    const header = `<b>${emoji} ${actionText}: ${safeTitle}</b>`;
+    const adminLine = `👤 <b>Admin:</b> ${
+      safeName ? `${safeName} (${safeEmail})` : safeEmail
+    }`;
+    const timestampLine = `🕐 ${timestamp}`;
 
+    // Build price lines: admin gets all prices, reviewer omits purchase price
+    let adminPriceLine = "";
+    let reviewerPriceLine = "";
     if (priceDetails) {
-      const parts: string[] = [];
+      const adminParts: string[] = [];
+      const reviewerParts: string[] = [];
       if (priceDetails.purchasePrice != null)
-        parts.push(`Nhập: ${formatCurrency(priceDetails.purchasePrice)}`);
-      if (priceDetails.sellingPrice != null)
-        parts.push(`Bán: ${formatCurrency(priceDetails.sellingPrice)}`);
-      if (priceDetails.originalPrice != null)
-        parts.push(`Gốc: ${formatCurrency(priceDetails.originalPrice)}`);
-      if (parts.length > 0) lines.push(`💵 <b>Giá:</b> ${parts.join(" | ")}`);
+        adminParts.push(`Nhập: ${formatCurrency(priceDetails.purchasePrice)}`);
+      if (priceDetails.sellingPrice != null) {
+        const p = `Bán: ${formatCurrency(priceDetails.sellingPrice)}`;
+        adminParts.push(p);
+        reviewerParts.push(p);
+      }
+      if (priceDetails.originalPrice != null) {
+        const p = `Gốc: ${formatCurrency(priceDetails.originalPrice)}`;
+        adminParts.push(p);
+        reviewerParts.push(p);
+      }
+      if (adminParts.length > 0)
+        adminPriceLine = `💵 <b>Giá:</b> ${adminParts.join(" | ")}`;
+      if (reviewerParts.length > 0)
+        reviewerPriceLine = `💵 <b>Giá:</b> ${reviewerParts.join(" | ")}`;
     }
 
-    lines.push(`🕐 ${timestamp}`);
-
+    // Build 2 caption strings
+    const lines = [header, "", adminLine];
+    if (adminPriceLine) lines.push(adminPriceLine);
+    lines.push(timestampLine);
     const caption = lines.join("\n");
+
+    const reviewerLines = [header, "", adminLine];
+    if (reviewerPriceLine) reviewerLines.push(reviewerPriceLine);
+    reviewerLines.push(timestampLine);
+    const reviewerCaption = reviewerLines.join("\n");
 
     // Inline keyboard buttons
     const buttons: Array<Array<{ text: string; url: string }>> = [];
@@ -109,23 +128,6 @@ export async function notifyAdminAction(
       }
     }
 
-    // Map action type to notification type
-    const notifTypeMap: Record<string, NotificationType> = {
-      CREATE: "account_created",
-      SELL: "sell_request",
-    };
-    const notifType: NotificationType = notifTypeMap[actionType] || "account_created";
-
-    // Deep-link URL — dedicated noti page so no heavy list query is triggered
-    const notifUrl = accountId ? `/dashboard/noti?id=${accountId}` : "/dashboard";
-
-    // Push notification payload for super admin
-    const pushTitle = `${emoji} ${actionText}`;
-    const pushBody = `${accountTitle}${adminName ? ` — ${adminName}` : ""}`;
-    const pushUrl = accountId
-      ? `${ADMIN_URL}/dashboard/noti?id=${accountId}`
-      : `${ADMIN_URL}/dashboard`;
-
     // Run all notifications in parallel (non-blocking)
     await Promise.allSettled([
       // 1. Zalo Bot — super admin chat
@@ -133,33 +135,14 @@ export async function notifyAdminAction(
 
       // 1b. Zalo Bot — reviewer group (only when approval needed)
       ...(needsApproval
-        ? [sendZaloReviewerNotification(caption, imageUrl, buttons.length ? buttons : null)]
+        ? [
+            sendZaloReviewerNotification(
+              reviewerCaption,
+              imageUrl,
+              buttons.length ? buttons : null,
+            ),
+          ]
         : []),
-
-      // 2. In-app notification
-      createNotification({
-        type: notifType,
-        title: `${emoji} ${actionText}: ${accountTitle}`,
-        body: adminName ? `${adminName} (${adminEmail})` : adminEmail,
-        data: {
-          accountId,
-          url: notifUrl,
-          navigateActions: [
-            { id: "view", label: "Xem chi tiết", url: notifUrl },
-          ],
-        },
-      }),
-
-      // 3. Web Push to super admin (all devices)
-      sendPushToSuperAdmin({
-        title: pushTitle,
-        body: pushBody,
-        url: pushUrl,
-        tag: accountId ? `account-${accountId}` : "admin-action",
-        actions: accountId
-          ? [{ action: "view", title: "Xem chi tiết", url: pushUrl }]
-          : undefined,
-      }),
     ]);
   } catch (error) {
     console.error("Failed to notify admin action:", error);

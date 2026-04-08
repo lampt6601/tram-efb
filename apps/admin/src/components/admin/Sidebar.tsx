@@ -24,6 +24,7 @@ import {
 import { Button } from "@thc-efb/ui/button";
 import { ThemeToggle } from "@/components/common/ThemeToggle";
 import { SidebarStats } from "./SidebarStats";
+import { usePendingCount } from "@/hooks/usePendingCount";
 
 const navItems = [
   { href: "/dashboard", label: "Bảng Điều Khiển", icon: LayoutDashboard },
@@ -59,6 +60,7 @@ export function Sidebar({ open, onClose, isSuperAdmin = false, isBoardMember = f
   const pathname = usePathname();
   const router = useRouter();
   const supabase = createSupabaseBrowserClient();
+  const { count: pendingCount } = usePendingCount(isSuperAdmin || isBoardMember);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -140,19 +142,26 @@ export function Sidebar({ open, onClose, isSuperAdmin = false, isBoardMember = f
                 </span>
               </div>
               <div className="space-y-1 rounded-xl border border-emerald-100 bg-emerald-50/50 p-1.5 dark:border-emerald-500/20 dark:bg-emerald-500/10">
-                <Link
-                  href="/dashboard/pending-review"
-                  prefetch={false}
-                  onClick={onClose}
-                  className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
-                    isActive("/dashboard/pending-review")
-                      ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-500/20 dark:text-emerald-300"
-                      : "text-emerald-700 hover:bg-emerald-100 hover:text-emerald-900 dark:text-emerald-400 dark:hover:bg-emerald-500/20 dark:hover:text-emerald-300"
-                  }`}
-                >
-                  <ClipboardCheck className={`h-5 w-5 ${isActive("/dashboard/pending-review") ? "text-emerald-600 dark:text-emerald-400" : "text-emerald-400 dark:text-emerald-500"}`} />
-                  Chờ Duyệt
-                </Link>
+                  <Link
+                    href="/dashboard/pending-review"
+                    prefetch={false}
+                    onClick={onClose}
+                    className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
+                      isActive("/dashboard/pending-review")
+                        ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-500/20 dark:text-emerald-300"
+                        : "text-emerald-700 hover:bg-emerald-100 hover:text-emerald-900 dark:text-emerald-400 dark:hover:bg-emerald-500/20 dark:hover:text-emerald-300"
+                    }`}
+                  >
+                    <ClipboardCheck className={`h-5 w-5 ${isActive("/dashboard/pending-review") ? "text-emerald-600 dark:text-emerald-400" : "text-emerald-400 dark:text-emerald-500"}`} />
+                    <span className="flex items-center gap-2">
+                      Chờ Duyệt
+                      {pendingCount > 0 && (
+                        <span className="min-w-[1.25rem] h-5 px-1.5 rounded-full bg-red-500 text-[11px] font-semibold text-white flex items-center justify-center">
+                          {pendingCount > 99 ? "99+" : pendingCount}
+                        </span>
+                      )}
+                    </span>
+                  </Link>
               </div>
             </div>
           )}
@@ -166,24 +175,39 @@ export function Sidebar({ open, onClose, isSuperAdmin = false, isBoardMember = f
                 </span>
               </div>
               <div className="space-y-1 rounded-xl border border-amber-100 bg-amber-50/50 p-1.5 dark:border-amber-500/20 dark:bg-amber-500/10">
-                {superAdminNavItems.map((item) => (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    prefetch={false}
-                    onClick={onClose}
-                    className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
-                      isActive(item.href)
-                        ? "bg-amber-100 text-amber-800 dark:bg-amber-500/20 dark:text-amber-300"
-                        : "text-amber-700 hover:bg-amber-100 hover:text-amber-900 dark:text-amber-400 dark:hover:bg-amber-500/20 dark:hover:text-amber-300"
-                    }`}
-                  >
-                    <item.icon
-                      className={`h-5 w-5 ${isActive(item.href) ? "text-amber-600 dark:text-amber-400" : "text-amber-400 dark:text-amber-500"}`}
-                    />
-                    {item.label}
-                  </Link>
-                ))}
+                {superAdminNavItems.map((item) => {
+                  const isPendingItem =
+                    item.href === "/dashboard/pending-review";
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      prefetch={false}
+                      onClick={onClose}
+                      className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
+                        isActive(item.href)
+                          ? "bg-amber-100 text-amber-800 dark:bg-amber-500/20 dark:text-amber-300"
+                          : "text-amber-700 hover:bg-amber-100 hover:text-amber-900 dark:text-amber-400 dark:hover:bg-amber-500/20 dark:hover:text-amber-300"
+                      }`}
+                    >
+                      <item.icon
+                        className={`h-5 w-5 ${
+                          isActive(item.href)
+                            ? "text-amber-600 dark:text-amber-400"
+                            : "text-amber-400 dark:text-amber-500"
+                        }`}
+                      />
+                      <span className="flex items-center gap-2">
+                        {item.label}
+                        {isPendingItem && pendingCount > 0 && (
+                          <span className="min-w-[1.25rem] h-5 px-1.5 rounded-full bg-red-500 text-[11px] font-semibold text-white flex items-center justify-center">
+                            {pendingCount > 99 ? "99+" : pendingCount}
+                          </span>
+                        )}
+                      </span>
+                    </Link>
+                  );
+                })}
               </div>
             </div>
           )}

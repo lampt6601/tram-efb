@@ -4,7 +4,6 @@ import { createSupabaseServiceClient } from "@thc-efb/supabase/service";
 import { createSupabaseServerClient } from "@thc-efb/supabase/server";
 import { uploadFileToImageKit } from "@/lib/imagekit";
 import { sendZaloNotification, escapeHtml } from "@/lib/zalo-bot";
-import { createNotification } from "@/lib/notifications";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { rateLimit, getClientIp } from "@thc-efb/shared/rate-limit";
@@ -79,9 +78,6 @@ export async function submitSellRequest(formData: FormData) {
   }
 
   // Notify via all channels (non-blocking)
-  const notifTitle = `🏷️ Yêu cầu bán acc mới`;
-  const notifBody = `${sellerName} - ${priceExpectation}`;
-  const notifUrl = `/dashboard/sell-requests?highlight=${inserted.id}`;
   const sellRequestText =
     `<b>🏷️ Yêu cầu bán acc mới</b>\n\n` +
     `👤 <b>Người bán:</b> ${escapeHtml(sellerName)}\n` +
@@ -97,17 +93,6 @@ export async function submitSellRequest(formData: FormData) {
 
   await Promise.allSettled([
     sendZaloNotification(sellRequestText, imageUrls, sellRequestButtons),
-    createNotification({
-      type: "sell_request",
-      title: notifTitle,
-      body: notifBody,
-      data: {
-        url: notifUrl,
-        navigateActions: [
-          { id: "view", label: "Xem yêu cầu", url: notifUrl },
-        ],
-      },
-    }),
   ]);
 
   return { success: true };

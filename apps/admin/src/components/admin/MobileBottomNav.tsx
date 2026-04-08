@@ -23,13 +23,13 @@ import {
   LogOut,
 } from "lucide-react";
 import { ThemeToggle } from "@/components/common/ThemeToggle";
-import { PushNotificationToggle } from "@/components/common/PushNotificationToggle";
 import {
   Drawer,
   DrawerContent,
   DrawerDescription,
   DrawerTitle,
 } from "@thc-efb/ui/drawer";
+import { usePendingCount } from "@/hooks/usePendingCount";
 
 interface NavItem {
   href: string;
@@ -48,11 +48,11 @@ function buildNavItems(base: string): {
     adminPrimaryItems: [
       { href: `${base}`, label: "Trang Chủ", icon: LayoutDashboard },
       { href: `${base}/accounts`, label: "Tài Khoản", icon: Gamepad2 },
-      { href: `${base}/requests`, label: "Tìm Acc", icon: SearchCheck },
+      { href: `${base}/emails`, label: "Email", icon: Mail },
       { href: `${base}/sell-requests`, label: "Thu Mua", icon: Tag },
     ],
     adminOverflowItems: [
-      { href: `${base}/emails`, label: "Email", icon: Mail },
+      { href: `${base}/requests`, label: "Tìm Acc", icon: SearchCheck },
       { href: `${base}/profile`, label: "Hồ Sơ", icon: UserCircle },
       { href: `${base}/guide`, label: "Hướng Dẫn", icon: BookOpen },
     ],
@@ -98,6 +98,9 @@ export function MobileBottomNav({
   const router = useRouter();
   const supabase = createSupabaseBrowserClient();
   const [moreOpen, setMoreOpen] = useState(false);
+  const { count: pendingCount } = usePendingCount(
+    (isSuperAdmin || isBoardMember) && !isTma,
+  );
 
   const base = isTma ? "/tma/dashboard" : "/dashboard";
   const {
@@ -138,18 +141,26 @@ export function MobileBottomNav({
         <div className="flex items-stretch">
           {primaryItems.map((item) => {
             const active = isActive(item.href);
+            const isPendingItem = item.href.endsWith("/pending-review");
             return (
               <Link
                 key={item.href}
                 href={item.href}
                 prefetch={false}
-                className={`flex flex-1 flex-col items-center justify-center gap-0.5 py-2.5 text-[10px] font-medium transition-colors active:scale-95 ${
+                className={`relative flex flex-1 flex-col items-center justify-center gap-0.5 py-2.5 text-[10px] font-medium transition-colors active:scale-95 ${
                   active
                     ? "text-indigo-600 dark:text-indigo-400"
                     : "text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300"
                 }`}
               >
-                <item.icon className="h-5 w-5" />
+                <div className="relative">
+                  <item.icon className="h-5 w-5" />
+                  {isPendingItem && pendingCount > 0 && (
+                    <span className="absolute -top-1.5 -right-2 min-w-[1.15rem] h-4 px-1.5 rounded-full bg-red-500 text-[10px] font-semibold text-white flex items-center justify-center">
+                      {pendingCount > 99 ? "99+" : pendingCount}
+                    </span>
+                  )}
+                </div>
                 <span>{item.label}</span>
               </Link>
             );
@@ -237,9 +248,6 @@ export function MobileBottomNav({
                 </div>
                 <ThemeToggle className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-slate-200 bg-slate-100 text-slate-500 transition-colors hover:bg-slate-200 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-400 dark:hover:bg-slate-600" />
               </div>
-
-              {/* Push notification toggle — hidden in TMA */}
-              {!isTma && <PushNotificationToggle />}
 
               {/* Logout — hidden in TMA (Telegram handles session) */}
               {!isTma && (

@@ -5,7 +5,6 @@ import { createSupabaseServerClient } from "@thc-efb/supabase/server";
 import { createSupabaseServiceClient } from "@thc-efb/supabase/service";
 import { revalidatePath } from "next/cache";
 import { sendZaloNotification, escapeHtml } from "@/lib/zalo-bot";
-import { createNotification } from "@/lib/notifications";
 
 interface ApplySellerInput {
   fullName: string;
@@ -55,9 +54,6 @@ export async function submitSellerApplication(input: ApplySellerInput) {
 
   // Notify via all channels (non-blocking)
   const zaloPhone = input.zaloLink.replace(/^https?:\/\/zalo\.me\//, "");
-  const notifTitle = `📋 Đơn đăng ký người bán mới`;
-  const notifBody = `${input.fullName.trim()} - ${input.email.trim()}`;
-  const notifUrl = `/dashboard/super/applications?highlight=${inserted.id}`;
   const appText =
     `<b>📋 Đơn đăng ký người bán mới</b>\n\n` +
     `👤 <b>Họ tên:</b> ${escapeHtml(input.fullName.trim())}\n` +
@@ -72,17 +68,6 @@ export async function submitSellerApplication(input: ApplySellerInput) {
 
   await Promise.allSettled([
     sendZaloNotification(appText, null, appButtons),
-    createNotification({
-      type: "application",
-      title: notifTitle,
-      body: notifBody,
-      data: {
-        url: notifUrl,
-        navigateActions: [
-          { id: "view", label: "Xem đơn ứng tuyển", url: notifUrl },
-        ],
-      },
-    }),
   ]);
 
   return { success: true, message: "Đơn đăng ký đã được gửi! Chúng tôi sẽ liên hệ sớm nhất." };
