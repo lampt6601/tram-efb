@@ -5,11 +5,10 @@ import { OwnerSection } from "@/components/storefront/OwnerSection";
 import { AccountCard } from "@/components/storefront/AccountCard";
 import { AccountFilters } from "@/components/storefront/AccountFilters";
 import { StatsBar } from "@/components/storefront/StatsBar";
-import { TelegramNotify } from "@/components/storefront/TelegramNotify";
 import { ScrollReveal } from '@thc-efb/ui/scroll-reveal';
 import { AutoScrollSlider } from '@thc-efb/ui/auto-scroll-slider';
 import Link from "next/link";
-import { Gamepad2, Search, BadgeCheck, Flame, Clock, ShieldCheck, CircleCheck, ArrowRight } from "lucide-react";
+import { Search, BadgeCheck, Flame, Clock, ShieldCheck, CircleCheck, ArrowRight } from "lucide-react";
 import Image from "next/image";
 import { RecruitHeroCTA } from "@/components/storefront/RecruitHeroCTA";
 import { RecruitAdminSection } from "@/components/storefront/RecruitAdminSection";
@@ -318,12 +317,6 @@ export default async function HomePage({
         )}
       </main>
 
-      {/* Zalo notification CTA */}
-      <section className="border-t border-slate-200 dark:border-slate-700">
-        <div className="mx-auto max-w-xl px-4 py-8 sm:px-6 sm:py-10">
-          <TelegramNotify />
-        </div>
-      </section>
 
       {/* Bảo kê trust banner */}
       <section className="border-t border-slate-200 dark:border-slate-700">

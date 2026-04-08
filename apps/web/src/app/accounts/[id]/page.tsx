@@ -14,7 +14,6 @@ import {
 import {
   ArrowLeft,
   Zap,
-  Coins,
   Shield,
   MessageCircle,
   CheckCircle2,

@@ -82,8 +82,6 @@ interface MobileBottomNavProps {
   adminName?: string;
   adminEmail?: string;
   adminAvatarUrl?: string;
-  /** When true, uses /tma/dashboard/* hrefs and hides logout + push opt-in */
-  isTma?: boolean;
 }
 
 export function MobileBottomNav({
@@ -92,17 +90,16 @@ export function MobileBottomNav({
   adminName = "",
   adminEmail = "",
   adminAvatarUrl = "",
-  isTma = false,
 }: MobileBottomNavProps) {
   const pathname = usePathname();
   const router = useRouter();
   const supabase = createSupabaseBrowserClient();
   const [moreOpen, setMoreOpen] = useState(false);
   const { count: pendingCount } = usePendingCount(
-    (isSuperAdmin || isBoardMember) && !isTma,
+    isSuperAdmin || isBoardMember,
   );
 
-  const base = isTma ? "/tma/dashboard" : "/dashboard";
+  const base = "/dashboard";
   const {
     adminPrimaryItems,
     adminOverflowItems,
@@ -137,7 +134,7 @@ export function MobileBottomNav({
 
   return (
     <>
-      <nav className={`fixed bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/95 backdrop-blur-md dark:border-slate-700 dark:bg-slate-900/95 ${isTma ? "" : "lg:hidden"}`}>
+      <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/95 backdrop-blur-md lg:hidden dark:border-slate-700 dark:bg-slate-900/95">
         <div className="flex items-stretch">
           {primaryItems.map((item) => {
             const active = isActive(item.href);
@@ -249,16 +246,13 @@ export function MobileBottomNav({
                 <ThemeToggle className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-slate-200 bg-slate-100 text-slate-500 transition-colors hover:bg-slate-200 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-400 dark:hover:bg-slate-600" />
               </div>
 
-              {/* Logout — hidden in TMA (Telegram handles session) */}
-              {!isTma && (
-                <button
-                  onClick={handleLogout}
-                  className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:bg-red-50 hover:text-red-700 dark:text-slate-300 dark:hover:bg-red-500/10 dark:hover:text-red-400"
-                >
-                  <LogOut className="h-5 w-5 text-slate-400 dark:text-slate-500" />
-                  Đăng Xuất
-                </button>
-              )}
+              <button
+                onClick={handleLogout}
+                className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:bg-red-50 hover:text-red-700 dark:text-slate-300 dark:hover:bg-red-500/10 dark:hover:text-red-400"
+              >
+                <LogOut className="h-5 w-5 text-slate-400 dark:text-slate-500" />
+                Đăng Xuất
+              </button>
             </div>
           </div>
         </DrawerContent>

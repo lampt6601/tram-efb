@@ -5,7 +5,6 @@ import { checkIsSuperAdmin } from '@thc-efb/shared/super-admin';
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const isDashboard = pathname.startsWith('/dashboard');
-  const isTmaDashboard = pathname.startsWith('/tma/dashboard');
 
   const hasAuthCookies = request.cookies.getAll().some(({ name }) => name.startsWith('sb-'));
 
@@ -17,10 +16,6 @@ export async function middleware(request: NextRequest) {
   if (!hasAuthCookies) {
     if (isDashboard) {
       return NextResponse.redirect(new URL('/login', request.url));
-    }
-    if (isTmaDashboard) {
-      const from = encodeURIComponent(pathname + request.nextUrl.search);
-      return NextResponse.redirect(new URL(`/tma/loading?from=${from}`, request.url));
     }
     return NextResponse.next();
   }
@@ -61,10 +56,6 @@ export async function middleware(request: NextRequest) {
     if (isDashboard) {
       return clearCookies(NextResponse.redirect(new URL('/login', request.url)));
     }
-    if (isTmaDashboard) {
-      const from = encodeURIComponent(pathname + request.nextUrl.search);
-      return clearCookies(NextResponse.redirect(new URL(`/tma/loading?from=${from}`, request.url)));
-    }
     return NextResponse.next({ request });
   }
 
@@ -73,20 +64,9 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/login', request.url));
   }
 
-  // Protect /tma/dashboard routes
-  if (isTmaDashboard && !user) {
-    const from = encodeURIComponent(pathname + request.nextUrl.search);
-    return NextResponse.redirect(new URL(`/tma/loading?from=${from}`, request.url));
-  }
-
-  // Protect super admin routes (both /dashboard/super and /tma/dashboard/super)
-  if (
-    (pathname.startsWith('/dashboard/super') || pathname.startsWith('/tma/dashboard/super')) &&
-    !checkIsSuperAdmin(user?.email)
-  ) {
-    return NextResponse.redirect(
-      new URL(isDashboard ? '/dashboard' : '/tma/dashboard', request.url)
-    );
+  // Protect super admin routes
+  if (pathname.startsWith('/dashboard/super') && !checkIsSuperAdmin(user?.email)) {
+    return NextResponse.redirect(new URL('/dashboard', request.url));
   }
 
   // Redirect logged-in users away from login page
@@ -99,14 +79,6 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths EXCEPT:
-     * - _next/static (static files)
-     * - _next/image (image optimization)
-     * - favicon.ico
-     * - sw.js, manifest files
-     * - Static assets (images, fonts, etc.)
-     */
     '/((?!_next/static|_next/image|favicon\\.ico|sw\\.js|manifest\\.webmanifest|icons/|images/).*)',
   ],
 };

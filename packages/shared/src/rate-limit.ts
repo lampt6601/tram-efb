@@ -3,8 +3,7 @@
  * Uses a sliding window approach with automatic cleanup.
  *
  * NOTE: This works per-instance. In Vercel serverless, each cold start
- * gets its own memory. For stricter rate limiting across instances,
- * consider Upstash Redis (@upstash/ratelimit).
+ * gets its own memory. This is sufficient for most use cases.
  */
 
 interface RateLimitEntry {
