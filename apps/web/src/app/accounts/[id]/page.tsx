@@ -43,6 +43,22 @@ import { getSiteSettings } from "@/lib/site-settings";
 
 export const revalidate = 3600; // 1 hour — revalidated on account update via revalidatePath
 
+export async function generateStaticParams() {
+  const supabase = createSupabaseAnonClient();
+
+  const [{ data: available }, { data: sold }] = await Promise.all([
+    supabase.from("public_accounts").select("id"),
+    supabase.from("public_sold_accounts").select("id"),
+  ]);
+
+  const ids = [
+    ...(available ?? []).map((r) => r.id),
+    ...(sold ?? []).map((r) => r.id),
+  ];
+
+  return ids.map((id) => ({ id: String(id) }));
+}
+
 export async function generateMetadata({
   params,
 }: {

@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "serena": {
+      "command": "/Users/canhth/.local/bin/serena",
+      "args": [
+        "start-mcp-server",
+        "--project-from-cwd",
+        "--context",
+        "claude-code",
+        "--enable-web-dashboard",
+        "false"
+      ]
+    }
+  }
+}
