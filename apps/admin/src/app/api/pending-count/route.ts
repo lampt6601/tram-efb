@@ -41,7 +41,10 @@ export async function GET() {
       );
     }
 
-    return NextResponse.json({ count: count ?? 0 });
+    return NextResponse.json(
+      { count: count ?? 0 },
+      { headers: { "Cache-Control": "private, max-age=60, stale-while-revalidate=120" } },
+    );
   } catch (error) {
     console.error("Unexpected error in /api/pending-count:", error);
     return NextResponse.json(

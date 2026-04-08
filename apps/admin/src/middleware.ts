@@ -5,14 +5,16 @@ import { checkIsSuperAdmin } from '@thc-efb/shared/super-admin';
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const isDashboard = pathname.startsWith('/dashboard');
+  const isLogin = pathname === '/login';
 
-  const hasAuthCookies = request.cookies.getAll().some(({ name }) => name.startsWith('sb-'));
-
-  // API routes don't need auth middleware
-  if (pathname.startsWith('/api/')) {
+  // Only run auth logic for routes that actually need it
+  if (!isDashboard && !isLogin) {
     return NextResponse.next();
   }
 
+  const hasAuthCookies = request.cookies.getAll().some(({ name }) => name.startsWith('sb-'));
+
+  // No cookies + dashboard → redirect to login (no Supabase call needed)
   if (!hasAuthCookies) {
     if (isDashboard) {
       return NextResponse.redirect(new URL('/login', request.url));
@@ -20,6 +22,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
+  // Only call supabase.auth.getUser() for /dashboard/* and /login
   let supabaseResponse = NextResponse.next({ request });
 
   const supabase = createServerClient(
@@ -46,15 +49,12 @@ export async function middleware(request: NextRequest) {
   const { data: { user }, error } = await supabase.auth.getUser();
 
   if (error) {
-    const clearCookies = (response: NextResponse) => {
-      request.cookies.getAll().forEach(({ name }) => {
-        if (name.startsWith('sb-')) response.cookies.delete(name);
-      });
-      return response;
-    };
-
     if (isDashboard) {
-      return clearCookies(NextResponse.redirect(new URL('/login', request.url)));
+      const res = NextResponse.redirect(new URL('/login', request.url));
+      request.cookies.getAll().forEach(({ name }) => {
+        if (name.startsWith('sb-')) res.cookies.delete(name);
+      });
+      return res;
     }
     return NextResponse.next({ request });
   }
@@ -70,7 +70,7 @@ export async function middleware(request: NextRequest) {
   }
 
   // Redirect logged-in users away from login page
-  if (pathname === '/login' && user) {
+  if (isLogin && user) {
     return NextResponse.redirect(new URL('/dashboard', request.url));
   }
 
@@ -78,7 +78,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    '/((?!_next/static|_next/image|favicon\\.ico|sw\\.js|manifest\\.webmanifest|icons/|images/).*)',
-  ],
+  matcher: ['/dashboard/:path*', '/login'],
 };

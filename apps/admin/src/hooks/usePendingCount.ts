@@ -33,7 +33,7 @@ export function usePendingCount(enabled: boolean): UsePendingCountResult {
     const fetchCount = async () => {
       try {
         setLoading(true);
-        const res = await fetch("/api/pending-count", { cache: "no-store" });
+        const res = await fetch("/api/pending-count");
         if (!res.ok) {
           return;
         }

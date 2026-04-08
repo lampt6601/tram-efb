@@ -39,5 +39,7 @@ export async function GET(
     );
   }
 
-  return NextResponse.redirect(link, 302);
+  const response = NextResponse.redirect(link, 302);
+  response.headers.set("Cache-Control", "public, max-age=300, s-maxage=300");
+  return response;
 }

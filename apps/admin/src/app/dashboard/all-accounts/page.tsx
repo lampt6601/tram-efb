@@ -4,7 +4,7 @@ import { createSupabaseServiceClient } from "@thc-efb/supabase/service";
 import { checkIsSuperAdmin } from "@thc-efb/shared/super-admin";
 import { getAdminUsers } from "@/lib/cached-users";
 
-export const revalidate = 0; // always fresh
+export const revalidate = 60; // 1 minute — revalidated on mutations via revalidatePath
 
 export const metadata: Metadata = { title: "Tất Cả Tài Khoản" };
 import { redirect } from "next/navigation";
