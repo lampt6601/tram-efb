@@ -1,50 +1,6 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 import { checkIsSuperAdmin } from '@thc-efb/shared/super-admin';
-import {
-  edgeRateLimit,
-  edgeRateLimitHeaders,
-  getEdgeClientIp,
-  getTierForPath,
-} from '@thc-efb/shared/edge-rate-limit';
-
-// ─── Rate limiting ──────────────────────────────────────────────────
-
-async function checkRateLimit(request: NextRequest): Promise<NextResponse | null> {
-  const { pathname } = request.nextUrl;
-  const tier = getTierForPath(pathname);
-  if (!tier) return null; // Static asset — skip
-
-  const ip = getEdgeClientIp(request);
-
-  try {
-    const result = await edgeRateLimit(ip, tier);
-    if (!result) return null; // Redis not configured — graceful pass-through
-
-    if (!result.success) {
-      return new NextResponse(
-        JSON.stringify({
-          error: 'Too Many Requests',
-          message: 'Bạn đã gửi quá nhiều yêu cầu. Vui lòng thử lại sau.',
-          retryAfter: Math.ceil((result.reset - Date.now()) / 1000),
-        }),
-        {
-          status: 429,
-          headers: {
-            'Content-Type': 'application/json',
-            ...edgeRateLimitHeaders(result),
-          },
-        },
-      );
-    }
-  } catch {
-    // Upstash quota exceeded or Redis unavailable — allow request through
-  }
-
-  return null;
-}
-
-// ─── Auth middleware ─────────────────────────────────────────────────
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -53,14 +9,7 @@ export async function middleware(request: NextRequest) {
 
   const hasAuthCookies = request.cookies.getAll().some(({ name }) => name.startsWith('sb-'));
 
-  // Rate limit ONLY unauthenticated requests (anonymous visitors, bots, attackers).
-  // Authenticated admins are trusted — no rate limit to avoid blocking batch operations.
-  if (!hasAuthCookies) {
-    const rateLimitResponse = await checkRateLimit(request);
-    if (rateLimitResponse) return rateLimitResponse;
-  }
-
-  // API routes don't need auth middleware — only rate limiting above
+  // API routes don't need auth middleware
   if (pathname.startsWith('/api/')) {
     return NextResponse.next();
   }
