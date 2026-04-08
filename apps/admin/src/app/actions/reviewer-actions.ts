@@ -112,8 +112,6 @@ export async function reviewerApproveAccount(accountId: string) {
   revalidatePath("/dashboard/super/pending");
   revalidatePath("/dashboard/super/accounts");
   revalidatePath("/dashboard/accounts");
-  revalidatePath(`/accounts/${accountId}`);
-  revalidatePath("/");
 
   // Send notifications non-blocking
   const reviewerName = getReviewerName(user);

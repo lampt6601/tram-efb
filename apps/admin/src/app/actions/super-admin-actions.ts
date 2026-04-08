@@ -63,8 +63,6 @@ export async function unapproveAccount(accountId: string) {
   revalidatePath("/dashboard/super/pending");
   revalidatePath("/dashboard/super/accounts");
   revalidatePath("/dashboard/accounts");
-  revalidatePath(`/accounts/${accountId}`);
-  revalidatePath("/");
 }
 
 export async function rejectAccount(accountId: string, reason: string = "") {
@@ -79,8 +77,6 @@ export async function superAdminDeleteAccount(accountId: string) {
   const { error } = await service.from("accounts").delete().eq("id", accountId);
   if (error) throw new Error(error.message);
   revalidatePath("/dashboard/super/accounts");
-  revalidatePath(`/accounts/${accountId}`);
-  revalidatePath("/");
 }
 
 export async function superAdminUpdateAccount(
@@ -115,8 +111,6 @@ export async function superAdminUpdateAccount(
   revalidatePath("/dashboard/super/accounts");
   revalidatePath(`/dashboard/super/accounts/${accountId}/edit`);
   revalidatePath("/dashboard/accounts");
-  revalidatePath(`/accounts/${accountId}`);
-  revalidatePath("/");
 }
 
 export async function copyAccountToAdmin(accountId: string, targetAdminId: string) {
@@ -203,7 +197,6 @@ export async function buybackAccount(
 
   revalidatePath("/dashboard/super/accounts");
   revalidatePath("/dashboard/accounts");
-  revalidatePath("/");
 }
 
 export async function createAdmin(email: string, password: string, name?: string) {
@@ -249,7 +242,6 @@ export async function updateAdminProfile(
     );
 
   revalidatePath("/dashboard/super/admins");
-  revalidatePath("/");
 }
 
 export async function deleteAdmin(adminId: string) {
@@ -274,7 +266,6 @@ export async function deleteAdmin(adminId: string) {
 
   revalidatePath("/dashboard/super/admins");
   revalidatePath("/dashboard/super/accounts");
-  revalidatePath("/");
 }
 
 export async function updateTransactionBoxUrl(
@@ -291,7 +282,6 @@ export async function updateTransactionBoxUrl(
     );
   if (error) throw new Error(error.message);
   revalidatePath("/dashboard/super/admins");
-  revalidatePath("/");
 }
 
 export async function resetAdminPassword(adminId: string, newPassword: string) {
@@ -361,8 +351,6 @@ export async function updateSellerCollateral(
 
   revalidatePath("/dashboard/super/admins");
   revalidatePath("/dashboard");
-  revalidatePath("/");
-  revalidatePath("/bao-ke");
 }
 
 export async function getSuperAccountForEdit(accountId: string) {
@@ -419,5 +407,4 @@ export async function updateSiteSetting(key: string, value: string) {
     .upsert({ key, value, updated_at: new Date().toISOString() }, { onConflict: "key" });
   if (error) throw new Error(error.message);
   revalidatePath("/dashboard/super/settings");
-  revalidatePath("/accounts", "layout");
 }

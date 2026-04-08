@@ -21,7 +21,6 @@ export async function updateMyProfile(name: string) {
   if (error) throw new Error(error.message);
 
   revalidatePath("/dashboard/profile");
-  revalidatePath("/");
 }
 
 export async function changeMyPassword(
@@ -86,7 +85,6 @@ export async function updateMyZaloName(zaloName: string | null) {
 
   if (error) throw new Error(error.message);
   revalidatePath("/dashboard/profile");
-  revalidatePath("/bao-ke");
 }
 
 export async function updateMyAvatar(avatarUrl: string | null) {
@@ -107,6 +105,5 @@ export async function updateMyAvatar(avatarUrl: string | null) {
 
   if (error) throw new Error(error.message);
   revalidatePath("/dashboard");
-  revalidatePath("/");
 }
 

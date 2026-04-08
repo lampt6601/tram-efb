@@ -46,7 +46,7 @@ export async function toggleAccountPriority(
   if (error) return { error: error.message };
 
   revalidatePath("/dashboard/accounts");
-  revalidatePath("/"); // slider acc nổi bật trang chủ
+  revalidatePath("/dashboard");
   return { success: true, next };
 }
 

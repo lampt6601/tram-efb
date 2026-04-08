@@ -39,7 +39,7 @@ export async function submitEventEntry(
   }
 
   revalidatePath("/event");
-  revalidatePath("/admin/dashboard/super/event");
+  revalidatePath("/event");
   return { success: true };
 }
 
@@ -83,9 +83,8 @@ export async function submitMultipleEventEntries(
   }
 
   revalidatePath("/event");
-  revalidatePath("/admin/dashboard/super/event");
-  revalidatePath("/admin/dashboard/super/event/spin");
-  return { success: true };
+  revalidatePath("/event");
+    return { success: true };
 }
 
 // ─── Super Admin Actions ───────────────────────────────────
@@ -108,7 +107,7 @@ export async function deleteEventEntry(id: string) {
   const { error } = await service.from("event_entries").delete().eq("id", id);
   if (error) throw new Error(error.message);
   revalidatePath("/event");
-  revalidatePath("/admin/dashboard/super/event");
+  revalidatePath("/event");
 }
 
 export async function confirmPrize(
@@ -147,9 +146,8 @@ export async function confirmPrize(
 
   if (error) throw new Error(error.message);
   revalidatePath("/event");
-  revalidatePath("/admin/dashboard/super/event");
-  revalidatePath("/admin/dashboard/super/event/spin");
-}
+  revalidatePath("/event");
+  }
 
 export async function clearPrize(prizeType: "grand" | "consolation") {
   await verifySuperAdmin();
@@ -160,6 +158,5 @@ export async function clearPrize(prizeType: "grand" | "consolation") {
     .eq("prize_type", prizeType);
   if (error) throw new Error(error.message);
   revalidatePath("/event");
-  revalidatePath("/admin/dashboard/super/event");
-  revalidatePath("/admin/dashboard/super/event/spin");
-}
+  revalidatePath("/event");
+  }

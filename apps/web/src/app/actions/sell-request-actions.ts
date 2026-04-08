@@ -129,6 +129,6 @@ export async function updateSellRequestStatus(
 
   if (error) return { error: "Không thể cập nhật trạng thái." };
 
-  revalidatePath("/admin/dashboard/sell-requests");
+  revalidatePath("/sell");
   return { success: true };
 }

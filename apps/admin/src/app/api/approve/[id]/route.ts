@@ -187,7 +187,7 @@ export async function GET(
 
     revalidatePath("/dashboard/super/pending");
     revalidatePath("/dashboard/super/accounts");
-    revalidatePath("/");
+    revalidatePath("/dashboard/accounts");
 
     return htmlResponse(
       buildPage(

@@ -52,7 +52,7 @@ export async function submitSellerApplication(input: ApplySellerInput) {
     return { error: "Không thể gửi đơn đăng ký. Vui lòng thử lại." };
   }
 
-  // Notify super admin via Telegram Bot (non-blocking)
+  // Notify super admin via Zalo Bot (non-blocking)
   const zaloPhone = input.zaloLink.replace(/^https?:\/\/zalo\.me\//, "");
   const appText =
     `<b>📋 Đơn đăng ký người bán mới</b>\n\n` +
@@ -130,7 +130,6 @@ export async function updateApplicationStatus(
     return { error: "Không thể cập nhật trạng thái đơn đăng ký." };
   }
 
-  revalidatePath("/admin/dashboard/super/applications");
-  revalidatePath("/admin/dashboard/super/admins");
+  revalidatePath("/seller/apply");
   return { success: true };
 }
