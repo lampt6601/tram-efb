@@ -60,12 +60,13 @@ export async function GET(request: NextRequest) {
         .eq("status", "Available")
         .eq("is_approved", true),
 
-      // Accounts pending approval
+      // Accounts pending approval (exclude Sold — matches getPendingAccountsForReview logic)
       supabase
         .from("accounts")
         .select("id", { count: "exact", head: true })
         .eq("is_approved", false)
-        .eq("is_rejected", false),
+        .eq("is_rejected", false)
+        .neq("status", "Sold"),
 
       // Sell requests touched today
       supabase
