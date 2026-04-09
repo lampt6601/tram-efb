@@ -4,7 +4,6 @@ import { createSupabaseAnonClient } from '@thc-efb/supabase/anon';
 import { createSupabaseServerClient } from '@thc-efb/supabase/server';
 import { createSupabaseServiceClient } from '@thc-efb/supabase/service';
 import { revalidatePath } from "next/cache";
-import { sendZaloNotification, escapeHtml } from "@thc-efb/shared/zalo-bot";
 
 interface ApplySellerInput {
   fullName: string;
@@ -51,20 +50,6 @@ export async function submitSellerApplication(input: ApplySellerInput) {
     console.error("Seller application error:", error);
     return { error: "Không thể gửi đơn đăng ký. Vui lòng thử lại." };
   }
-
-  // Notify super admin via Zalo Bot (non-blocking)
-  const zaloPhone = input.zaloLink.replace(/^https?:\/\/zalo\.me\//, "");
-  const appText =
-    `<b>📋 Đơn đăng ký người bán mới</b>\n\n` +
-    `👤 <b>Họ tên:</b> ${escapeHtml(input.fullName.trim())}\n` +
-    `📧 <b>Email:</b> ${escapeHtml(input.email.trim())}\n` +
-    `📱 <b>Zalo:</b> ${escapeHtml(zaloPhone)}\n` +
-    (input.reason ? `💬 <b>Lý do:</b> ${escapeHtml(input.reason.trim())}\n` : "");
-  await sendZaloNotification(
-    appText,
-    null,
-    [[{ text: "👉 Duyệt đơn", url: "https://admin.thc-efb.com/dashboard/super/applications" }]],
-  );
 
   return { success: true, message: "Đơn đăng ký đã được gửi! Chúng tôi sẽ liên hệ sớm nhất." };
 }

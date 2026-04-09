@@ -1,7 +1,7 @@
 "use server";
 
 import { createSupabaseServerClient } from "@thc-efb/supabase/server";
-import { sendZaloNotification, sendZaloReviewerNotification, escapeHtml } from "@thc-efb/shared/zalo-bot";
+import { sendZaloReviewerNotification, escapeHtml } from "@thc-efb/shared/zalo-bot";
 import { formatCurrency } from "@thc-efb/shared/constants";
 import { SUPER_ADMIN_EMAIL } from "@thc-efb/shared/super-admin";
 
@@ -72,35 +72,17 @@ export async function notifyAdminAction(
     }`;
     const timestampLine = `🕐 ${timestamp}`;
 
-    // Build price lines: admin gets all prices, reviewer omits purchase price
-    let adminPriceLine = "";
+    // Build reviewer price line (omits purchase price — sensitive data)
     let reviewerPriceLine = "";
     if (priceDetails) {
-      const adminParts: string[] = [];
       const reviewerParts: string[] = [];
-      if (priceDetails.purchasePrice != null)
-        adminParts.push(`Nhập: ${formatCurrency(priceDetails.purchasePrice)}`);
-      if (priceDetails.sellingPrice != null) {
-        const p = `Bán: ${formatCurrency(priceDetails.sellingPrice)}`;
-        adminParts.push(p);
-        reviewerParts.push(p);
-      }
-      if (priceDetails.originalPrice != null) {
-        const p = `Gốc: ${formatCurrency(priceDetails.originalPrice)}`;
-        adminParts.push(p);
-        reviewerParts.push(p);
-      }
-      if (adminParts.length > 0)
-        adminPriceLine = `💵 <b>Giá:</b> ${adminParts.join(" | ")}`;
+      if (priceDetails.sellingPrice != null)
+        reviewerParts.push(`Bán: ${formatCurrency(priceDetails.sellingPrice)}`);
+      if (priceDetails.originalPrice != null)
+        reviewerParts.push(`Gốc: ${formatCurrency(priceDetails.originalPrice)}`);
       if (reviewerParts.length > 0)
         reviewerPriceLine = `💵 <b>Giá:</b> ${reviewerParts.join(" | ")}`;
     }
-
-    // Build 2 caption strings
-    const lines = [header, "", adminLine];
-    if (adminPriceLine) lines.push(adminPriceLine);
-    lines.push(timestampLine);
-    const caption = lines.join("\n");
 
     const reviewerLines = [header, "", adminLine];
     if (reviewerPriceLine) reviewerLines.push(reviewerPriceLine);
@@ -128,22 +110,15 @@ export async function notifyAdminAction(
       }
     }
 
-    // Run all notifications in parallel (non-blocking)
-    await Promise.allSettled([
-      // 1. Zalo Bot — super admin chat
-      sendZaloNotification(caption, imageUrl, buttons.length ? buttons : null),
-
-      // 1b. Zalo Bot — reviewer group (only when approval needed)
-      ...(needsApproval
-        ? [
-            sendZaloReviewerNotification(
-              reviewerCaption,
-              imageUrl,
-              buttons.length ? buttons : null,
-            ),
-          ]
-        : []),
-    ]);
+    // Zalo Bot — reviewer group only when approval needed
+    // (super admin receives hourly summary report instead of individual noti)
+    if (needsApproval) {
+      await sendZaloReviewerNotification(
+        reviewerCaption,
+        imageUrl,
+        buttons.length ? buttons : null,
+      );
+    }
   } catch (error) {
     console.error("Failed to notify admin action:", error);
   }

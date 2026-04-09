@@ -3,7 +3,6 @@
 import { createSupabaseServiceClient } from '@thc-efb/supabase/service';
 import { createSupabaseServerClient } from '@thc-efb/supabase/server';
 import { uploadFileToImageKit } from "@thc-efb/shared/imagekit";
-import { sendZaloNotification, escapeHtml } from "@thc-efb/shared/zalo-bot";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { rateLimit, getClientIp } from '@thc-efb/shared/rate-limit';
@@ -76,20 +75,6 @@ export async function submitSellRequest(formData: FormData) {
     console.error("Sell request error:", error);
     return { error: "Không thể gửi yêu cầu. Vui lòng thử lại." };
   }
-
-  // Notify via Telegram Bot (non-blocking)
-  const sellRequestText =
-    `<b>🏷️ Yêu cầu bán acc mới</b>\n\n` +
-    `👤 <b>Người bán:</b> ${escapeHtml(sellerName)}\n` +
-    `📱 <b>Zalo:</b> ${escapeHtml(zaloPhone)}\n` +
-    `💰 <b>Giá:</b> ${escapeHtml(priceExpectation)}\n` +
-    (description ? `📝 <b>Mô tả:</b> ${escapeHtml(description)}\n` : "") +
-    `📸 ${imageUrls.length} ảnh`;
-  await sendZaloNotification(
-    sellRequestText,
-    imageUrls,
-    [[{ text: "👉 Xem yêu cầu", url: "https://admin.thc-efb.com/dashboard/sell-requests" }]],
-  );
 
   return { success: true };
 }
