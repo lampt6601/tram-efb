@@ -42,13 +42,13 @@ export async function GET(request: NextRequest) {
       // Accounts created today
       supabase
         .from("accounts")
-        .select("id, status, is_approved, is_rejected, user_id")
+        .select("id, status, user_id")
         .gte("created_at", isoStart),
 
       // Accounts updated today (but created before today)
       supabase
         .from("accounts")
-        .select("id, status, is_approved, is_rejected, user_id")
+        .select("id, status, user_id")
         .gte("updated_at", isoStart)
         .lt("created_at", isoStart),
 
@@ -113,10 +113,6 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    const approvedCount = [
-      ...newAccounts.filter((a) => a.is_approved === true),
-      ...updatedAccounts.filter((a) => a.is_approved === true),
-    ].length;
 
     const availableCount = currentInventoryRes.count ?? 0;
     const pendingApprovalCount = pendingApprovalRes.count ?? 0;
@@ -143,8 +139,7 @@ export async function GET(request: NextRequest) {
     ).length;
 
     // Check if there's any activity worth reporting
-    const hasAccountActivity =
-      newCount > 0 || soldCount > 0 || approvedCount > 0;
+    const hasAccountActivity = newCount > 0 || soldCount > 0;
     const hasSellActivity =
       newSellRequests > 0 ||
       contactedSellRequests > 0 ||
@@ -165,8 +160,7 @@ export async function GET(request: NextRequest) {
     });
 
     const lines: string[] = [];
-    lines.push(`📊 BÁO CÁO HOẠT ĐỘNG HÔM NAY`);
-    lines.push(`📅 ${dateStr} | Cập nhật lúc ${timeStr}`);
+    lines.push(`📊 Báo cáo ${dateStr} | ${timeStr}`);
 
     if (hasAccountActivity) {
       lines.push(``);
@@ -180,7 +174,6 @@ export async function GET(request: NextRequest) {
           lines.push(`   • ${name}: ${count}`);
         }
       }
-      if (approvedCount > 0) lines.push(`✅ Đã duyệt: ${approvedCount}`);
       lines.push(``);
       lines.push(`Kho hiện tại: ${availableCount} còn hàng | ${pendingApprovalCount} chờ duyệt`);
     }
