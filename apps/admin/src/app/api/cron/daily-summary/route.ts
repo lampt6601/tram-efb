@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createSupabaseServiceClient } from "@thc-efb/supabase/service";
 import { sendZaloNotification } from "@thc-efb/shared/zalo-bot";
-import { formatCurrency } from "@thc-efb/shared/constants";
 
 // Vietnam timezone offset: UTC+7
 const VN_OFFSET_MS = 7 * 60 * 60 * 1000;
@@ -43,13 +42,13 @@ export async function GET(request: NextRequest) {
       // Accounts created today
       supabase
         .from("accounts")
-        .select("id, status, selling_price, is_approved, is_rejected")
+        .select("id, status, is_approved, is_rejected, user_id")
         .gte("created_at", isoStart),
 
       // Accounts updated today (but created before today)
       supabase
         .from("accounts")
-        .select("id, status, selling_price, is_approved, is_rejected")
+        .select("id, status, is_approved, is_rejected, user_id")
         .gte("updated_at", isoStart)
         .lt("created_at", isoStart),
 
@@ -86,21 +85,38 @@ export async function GET(request: NextRequest) {
     const updatedAccounts = updatedAccountsRes.data ?? [];
 
     const newCount = newAccounts.length;
-    const soldToday = [
+
+    const soldAccounts = [
       ...newAccounts.filter((a) => a.status === "Sold"),
       ...updatedAccounts.filter((a) => a.status === "Sold"),
     ];
-    const soldCount = soldToday.length;
-    const soldRevenue = soldToday.reduce(
-      (sum, a) => sum + (a.selling_price ?? 0),
-      0,
-    );
+    const soldCount = soldAccounts.length;
 
-    const approvedToday = [
+    // Count sold per admin user_id
+    const soldByUser: Record<string, number> = {};
+    for (const a of soldAccounts) {
+      soldByUser[a.user_id] = (soldByUser[a.user_id] ?? 0) + 1;
+    }
+
+    // Resolve admin names for sold accounts
+    const soldUserIds = Object.keys(soldByUser);
+    const adminNameMap: Record<string, string> = {};
+    if (soldUserIds.length > 0) {
+      const { data: usersData } = await supabase.auth.admin.listUsers({ perPage: 200 });
+      if (usersData?.users) {
+        for (const u of usersData.users) {
+          if (soldUserIds.includes(u.id)) {
+            adminNameMap[u.id] =
+              (u.user_metadata?.full_name as string | undefined) || u.email || u.id;
+          }
+        }
+      }
+    }
+
+    const approvedCount = [
       ...newAccounts.filter((a) => a.is_approved === true),
       ...updatedAccounts.filter((a) => a.is_approved === true),
-    ];
-    const approvedCount = approvedToday.length;
+    ].length;
 
     const availableCount = currentInventoryRes.count ?? 0;
     const pendingApprovalCount = pendingApprovalRes.count ?? 0;
@@ -141,9 +157,8 @@ export async function GET(request: NextRequest) {
 
     // Build report text
     const now = new Date();
-    const vnNow = new Date(now.getTime() + VN_OFFSET_MS);
-    const dateStr = vnNow.toLocaleDateString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh" });
-    const timeStr = vnNow.toLocaleTimeString("vi-VN", {
+    const dateStr = now.toLocaleDateString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh" });
+    const timeStr = now.toLocaleTimeString("vi-VN", {
       timeZone: "Asia/Ho_Chi_Minh",
       hour: "2-digit",
       minute: "2-digit",
@@ -158,12 +173,16 @@ export async function GET(request: NextRequest) {
       lines.push(`━━━ TÀI KHOẢN ━━━`);
       if (newCount > 0) lines.push(`🆕 Tạo mới: ${newCount}`);
       if (soldCount > 0) {
-        const revenueStr = soldRevenue > 0 ? ` (${formatCurrency(soldRevenue)})` : "";
-        lines.push(`💰 Đã bán: ${soldCount}${revenueStr}`);
+        lines.push(`💰 Đã bán: ${soldCount}`);
+        // List per-admin breakdown
+        for (const [userId, count] of Object.entries(soldByUser)) {
+          const name = adminNameMap[userId] || userId;
+          lines.push(`   • ${name}: ${count}`);
+        }
       }
       if (approvedCount > 0) lines.push(`✅ Đã duyệt: ${approvedCount}`);
       lines.push(``);
-      lines.push(`Kho hiện tại: ${availableCount} Available | ${pendingApprovalCount} chờ duyệt`);
+      lines.push(`Kho hiện tại: ${availableCount} còn hàng | ${pendingApprovalCount} chờ duyệt`);
     }
 
     if (hasSellActivity) {
