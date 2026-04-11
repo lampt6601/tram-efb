@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createSupabaseServiceClient } from "@thc-efb/supabase/service";
-import { sendZaloNotification } from "@thc-efb/shared/zalo-bot";
+import { sendTelegramNotification } from "@thc-efb/shared/telegram-bot";
 
 // Vietnam timezone offset: UTC+7
 const VN_OFFSET_MS = 7 * 60 * 60 * 1000;
@@ -199,7 +199,7 @@ export async function GET(request: NextRequest) {
 
     const reportText = lines.join("\n");
 
-    await sendZaloNotification(reportText);
+    await sendTelegramNotification(reportText);
 
     return NextResponse.json({ ok: true, sent: true });
   } catch (error) {

@@ -11,7 +11,7 @@
     "./image-utils": "./src/image-utils.ts",
     "./rate-limit": "./src/rate-limit.ts",
     "./approval-board": "./src/approval-board.ts",
-    "./zalo-bot": "./src/zalo-bot.ts",
+    "./telegram-bot": "./src/telegram-bot.ts",
     "./imagekit": "./src/imagekit.ts",
     "./site-settings": "./src/site-settings.ts",
     "./revalidate-web": "./src/revalidate-web.ts"

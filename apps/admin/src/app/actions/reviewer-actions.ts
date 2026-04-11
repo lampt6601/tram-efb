@@ -6,7 +6,11 @@ import { checkIsSuperAdmin } from "@thc-efb/shared/super-admin";
 import { checkIsBoardMember } from "@thc-efb/shared/approval-board";
 import { revalidatePath } from "next/cache";
 import { sendApprovalEmail, sendRejectionEmail } from "@/lib/email";
-import { sendZaloReviewerNotification } from "@thc-efb/shared/zalo-bot";
+import {
+  buildGalleryPhotoUrls,
+  escapeHtml,
+  sendTelegramReviewerNotification,
+} from "@thc-efb/shared/telegram-bot";
 import { revalidateAccountApproval } from "@thc-efb/shared/revalidate-web";
 
 const ADMIN_URL = "https://admin.thc-efb.com";
@@ -132,10 +136,9 @@ export async function reviewerApproveAccount(accountId: string) {
         });
       }
     })(),
-    // Zalo reviewer group
-    sendZaloReviewerNotification(
-      `✅ Đã duyệt: ${account.title}\n👤 Bởi: ${reviewerName}`,
-      account.primary_image_url ?? (account.images[0] ?? null),
+    sendTelegramReviewerNotification(
+      `<b>✅ Đã duyệt:</b> ${escapeHtml(account.title)}\n👤 <b>Bởi:</b> ${escapeHtml(reviewerName)}`,
+      buildGalleryPhotoUrls(account.primary_image_url, account.images),
     ),
   ]);
 }
@@ -195,9 +198,8 @@ export async function reviewerRejectAccount(accountId: string, reason: string) {
         });
       }
     })(),
-    // Zalo reviewer group
-    sendZaloReviewerNotification(
-      `❌ Từ chối: ${account.title}\n👤 Bởi: ${reviewerName}\n📝 Lý do: ${trimmedReason}`,
+    sendTelegramReviewerNotification(
+      `<b>❌ Từ chối:</b> ${escapeHtml(account.title)}\n👤 <b>Bởi:</b> ${escapeHtml(reviewerName)}\n📝 <b>Lý do:</b> ${escapeHtml(trimmedReason)}`,
     ),
   ]);
 }
@@ -244,9 +246,9 @@ export async function resubmitAccount(accountId: string) {
   const buttons = approveSecret
     ? [[{ text: "✅ Duyệt ngay", url: `${ADMIN_URL}/api/approve/${accountId}?token=${approveSecret}` }]]
     : undefined;
-  await sendZaloReviewerNotification(
-    `🔄 Gửi lại duyệt: ${account.title}`,
-    account.primary_image_url ?? (account.images[0] ?? null),
+  await sendTelegramReviewerNotification(
+    `<b>🔄 Gửi lại duyệt:</b> ${escapeHtml(account.title)}`,
+    buildGalleryPhotoUrls(account.primary_image_url, account.images),
     buttons,
   );
 }

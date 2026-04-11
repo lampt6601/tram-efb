@@ -4,7 +4,7 @@ import { createSupabaseAnonClient } from "@thc-efb/supabase/anon";
 import { createSupabaseServerClient } from "@thc-efb/supabase/server";
 import { createSupabaseServiceClient } from "@thc-efb/supabase/service";
 import { revalidatePath } from "next/cache";
-import { sendZaloNotification, escapeHtml } from "@thc-efb/shared/zalo-bot";
+import { sendTelegramNotification, escapeHtml } from "@thc-efb/shared/telegram-bot";
 
 interface ApplySellerInput {
   fullName: string;
@@ -67,7 +67,7 @@ export async function submitSellerApplication(input: ApplySellerInput) {
   ];
 
   await Promise.allSettled([
-    sendZaloNotification(appText, null, appButtons),
+    sendTelegramNotification(appText, null, appButtons),
   ]);
 
   return { success: true, message: "Đơn đăng ký đã được gửi! Chúng tôi sẽ liên hệ sớm nhất." };

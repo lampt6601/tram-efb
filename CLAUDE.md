@@ -105,7 +105,7 @@ Middleware (`src/middleware.ts`) protects routes:
 
 - **Priority accounts:** Max 1 Available account per admin can be `is_priority: true` (enforced in `src/lib/account-priority.ts`). Priority accounts appear in the homepage carousel.
 - **Image handling:** Images stored via ImageKit (`src/lib/imagekit.ts`). Upload limit 4MB (`src/lib/constants.ts`). Server action body size limit is 5MB in `next.config.ts`. Preset URL transforms in `src/lib/image-utils.ts` (thumbCard, galleryMain, galleryFull, ogImage, adminThumb).
-- **Zalo Bot notifications:** `src/lib/zalo-bot.ts` sends non-blocking notifications on account CRUD and seller applications (photo with text fallback). Called from `src/app/actions/notify-admin.ts`.
+- **Telegram Bot notifications:** `packages/shared/src/telegram-bot.ts` sends non-blocking notifications (album up to 10 photos, inline URL buttons). Env: `TELEGRAM_BOT_TOKEN` / `TELEGRAM_CHAT_ID` and reviewer group `TELEGRAM_REVIEWER_*`. Used from `apps/admin` actions (e.g. `notify-admin.ts`, sell requests, seller applications, reviewer actions, daily summary cron).
 - **Rate limiting:** In-memory sliding window limiter in `src/lib/rate-limit.ts` — used for sell requests (3/10min per IP) and approve API (10/min).
 - **Buyback policy:** `src/lib/buyback.ts` calculates refund rates by days elapsed (80% → 60% over 21 days).
 - **Account approval workflow:** Admins create accounts (is_approved=false by default), super-admin approves before public visibility. Per-admin `auto_approve` setting in `admin_settings` table can bypass this. Quick-approve link available via `/api/approve/[id]?token=SECRET`.

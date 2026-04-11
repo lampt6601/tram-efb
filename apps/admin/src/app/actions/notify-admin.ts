@@ -1,7 +1,10 @@
 "use server";
 
 import { createSupabaseServerClient } from "@thc-efb/supabase/server";
-import { sendZaloReviewerNotification, escapeHtml } from "@thc-efb/shared/zalo-bot";
+import {
+  sendTelegramReviewerNotification,
+  escapeHtml,
+} from "@thc-efb/shared/telegram-bot";
 import { formatCurrency } from "@thc-efb/shared/constants";
 import { SUPER_ADMIN_EMAIL } from "@thc-efb/shared/super-admin";
 
@@ -27,7 +30,7 @@ const BASE_URL = "https://thc-efb.com";
 const ADMIN_URL = "https://admin.thc-efb.com";
 
 /**
- * Notifies the Super Admin via Zalo Bot when an admin performs an action.
+ * Notifies reviewers via Telegram when an admin performs an action that needs approval.
  * Non-blocking: never throws — errors are logged silently.
  */
 export async function notifyAdminAction(
@@ -39,7 +42,7 @@ export async function notifyAdminAction(
     originalPrice?: number | null;
   },
   accountId?: string,
-  imageUrl?: string | null,
+  photoUrls?: string | string[] | null,
   needsApproval?: boolean,
 ) {
   try {
@@ -92,7 +95,7 @@ export async function notifyAdminAction(
     // Inline keyboard buttons
     const buttons: Array<Array<{ text: string; url: string }>> = [];
     if (accountId) {
-      // Encode UUID as base64url (22 chars) for shorter URLs in Zalo Bot
+      // Encode UUID as base64url for shorter deep links
       const shortId = Buffer.from(accountId.replace(/-/g, ""), "hex").toString("base64url");
       buttons.push([
         { text: "🔍 Xem chi tiết", url: `${ADMIN_URL}/go/${shortId}` },
@@ -110,12 +113,11 @@ export async function notifyAdminAction(
       }
     }
 
-    // Zalo Bot — reviewer group only when approval needed
-    // (super admin receives hourly summary report instead of individual noti)
+    // Telegram — reviewer group only when approval needed
     if (needsApproval) {
-      await sendZaloReviewerNotification(
+      await sendTelegramReviewerNotification(
         reviewerCaption,
-        imageUrl,
+        photoUrls,
         buttons.length ? buttons : null,
       );
     }

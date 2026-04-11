@@ -41,6 +41,7 @@ import { cn } from "@thc-efb/shared/utils";
 import { toast } from "sonner";
 import { adminThumb } from "@thc-efb/shared/image-utils";
 import { MAX_IMAGE_UPLOAD_BYTES } from "@thc-efb/shared/constants";
+import { buildGalleryPhotoUrls } from "@thc-efb/shared/telegram-bot";
 
 interface AccountFormProps {
   account?: Account | null;
@@ -444,7 +445,9 @@ export function AccountForm({ account, duplicating, availableEmails, embedded, o
             originalPrice: payload.original_price,
           },
           accountId,
-          finalPrimaryUrl ?? null,
+          needsApproval
+            ? buildGalleryPhotoUrls(finalPrimaryUrl, finalImages)
+            : null,
           needsApproval,
         );
       } catch (notifyErr) {

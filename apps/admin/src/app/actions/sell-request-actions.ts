@@ -3,7 +3,7 @@
 import { createSupabaseServiceClient } from "@thc-efb/supabase/service";
 import { createSupabaseServerClient } from "@thc-efb/supabase/server";
 import { uploadFileToImageKit } from "@thc-efb/shared/imagekit";
-import { sendZaloNotification, escapeHtml } from "@thc-efb/shared/zalo-bot";
+import { sendTelegramNotification, escapeHtml } from "@thc-efb/shared/telegram-bot";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { rateLimit, getClientIp } from "@thc-efb/shared/rate-limit";
@@ -92,7 +92,7 @@ export async function submitSellRequest(formData: FormData) {
   ];
 
   await Promise.allSettled([
-    sendZaloNotification(sellRequestText, imageUrls, sellRequestButtons),
+    sendTelegramNotification(sellRequestText, imageUrls, sellRequestButtons),
   ]);
 
   return { success: true };
