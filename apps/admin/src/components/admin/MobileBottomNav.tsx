@@ -68,6 +68,7 @@ function buildNavItems(base: string): {
       { href: `${base}/super/admins`, label: "Admins", icon: Users },
       { href: `${base}/requests`, label: "Tìm Acc", icon: SearchCheck },
       { href: `${base}/sell-requests`, label: "Thu Mua", icon: Tag },
+      { href: `${base}/emails`, label: "Email", icon: Mail },
       { href: `${base}/profile`, label: "Hồ Sơ", icon: UserCircle },
       { href: `${base}/guide`, label: "Hướng Dẫn", icon: BookOpen },
       { href: `${base}/super/applications`, label: "Đơn Đăng Ký", icon: UserPlus, superAdmin: true },
