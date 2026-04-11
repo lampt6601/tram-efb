@@ -41,7 +41,7 @@ export default function EditEmailPage() {
       if (data) {
         reset({
           emailAddress: data.email_address,
-          password: data.password,
+          password: data.password ?? "",
           recoveryInfo: data.recovery_info || "",
         });
       }
@@ -58,7 +58,7 @@ export default function EditEmailPage() {
       .from("emails")
       .update({
         email_address: values.emailAddress,
-        password: values.password,
+        password: values.password.trim() || "",
         recovery_info: values.recoveryInfo || null,
       })
       .eq("id", id);
@@ -121,19 +121,14 @@ export default function EditEmailPage() {
           </div>
           <div>
             <label className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-200">
-              Mật khẩu
+              Mật khẩu <span className="font-normal text-slate-400">(tùy chọn)</span>
             </label>
             <input
               type="text"
-              {...register("password", {
-                required: "Vui lòng nhập mật khẩu",
-              })}
-              aria-invalid={!!errors.password}
+              {...register("password")}
               className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm outline-none transition-colors focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 dark:bg-slate-800 dark:border-slate-600 dark:text-slate-100"
+              placeholder="Có thể bỏ trống"
             />
-            {errors.password && (
-              <p className="mt-1 text-xs text-red-600">{errors.password.message}</p>
-            )}
           </div>
           <div>
             <label className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-200">
