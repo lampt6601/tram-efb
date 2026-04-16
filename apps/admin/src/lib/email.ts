@@ -1,6 +1,6 @@
 import { Resend } from "resend";
 
-const FROM_EMAIL = process.env.RESEND_FROM_EMAIL ?? "noreply@thc-efb.com";
+const FROM_EMAIL = process.env.RESEND_FROM_EMAIL ?? "noreply@sap-efb.vercel.app";
 
 function getResend() {
   const key = process.env.RESEND_API_KEY;

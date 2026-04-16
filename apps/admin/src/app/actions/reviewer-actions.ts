@@ -13,8 +13,8 @@ import {
 } from "@thc-efb/shared/telegram-bot";
 import { revalidateAccountApproval } from "@thc-efb/shared/revalidate-web";
 
-const ADMIN_URL = "https://admin.thc-efb.com";
-const BASE_URL = "https://thc-efb.com";
+const ADMIN_URL = "https://admin.sap-efb.vercel.app";
+const BASE_URL = "https://sap-efb.vercel.app";
 
 /**
  * Verify the current user is either a super admin or an approval board member.

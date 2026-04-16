@@ -156,7 +156,7 @@ export function SuperAccountActionsDropdown({
   // ── Copy link ─────────────────────────────────────────────────────────────
   const handleCopyLink = async () => {
     try {
-      await navigator.clipboard.writeText(`https://thc-efb.com/accounts/${id}`);
+      await navigator.clipboard.writeText(`https://sap-efb.vercel.app/accounts/${id}`);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
@@ -406,7 +406,7 @@ export function SuperAccountActionsDropdown({
             <ResponsiveDropdownMenuItem
               render={
                 <Link
-                  href={`https://thc-efb.com/accounts/${id}`}
+                  href={`https://sap-efb.vercel.app/accounts/${id}`}
                   target="_blank"
                   className="flex items-center gap-2"
                 />

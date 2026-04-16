@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   description:
     "Câu hỏi thường gặp về mua bán tài khoản eFootball. Hướng dẫn mua acc, thanh toán, bảo hành, và thông tin chung về acc clone, server Japan và các chỉ số game.",
   alternates: {
-    canonical: "https://thc-efb.com/faq",
+    canonical: "https://sap-efb.vercel.app/faq",
   },
   openGraph: {
     title: "Câu Hỏi Thường Gặp | Sạp Acc eFootball",

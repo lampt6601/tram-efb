@@ -22,7 +22,7 @@ export const metadata: Metadata = {
   description:
     "Sạp Acc eFootball - shop tài khoản eFootball uy tín, cập nhật tài khoản chất lượng mỗi ngày và hỗ trợ nhanh qua Box cộng đồng.",
   alternates: {
-    canonical: "https://thc-efb.com",
+    canonical: "https://sap-efb.vercel.app",
   },
   openGraph: {
     title:

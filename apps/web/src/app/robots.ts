@@ -9,6 +9,6 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ["/admin/", "/api/"],
       },
     ],
-    sitemap: "https://thc-efb.com/sitemap.xml",
+    sitemap: "https://sap-efb.vercel.app/sitemap.xml",
   };
 }

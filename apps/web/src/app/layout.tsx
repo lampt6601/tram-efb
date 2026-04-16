@@ -26,14 +26,14 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://thc-efb.com"),
+  metadataBase: new URL("https://sap-efb.vercel.app"),
   icons: {
     icon: "/icon-shop.png",
     shortcut: "/icon-shop.png",
     apple: "/icon-shop.png",
   },
   alternates: {
-    canonical: "https://thc-efb.com",
+    canonical: "https://sap-efb.vercel.app",
   },
   title: {
     default:
@@ -78,7 +78,7 @@ export const metadata: Metadata = {
     title: "Sạp Acc eFootball | Shop Tài Khoản eFootball Uy Tín",
     description:
       "Shop tài khoản eFootball uy tín, cập nhật tài khoản chất lượng mỗi ngày tại Sạp Acc eFootball.",
-    url: "https://thc-efb.com",
+    url: "https://sap-efb.vercel.app",
     images: [
       {
         url: "/icon-shop.png",
@@ -126,8 +126,8 @@ export default function RootLayout({
               "@type": "Organization",
               name: "Sạp Acc eFootball",
               alternateName: "Sạp Acc eFootball Shop",
-              url: "https://thc-efb.com",
-              logo: "https://thc-efb.com/icon-shop.png",
+              url: "https://sap-efb.vercel.app",
+              logo: "https://sap-efb.vercel.app/icon-shop.png",
               description:
                 "Shop tài khoản eFootball uy tín, hỗ trợ nhanh qua Box cộng đồng.",
               contactPoint: {
@@ -152,12 +152,12 @@ export default function RootLayout({
                 "Shop Acc eFootball",
                 "Sạp Acc eFootball",
               ],
-              url: "https://thc-efb.com",
+              url: "https://sap-efb.vercel.app",
               inLanguage: "vi",
               potentialAction: {
                 "@type": "SearchAction",
                 target:
-                  "https://thc-efb.com/?q={search_term_string}",
+                  "https://sap-efb.vercel.app/?q={search_term_string}",
                 "query-input":
                   "required name=search_term_string",
               },

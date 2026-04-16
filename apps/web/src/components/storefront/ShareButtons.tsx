@@ -9,7 +9,7 @@ interface ShareButtonsProps {
 
 export function ShareButtons({ accountId }: ShareButtonsProps) {
   const [copied, setCopied] = useState(false);
-  const url = `https://thc-efb.com/accounts/${accountId}`;
+  const url = `https://sap-efb.vercel.app/accounts/${accountId}`;
   const encodedUrl = encodeURIComponent(url);
 
   const handleCopy = async () => {

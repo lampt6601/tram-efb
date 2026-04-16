@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   description:
     "Đăng yêu cầu thanh lý tài khoản eFootball của bạn. Người thu mua phù hợp sẽ liên hệ trực tiếp, quy trình đơn giản và miễn phí.",
   alternates: {
-    canonical: "https://thc-efb.com/sell",
+    canonical: "https://sap-efb.vercel.app/sell",
   },
   openGraph: {
     title: "Thanh Lý Tài Khoản eFootball | Sạp Acc eFootball",

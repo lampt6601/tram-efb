@@ -332,7 +332,7 @@ export default async function DashboardPage({
                     >
                       <TableCell className="px-4 py-3">
                         <Link
-                          href={`https://thc-efb.com/accounts/${account.id}`}
+                          href={`https://sap-efb.vercel.app/accounts/${account.id}`}
                           target="_blank"
                           className="group inline-flex items-center gap-1.5 max-w-xs truncate font-medium text-slate-900 dark:text-slate-100 hover:text-indigo-600 dark:hover:text-indigo-400"
                         >
@@ -370,7 +370,7 @@ export default async function DashboardPage({
                   <CardContent className="flex items-start justify-between gap-3 py-0">
                     <div className="min-w-0 flex-1">
                       <Link
-                        href={`https://thc-efb.com/accounts/${account.id}`}
+                        href={`https://sap-efb.vercel.app/accounts/${account.id}`}
                         target="_blank"
                         className="group inline-flex items-center gap-1 font-medium text-slate-900 dark:text-slate-100 hover:text-indigo-600 dark:hover:text-indigo-400"
                       >

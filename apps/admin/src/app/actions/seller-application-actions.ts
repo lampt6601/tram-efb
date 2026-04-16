@@ -62,7 +62,7 @@ export async function submitSellerApplication(input: ApplySellerInput) {
     (input.reason ? `💬 <b>Lý do:</b> ${escapeHtml(input.reason.trim())}\n` : "");
   const appButtons = [
     [
-      { text: "👉 Duyệt đơn", url: `https://admin.thc-efb.com/dashboard/super/applications?highlight=${inserted.id}` },
+      { text: "👉 Duyệt đơn", url: `https://admin.sap-efb.vercel.app/dashboard/super/applications?highlight=${inserted.id}` },
     ],
   ];
 

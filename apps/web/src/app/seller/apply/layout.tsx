@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   description:
     "Đăng ký bán acc eFootball tại Sạp Acc eFootball. Tự đăng acc miễn phí, quy trình kiểm duyệt rõ ràng.",
   alternates: {
-    canonical: "https://thc-efb.com/seller/apply",
+    canonical: "https://sap-efb.vercel.app/seller/apply",
   },
   openGraph: {
     title: "Đăng Ký Bán Acc eFootball | Sạp Acc eFootball",

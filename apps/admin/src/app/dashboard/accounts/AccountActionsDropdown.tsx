@@ -149,7 +149,7 @@ export function AccountActionsDropdown({
   const handleCopyLink = async () => {
     try {
       await navigator.clipboard.writeText(
-        `https://thc-efb.com/accounts/${id}`,
+        `https://sap-efb.vercel.app/accounts/${id}`,
       );
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
@@ -444,7 +444,7 @@ export function AccountActionsDropdown({
           <ResponsiveDropdownMenuItem
             render={
               <Link
-                href={`https://thc-efb.com/accounts/${id}`}
+                href={`https://sap-efb.vercel.app/accounts/${id}`}
                 target="_blank"
                 className="flex items-center gap-2"
               />

@@ -94,7 +94,7 @@ export async function generateMetadata({
       ? { index: false, follow: false }
       : { index: true, follow: true },
     alternates: !isSold
-      ? { canonical: `https://thc-efb.com/accounts/${id}` }
+      ? { canonical: `https://sap-efb.vercel.app/accounts/${id}` }
       : undefined,
     openGraph: {
       title,
@@ -473,11 +473,11 @@ export default async function AccountDetailPage({
                     availability: isDeposited
                       ? "https://schema.org/LimitedAvailability"
                       : "https://schema.org/InStock",
-                    url: `https://thc-efb.com/accounts/${account.id}`,
+                    url: `https://sap-efb.vercel.app/accounts/${account.id}`,
                     seller: {
                       "@type": "Organization",
                       name: "Sạp Acc eFootball",
-                      url: "https://thc-efb.com",
+                      url: "https://sap-efb.vercel.app",
                     },
                   },
                   additionalProperty: [
@@ -524,13 +524,13 @@ export default async function AccountDetailPage({
                     "@type": "ListItem",
                     position: 1,
                     name: "Trang chủ",
-                    item: "https://thc-efb.com",
+                    item: "https://sap-efb.vercel.app",
                   },
                   {
                     "@type": "ListItem",
                     position: 2,
                     name: account.title,
-                    item: `https://thc-efb.com/accounts/${account.id}`,
+                    item: `https://sap-efb.vercel.app/accounts/${account.id}`,
                   },
                 ],
               }),

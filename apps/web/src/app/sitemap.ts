@@ -2,7 +2,7 @@ import { MetadataRoute } from "next";
 import { createSupabaseAnonClient } from '@thc-efb/supabase/anon';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = "https://thc-efb.com";
+  const baseUrl = "https://sap-efb.vercel.app";
   const supabase = createSupabaseAnonClient();
 
   // Available accounts

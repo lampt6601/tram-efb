@@ -8,11 +8,11 @@
  * Fire-and-forget by default (don't await in server actions).
  *
  * Requires env vars:
- *   WEB_URL            — e.g. "https://thc-efb.com"
+ *   WEB_URL            — e.g. "https://sap-efb.vercel.app"
  *   REVALIDATION_SECRET — shared secret matching the web app
  */
 
-const WEB_URL = process.env.WEB_URL ?? "https://thc-efb.com";
+const WEB_URL = process.env.WEB_URL ?? "https://sap-efb.vercel.app";
 const SECRET = process.env.REVALIDATION_SECRET;
 
 async function callRevalidate(

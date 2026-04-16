@@ -28,7 +28,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { name } = await params;
   const sellerName = decodeURIComponent(name);
-  const canonicalUrl = `https://thc-efb.com/shop/${encodeURIComponent(sellerName)}`;
+  const canonicalUrl = `https://sap-efb.vercel.app/shop/${encodeURIComponent(sellerName)}`;
 
   return {
     title: `Kho tài khoản ${sellerName} | Sạp Acc eFootball`,
@@ -220,14 +220,14 @@ export default async function SellerShopPage({
                 worksFor: {
                   "@type": "Organization",
                   name: "Sạp Acc eFootball",
-                  url: "https://thc-efb.com",
+                  url: "https://sap-efb.vercel.app",
                 },
                 makesOffer: available.map((a) => ({
                   "@type": "Offer",
                   itemOffered: {
                     "@type": "Product",
                     name: a.title,
-                    url: `https://thc-efb.com/accounts/${a.id}`,
+                    url: `https://sap-efb.vercel.app/accounts/${a.id}`,
                   },
                   priceCurrency: "VND",
                   price: a.selling_price,
@@ -249,13 +249,13 @@ export default async function SellerShopPage({
                   "@type": "ListItem",
                   position: 1,
                   name: "Trang chủ",
-                  item: "https://thc-efb.com",
+                  item: "https://sap-efb.vercel.app",
                 },
                 {
                   "@type": "ListItem",
                   position: 2,
                   name: `Gian hàng ${seller.name}`,
-                  item: `https://thc-efb.com/shop/${encodeURIComponent(seller.name)}`,
+                  item: `https://sap-efb.vercel.app/shop/${encodeURIComponent(seller.name)}`,
                 },
               ],
             }),

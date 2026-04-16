@@ -182,7 +182,7 @@ export default async function SuperAccountsPage({
                         <Gamepad2 className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
                       </div>
                       <Link
-                        href={`https://thc-efb.com/accounts/${account.id}`}
+                        href={`https://sap-efb.vercel.app/accounts/${account.id}`}
                         target="_blank"
                         className="group flex items-center gap-1.5 font-medium text-slate-900 dark:text-slate-100 hover:text-indigo-600 dark:hover:text-indigo-400"
                       >
@@ -274,7 +274,7 @@ export default async function SuperAccountsPage({
             <CardHeader>
               <CardTitle>
                 <Link
-                  href={`https://thc-efb.com/accounts/${account.id}`}
+                  href={`https://sap-efb.vercel.app/accounts/${account.id}`}
                   target="_blank"
                   className="group inline-flex items-center gap-1.5 font-medium text-slate-900 dark:text-slate-100 hover:text-indigo-600 dark:hover:text-indigo-400"
                 >

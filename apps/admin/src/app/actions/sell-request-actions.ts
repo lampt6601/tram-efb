@@ -87,7 +87,7 @@ export async function submitSellRequest(formData: FormData) {
     `📸 ${imageUrls.length} ảnh`;
   const sellRequestButtons = [
     [
-      { text: "👉 Xem yêu cầu", url: `https://admin.thc-efb.com/dashboard/sell-requests?highlight=${inserted.id}` },
+      { text: "👉 Xem yêu cầu", url: `https://admin.sap-efb.vercel.app/dashboard/sell-requests?highlight=${inserted.id}` },
     ],
   ];
 

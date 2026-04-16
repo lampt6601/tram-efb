@@ -26,8 +26,8 @@ const actionEmoji: Record<string, string> = {
   UPDATE_SALE: "🏷️",
 };
 
-const BASE_URL = "https://thc-efb.com";
-const ADMIN_URL = "https://admin.thc-efb.com";
+const BASE_URL = "https://sap-efb.vercel.app";
+const ADMIN_URL = "https://admin.sap-efb.vercel.app";
 
 /**
  * Notifies reviewers via Telegram when an admin performs an action that needs approval.

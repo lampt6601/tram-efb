@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { rateLimit, getClientIp } from "@thc-efb/shared/rate-limit";
 import { revalidateAccountApproval } from "@thc-efb/shared/revalidate-web";
 
-const BASE_URL = "https://thc-efb.com";
+const BASE_URL = "https://sap-efb.vercel.app";
 
 function htmlResponse(html: string, status = 200) {
   return new NextResponse(html, {
