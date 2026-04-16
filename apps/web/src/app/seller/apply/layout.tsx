@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Đăng Ký Bán Acc eFootball | THC eFootball Shop",
+  title: "Đăng Ký Bán Acc eFootball | Sạp Acc eFootball",
   description:
-    "Đăng ký bán acc eFootball tại THC eFootball Shop. Tự đăng acc miễn phí, giao dịch an toàn qua trung gian.",
+    "Đăng ký bán acc eFootball tại Sạp Acc eFootball. Tự đăng acc miễn phí, quy trình kiểm duyệt rõ ràng.",
   alternates: {
     canonical: "https://thc-efb.com/seller/apply",
   },
   openGraph: {
-    title: "Đăng Ký Bán Acc eFootball | THC eFootball Shop",
+    title: "Đăng Ký Bán Acc eFootball | Sạp Acc eFootball",
     description:
       "Đăng ký bán acc eFootball tại THC Shop. Tiếp cận hàng trăm khách mua mỗi ngày.",
     url: "/seller/apply",

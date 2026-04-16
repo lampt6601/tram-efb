@@ -12,7 +12,15 @@ import { formatCompactCurrency } from '@thc-efb/shared/constants';
 import type { PublicAccount } from '@thc-efb/supabase/types';
 import { thumbCard } from '@thc-efb/shared/image-utils';
 
-export function AccountCard({ account, priority = false }: { account: PublicAccount; priority?: boolean }) {
+export function AccountCard({
+  account,
+  priority = false,
+  hideSellerInfo = false,
+}: {
+  account: PublicAccount;
+  priority?: boolean;
+  hideSellerInfo?: boolean;
+}) {
   const thumbnail = account.primary_image_url || account.images?.[0];
   const optimizedThumb = thumbnail ? thumbCard(thumbnail) : undefined;
   const isSold = account.status === "Sold";
@@ -147,7 +155,7 @@ export function AccountCard({ account, priority = false }: { account: PublicAcco
         </div>
 
         {/* Seller row */}
-        {account.seller_full_name && (
+        {account.seller_full_name && !hideSellerInfo && (
           <div className="flex items-center gap-1.5 border-t border-slate-100 dark:border-slate-700/60 pt-2">
             {account.seller_avatar_url ? (
               <span className="relative h-4 w-4 shrink-0 overflow-hidden rounded-full ring-1 ring-slate-200 dark:ring-slate-600">

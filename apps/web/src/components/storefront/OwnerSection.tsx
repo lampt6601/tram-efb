@@ -14,7 +14,7 @@ export function OwnerSection() {
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/avatar-owner.jpeg"
-                alt="Trần Hữu Cảnh"
+                alt="Sạp Acc eFootball"
                 className="h-full w-full rounded-2xl object-cover shadow-lg"
               />
               <div className="absolute -bottom-1.5 -right-1.5 flex h-7 w-7 items-center justify-center rounded-full border-2 border-white bg-emerald-500 shadow dark:border-slate-800">
@@ -26,15 +26,15 @@ export function OwnerSection() {
           {/* Info */}
           <div className="flex-1 text-center sm:text-left">
             <p className="mb-1 text-xs font-semibold uppercase tracking-widest text-indigo-500 dark:text-indigo-400">
-              Chủ Sàn
+              Shop
             </p>
             <h2 className="text-2xl font-extrabold text-slate-900 dark:text-slate-100 sm:text-3xl">
-              Trần Hữu Cảnh
+              Sạp Acc eFootball
             </h2>
             <p className="mt-1.5 max-w-lg text-sm text-slate-500 dark:text-slate-400">
               Người sáng lập{" "}
               <span className="font-semibold text-slate-700 dark:text-slate-200">
-                THC eFootball Shop
+                Sạp Acc eFootball
               </span>{" "}
               — chuyên cung cấp tài khoản eFootball chất lượng, giao dịch minh
               bạch và hỗ trợ tận tâm.
@@ -44,7 +44,7 @@ export function OwnerSection() {
                 href="/api/contact/owner?type=facebook"
                 target="_blank"
                 rel="noopener noreferrer"
-                title="Facebook cá nhân — Trần Hữu Cảnh"
+                title="Facebook Sạp Acc eFootball"
                 className="group flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 transition-all hover:bg-blue-100 hover:scale-110 active:scale-95 dark:bg-slate-700 dark:hover:bg-slate-600"
               >
                 <Image
@@ -58,7 +58,7 @@ export function OwnerSection() {
                 href="/api/contact/owner?type=zalo"
                 target="_blank"
                 rel="noopener noreferrer"
-                title="Zalo cá nhân — Trần Hữu Cảnh"
+                title="Zalo Sạp Acc eFootball"
                 className="group flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 transition-all hover:bg-blue-100 hover:scale-110 active:scale-95 dark:bg-slate-700 dark:hover:bg-slate-600"
               >
                 <Image

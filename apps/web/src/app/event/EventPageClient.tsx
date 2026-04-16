@@ -114,13 +114,13 @@ export default function EventPageClient({ entries, results }: EventPageClientPro
             </span>
           </div>
           <h1 className="text-balance text-2xl font-extrabold tracking-tight text-white sm:text-4xl lg:text-5xl">
-            MỪNG THC EFB CÁN MỐC
+            MỪNG SẠP ACC EFOOTBALL CÁN MỐC
             <span className="mt-1 block bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
               2K USER & 100 ANH EM ZALO
             </span>
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-sm text-white/60 sm:text-base">
-            Minigame quay số trúng thưởng cây nhà lá vườn ngay trên hệ thống website của sàn.
+            Minigame quay số trúng thưởng ngay trên hệ thống website của shop.
             Trúng là bế acc về đá ngay! 🎮⚽
           </p>
         </div>

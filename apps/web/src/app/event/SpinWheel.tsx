@@ -85,7 +85,7 @@ export function SpinWheelPreview({ pickedNumbers }: SpinWheelPreviewProps) {
     ctx.font = "bold 10px sans-serif";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillText("THC EFB", center, center);
+    ctx.fillText("SAP ACC EFOOTBALL", center, center);
 
     // Outer ring
     ctx.beginPath();

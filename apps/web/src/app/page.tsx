@@ -1,44 +1,41 @@
 import { createSupabaseAnonClient } from '@thc-efb/supabase/anon';
 import { Header } from "@/components/storefront/Header";
 import { Footer } from "@/components/storefront/Footer";
-import { OwnerSection } from "@/components/storefront/OwnerSection";
 import { AccountCard } from "@/components/storefront/AccountCard";
 import { AccountFilters } from "@/components/storefront/AccountFilters";
 import { StatsBar } from "@/components/storefront/StatsBar";
 import { ScrollReveal } from '@thc-efb/ui/scroll-reveal';
 import { AutoScrollSlider } from '@thc-efb/ui/auto-scroll-slider';
-import Link from "next/link";
-import { Search, BadgeCheck, Flame, Clock, ShieldCheck, CircleCheck, ArrowRight } from "lucide-react";
-import Image from "next/image";
+import { Search, BadgeCheck, Flame, Clock, Sparkles, ShieldCheck } from "lucide-react";
 import { RecruitHeroCTA } from "@/components/storefront/RecruitHeroCTA";
-import { RecruitAdminSection } from "@/components/storefront/RecruitAdminSection";
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import type { PublicAccount } from '@thc-efb/supabase/types';
 import { FiltersSkeleton } from "@/components/storefront/AccountCardSkeleton";
+import Link from "next/link";
 
 export const revalidate = 300; // 5 minutes — balances freshness with Vercel edge requests
 
 export const metadata: Metadata = {
   title:
-    "Shop Acc eFootball Mobile Uy Tín | Mua Bán Tài Khoản eFootball Giá Rẻ",
+    "Sạp Acc eFootball | Shop Tài Khoản eFootball Uy Tín",
   description:
-    "Shop acc eFootball mobile uy tín #1 Việt Nam. Mua bán acc eFootball giá rẻ, acc clone chất lượng cao. Giao dịch an toàn, bảo hành đổi trả, cập nhật acc mới mỗi ngày. 160+ giao dịch thành công.",
+    "Sạp Acc eFootball - shop tài khoản eFootball uy tín, cập nhật tài khoản chất lượng mỗi ngày và hỗ trợ nhanh qua Box cộng đồng.",
   alternates: {
     canonical: "https://thc-efb.com",
   },
   openGraph: {
     title:
-      "Shop Acc eFootball Mobile Uy Tín | Mua Bán Tài Khoản - THC EFB",
+      "Sạp Acc eFootball | Shop Tài Khoản eFootball Uy Tín",
     description:
-      "Mua bán acc eFootball mobile giá rẻ, uy tín. 160+ giao dịch thành công. Acc clone chất lượng, giao dịch an toàn, bảo hành đổi trả.",
+      "Shop tài khoản eFootball uy tín, cập nhật tài khoản chất lượng mỗi ngày tại Sạp Acc eFootball.",
     url: "/",
     images: [
       {
-        url: "/thc-shop.jpg",
+        url: "/icon-shop.png",
         width: 1200,
         height: 630,
-        alt: "THC eFootball Shop - Shop Acc eFootball Mobile Uy Tín",
+        alt: "Sạp Acc eFootball - Shop Tai Khoan eFootball",
       },
     ],
   },
@@ -149,38 +146,31 @@ export default async function HomePage({
           <div className="relative mx-auto max-w-7xl px-4 py-1 sm:px-6 sm:py-8 lg:px-8 lg:py-10">
             <div className="flex flex-col py-2 sm:py-6 md:py-10">
               <div className="text-center lg:text-left">
-                <div className="mx-auto mb-3 inline-flex items-center gap-2 rounded-full border border-indigo-500/30 bg-indigo-500/10 py-1 pl-1 pr-3 sm:mb-5 sm:gap-2.5 sm:py-1.5 sm:pl-1.5 sm:pr-4 lg:mx-0">
-                  <Image
-                    src="/avatar-owner.jpeg"
-                    alt="Trần Hữu Cảnh"
-                    width={28}
-                    height={28}
-                    className="h-6 w-6 rounded-full object-cover ring-2 ring-indigo-400/50 sm:h-7 sm:w-7"
-                    priority
-                  />
-                  <span className="text-[11px] font-semibold tracking-wide text-indigo-300 sm:text-xs">
-                    Sàn của <span className="text-white">Trần Hữu Cảnh</span>
-                  </span>
-                  <BadgeCheck className="h-3.5 w-3.5 text-indigo-400 sm:h-4 sm:w-4" />
+                <div className="mx-auto mb-3 inline-flex items-center gap-2 rounded-full border border-indigo-400/30 bg-indigo-500/10 px-3 py-1 text-[11px] font-semibold tracking-wide text-indigo-200 lg:mx-0">
+                  <Sparkles className="h-3.5 w-3.5 text-indigo-300" />
+                  Kho acc cập nhật mỗi ngày
                 </div>
                 <h1 className="text-balance text-2xl font-extrabold tracking-tight text-white sm:text-4xl lg:text-5xl">
-                  Sàn Giao Dịch{" "}
-                  <span className="block text-indigo-400">
-                    Tài Khoản eFootball
+                  Sạp Acc eFootball
+                  <span className="mt-1 block text-indigo-300">
+                    Giá tốt - Đa dạng - Uy tín
                   </span>
                 </h1>
-                <p className="mx-auto mt-2 text-xs text-slate-400 sm:mt-3 sm:text-base lg:mx-0">
-                  Mua bán tài khoản eFootball an toàn, giá hợp lý.
-                </p>
-                <div className="mx-auto mt-2 flex flex-wrap justify-center gap-x-4 gap-y-1 sm:mt-3 lg:mx-0 lg:justify-start">
-                  <span className="inline-flex items-center gap-1.5 text-[11px] text-slate-400 sm:text-xs">
-                    <ShieldCheck className="h-3.5 w-3.5 text-indigo-400" />
-                    Chủ sàn duyệt trước khi đăng
-                  </span>
-                  <span className="inline-flex items-center gap-1.5 text-[11px] text-slate-400 sm:text-xs">
-                    <CircleCheck className="h-3.5 w-3.5 text-emerald-400" />
-                    Giao dịch an toàn qua trung gian chủ sàn
-                  </span>
+                <div className="mx-auto mt-4 flex flex-wrap items-center justify-center gap-2 lg:mx-0 lg:justify-start">
+                  <Link
+                    href="#accounts"
+                    className="rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-indigo-500"
+                  >
+                    Xem tài khoản đang bán
+                  </Link>
+                  <a
+                    href="https://zalo.me/g/a3v3dgaj4ugylmmnwk0u"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="rounded-xl border border-slate-300/25 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-100 transition-colors hover:bg-white/10"
+                  >
+                    Box Acc Zalo
+                  </a>
                 </div>
                 {/* Recruitment CTA */}
                 <RecruitHeroCTA />
@@ -241,7 +231,7 @@ export default async function HomePage({
                         distance="sm"
                         className="h-full min-h-0"
                       >
-                        <AccountCard account={account} priority={i < 3} />
+                        <AccountCard account={account} priority={i < 3} hideSellerInfo />
                       </ScrollReveal>
                     ))}
                   </div>
@@ -269,7 +259,11 @@ export default async function HomePage({
                         distance="sm"
                         className="h-full min-h-0"
                       >
-                        <AccountCard account={account} priority={priorityItems.length === 0 && i < 3} />
+                        <AccountCard
+                          account={account}
+                          priority={priorityItems.length === 0 && i < 3}
+                          hideSellerInfo
+                        />
                       </ScrollReveal>
                     ))}
                   </div>
@@ -295,8 +289,7 @@ export default async function HomePage({
                     Tài Khoản Đã Bán
                   </h2>
                   <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-                    {soldItems.length} giao dịch thành công — minh chứng uy tín
-                    của sàn
+                    {soldItems.length} giao dịch thành công tại Sạp Acc eFootball
                   </p>
                 </div>
               </ScrollReveal>
@@ -307,7 +300,7 @@ export default async function HomePage({
                       className="w-[85vw] max-w-[320px] shrink-0 snap-start sm:w-[340px] lg:w-[380px]"
                     >
                       <ScrollReveal delay={i * 80} distance="sm">
-                        <AccountCard account={account} />
+                        <AccountCard account={account} hideSellerInfo />
                       </ScrollReveal>
                     </div>
                   ))}
@@ -317,34 +310,6 @@ export default async function HomePage({
         )}
       </main>
 
-
-      {/* Bảo kê trust banner */}
-      <section className="border-t border-slate-200 dark:border-slate-700">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <Link
-            href="/bao-ke"
-            className="flex items-center justify-between gap-4 py-3.5 transition-opacity hover:opacity-80"
-          >
-            <div className="flex items-center gap-3">
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-emerald-100 dark:bg-emerald-500/20">
-                <ShieldCheck className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
-              </div>
-              <div className="flex items-center gap-2.5">
-                <span className="text-sm font-bold text-slate-800 dark:text-slate-100">
-                  Người Bán Được Bảo Kê
-                </span>
-                <span className="hidden sm:inline text-xs text-slate-500 dark:text-slate-400">
-                  Ký quỹ minh bạch · Giao dịch an toàn
-                </span>
-              </div>
-            </div>
-            <ArrowRight className="h-5 w-5 shrink-0 text-emerald-400" />
-          </Link>
-        </div>
-      </section>
-
-      <RecruitAdminSection />
-      <OwnerSection />
       <Footer />
     </div>
   );

@@ -2,10 +2,10 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "THC eFootball Shop",
-    short_name: "THC EFB",
+    name: "Sạp Acc eFootball",
+    short_name: "Sạp Acc eFootball",
     description:
-      "Shop acc eFootball mobile uy tin. Mua ban tai khoan eFootball gia re, giao dich an toan.",
+      "Sạp Acc eFootball - shop tài khoản eFootball uy tín, hỗ trợ nhanh qua Box cộng đồng.",
     start_url: "/",
     scope: "/",
     display: "standalone",

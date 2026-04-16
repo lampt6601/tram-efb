@@ -1,20 +1,7 @@
 import Link from "next/link";
-import { UserPlus, Megaphone, ChevronRight } from "lucide-react";
+import { Megaphone, ChevronRight } from "lucide-react";
 
 const cards = [
-  {
-    href: "/seller/apply",
-    icon: UserPlus,
-    iconColor: "text-emerald-400",
-    iconBg: "bg-emerald-500/15 border-emerald-500/25",
-    title: "Đăng ký bán",
-    desc: "Mở gian hàng & đăng acc lên sàn",
-    descFull: "Mở gian hàng miễn phí, đăng acc lên sàn để tiếp cận người mua.",
-    badge: "Miễn phí",
-    cta: "Đăng ký ngay",
-    ctaStyle:
-      "border border-emerald-500/40 text-emerald-300 hover:bg-emerald-500/10",
-  },
   {
     href: "/sell",
     icon: Megaphone,
@@ -32,7 +19,7 @@ const cards = [
 
 export function RecruitHeroCTA() {
   return (
-    <div className="mx-auto mt-5 grid w-full max-w-xl grid-cols-1 gap-2 sm:mt-10 sm:grid-cols-2 sm:gap-4 lg:mx-0">
+    <div className="mx-auto mt-5 grid w-full max-w-xl grid-cols-1 gap-2 sm:mt-10 sm:gap-4 lg:mx-0">
       {cards.map((card) => (
         <Link
           key={card.href}
