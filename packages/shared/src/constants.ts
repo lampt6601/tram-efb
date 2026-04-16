@@ -6,6 +6,15 @@ export const CONTACT_ZALO_GROUP_URL = "https://zalo.me/g/a3v3dgaj4ugylmmnwk0u";
 export const CONTACT_MESSENGER_URL =
   "https://www.facebook.com/share/1B7kgySoVd/?mibextid=wwXIfr";
 
+/**
+ * Whitelist partner IDs allowed to open storefront via `?ref=<partner_id>`.
+ * Replace with real partner IDs used in distribution links.
+ */
+export const VALID_PARTNER_IDS = ["tram-efb"];
+export const PARTNER_REF_QUERY_KEY = "ref";
+export const PARTNER_ACCESS_COOKIE_NAME = "partner_access";
+export const PARTNER_ACCESS_COOKIE_MAX_AGE_SECONDS = 7 * 24 * 60 * 60;
+
 export const STATUS_COLORS: Record<string, string> = {
   Available: "bg-emerald-100 text-emerald-800",
   Pending: "bg-amber-100 text-amber-800",
