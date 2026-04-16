@@ -1,7 +1,20 @@
 import Link from "next/link";
-import { Megaphone, ChevronRight } from "lucide-react";
+import { type LucideIcon, Megaphone, ChevronRight } from "lucide-react";
 
-const cards = [
+type Card = {
+  href: string;
+  icon: LucideIcon;
+  iconColor: string;
+  iconBg: string;
+  title: string;
+  desc: string;
+  descFull: string;
+  cta: string;
+  ctaStyle: string;
+  badge?: string;
+};
+
+const cards: Card[] = [
   {
     href: "/sell",
     icon: Megaphone,
