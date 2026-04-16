@@ -13,7 +13,7 @@ import {
 } from "@thc-efb/shared/telegram-bot";
 import { revalidateAccountApproval } from "@thc-efb/shared/revalidate-web";
 
-const ADMIN_URL = "https://admin.sap-efb.vercel.app";
+const ADMIN_URL = "https://sap-efb-admin.vercel.app";
 const BASE_URL = "https://sap-efb.vercel.app";
 
 /**
