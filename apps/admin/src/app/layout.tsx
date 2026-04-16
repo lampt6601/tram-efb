@@ -71,8 +71,8 @@ export default function RootLayout({
           }}
         />
         <OfflineIndicator />
-        <Script id="sw-register" strategy="afterInteractive">
-          {`if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js')}`}
+        <Script id="sw-unregister" strategy="afterInteractive">
+          {`(function(){if('serviceWorker'in navigator){navigator.serviceWorker.getRegistrations().then(function(r){r.forEach(function(x){x.unregister()})})}if('caches'in window){caches.keys().then(function(n){return Promise.all(n.map(function(k){return caches.delete(k)}))})}})()`}
         </Script>
       </body>
     </html>

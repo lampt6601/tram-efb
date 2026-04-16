@@ -7,7 +7,7 @@ import {
 import { NextResponse, type NextRequest } from "next/server";
 
 const PUBLIC_PATH_PREFIXES = ["/_next", "/images", "/icons"];
-const PUBLIC_EXACT_PATHS = ["/access-denied", "/favicon.ico", "/robots.txt", "/sitemap.xml", "/manifest.json", "/sw.js"];
+const PUBLIC_EXACT_PATHS = ["/access-denied", "/favicon.ico", "/robots.txt", "/sitemap.xml", "/manifest.json"];
 
 const isWhitelistedPartner = (partnerId: string | undefined): partnerId is string =>
   Boolean(partnerId && VALID_PARTNER_IDS.includes(partnerId));
