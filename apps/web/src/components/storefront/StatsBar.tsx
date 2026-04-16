@@ -23,15 +23,15 @@ export async function StatsBar() {
     {
       icon: Users,
       value: `${sellerCount > 0 ? sellerCount : 0}+`,
-      label: "Người bán",
+      label: "CTV",
       color: "text-indigo-400",
     },
   ];
 
   return (
-    <div className="mt-4 flex flex-wrap items-center justify-center gap-5 sm:mt-8 sm:gap-10 lg:justify-start">
+    <div className="mt-4 flex flex-wrap items-center justify-center gap-10 lg:justify-start">
       {stats.map((stat) => (
-        <div key={stat.label} className="flex items-center gap-2.5">
+        <div key={stat.label} className="flex items-center gap-2">
           <stat.icon className={`h-5 w-5 ${stat.color}`} />
           <div>
             <p className="text-lg font-bold text-white sm:text-xl">

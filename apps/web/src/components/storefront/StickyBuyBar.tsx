@@ -69,7 +69,7 @@ export function StickyBuyBar({
             </p>
             <p className="flex items-center gap-1 text-[10px] text-emerald-600 dark:text-emerald-400">
               <ShieldCheck className="h-3 w-3" />
-              Qua trung gian Chủ Sàn
+              Liên hệ qua Box chính thức
             </p>
           </div>
 
@@ -83,7 +83,7 @@ export function StickyBuyBar({
               onClick={() => setDialogOpen(true)}
               className="ml-auto shrink-0 rounded-xl bg-indigo-600 px-6 py-2.5 text-sm font-bold text-white shadow-lg shadow-indigo-500/25 transition-colors hover:bg-indigo-700 active:scale-95"
             >
-              Mua ngay
+              Liên hệ qua Box
             </button>
           )}
         </div>

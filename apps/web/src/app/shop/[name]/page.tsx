@@ -31,20 +31,20 @@ export async function generateMetadata({
   const canonicalUrl = `https://thc-efb.com/shop/${encodeURIComponent(sellerName)}`;
 
   return {
-    title: `Gian hàng ${sellerName} | THC eFootball Shop`,
-    description: `Xem tất cả tài khoản eFootball đang bán và đã bán của ${sellerName} tại THC eFootball Shop.`,
+    title: `Kho tài khoản ${sellerName} | Sạp Acc eFootball`,
+    description: `Xem tất cả tài khoản eFootball đang bán và đã bán của ${sellerName} tại Sạp Acc eFootball.`,
     alternates: { canonical: canonicalUrl },
     openGraph: {
-      title: `Gian hàng ${sellerName} | THC eFootball Shop`,
-      description: `Xem tất cả tài khoản eFootball đang bán và đã bán của ${sellerName} tại THC eFootball Shop.`,
+      title: `Kho tài khoản ${sellerName} | Sạp Acc eFootball`,
+      description: `Xem tất cả tài khoản eFootball đang bán và đã bán của ${sellerName} tại Sạp Acc eFootball.`,
       url: canonicalUrl,
       type: "website",
-      siteName: "THC eFootball Shop",
+      siteName: "Sạp Acc eFootball",
     },
     twitter: {
       card: "summary_large_image",
-      title: `Gian hàng ${sellerName} | THC eFootball Shop`,
-      description: `Xem tất cả tài khoản eFootball đang bán và đã bán của ${sellerName} tại THC eFootball Shop.`,
+      title: `Kho tài khoản ${sellerName} | Sạp Acc eFootball`,
+      description: `Xem tất cả tài khoản eFootball đang bán và đã bán của ${sellerName} tại Sạp Acc eFootball.`,
     },
   };
 }
@@ -219,7 +219,7 @@ export default async function SellerShopPage({
                 ...(seller.avatar && { image: seller.avatar }),
                 worksFor: {
                   "@type": "Organization",
-                  name: "THC eFootball Shop",
+                  name: "Sạp Acc eFootball",
                   url: "https://thc-efb.com",
                 },
                 makesOffer: available.map((a) => ({

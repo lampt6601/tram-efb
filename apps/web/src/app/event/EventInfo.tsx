@@ -21,7 +21,7 @@ const turnRules = [
   {
     icon: MessageCircle,
     label: "+1 Lượt",
-    description: "Đang là thành viên trong Box Zalo của THC EFB.",
+    description: "Đang là thành viên trong Box Zalo của Sạp Acc eFootball.",
     color: "text-emerald-400",
     bg: "bg-emerald-500/10",
     border: "border-emerald-500/20",
@@ -29,7 +29,7 @@ const turnRules = [
   {
     icon: ShoppingBag,
     label: "+1 Lượt",
-    description: "Đã mua account bên shop THC EFB.",
+    description: "Đã mua account bên shop Sạp Acc eFootball.",
     color: "text-amber-400",
     bg: "bg-amber-500/10",
     border: "border-amber-500/20",
@@ -37,7 +37,7 @@ const turnRules = [
   {
     icon: UserPlus,
     label: "+1 Lượt",
-    description: "Đã kết bạn Facebook với Admin (Chủ sàn).",
+    description: "Đã kết bạn Facebook với Admin của shop.",
     color: "text-blue-400",
     bg: "bg-blue-500/10",
     border: "border-blue-500/20",

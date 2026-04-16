@@ -219,7 +219,7 @@ export default function RequestPage() {
             </Button>
 
             <p className="mt-3 text-center text-xs text-slate-400 dark:text-slate-500">
-              Miễn phí · Chủ sàn sẽ liên hệ khi có acc phù hợp
+              Miễn phí · Đội ngũ shop sẽ liên hệ khi có acc phù hợp
             </p>
           </form>
         </div>

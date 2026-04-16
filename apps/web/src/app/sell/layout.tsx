@@ -8,7 +8,7 @@ export const metadata: Metadata = {
     canonical: "https://thc-efb.com/sell",
   },
   openGraph: {
-    title: "Thanh Lý Tài Khoản eFootball | THC EFB",
+    title: "Thanh Lý Tài Khoản eFootball | Sạp Acc eFootball",
     description:
       "Đăng yêu cầu thanh lý tài khoản eFootball. Người thu mua phù hợp sẽ liên hệ bạn trực tiếp.",
     url: "/sell",

@@ -27,20 +27,25 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://thc-efb.com"),
+  icons: {
+    icon: "/icon-shop.png",
+    shortcut: "/icon-shop.png",
+    apple: "/icon-shop.png",
+  },
   alternates: {
     canonical: "https://thc-efb.com",
   },
   title: {
     default:
-      "Shop Acc eFootball Mobile Uy Tín | Mua Bán Tài Khoản eFootball - THC EFB",
-    template: "%s | THC eFootball Shop",
+      "Sạp Acc eFootball | Shop Tài Khoản eFootball Uy Tín",
+    template: "%s | Sạp Acc eFootball",
   },
   description:
-    "Shop acc eFootball mobile uy tín #1. Mua bán tài khoản eFootball giá rẻ, acc clone chất lượng, giao dịch an toàn, bảo hành đổi trả. Cập nhật acc mới mỗi ngày tại THC eFootball Shop.",
+    "Sạp Acc eFootball - shop tài khoản eFootball uy tín, cập nhật tài khoản chất lượng mỗi ngày, hỗ trợ nhanh qua Box cộng đồng.",
   keywords: [
     "shop acc efootball",
+    "efootball elite",
     "mua acc efootball",
-    "bán acc efootball",
     "acc efootball mobile",
     "acc clone efootball",
     "shop acc efootball uy tín",
@@ -52,10 +57,9 @@ export const metadata: Metadata = {
     "acc efootball 2026",
     "mua acc pes mobile",
     "shop acc pes",
-    "thc efootball shop",
-    "trần hữu cảnh efootball",
+    "efootball shop",
   ],
-  authors: [{ name: "Trần Hữu Cảnh" }],
+  authors: [{ name: "Sạp Acc eFootball" }],
   robots: {
     index: true,
     follow: true,
@@ -70,26 +74,26 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "vi_VN",
-    siteName: "THC eFootball Shop",
-    title: "Shop Acc eFootball Mobile Uy Tín | Mua Bán Tài Khoản - THC EFB",
+    siteName: "Sạp Acc eFootball",
+    title: "Sạp Acc eFootball | Shop Tài Khoản eFootball Uy Tín",
     description:
-      "Shop acc eFootball mobile uy tín. Mua bán tài khoản eFootball giá rẻ, acc clone chất lượng, giao dịch an toàn, bảo hành đổi trả. Cập nhật mỗi ngày.",
+      "Shop tài khoản eFootball uy tín, cập nhật tài khoản chất lượng mỗi ngày tại Sạp Acc eFootball.",
     url: "https://thc-efb.com",
     images: [
       {
-        url: "/thc-shop.jpg",
+        url: "/icon-shop.png",
         width: 1200,
         height: 630,
-        alt: "THC eFootball Shop - Shop Acc eFootball Mobile Uy Tín",
+        alt: "Sạp Acc eFootball - Shop Tai Khoan eFootball",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Shop Acc eFootball Mobile Uy Tín | THC eFootball Shop",
+    title: "Sạp Acc eFootball | Shop Tai Khoan eFootball",
     description:
-      "Mua bán acc eFootball mobile giá rẻ, uy tín. Acc clone chất lượng, giao dịch an toàn, bảo hành đổi trả.",
-    images: ["/thc-shop.jpg"],
+      "Shop tài khoản eFootball uy tín, hỗ trợ nhanh qua Box cộng đồng.",
+    images: ["/icon-shop.png"],
   },
 };
 
@@ -105,10 +109,10 @@ export default function RootLayout({
           name="google-site-verification"
           content="trJhJ1lGcDKXthkx1ozmLiOXoxCM9nhp536tTfFd-dE"
         />
-        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+        <link rel="apple-touch-icon" href="/icon-shop.png" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-        <meta name="apple-mobile-web-app-title" content="THC EFB" />
+        <meta name="apple-mobile-web-app-title" content="Sạp Acc eFootball" />
       </head>
       <body className="font-sans antialiased" suppressHydrationWarning>
         <ThemeProvider>
@@ -119,48 +123,20 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
               "@context": "https://schema.org",
-              "@type": "Person",
-              name: "Trần Hữu Cảnh",
-              url: "https://thc-efb.com",
-              jobTitle: "Founder",
-              worksFor: {
-                "@type": "Organization",
-                name: "THC eFootball Shop",
-              },
-              sameAs: [
-                "https://zalo.me/0969347283",
-                "https://www.facebook.com/share/1B7kgySoVd/?mibextid=wwXIfr",
-              ],
-            }),
-          }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
               "@type": "Organization",
-              name: "THC eFootball Shop",
-              alternateName: "Shop Acc eFootball THC EFB",
+              name: "Sạp Acc eFootball",
+              alternateName: "Sạp Acc eFootball Shop",
               url: "https://thc-efb.com",
-              logo: "https://thc-efb.com/thc-shop.jpg",
+              logo: "https://thc-efb.com/icon-shop.png",
               description:
-                "Shop mua bán tài khoản eFootball mobile uy tín. Acc clone chất lượng, giao dịch an toàn, bảo hành đổi trả.",
-              founder: {
-                "@type": "Person",
-                name: "Trần Hữu Cảnh",
-                url: "https://www.facebook.com/share/1B7kgySoVd/?mibextid=wwXIfr",
-              },
+                "Shop tài khoản eFootball uy tín, hỗ trợ nhanh qua Box cộng đồng.",
               contactPoint: {
                 "@type": "ContactPoint",
                 contactType: "customer service",
                 availableLanguage: "Vietnamese",
-                url: "https://zalo.me/0969347283",
+                url: "https://zalo.me/g/pmpbi2qosaovor0ez3ys",
               },
-              sameAs: [
-                "https://zalo.me/0969347283",
-                "https://www.facebook.com/share/1B7kgySoVd/?mibextid=wwXIfr",
-              ],
+              sameAs: ["https://zalo.me/g/pmpbi2qosaovor0ez3ys"],
             }),
           }}
         />
@@ -170,12 +146,11 @@ export default function RootLayout({
             __html: JSON.stringify({
               "@context": "https://schema.org",
               "@type": "WebSite",
-              name: "THC eFootball Shop",
+              name: "Sạp Acc eFootball",
               alternateName: [
-                "THC Shop",
-                "THC eFootball",
+                "Sạp Acc eFootball Shop",
                 "Shop Acc eFootball",
-                "THC EFB Shop",
+                "Sạp Acc eFootball",
               ],
               url: "https://thc-efb.com",
               inLanguage: "vi",
