@@ -21,6 +21,18 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async redirects() {
+    return [
+      {
+        // Khớp với tất cả các đường dẫn
+        source: '/:path*', 
+        // Chuyển hướng sang domain mới kèm theo đường dẫn cũ
+        destination: 'https://thc-efb.com/:path*', 
+        // true = 301 (vĩnh viễn), false = 302 (tạm thời)
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;
