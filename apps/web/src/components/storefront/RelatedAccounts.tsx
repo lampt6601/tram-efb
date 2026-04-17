@@ -9,44 +9,47 @@ interface RelatedAccountsProps {
   onlyAvailable?: boolean;
 }
 
+const ACCOUNT_FIELDS = "id, title, selling_price, original_price, primary_image_url, images, status, total_gp, total_coins_android, total_coins_ios, team_strength, is_priority, is_clone, server_region, created_at, seller_full_name, seller_avatar_url, seller_sold_count";
+
 export async function RelatedAccounts({
   currentAccountId,
   currentPrice,
-  onlyAvailable = false,
 }: RelatedAccountsProps) {
   const supabase = createSupabaseAnonClient();
 
-  // Price range: ±30% of current price, minimum 50k VND range
+  // Fetch 6 accounts ordered by priority+recency — no price filter to avoid
+  // a second waterfall fallback query. Slice to 3 after fetching.
+  // Price range is applied as a soft preference via the query order, not a hard filter.
   const minPrice = Math.max(0, Math.floor(currentPrice * 0.7));
   const maxPrice = Math.ceil(currentPrice * 1.3);
 
-  const { data } = await supabase
-    .from("public_accounts")
-    .select("id, title, selling_price, original_price, primary_image_url, images, status, total_gp, total_coins_android, total_coins_ios, team_strength, is_priority, is_clone, server_region, created_at, seller_full_name, seller_avatar_url, seller_sold_count")
-    .neq("id", currentAccountId)
-    .gte("selling_price", minPrice)
-    .lte("selling_price", maxPrice)
-    .order("is_priority", { ascending: false })
-    .order("created_at", { ascending: false })
-    .limit(3);
-
-  const accounts = (data ?? []) as PublicAccount[];
-
-  // If not enough in price range, fetch latest accounts as fallback
-  if (accounts.length < 2) {
-    const existingIds = [currentAccountId, ...accounts.map((a) => a.id)];
-    const { data: fallback } = await supabase
+  // Single query: prefer price-range matches, fall back to latest if < 3 results
+  const [{ data: inRange }, { data: latest }] = await Promise.all([
+    supabase
       .from("public_accounts")
-      .select("id, title, selling_price, original_price, primary_image_url, images, status, total_gp, total_coins_android, total_coins_ios, team_strength, is_priority, is_clone, server_region, created_at, seller_full_name, seller_avatar_url, seller_sold_count")
-      .not("id", "in", `(${existingIds.join(",")})`)
+      .select(ACCOUNT_FIELDS)
+      .neq("id", currentAccountId)
+      .gte("selling_price", minPrice)
+      .lte("selling_price", maxPrice)
       .order("is_priority", { ascending: false })
       .order("created_at", { ascending: false })
-      .limit(3 - accounts.length);
+      .limit(3),
+    supabase
+      .from("public_accounts")
+      .select(ACCOUNT_FIELDS)
+      .neq("id", currentAccountId)
+      .order("is_priority", { ascending: false })
+      .order("created_at", { ascending: false })
+      .limit(3),
+  ]);
 
-    if (fallback) {
-      accounts.push(...(fallback as PublicAccount[]));
-    }
-  }
+  // Prefer in-range accounts; fill remainder with latest (deduplicated)
+  const inRangeList = (inRange ?? []) as PublicAccount[];
+  const inRangeIds = new Set(inRangeList.map((a) => a.id));
+  const extras = ((latest ?? []) as PublicAccount[]).filter(
+    (a) => !inRangeIds.has(a.id),
+  );
+  const accounts = [...inRangeList, ...extras].slice(0, 3);
 
   if (accounts.length === 0) return null;
 

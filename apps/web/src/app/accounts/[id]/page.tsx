@@ -1,3 +1,4 @@
+import { getAccountById, getAccountMetaById } from "@/lib/account-fetch";
 import { createSupabaseAnonClient } from '@thc-efb/supabase/anon';
 import { Header } from "@/components/storefront/Header";
 import { BackButton } from '@thc-efb/ui/back-button';
@@ -52,23 +53,9 @@ export async function generateMetadata({
   params: Promise<{ id: string }>;
 }): Promise<Metadata> {
   const { id } = await params;
-  const supabase = createSupabaseAnonClient();
 
-  const { data: pub } = await supabase
-    .from("public_accounts")
-    .select("title, selling_price, primary_image_url, status")
-    .eq("id", id)
-    .single();
-
-  const { data: sold } = !pub
-    ? await supabase
-        .from("public_sold_accounts")
-        .select("title, selling_price, primary_image_url, status")
-        .eq("id", id)
-        .single()
-    : { data: null };
-
-  const account = pub ?? sold;
+  // Uses React.cache() — deduplicates with the page() fetch in the same render cycle
+  const account = await getAccountMetaById(id);
   if (!account) return {};
 
   const isSold = account.status === "Sold";
@@ -119,26 +106,15 @@ export default async function AccountDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const supabase = createSupabaseAnonClient();
 
-  // Try public_accounts view first (Available/Pending)
-  const accountFields = "id, title, description, selling_price, original_price, images, primary_image_url, status, total_gp, total_coins_android, total_coins_ios, team_strength, is_priority, is_clone, server_region, monthly_log_quota, created_at, seller_full_name, seller_avatar_url, seller_transaction_box_url, seller_collateral_amount, seller_sold_count";
+  // Uses React.cache() — deduplicates with generateMetadata fetch in the same render cycle
+  const { account: fetchedAccount, isSold: fetchedIsSold } = await getAccountById(id);
 
-  const { data: publicData } = await supabase
-    .from("public_accounts")
-    .select(accountFields)
-    .eq("id", id)
-    .single();
+  if (!fetchedAccount) notFound();
 
-  // Fallback: check if it's a sold account
-  if (!publicData) {
-    const { data: soldData } = await supabase
-      .from("public_sold_accounts")
-      .select(accountFields)
-      .eq("id", id)
-      .single();
-
-    if (!soldData) notFound();
+  // Sold account branch
+  if (fetchedIsSold) {
+    const soldData = fetchedAccount;
 
     const account = soldData as PublicAccount;
     const galleryImages = account.primary_image_url
@@ -184,7 +160,6 @@ export default async function AccountDetailPage({
               <RelatedAccounts
                 currentAccountId={id}
                 currentPrice={account.selling_price}
-                onlyAvailable
               />
             </div>
 
@@ -245,10 +220,11 @@ export default async function AccountDetailPage({
         <Footer />
       </div>
     );
-  }
+  } // end sold branch
 
   // ── AVAILABLE / DEPOSITED ACCOUNT PAGE ──────────────────────────────────
-  const account = publicData as PublicAccount;
+
+  const account = fetchedAccount as PublicAccount;
   const isDeposited = account.status === "Deposited";
   const isSale = account.original_price
     ? account.original_price > account.selling_price
