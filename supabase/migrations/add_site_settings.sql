@@ -31,4 +31,5 @@ GRANT ALL ON site_settings TO authenticated;
 -- Seed default values
 INSERT INTO site_settings (key, value, label) VALUES
   ('zalo_box_members', '200+', 'Số thành viên Box Zalo Shop'),
-  ('zalo_group_members', '', 'Số thành viên Group Tư Vấn');
+  ('zalo_group_members', '', 'Số thành viên Group Tư Vấn'),
+  ('require_partner_ref', 'false', 'Chặn truy cập nếu không có Ref hợp lệ');

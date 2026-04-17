@@ -7,6 +7,7 @@ import { Toaster } from '@thc-efb/ui/sonner';
 
 import { ThemeProvider } from "@/components/storefront/ThemeProvider";
 import { cn } from '@thc-efb/shared/utils';
+import { Analytics } from "@vercel/analytics/react";
 
 const inter = Inter({
   subsets: ["latin", "vietnamese"],
@@ -168,6 +169,7 @@ export default function RootLayout({
         <Script id="sw-unregister" strategy="afterInteractive">
           {`(function(){if('serviceWorker'in navigator){navigator.serviceWorker.getRegistrations().then(function(r){r.forEach(function(x){x.unregister()})})}if('caches'in window){caches.keys().then(function(n){return Promise.all(n.map(function(k){return caches.delete(k)}))})}})()`}
         </Script>
+        <Analytics />
       </body>
     </html>
   );

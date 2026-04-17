@@ -15,10 +15,35 @@ const isWhitelistedPartner = (partnerId: string | undefined): partnerId is strin
 const isPublicPath = (pathname: string): boolean =>
   PUBLIC_EXACT_PATHS.includes(pathname) || PUBLIC_PATH_PREFIXES.some((prefix) => pathname.startsWith(prefix));
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const { pathname, searchParams } = request.nextUrl;
 
   if (isPublicPath(pathname)) {
+    return NextResponse.next();
+  }
+
+  try {
+    // Fetch setting and cache it for 60 seconds to avoid latency on every request
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_SUPABASE_URL}/rest/v1/site_settings?select=value&key=eq.require_partner_ref`,
+      {
+        headers: {
+          apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+          Authorization: `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!}`,
+        },
+        next: { revalidate: 60 },
+      }
+    );
+    const data = await res.json();
+    const requireRef = data?.[0]?.value === "true";
+
+    if (!requireRef) {
+      return NextResponse.next();
+    }
+  } catch (error) {
+    // On fetch error, fallback to allowing access or default to block?
+    // We'll fallback to not blocking to be safe and avoid full outage
+    console.error("Error fetching require_partner_ref setting in middleware:", error);
     return NextResponse.next();
   }
 
